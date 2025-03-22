@@ -8,12 +8,21 @@ import { CommonModule } from '@angular/common';
   templateUrl: './areas-card.component.html',
 })
 export class AreasCardComponent {
+  @Input({required: true}) 
+  Area!: Area;
 
+  isModalOpen = false;
 
+  openModal() {
+    this.isModalOpen = true; 
+  }
 
-      @Input({required:true})
-      Area!:Area;
+  closeModal() {
+    this.isModalOpen = false;
+  }
 
-
-
+  saveCategory() {
+    console.log('Categoría guardada');
+    this.closeModal(); 
+  }
 }
