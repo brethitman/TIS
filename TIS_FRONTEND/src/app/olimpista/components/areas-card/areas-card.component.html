@@ -25,24 +25,8 @@
 </div>
 
 <!-- Modal -->
-<div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center" style="background-color: rgba(75, 85, 99, 0.3)">
-  <div class="bg-white p-5 rounded-lg shadow-lg max-w-md" style=" width: 600px; height: 400px; background-color: (220, 220, 239, 100);">
-    <h3 class="text-lg font-semibold text-gray-800">Añadir Categoría</h3>
-    <p class="text-sm text-gray-500">Introduce los detalles de la categoría.</p>
-    <input 
-      type="text" 
-      placeholder="Nombre de la categoría" 
-      class="mt-4 p-2 border border-gray-300 rounded w-full" >
-    <div class="mt-4 flex justify-end gap-2">
-      <button 
-        class="px-4 py-2 bg-gray-300 rounded" 
-        (click)="closeModal()">Cancelar</button>
-      <button 
-        class="px-4 py-2 bg-blue-500 text-white rounded" 
-        (click)="saveCategory()">Guardar</button> 
-<div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-  <div class="p-6 bg-white rounded-lg shadow-lg w-96">
-    <!-- Título Principal -->
+<div *ngIf="isModalOpen" class="fixed inset-0  flex justify-center items-center" style="background-color: rgba(75, 85, 99, 0.167)">
+  <div class="bg-white p-5 rounded-lg shadow-lg max-w-md" style="background-color: rgba(220, 220, 100, 239)">
     <h2 class="text-xl font-bold text-gray-900">Añadir Categoría</h2>
     <p class="text-sm text-gray-500 mb-4">Introduce los detalles de la categoría.</p>
 
