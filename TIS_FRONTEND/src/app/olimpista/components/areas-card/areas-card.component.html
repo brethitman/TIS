@@ -15,10 +15,11 @@
               {{ Area.costo | currency:'USD':'symbol':'1.2-2' }} <!-- Usa el pipe currency -->
             </td>
           </tr>
-          <button>Añadir categoria</button>
+          <button (click)="openModal()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Añadir categoría</button>
         </tbody>
-        <button>Añadir Ctegoria1</button>
       </table>
     </div>
   </div>
 </div>
+<!-- Modal -->
+<app-categoria-modal [isOpen]="isModalOpen" (close)="closeModal()"></app-categoria-modal>

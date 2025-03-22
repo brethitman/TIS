@@ -1,0 +1,16 @@
+<div *ngIf="isOpen" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96 animate-fade-in">
+      <h2 class="text-lg font-semibold mb-4 text-gray-800">Añadir Categoría</h2>
+      
+      <input 
+        type="text" 
+        placeholder="Nombre de la categoría" 
+        class="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400">
+  
+      <div class="flex justify-end">
+        <button (click)="closeModal()" class="px-4 py-2 bg-gray-300 rounded-lg mr-2 hover:bg-gray-400">Cancelar</button>
+        <button class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Guardar</button>
+      </div>
+    </div>
+  </div>
+  
