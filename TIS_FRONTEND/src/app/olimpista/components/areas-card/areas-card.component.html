@@ -25,8 +25,10 @@
 </div>
 
 <!-- Modal -->
-<div *ngIf="isModalOpen" class="fixed inset-0  flex justify-center items-center" style="background-color: rgba(75, 85, 99, 0.167)">
-  <div class="bg-white p-5 rounded-lg shadow-lg max-w-md" style="background-color: rgba(220, 220, 100, 239)">
+<div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center" style="background-color: rgba(75, 85, 99, 0.3)">
+  <div class="bg-white p-5 rounded-lg shadow-lg max-w-md" style=" width: 600px; height: 400px; background-color: (220, 220, 239, 100);"> 
+
+    <!-- Título Principal -->
     <h2 class="text-xl font-bold text-gray-900">Añadir Categoría</h2>
     <p class="text-sm text-gray-500 mb-4">Introduce los detalles de la categoría.</p>
 
@@ -51,7 +53,7 @@
       class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400">
 
     <!-- Botones de acción -->
-    <div class="mt-8 flex justify-end gap-38">
+    <div class="mt-5 flex justify-end gap-55">
       <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" (click)="closeModal()">Cancelar</button>
       <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" (click)="saveCategory()">Aceptar</button>
     </div>
