@@ -1,29 +1,19 @@
-import { Component, Input} from '@angular/core';
-import { Area } from '../../interfaces/inscripcion.interface';
+import { Component, Input } from '@angular/core';
+import { Area } from '../../interfaces/area.interface';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-areas-card',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './areas-card.component.html',
 })
 export class AreasCardComponent {
-  @Input({required: true}) 
-  Area!: Area;
 
-  isModalOpen = false;
 
-  openModal() {
-    this.isModalOpen = true; 
-  }
 
-  closeModal() {
-    this.isModalOpen = false;
-  }
+      @Input({required:true})
+      Area!:Area;
 
-  saveCategory() {
-    console.log('Categoría guardada');
-    this.closeModal(); 
-  }
+
+
 }

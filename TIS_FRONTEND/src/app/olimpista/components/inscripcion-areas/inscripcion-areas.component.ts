@@ -8,20 +8,22 @@ import { Area } from '../../interfaces/area.interface';
   standalone: true, // Indica que es un componente standalone
   imports: [FormsModule], // Importa FormsModule aquí
   templateUrl: './inscripcion-areas.component.html',
-
 })
 export class InscripcionAreasComponent {
+  // Actualiza la estructura del área con la nueva interfaz
   area: Area = {
     id: 0,
     nombre_area: '',
-    costo: 0,
+    descripcion: null,  // Nuevo campo 'descripcion'
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   constructor(private areaService: AreaService) {}
 
+  // Método para manejar el submit del formulario
   onSubmit(): void {
+    // Llamamos al servicio para crear el área
     this.areaService.createArea(this.area).subscribe(
       (response) => {
         console.log('Área guardada:', response);
