@@ -5,20 +5,17 @@ export interface GetAreaResponse {
   meta:  Meta;
 }
 
-
-
- interface Links {
+interface Links {
   first: string;
-  last:  null;
-  prev:  null;
-  next:  null;
+  last: null;
+  prev: null;
+  next: null;
 }
 
- interface Meta {
+interface Meta {
   current_page: number;
-  from:         number;
-  path:         string;
-  per_page:     number;
-  to:           number;
+  from: number;
+  path: string;
+  per_page: number;
+  to: number;
 }
-
