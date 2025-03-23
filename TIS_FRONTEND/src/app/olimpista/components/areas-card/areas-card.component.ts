@@ -16,8 +16,8 @@ export class AreasCardComponent {
   @Input({ required: true }) Area!: Area;
   isModalOpen = false;
   isConfirmModalOpen = false;
-  cards: { nombre_area: string; descripcion: string }[] = [];
-  cardIndexToDelete: number | null = null; // Nueva propiedad para almacenar el índice de la tarjeta
+  cards: { nombre_area: string; descripcion: string; habilitada: boolean }[] = []; // Nueva propiedad "habilitada"
+  cardIndexToToggle: number | null = null; // Almacenar el índice de la tarjeta a modificar
 
   openModal() {
     this.isModalOpen = true;
@@ -34,27 +34,30 @@ export class AreasCardComponent {
     this.cards.push({
       nombre_area: this.Area.nombre_area,
       descripcion: this.Area.descripcion || 'No disponible',
+      habilitada: true, // Por defecto, la tarjeta está habilitada
     });
 
     this.closeModal();
   }
-   openConfirmModal(index: number) {
-    this.cardIndexToDelete = index; // Almacenar el índice de la tarjeta
+
+  openConfirmModal(index: number) {
+    this.cardIndexToToggle = index; // Almacenar el índice de la tarjeta
     this.isConfirmModalOpen = true;
   }
 
   closeConfirmModal() {
     this.isConfirmModalOpen = false;
-    this.cardIndexToDelete = null; // Limpiar el índice almacenado
+    this.cardIndexToToggle = null; // Limpiar el índice almacenado
   }
-  disableArea() {
-    if (this.cardIndexToDelete !== null) {
-      console.log(`Tarjeta en índice ${this.cardIndexToDelete} deshabilitada`);
 
-      // Eliminar la tarjeta usando su índice
-      this.cards.splice(this.cardIndexToDelete, 1);
+  toggleHabilitar() {
+    if (this.cardIndexToToggle !== null) {
+      // Cambiar el estado de la tarjeta
+      this.cards[this.cardIndexToToggle].habilitada = !this.cards[this.cardIndexToToggle].habilitada;
+      console.log(`Tarjeta en índice ${this.cardIndexToToggle} cambió su estado a: ${this.cards[this.cardIndexToToggle].habilitada ? 'Habilitada' : 'Deshabilitada'}`);
 
       this.closeConfirmModal();
     }
   }
 }
+
