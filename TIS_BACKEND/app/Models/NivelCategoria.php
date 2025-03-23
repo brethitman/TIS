@@ -15,11 +15,19 @@ class NivelCategoria extends Model
     protected $fillable = [
         'id_area',
         'nombre_nivel',
-        'descripcion'
+        'fecha_examen',
+        'costo',
+        'habilitacion',
+    ];
+
+    protected $casts = [
+        'fecha_examen' => 'date',
+        'costo' => 'decimal:2',
+        'habilitacion' => 'boolean',
     ];
 
     /**
-     * Obtener el área relacionada con este nivel/categoría
+     * Obtener el área relacionada con este nivel/categoría.
      */
     public function area()
     {

@@ -14,12 +14,7 @@ class Area extends Model
 
     protected $fillable = [
         'nombre_area',
-        'costo'
-    ];
-
-
-    protected $casts = [
-        'costo' => 'decimal:2',  // Esto asegura que 'costo' sea un decimal con 2 decimales
+        'descripcion', // Mantenemos el nuevo campo
     ];
 
     /**

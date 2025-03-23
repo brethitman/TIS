@@ -1,10 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { Area } from '../../interfaces/area.interface';
+import { Area } from '../../interfaces/inscripcion.interface';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-areas-card',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './areas-card.component.html',
 })

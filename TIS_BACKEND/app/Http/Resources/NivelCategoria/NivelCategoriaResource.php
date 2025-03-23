@@ -17,12 +17,13 @@ class NivelCategoriaResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id_nivel,  // Asegúrate de que este nombre coincida con el campo real en la base de datos
+            'id' => $this->id_nivel,
             'nombre' => $this->nombre_nivel,
-            'descripcion' => $this->descripcion,
+            'fecha_examen' => $this->fecha_examen,
+            'costo' => $this->costo,
+            'habilitacion' => $this->habilitacion,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];
-
     }
 }
