@@ -1,40 +1,80 @@
-<div class="max-w-md mx-auto p-6 bg-white shadow-md rounded-lg">
-  <h2 class="text-2xl font-bold mb-4 text-center">Registro de Áreas</h2>
-  <form (ngSubmit)="onSubmit()" class="space-y-4">
-    <!-- Campo para Nombre del Área -->
-    <div>
-      <label for="nombre_area" class="block text-sm font-medium text-gray-700">Nombre del Área:</label>
-      <input
-        type="text"
-        id="nombre_area"
-        [(ngModel)]="area.nombre_area"
-        name="nombre_area"
-        required
-        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-      />
+<div class="mx-auto p-6 bg-white shadow-md rounded-lg">
+  <h2 class="text-xl font-bold mb-4">Registrar nueva area</h2>
+  
+  <form #areaForm="ngForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <div class="flex flex-row items-center space-x-4">
+      <!-- Campo de Nombre del área -->
+      <div class="flex-1">
+        <label for="nombre_area" class="sr-only">Nombre del area</label>
+        <input
+          type="text"
+          id="nombre_area"
+          [(ngModel)]="area.nombre_area"
+          name="nombre_area"
+          placeholder="Nombre del area"
+          required
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+        />
+      </div>
+      
+      <!-- Botón de selección de cursos -->
+      <div class="relative">
+        <button
+          type="button"
+          (click)="toggleDropdown()"
+          class="px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Seleccion de cursos
+        </button>
+        
+        <!-- Dropdown de cursos -->
+        <div
+          *ngIf="isDropdownOpen"
+          class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
+        >
+          <div class="py-1">
+            <!-- Lista de cursos - ahora con actualización en tiempo real -->
+            <label
+              *ngFor="let grade of grades"
+              class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              <input
+                type="checkbox"
+                [(ngModel)]="grade.selected"
+                [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="updateSelectedGrades()"
+                class="mr-2"
+              />
+              {{ grade.name }}
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Botón de Añadir área -->
+      <button
+        type="submit"
+        class="px-4 py-2 bg-indigo-900 text-white rounded-md hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      >
+        <div class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+          </svg>
+          Añadir area
+        </div>
+      </button>
     </div>
-
-    <!-- Campo para Descripción -->
-    <div>
-      <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción:</label>
-      <textarea
-        id="descripcion"
-        [(ngModel)]="area.descripcion"
-        name="descripcion"
-        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-        rows="4"
-        placeholder="Escribe una descripción del área..."
-      ></textarea>
+    
+    <!-- Campo oculto para la descripción (guarda los cursos seleccionados) -->
+    <input
+      type="hidden"
+      [(ngModel)]="area.descripcion"
+      name="descripcion"
+    />
+    
+    <!-- Mostrar cursos seleccionados automáticamente -->
+    <div *ngIf="selectedGrades" class="mt-4 text-sm text-gray-700">
+      <p>Seleccionados: {{ selectedGrades }}</p>
     </div>
-
-
-
-    <!-- Botón de Submit -->
-    <button
-      type="submit"
-      class="w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-    >
-      Guardar
-    </button>
   </form>
 </div>
