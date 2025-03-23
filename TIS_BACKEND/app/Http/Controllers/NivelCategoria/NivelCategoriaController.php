@@ -28,6 +28,7 @@ class NivelCategoriaController extends Controller
      */
     public function store(Request $request)
     {
+        try {
         // Validar los datos recibidos
         $request->validate([
 
@@ -51,6 +52,12 @@ class NivelCategoriaController extends Controller
             'message' => 'Nivel de categoría creado exitosamente',
             'nivelCategoria' => new NivelCategoriaResource($nivelCategoria)
         ], 201);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'message' => 'Error de validación',
+            'errors' => $e->errors()
+        ], 422);
+    }
     }
 
     /**
