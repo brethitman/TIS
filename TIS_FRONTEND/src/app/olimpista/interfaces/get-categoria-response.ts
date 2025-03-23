@@ -20,5 +20,3 @@ export interface GetCategoriaResponse {
   to:           number;
 }
 
-
-

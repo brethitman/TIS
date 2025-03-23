@@ -9,11 +9,10 @@ export interface Inscripcione {
   createdAt:         null;
   updatedAt:         null;
 }
-
 export interface Area {
   id:          number;
   nombre_area: string;
-  costo: number;
+  descripcion: null | string;
   createdAt:   Date;
   updatedAt:   Date;
 }

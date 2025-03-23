@@ -18,7 +18,7 @@ class AreaController extends Controller
      */
     public function index()
     {
-        $areas = Area::orderBy("created_at", "desc")->simplePaginate (10);
+        $areas = Area::orderBy("created_at", "desc")->simplePaginate(10);
         return new AreaCollection($areas);
     }
 
@@ -30,13 +30,13 @@ class AreaController extends Controller
         // Validar los datos recibidos
         $request->validate([
             'nombre_area' => 'required|string|max:100|unique:areas',
-            'costo' => 'required|numeric|min:0',
+            'descripcion' => 'nullable|string|max:255',
         ]);
 
         // Crear el nuevo área
         $area = Area::create([
             'nombre_area' => $request->nombre_area,
-            'costo' => $request->costo,
+            'descripcion' => $request->descripcion,
         ]);
 
         return response()->json([
@@ -64,13 +64,13 @@ class AreaController extends Controller
         // Validar los datos recibidos
         $request->validate([
             'nombre_area' => 'required|string|max:100|unique:areas,nombre_area,'.$id.',id_area',
-            'costo' => 'required|numeric|min:0',
+            'descripcion' => 'nullable|string|max:255',
         ]);
 
         // Actualizar el área
         $area->update([
             'nombre_area' => $request->nombre_area,
-            'costo' => $request->costo,
+            'descripcion' => $request->descripcion,
         ]);
 
         return response()->json([
