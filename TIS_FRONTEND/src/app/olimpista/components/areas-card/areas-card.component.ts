@@ -8,80 +8,53 @@ import { FormsModule } from '@angular/forms'; // Para usar ngModel en el modal
 
 @Component({
   selector: 'app-areas-card',
-  imports: [CommonModule, FormsModule],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './areas-card.component.html',
 })
 export class AreasCardComponent {
-      @Input({required:true})
-      Area!:Area;
-      @Input() categorias: NivelesCategoria[] = [];
+  @Input({ required: true }) Area!: Area;
+  isModalOpen = false;
+  isConfirmModalOpen = false;
+  cards: { nombre_area: string; descripcion: string }[] = [];
+  cardIndexToDelete: number | null = null; // Nueva propiedad para almacenar el índice de la tarjeta
 
-      isModalOpen = false;
+  openModal() {
+    this.isModalOpen = true;
+  }
 
-      categoriaNombre: string = '';
-      categoriaNivel: string = '';
-      categoriaFechaExamen: string = ''; // formato YYYY-MM-DD
-      categoriaCosto: string = '';
-    
-      constructor(private categoriaService: CategoriaService) {}
+  closeModal() {
+    this.isModalOpen = false;
+  }
 
-      openModal() {
-        this.isModalOpen = true; 
-      }
-    
-      closeModal() {
-        this.isModalOpen = false;
-        this.resetCategoriaForm();
+  saveCategory() {
+    console.log('Categoría guardada');
 
-        
-      }
-    
-      saveCategory() {
-        if (
-          !this.categoriaNombre.trim() ||
-          !this.categoriaNivel ||
-          !this.categoriaFechaExamen ||
-          !this.categoriaCosto.trim()
-        ) {
-          alert('Por favor, completa todos los campos.');
-          return;
-        }
-    
-        // Combinar el nombre y el nivel académico para formar el nombre final de la categoría
-        const nombreFinal = `${this.categoriaNombre} - ${this.categoriaNivel}`;
-    
-        // Crear el objeto NivelesCategoria
-        const nuevaCategoria: NivelesCategoria = {
-          id: 0, // El backend asignará el id definitivo
-          nombre: nombreFinal,
-          fecha_examen: new Date(this.categoriaFechaExamen),
-          costo: this.categoriaCosto,
-          habilitacion: true, // Puedes ajustar este valor según tus requerimientos
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-    
-        // Enviar la categoría al backend
-        this.categoriaService.createCategoria(nuevaCategoria).subscribe({
-          next: (response) => {
-            console.log('Categoría guardada:', response);
-            alert('Categoría guardada con éxito');
-            // Agregar la nueva categoría a la lista para actualizar la vista
-            this.categorias.push(response);
-            this.closeModal();
-          },
-          error: (error) => {
-            console.error('Error al guardar la categoría:', error);
-            alert('Error al guardar la categoría: ' + (error.message || 'Error desconocido'));
-          },
-        });
-      }
-    
-      resetCategoriaForm() {
-        this.categoriaNombre = '';
-        this.categoriaNivel = '';
-        this.categoriaFechaExamen = '';
-        this.categoriaCosto = '';
-      }
+    // Agregar una nueva tarjeta al array
+    this.cards.push({
+      nombre_area: this.Area.nombre_area,
+      descripcion: this.Area.descripcion || 'No disponible',
+    });
 
+    this.closeModal();
+  }
+   openConfirmModal(index: number) {
+    this.cardIndexToDelete = index; // Almacenar el índice de la tarjeta
+    this.isConfirmModalOpen = true;
+  }
+
+  closeConfirmModal() {
+    this.isConfirmModalOpen = false;
+    this.cardIndexToDelete = null; // Limpiar el índice almacenado
+  }
+  disableArea() {
+    if (this.cardIndexToDelete !== null) {
+      console.log(`Tarjeta en índice ${this.cardIndexToDelete} deshabilitada`);
+
+      // Eliminar la tarjeta usando su índice
+      this.cards.splice(this.cardIndexToDelete, 1);
+
+      this.closeConfirmModal();
+    }
+  }
 }
