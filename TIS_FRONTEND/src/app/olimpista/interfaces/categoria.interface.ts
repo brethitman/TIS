@@ -1,7 +1,11 @@
+
+
 export interface NivelesCategoria {
-  id:          number;
-  nombre:      string;
-  descripcion: string;
-  createdAt:   Date;
-  updatedAt:   Date;
+  id:           number;
+  nombre:       string;
+  fecha_examen: Date | null;
+  costo:        string;
+  habilitacion: boolean | null;
+  createdAt:    Date;
+  updatedAt:    Date;
 }

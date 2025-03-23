@@ -18,7 +18,8 @@ class NivelCategoriaController extends Controller
      */
     public function index()
     {
-        $niveles = NivelCategoria::orderBy("created_at", "desc")->simplePaginate (10);
+
+        $niveles = NivelCategoria::orderBy("created_at", "desc")->simplePaginate(10);
         return new NivelCategoriaCollection($niveles);
     }
 
@@ -29,14 +30,21 @@ class NivelCategoriaController extends Controller
     {
         // Validar los datos recibidos
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string|max:500',
+
+            'id_area' => 'required|integer|exists:areas,id_area', // Asegurando que el área exista
+            'nombre_nivel' => 'required|string|max:100',
+            'fecha_examen' => 'nullable|date',
+            'costo' => 'required|numeric|min:0',
+            'habilitacion' => 'nullable|boolean',
         ]);
 
         // Crear el nuevo nivel de categoría
         $nivelCategoria = NivelCategoria::create([
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
+            'id_area' => $request->id_area,
+            'nombre_nivel' => $request->nombre_nivel,
+            'fecha_examen' => $request->fecha_examen,
+            'costo' => $request->costo,
+            'habilitacion' => $request->habilitacion,
         ]);
 
         return response()->json([
@@ -63,8 +71,12 @@ class NivelCategoriaController extends Controller
 
         // Validar los datos recibidos
         $validatedData = $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string|max:500',
+
+            'id_area' => 'required|integer|exists:areas,id_area', // Asegurando que el área exista
+            'nombre_nivel' => 'required|string|max:100',
+            'fecha_examen' => 'nullable|date',
+            'costo' => 'required|numeric|min:0',
+            'habilitacion' => 'nullable|boolean',
         ]);
 
         // Actualizar el nivel de categoría

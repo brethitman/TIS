@@ -25,8 +25,10 @@
 </div>
 
 <!-- Modal -->
-<div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center" style="background-color: rgba(75, 85, 99, 0.3);">
-  <div class="bg-white p-5 rounded-lg shadow-lg max-w-md" style="width: 600px; height: 500px; background-color:rgba(206, 223, 255, 100);"> 
+<div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center"
+  style="background-color: rgba(75, 85, 99, 0.3);">
+  <div class="bg-white p-5 rounded-lg shadow-lg max-w-md"
+    style="width: 600px; height: 500px; background-color:rgba(206, 223, 255, 100);">
 
     <!-- Título Principal -->
     <h2 class="text-xl font-bold text-gray-900">Añadir Categoría</h2>
@@ -35,31 +37,45 @@
     <!-- Nombre de Categoría -->
     <label class="text-sm text-gray-700">Nombre de la Categoría</label>
     <input type="text" placeholder="Ingresar nombre de la categoría"
-      class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400" style="background-color: white;">
+      class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+      style="background-color: white;" oninput="this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '')">
 
     <!-- Nivel Académico -->
     <label class="text-sm text-gray-700 mt-4 block">Nivel Académico</label>
-    <select class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400" style="background-color: white;">
-      <option value="" disabled selected class="text-gray-400">Seleccionar nivel académico</option>
-      <option value="basico">Básico</option>
-      <option value="medio">Medio</option>
-      <option value="superior">Superior</option>
-      <option value="postgrado">Postgrado</option>
+    <select class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+      style="background-color: white;" >
+      <option value="" disabled selected class="text-gray-400" 
+      style="max-height: 5px; overflow-y: scroll; scrollbar-width: 2px;">Seleccionar nivel académico</option>
+      <option value="basico">1ro de Primaria</option>
+      <option value="basico">2ro de Primaria</option>
+      <option value="medio">3ro de Primaria</option>
+      <option value="medio">4ro de Primaria</option>
+      <option value="medio">5ro de Primaria</option>
+      <option value="medio">6ro de Primaria</option>
+      <option value="medio">1ro de Secundaria</option>
+      <option value="medio">2ro de Secundaria</option>
+      <option value="medio">3ro de Secundaria</option>
+      <option value="medio">4ro de Secundaria</option>
+      <option value="medio">5ro de Secundaria</option>
+      <option value="medio">6ro de Secundaria</option>
     </select>
 
     <!-- Fecha de examen -->
     <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
     <input type="date" placeholder="Ingresar fecha de examen"
-      class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400" style="background-color: white;">
+      class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+      style="background-color: white;">
 
     <!-- Costo de la Categoría -->
     <label class="text-sm text-gray-700 mt-4 block">Costo de la Categoría</label>
     <input type="text" placeholder="Ingresar costo"
-      class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400" style="background-color: white;">
+      class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+      style="background-color: white;" oninput="this.value = this.value.replace(/[^0-9 ]/g, '')">
 
     <!-- Botones de acción -->
     <div class="mt-5 flex justify-end gap-55">
-      <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" (click)="saveCategory()">Aceptar</button>
+      <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        (click)="saveCategory()">Aceptar</button>
       <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" (click)="closeModal()">Cancelar</button>
     </div>
   </div>

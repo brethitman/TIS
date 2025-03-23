@@ -13,7 +13,7 @@ export interface Inscripcione {
 export interface Area {
   id:          number;
   nombre_area: string;
-  costo: number;
+  descripcion: null | string;
   createdAt:   Date;
   updatedAt:   Date;
 }
