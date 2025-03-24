@@ -7,6 +7,8 @@ use App\Http\Resources\NivelCategoria\NivelCategoriaCollection;
 use App\Http\Resources\NivelCategoria\NivelCategoriaResource;
 use App\Models\NivelCategoria;
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Exception;
 
 class NivelCategoriaController extends Controller
 {
@@ -14,97 +16,112 @@ class NivelCategoriaController extends Controller
     protected $collectionResource = NivelCategoriaCollection::class;
 
     /**
-     * Display a listing of the resource.
+     * Muestra una lista paginada de los niveles de categoría.
      */
     public function index()
     {
-
         $niveles = NivelCategoria::orderBy("created_at", "desc")->simplePaginate(10);
         return new NivelCategoriaCollection($niveles);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Almacena un nuevo nivel de categoría en la base de datos.
      */
     public function store(Request $request)
     {
         try {
-        // Validar los datos recibidos
-        $request->validate([
+            // Validar los datos del request
+            $validatedData = $request->validate([
+                'id_area' => 'required|integer|exists:areas,id_area', // Asegura que el área exista
+                'nombre_nivel' => 'required|string|max:100',
+                'descripcion' => 'nullable|string',
+                'fecha_examen' => 'nullable|date',
+                'costo' => 'required|numeric|min:0',
+                'habilitacion' => 'nullable|boolean',
+            ]);
 
-            'id_area' => 'required|integer|exists:areas,id_area', // Asegurando que el área exista
-            'nombre_nivel' => 'required|string|max:100',
-            'fecha_examen' => 'nullable|date',
-            'costo' => 'required|numeric|min:0',
-            'habilitacion' => 'nullable|boolean',
-        ]);
+            // Crear el nuevo nivel de categoría
+            $nivelCategoria = NivelCategoria::create($validatedData);
 
-        // Crear el nuevo nivel de categoría
-        $nivelCategoria = NivelCategoria::create([
-            'id_area' => $request->id_area,
-            'nombre_nivel' => $request->nombre_nivel,
-            'fecha_examen' => $request->fecha_examen,
-            'costo' => $request->costo,
-            'habilitacion' => $request->habilitacion,
-        ]);
-
-        return response()->json([
-            'message' => 'Nivel de categoría creado exitosamente',
-            'nivelCategoria' => new NivelCategoriaResource($nivelCategoria)
-        ], 201);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json([
-            'message' => 'Error de validación',
-            'errors' => $e->errors()
-        ], 422);
-    }
+            return response()->json([
+                'message' => 'Nivel de categoría creado exitosamente',
+                'nivelCategoria' => new NivelCategoriaResource($nivelCategoria),
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'No se pudo crear el nivel de categoría',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
-     * Display the specified resource.
+     * Muestra un nivel de categoría por su ID.
      */
     public function show(string $id)
     {
-        $nivelCategoria = NivelCategoria::findOrFail($id);
-        return new NivelCategoriaResource($nivelCategoria);
+        try {
+            $nivelCategoria = NivelCategoria::findOrFail($id);
+            return new NivelCategoriaResource($nivelCategoria);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Nivel de categoría no encontrado'], 404);
+        }
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actualiza un nivel de categoría existente.
      */
     public function update(Request $request, string $id)
     {
-        $nivelCategoria = NivelCategoria::findOrFail($id);
+        try {
+            $nivelCategoria = NivelCategoria::findOrFail($id);
 
-        // Validar los datos recibidos
-        $validatedData = $request->validate([
+            // Validar los datos recibidos
+            $validatedData = $request->validate([
+                'id_area' => 'required|integer|exists:areas,id_area',
+                'nombre_nivel' => 'required|string|max:100',
+                'descripcion' => 'nullable|string',
+                'fecha_examen' => 'nullable|date',
+                'costo' => 'required|numeric|min:0',
+                'habilitacion' => 'nullable|boolean',
+            ]);
 
-            'id_area' => 'required|integer|exists:areas,id_area', // Asegurando que el área exista
-            'nombre_nivel' => 'required|string|max:100',
-            'fecha_examen' => 'nullable|date',
-            'costo' => 'required|numeric|min:0',
-            'habilitacion' => 'nullable|boolean',
-        ]);
+            // Actualizar el nivel de categoría
+            $nivelCategoria->update($validatedData);
 
-        // Actualizar el nivel de categoría
-        $nivelCategoria->update($validatedData);
-
-        return response()->json([
-            'message' => 'Nivel de categoría actualizado exitosamente',
-            'nivelCategoria' => new NivelCategoriaResource($nivelCategoria)
-        ]);
+            return response()->json([
+                'message' => 'Nivel de categoría actualizado exitosamente',
+                'nivelCategoria' => new NivelCategoriaResource($nivelCategoria),
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Nivel de categoría no encontrado'], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'No se pudo actualizar el nivel de categoría',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Elimina un nivel de categoría por su ID.
      */
     public function destroy(string $id)
     {
-        $nivelCategoria = NivelCategoria::findOrFail($id);
-        $nivelCategoria->delete();
+        try {
+            $nivelCategoria = NivelCategoria::findOrFail($id);
+            $nivelCategoria->delete();
 
-        return response()->json([
-            'message' => 'Nivel de categoría eliminado exitosamente'
-        ]);
+            return response()->json([
+                'message' => 'Nivel de categoría eliminado exitosamente'
+            ]);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Nivel de categoría no encontrado'], 404);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'No se pudo eliminar el nivel de categoría',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

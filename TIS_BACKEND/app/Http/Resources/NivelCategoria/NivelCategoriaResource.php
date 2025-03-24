@@ -18,12 +18,14 @@ class NivelCategoriaResource extends JsonResource
     {
         return [
             'id' => $this->id_nivel,
-            'nombre' => $this->nombre_nivel,
+            'id_area' => $this->id_area,
+            'nombre_nivel' => $this->nombre_nivel,
+            'descripcion' => $this->descripcion,
             'fecha_examen' => $this->fecha_examen,
             'costo' => $this->costo,
             'habilitacion' => $this->habilitacion,
-            'createdAt' => $this->created_at,
-            'updatedAt' => $this->updated_at,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

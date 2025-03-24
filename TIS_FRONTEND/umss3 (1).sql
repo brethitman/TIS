@@ -242,7 +242,7 @@ CREATE TABLE `nivel_categorias` (
   `id_nivel` bigint(20) UNSIGNED NOT NULL,
   `id_area` bigint(20) UNSIGNED NOT NULL,
   `nombre_nivel` varchar(100) NOT NULL,
-  `descripcion` text DEFAULT NULL,
+  `descripcion` varchar(50) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `fecha_examen` date DEFAULT NULL,

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { NivelesCategoria } from '../interfaces/categoria.interface';
+import { GetCategoriaResponse } from '../interfaces/get-categoria-response'; 
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class CategoriaService {
   }
 
   // Método opcional para obtener todas las categorías
-  getCategorias(): Observable<NivelesCategoria[]> {
-    return this.http.get<NivelesCategoria[]>(this.apiUrl);
+  getCategorias(): Observable<GetCategoriaResponse> {
+    return this.http.get<GetCategoriaResponse>(this.apiUrl);
   }
 }
