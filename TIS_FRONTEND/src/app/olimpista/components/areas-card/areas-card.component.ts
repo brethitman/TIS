@@ -15,21 +15,35 @@ export class AreasCardComponent {
   isModalOpen = false;
   isConfirmModalOpen = false;
   isEditModalOpen = false;
-  cards: { nombre_area: string; descripcion: string; habilitada: boolean; costo: number }[] = [];
+
+  // Estructura de las tarjetas
+  cards: {
+    nombre_area: string;
+    descripcion: string;
+    habilitada: boolean;
+    costo: number;
+    fecha_examen: string; // Nueva propiedad añadida
+  }[] = [];
+
   cardIndexToToggle: number | null = null;
   cardIndexToEdit: number | null = null;
+
+  // Propiedades para editar
   editedNombreArea = '';
-  editedDescripcion = '';
+  editedfechaExamen = '';
   editedCosto = 0;
 
+  // Abrir modal de añadir categoría
   openModal() {
     this.isModalOpen = true;
   }
 
+  // Cerrar modal de añadir categoría
   closeModal() {
     this.isModalOpen = false;
   }
 
+  // Guardar una nueva categoría
   saveCategory() {
     console.log('Categoría guardada');
 
@@ -38,21 +52,25 @@ export class AreasCardComponent {
       descripcion: this.Area.descripcion || 'No disponible',
       habilitada: true,
       costo: 0,
+      fecha_examen: '', // Inicializar fecha_examen vacía
     });
 
     this.closeModal();
   }
 
+  // Abrir modal de confirmación para habilitar/deshabilitar
   openConfirmModal(index: number) {
     this.cardIndexToToggle = index;
     this.isConfirmModalOpen = true;
   }
 
+  // Cerrar modal de confirmación
   closeConfirmModal() {
     this.isConfirmModalOpen = false;
     this.cardIndexToToggle = null;
   }
 
+  // Cambiar estado de habilitación
   toggleHabilitar() {
     if (this.cardIndexToToggle !== null) {
       this.cards[this.cardIndexToToggle].habilitada = !this.cards[this.cardIndexToToggle].habilitada;
@@ -63,23 +81,26 @@ export class AreasCardComponent {
     }
   }
 
+  // Abrir modal de edición
   openEditModal(index: number) {
     this.cardIndexToEdit = index;
     this.editedNombreArea = this.cards[index].nombre_area;
-    this.editedDescripcion = this.cards[index].descripcion;
+    this.editedfechaExamen = this.cards[index].fecha_examen;
     this.editedCosto = this.cards[index].costo;
     this.isEditModalOpen = true;
   }
 
+  // Cerrar modal de edición
   closeEditModal() {
     this.isEditModalOpen = false;
     this.cardIndexToEdit = null;
   }
 
+  // Guardar cambios de edición
   saveEdit() {
     if (this.cardIndexToEdit !== null) {
       this.cards[this.cardIndexToEdit].nombre_area = this.editedNombreArea;
-      this.cards[this.cardIndexToEdit].descripcion = this.editedDescripcion;
+      this.cards[this.cardIndexToEdit].fecha_examen = this.editedfechaExamen;
       this.cards[this.cardIndexToEdit].costo = this.editedCosto;
       console.log(`Tarjeta en índice ${this.cardIndexToEdit} editada.`);
       this.closeEditModal();
