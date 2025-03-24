@@ -13,8 +13,16 @@
           name="nombre_area"
           placeholder="Nombre del area"
           required
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          (blur)="validateNombreArea()"
+          (input)="validateNombreArea()"
+          [class]="errors.nombreArea ? 'w-full px-3 py-2 border border-red-500 rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500' : 'w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500'"
         />
+        <div *ngIf="errors.nombreArea" class="flex items-center text-red-500 text-sm mt-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          {{ errors.nombreArea }}
+        </div>
       </div>
       
       <!-- Botón de selección de cursos -->
@@ -22,7 +30,7 @@
         <button
           type="button"
           (click)="toggleDropdown()"
-          class="px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          [class]="errors.cursos ? 'px-4 py-2 border border-red-500 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500' : 'px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'"
         >
           Seleccion de cursos
         </button>
@@ -48,6 +56,12 @@
               {{ grade.name }}
             </label>
           </div>
+        </div>
+        <div *ngIf="errors.cursos" class="flex items-center text-red-500 text-sm mt-1">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          {{ errors.cursos }}
         </div>
       </div>
       
@@ -75,6 +89,20 @@
     <!-- Mostrar cursos seleccionados automáticamente -->
     <div *ngIf="selectedGrades" class="mt-4 text-sm text-gray-700">
       <p>Seleccionados: {{ selectedGrades }}</p>
+      <div *ngIf="errors.descripcion" class="flex items-center text-red-500 text-sm mt-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        {{ errors.descripcion }}
+      </div>
+    </div>
+    
+    <!-- Error de área duplicada -->
+    <div *ngIf="errors.duplicado" class="flex items-center mt-2 text-red-500 text-sm">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+      {{ errors.duplicado }}
     </div>
   </form>
 </div>
