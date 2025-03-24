@@ -1,66 +1,38 @@
 <div class="olimpista__card bg-blue-50 shadow-md rounded-lg overflow-hidden">
   <div class="p-4">
-    <h3 class="text-lg font-semibold text-gray-800 mb-2">Datos del Área</h3>
+    <h3 class="text-lg font-semibold text-gray-800 mb-2">{{ Area.nombre_area }}</h3>
+    <td class="px-2 py-2 text-sm font-semibold-500">{{ Area.descripcion }}</td>
+
+        <!-- Contenedor de Categorías -->
     <div class="border border-gray-200 p-4 bg-white rounded-lg">
-      <h4 class="text-md font-bold text-gray-700 mb-3">Información del Área</h4>
-      <table class="min-w-full">
-        <tbody>
-          <tr class="border-b border-gray-200">
-            <td class="px-2 py-2 text-sm text-gray-500">Nombre:</td>
-            <td class="px-2 py-2 text-sm font-semibold text-gray-800">{{ Area.nombre_area }}</td>
-          </tr>
-          <tr>
-            <td class="px-2 py-2 text-sm text-gray-500">Descripción:</td>
-            <td class="px-2 py-2 text-sm font-semibold text-gray-800">
-              {{ Area.descripcion || 'No disponible' }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <!-- Contenedor donde se agregarán dinámicamente las cards -->
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <div *ngFor="let categoria of nivelesCategorias; let i = index"
-          class="olimpista__card bg-white shadow-md rounded-lg overflow-hidden mt-4">
-          <div class="bg-teal-600 p-4 text-white">
-            <h3 class="text-lg font-semibold">{{ categoria.nombre_nivel }}</h3>
-            <p class="text-sm">{{ categoria.descripcion || 'Sin descripción' }}</p>
-          </div>
-          <div class="p-4">
-            <p class="text-sm"><strong>Fecha de examen:</strong> {{ categoria.fecha_examen | date }}</p>
-            <p class="text-sm"><strong>Costo:</strong> {{ categoria.costo }}</p>
-            <div class="mt-4 flex justify-between">
-              <button class="px-4 py-2 bg-blue-500 text-white rounded">Editar</button>
-              <!-- Botón de deshabilitar/habilitar -->
-              <button (click)="openConfirmModal(i)" class="px-4 py-2 bg-red-500 text-white rounded">
-                {{ categoria.habilitacion ? 'Deshabilitar' : 'Habilitar' }}
-              </button>
-            </div>
+      <h4 class="text-md font-semibold text-gray-700 mb-3">Categorías</h4>
+
+      <!-- Verifica si hay categorías -->
+      <div *ngIf="categorias.length > 0; else noCategorias">
+        <div class="grid grid-cols-2 gap-4">
+          <div *ngFor="let categoria of categorias" class="bg-red-500 text-white p-3 rounded-lg shadow-md">
+            <p class="text-xs">{{ categoria.nombre_nivel}}</p>
+            <p class="text-xs">{{ categoria.descripcion }}</p>
+            <p class="text-xs">Costo: {{ categoria.costo }} Bs</p>
+            <p class="text-xs">Fecha Examen: {{ categoria.fecha_examen| date:'dd/MM/yyyy' }}</p>
           </div>
         </div>
       </div>
-    </div>
-    <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" (click)="openModal()">
-      Añadir categoría
-    </button>
-  </div>
 
-  <!-- Modal de Confirmación -->
-  <div *ngIf="isConfirmModalOpen" class="fixed inset-0 flex items-center justify-center bg-grey bg-opacity-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-      <h2 class="text-lg font-bold">Confirmación</h2>
-      <p class="text-sm text-gray-600">¿Estás seguro de que deseas {{ cardIndexToToggle !== null &&
-        nivelesCategorias[cardIndexToToggle]?.habilitacion ? 'deshabilitar' : 'habilitar' }} esta categoría?</p>
-      <div class="mt-4 flex justify-end space-x-2">
-        <button (click)="toggleHabilitar()" class="px-4 py-2 bg-red-500 text-white rounded">
-          Sí, {{ cardIndexToToggle !== null && nivelesCategorias[cardIndexToToggle]?.habilitacion ? 'deshabilitar' : 'habilitar' }}
-        </button>
-        <button (click)="closeConfirmModal()" class="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
-      </div>
+      <!-- Mensaje si no hay categorías -->
+      <ng-template #noCategorias>
+        <p class="text-gray-500 text-sm italic">No hay categorías registradas.</p>
+      </ng-template>
+
+      <!-- Botón para abrir el modal -->
+      <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" (click)="openModal()">
+        Añadir categoría
+      </button>
     </div>
   </div>
 </div>
 
-<!-- Modal para añadir categoría -->
+<!-- Modal -->
 <div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center"
   style="background-color: rgba(75, 85, 99, 0.3);">
   <div class="bg-white p-5 rounded-lg shadow-lg max-w-md"
@@ -70,34 +42,51 @@
     <h2 class="text-xl font-bold text-gray-900">Añadir Categoría</h2>
     <p class="text-sm text-gray-500 mb-4">Introduce los detalles de la categoría.</p>
 
+    <!-- Formulario para la categoría -->
+    <form (ngSubmit)="saveCategory()">
+
     <!-- Nombre de Categoría -->
     <label class="text-sm text-gray-700">Nombre de la Categoría</label>
-    <input type="text" placeholder="Ingresar nombre de la categoría"
+    <input type="text" name="categoriaNombre" placeholder="Ingresar nombre de la categoría"
       class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-      style="background-color: white;">
+      [(ngModel)]="categoriaNombre"
+      style="background-color: white;" oninput="this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '')">
 
     <!-- Nivel Académico -->
-    <label class="text-sm text-gray-700 mt-4 block">Nivel Académico</label>
+    <label class="text-sm text-gray-700 mt-4 block">Descripción</label>
+<input type="text" name="categoriaDescripcion" [(ngModel)]="categoriaDescripcion" placeholder="Ingresar descripción">
+
     <select class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
       style="background-color: white;">
-      <option value="" disabled selected class="text-gray-400">Seleccionar nivel académico</option>
-      <option value="basico">Básico</option>
-      <option value="medio">Medio</option>
-      <option value="superior">Superior</option>
-      <option value="postgrado">Postgrado</option>
+      <option value="" disabled selected class="text-gray-400" 
+      style="max-height: 5px; overflow-y: scroll; scrollbar-width: 2px;">Seleccionar nivel académico</option>
+      <option value="basico">1ro de Primaria</option>
+      <option value="basico">2ro de Primaria</option>
+      <option value="medio">3ro de Primaria</option>
+      <option value="medio">4ro de Primaria</option>
+      <option value="medio">5ro de Primaria</option>
+      <option value="medio">6ro de Primaria</option>
+      <option value="medio">1ro de Secundaria</option>
+      <option value="medio">2ro de Secundaria</option>
+      <option value="medio">3ro de Secundaria</option>
+      <option value="medio">4ro de Secundaria</option>
+      <option value="medio">5ro de Secundaria</option>
+      <option value="medio">6ro de Secundaria</option>
     </select>
 
     <!-- Fecha de examen -->
     <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
     <input type="date" placeholder="Ingresar fecha de examen"
       class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+      [(ngModel)]="categoriaFechaExamen"
       style="background-color: white;">
 
     <!-- Costo de la Categoría -->
     <label class="text-sm text-gray-700 mt-4 block">Costo de la Categoría</label>
     <input type="text" placeholder="Ingresar costo"
       class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-      style="background-color: white;">
+      [(ngModel)]="categoriaCosto"
+      style="background-color: white;" oninput="this.value = this.value.replace(/[^0-9 ]/g, '')">
 
     <!-- Botones de acción -->
     <div class="mt-5 flex justify-end gap-55">
@@ -105,5 +94,6 @@
         (click)="saveCategory()">Aceptar</button>
       <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" (click)="closeModal()">Cancelar</button>
     </div>
+  </form>
   </div>
 </div>
