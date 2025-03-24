@@ -31,7 +31,7 @@
             <p class="text-sm"><strong>Ciudad:</strong> </p>
             <p class="text-sm"><strong>Provincia:</strong></p>
             <div class="mt-4 flex justify-between">
-              <button class="px-4 py-2 bg-blue-500 text-white rounded">Editar</button>
+              <button (click)="openEditModal(i)" class="px-4 py-2 bg-blue-500 text-white rounded">Editar</button>
               <!-- Botón de deshabilitar/habilitar -->
               <button (click)="openConfirmModal(i)" class="px-4 py-2 bg-red-500 text-white rounded">
                 {{ card.habilitada ? 'Deshabilitar' : 'Habilitar' }}
@@ -105,6 +105,39 @@
       <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         (click)="saveCategory()">Aceptar</button>
       <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" (click)="closeModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+<!-- Modal de Edición de Categoría -->
+<div *ngIf="isEditModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center"
+  style="background-color: rgba(75, 85, 99, 0.3);">
+  <div class="bg-white p-5 rounded-lg shadow-lg max-w-md" style="width: 600px; height: 400px;">
+    <h2 class="text-xl font-bold text-gray-900">Editar Categoría</h2>
+    <p class="text-sm text-gray-500 mb-4">Modifica los datos de la categoría.</p>
+
+    <!-- Nombre de Categoría -->
+    <label class="text-sm text-gray-700">Nombre de la Categoría</label>
+    <input type="text" [(ngModel)]="editedNombreArea"
+      class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
+
+    <!-- Descripción -->
+    <label class="text-sm text-gray-700 mt-4 block">Descripción</label>
+    <input type="text" [(ngModel)]="editedDescripcion"
+      class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
+
+    <!-- Costo de la Categoría -->
+    <label class="text-sm text-gray-700 mt-4 block">Costo</label>
+    <input type="text" [(ngModel)]="editedCosto"
+      class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
+
+    <!-- Botones -->
+    <div class="mt-5 flex justify-end gap-2">
+      <button (click)="saveEdit()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        Guardar
+      </button>
+      <button (click)="closeEditModal()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+        Cancelar
+      </button>
     </div>
   </div>
 </div>
