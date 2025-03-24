@@ -39,11 +39,14 @@ CREATE TABLE `areas` (
 -- Volcado de datos para la tabla `areas`
 --
 
-INSERT INTO `areas` (`id_area`, `nombre_area`, `created_at`, `updated_at`, `descripcion`) VALUES
-(1, 'Área 1', '2025-03-19 11:45:07', '2025-03-19 11:45:07', NULL),
-(2, 'Área 2', '2025-03-19 11:45:07', '2025-03-19 11:45:07', NULL),
-(7, 'metalica', '2025-03-23 06:36:14', '2025-03-23 06:36:14', '1S\n2S'),
-(8, 'lalalalala', '2025-03-23 06:47:15', '2025-03-23 06:47:15', '1S\n2S');
+INSERT INTO `areas` (`id_area`, `nombre_area`, `descripcion`, `created_at`, `updated_at`) VALUES 
+(1, 'Matemáticas', 'Desde 5to de Primaria hasta 5to de Secundaria', '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(2, 'Informática', 'Desde 1ro de Secundaria hasta 3ro de Secundaria', '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(3, 'Física', 'Desde 4to de Secundaria hasta 6to de Secundaria', '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(4, 'Biología', 'Desde 1ro de Primaria hasta 4to de Secundaria', '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(5, 'Química', 'Desde 3ro de Primaria hasta 4to de Secundaria', '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(6, 'Robótica', 'Desde 2do de Secundaria hasta 6to de Secundaria', '2025-03-19 12:43:41', '2025-03-19 12:43:41');
+
 
 -- --------------------------------------------------------
 
@@ -242,7 +245,7 @@ CREATE TABLE `nivel_categorias` (
   `id_nivel` bigint(20) UNSIGNED NOT NULL,
   `id_area` bigint(20) UNSIGNED NOT NULL,
   `nombre_nivel` varchar(100) NOT NULL,
-  `descripcion` text DEFAULT NULL,
+  `descripcion` varchar(50) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   `fecha_examen` date DEFAULT NULL,
@@ -254,14 +257,28 @@ CREATE TABLE `nivel_categorias` (
 -- Volcado de datos para la tabla `nivel_categorias`
 --
 
-INSERT INTO `nivel_categorias` (`id_nivel`, `id_area`, `nombre_nivel`, `descripcion`, `created_at`, `updated_at`, `fecha_examen`, `costo`, `habilitacion`) VALUES
-(1, 1, 'Básico', 'Nivel inicial para principiantes', '2025-03-19 12:43:41', '2025-03-19 12:43:41', NULL, 0.00, NULL),
-(2, 1, 'Intermedio', 'Nivel para usuarios con conocimientos básicos', '2025-03-19 12:43:41', '2025-03-19 12:43:41', NULL, 0.00, NULL),
-(3, 1, 'Avanzado', 'Nivel para usuarios con experiencia', '2025-03-19 12:43:41', '2025-03-19 12:43:41', NULL, 0.00, NULL),
-(4, 2, 'Básico', 'Nivel inicial para principiantes', '2025-03-19 12:43:41', '2025-03-19 12:43:41', NULL, 0.00, NULL),
-(5, 2, 'Intermedio', 'Nivel para usuarios con conocimientos básicos', '2025-03-19 12:43:41', '2025-03-19 12:43:41', NULL, 0.00, NULL),
-(6, 2, 'Avanzado', 'Nivel para usuarios con experiencia', '2025-03-19 12:43:41', '2025-03-19 12:43:41', NULL, 0.00, NULL),
-(10, 1, 'Avanzado', NULL, '2025-03-23 06:23:06', '2025-03-23 06:23:06', '2025-04-01', 500.00, 1);
+INSERT INTO `nivel_categorias` (`id_nivel`, `id_area`, `nombre_nivel`, `descripcion`, `fecha_examen`, `costo`, `habilitacion`, `created_at`, `updated_at`) VALUES
+(1, 1, '1B', '5to de Secundaria', '2025-09-20 15:00:00', 15.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(2, 1, '2M', '1ro de Secundaria', '2025-09-18 15:00:00', 15.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(3, 2, '3B', '2do de Secundaria', '2025-09-15 10:30:00', 20.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(4, 2, '4M', '3ro de Secundaria', '2025-09-10 08:00:00', 18.50, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(5, 3, '5B', '4to de Secundaria', '2025-09-12 14:00:00', 17.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(6, 3, '6M', '6to de Secundaria', '2025-09-22 16:00:00', 25.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(7, 4, '1P', '1ro de Primaria', '2025-09-05 09:30:00', 10.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(8, 4, '2P', '2do de Primaria', '2025-09-07 11:00:00', 12.50, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(9, 5, '3P', '3ro de Primaria', '2025-09-09 13:45:00', 13.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(10, 5, '4P', '4to de Primaria', '2025-09-11 15:30:00', 14.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(11, 6, '5P', '5to de Primaria', '2025-09-13 10:00:00', 15.50, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(12, 6, '6P', '6to de Primaria', '2025-09-17 14:30:00', 16.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(13, 1, '1S', '1ro de Secundaria', '2025-09-19 12:00:00', 18.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(14, 2, '2S', '2do de Secundaria', '2025-09-21 09:00:00', 19.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(15, 3, '3S', '3ro de Secundaria', '2025-09-23 10:30:00', 21.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(16, 4, '4S', '4to de Secundaria', '2025-09-25 14:45:00', 22.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(17, 5, '5S', '5to de Secundaria', '2025-09-27 11:15:00', 23.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(18, 6, '6S', '6to de Secundaria', '2025-09-29 13:00:00', 24.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(19, 1, '7P', '5to de Primaria', '2025-10-02 10:00:00', 15.00, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41'),
+(20, 2, '8P', '5to de Primaria', '2025-10-04 15:30:00', 15.50, NULL, '2025-03-19 12:43:41', '2025-03-19 12:43:41');
+
 
 -- --------------------------------------------------------
 

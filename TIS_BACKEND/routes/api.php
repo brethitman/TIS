@@ -55,10 +55,10 @@ Route::post('/inscripcion',        [ InscripcionController::class, 'store'     ]
 
 
 // categoria ENDPOINTS
-
-Route::get('/categoria',         [ NivelCategoriaController::class, 'index'     ]);
-Route::get('/categoria/{id}',    [ NivelCategoriaController::class, 'show'      ]);
-Route::post('/categoria',        [ NivelCategoriaController::class, 'store'     ]);
+Route::apiResource('nivelCategoria', NivelCategoriaController::class);
+Route::get('/nivelCategoria',         [ NivelCategoriaController::class, 'index'     ]);
+Route::get('/nivelCategoria/{id}',    [ NivelCategoriaController::class, 'show'      ]);
+Route::post('/nivelCategoria',        [ NivelCategoriaController::class, 'store'     ]);
 
 
 
