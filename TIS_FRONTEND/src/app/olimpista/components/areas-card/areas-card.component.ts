@@ -1,3 +1,4 @@
+//OJO PIOJO
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Area } from '../../interfaces/inscripcion.interface';
