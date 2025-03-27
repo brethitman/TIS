@@ -1,0 +1,17 @@
+completado clase 7
+clase 7
+
+
+me quede en la clase 8
+min 45
+
+
+
+nuestra aplicaion es una spa tiene que ser lo mas reactiva
+no queremos que se recarge cada que apretamos un boton
+
+
+osea angular o react te permite hacer un arbol de urls lo que le permite hacer una navegacion reactiva
+
+hay ciertos trabajo donde se desavilita java scrip y en lka empresa tienes que solicitar que se avilite javascrip
+por politicas de empresa para que no se exponga los datos
