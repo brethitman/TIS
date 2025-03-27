@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input,OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CategoriaService } from '../../service/categoria.service';
 import { Area } from '../../interfaces/inscripcion.interface';
 import { NivelesCategoria } from '../../interfaces/categoria.interface';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-areas-card',
@@ -11,12 +12,14 @@ import { NivelesCategoria } from '../../interfaces/categoria.interface';
   imports: [FormsModule, CommonModule],
   templateUrl: './areas-card.component.html',
 })
-export class AreasCardComponent {
+export class AreasCardComponent implements OnInit {
   @Input({ required: true }) Area!: Area;
   @Input() categorias: NivelesCategoria[] = [];
 
   isModalOpen = false;
   isConfirmModalOpen = false;
+  isEditModalOpen = false;
+  isAreaEditModalOpen = false;
   minDate: string = '';
   maxDate: string = '';
   errorMessage: string = '';
@@ -26,9 +29,15 @@ export class AreasCardComponent {
   categoriaDescripcion: string = '';
   categoriaFechaExamen: string = ''; // formato dd/mm/yyyy
   categoriaCosto: string = ''; // Modificado para ser un string
+  cardIndexToEdit: number | null = null;
+  editedNombreArea = '';
+  editedfechaExamen = '';
+  editedCosto = 0;
 
-  constructor(private categoriaService: CategoriaService) {}
-
+  // Variables para edición de área (nuevas)
+  editedAreaNombre = '';
+  editedAreaDescripcion = '';
+  constructor(private http: HttpClient, private categoriaService: CategoriaService) {}
 
   formData = {
     nombreCategoria: '',
@@ -37,6 +46,96 @@ export class AreasCardComponent {
     costoCategoria: '',
   };
 
+  cards: {
+    nombre_area: string;
+    descripcion: string;
+    habilitada: boolean;
+    costo: number;
+    fecha_examen: string;
+  }[] = [];
+
+  //Funciones del Area Valeria
+  openAreaEditModal() {
+    this.editedAreaNombre = this.Area.nombre_area;
+    this.editedAreaDescripcion = this.Area.descripcion || '';
+    this.isAreaEditModalOpen = true;
+  }
+
+  closeAreaEditModal() {
+    this.isAreaEditModalOpen = false;
+  }
+
+  saveAreaEdit() {
+    if (!this.Area.id) {
+      console.error('ID del área no disponible');
+      return;
+    }
+
+    const updateData = {
+      nombre_area: this.editedAreaNombre,
+      descripcion: this.editedAreaDescripcion
+    };
+
+    this.http.put(`/api/areas/${this.Area.id}`, updateData)
+      .subscribe({
+        next: (response: any) => {
+          console.log('Área actualizada exitosamente', response);
+          this.Area.nombre_area = this.editedAreaNombre;
+          this.Area.descripcion = this.editedAreaDescripcion;
+          this.closeAreaEditModal();
+        },
+        error: (error) => {
+          console.error('Error al actualizar el área', error);
+          // Aquí puedes agregar notificación de error al usuario
+        }
+      });
+  }
+
+//Funciones de categoria Andrea
+openConfirmModal(index: number) {
+  this.cardIndexToToggle = index;
+  this.isConfirmModalOpen = true;
+}
+
+closeConfirmModal() {
+  this.isConfirmModalOpen = false;
+  this.cardIndexToToggle = null;
+}
+
+toggleHabilitar() {
+  if (this.cardIndexToToggle !== null) {
+    this.cards[this.cardIndexToToggle].habilitada = !this.cards[this.cardIndexToToggle].habilitada;
+    console.log(
+      `Tarjeta en índice ${this.cardIndexToToggle} cambió su estado a: ${this.cards[this.cardIndexToToggle].habilitada ? 'Habilitada' : 'Deshabilitada'}`
+    );
+    this.closeConfirmModal();
+  }
+}
+
+openEditModal(index: number) {
+  this.cardIndexToEdit = index;
+  this.editedNombreArea = this.cards[index].nombre_area;
+  this.editedfechaExamen = this.cards[index].fecha_examen;
+  this.editedCosto = this.cards[index].costo;
+  this.isEditModalOpen = true;
+}
+
+closeEditModal() {
+  this.isEditModalOpen = false;
+  this.cardIndexToEdit = null;
+}
+
+saveEdit() {
+  if (this.cardIndexToEdit !== null) {
+    this.cards[this.cardIndexToEdit].nombre_area = this.editedNombreArea;
+    this.cards[this.cardIndexToEdit].fecha_examen = this.editedfechaExamen;
+    this.cards[this.cardIndexToEdit].costo = this.editedCosto;
+    console.log(`Tarjeta en índice ${this.cardIndexToEdit} editada.`);
+    this.closeEditModal();
+  }
+}
+
+//Funciones de categoria Anahi
 
   disableManualInput(event: KeyboardEvent): void {
     event.preventDefault(); // Evita que se ingresen datos manualmente con el teclado
@@ -137,26 +236,6 @@ export class AreasCardComponent {
     };
     this.errorMessage = '';
   }
-
-  openConfirmModal(index: number) {
-    this.cardIndexToToggle = index;
-    this.isConfirmModalOpen = true;
-  }
-
-  closeConfirmModal() {
-    this.isConfirmModalOpen = false;
-    this.cardIndexToToggle = null;
-  }
-
-  toggleHabilitar() {
-    if (this.cardIndexToToggle !== null) {
-      this.categorias[this.cardIndexToToggle].habilitacion = !this.categorias[this.cardIndexToToggle].habilitacion;
-      console.log(
-        `Categoría en índice ${this.cardIndexToToggle} cambió su estado a: ${
-          this.categorias[this.cardIndexToToggle].habilitacion ? 'Habilitada' : 'Deshabilitada'
-        }`
-      );
-      this.closeConfirmModal();
-    }
-  }
+ 
 }
+
