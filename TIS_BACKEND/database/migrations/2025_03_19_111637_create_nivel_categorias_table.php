@@ -11,16 +11,16 @@ return new class extends Migration
     {
         Schema::create('nivel_categorias', function (Blueprint $table) {
             $table->id('id_nivel'); // Clave primaria autoincremental
-           // $table->unsignedBigInteger('id_area'); // Clave foránea
-            $table->string('nombre_nivel', 100)->unique();
+            $table->unsignedBigInteger('id_area'); // Clave foránea
+            $table->string('nombre_nivel', 100); // Nombre del nivel
             $table->string('descripcion', 50); // Nombre del nivel
-            $table->string('fecha_examen'); // Fecha de examen
+            $table->date('fecha_examen'); // Fecha de examen
             $table->decimal('costo', 10, 2); // Costo del nivel
             $table->boolean('habilitacion')->default(false); // Habilitación (por defecto false)
             $table->timestamps(); // Campos created_at y updated_at
 
             // Definición de la clave foránea
-            //$table->foreign('id_area')->references('id_area')->on('areas')->onDelete('cascade');
+            $table->foreign('id_area')->references('id_area')->on('areas')->onDelete('cascade');
         });
     }
 

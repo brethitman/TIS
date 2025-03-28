@@ -15,7 +15,7 @@ class NivelCategoria extends Model
 
     // Definir los campos que se pueden asignar masivamente
     protected $fillable = [
-        //'id_area',
+        'id_area',
         'nombre_nivel',
         'descripcion',
         'fecha_examen',
@@ -25,8 +25,8 @@ class NivelCategoria extends Model
 
     // Castear algunos campos para que se manejen de forma correcta
     protected $casts = [
-        'fecha_examen' => 'string',
-        'costo' => 'decimal:2',
+        'fecha_examen' => 'date',
+        'costo' => 'integer',
         'habilitacion' => 'boolean',
     ];
 
