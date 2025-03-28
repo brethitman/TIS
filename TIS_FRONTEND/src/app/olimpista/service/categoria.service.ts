@@ -12,15 +12,13 @@ export class NivelCategoriaService {
 
   constructor(private http: HttpClient) {}
 
-  getByAreaId(areaId: number): Observable<NivelCategoria[]> {
-    return this.http.get<NivelCategoria[]>(`${this.apiUrl}/area/${areaId}`);
+  // Método para enviar los datos de la categoría al backend
+  createCategoria(nivelesCategoria: NivelesCategoria): Observable<NivelesCategoria> {
+    return this.http.post<NivelesCategoria>(this.apiUrl, nivelesCategoria);
   }
 
-  create(categoria: Omit<NivelCategoria, 'id' | 'created_at' | 'updated_at'>): Observable<NivelCategoria> {
-    return this.http.post<NivelCategoria>(this.apiUrl, categoria);
-  }
-
-  update(id: number, categoria: Partial<NivelCategoria>): Observable<NivelCategoria> {
-    return this.http.put<NivelCategoria>(`${this.apiUrl}/${id}`, categoria);
+  // Método opcional para obtener todas las categorías
+  getCategorias(): Observable<GetCategoriaResponse> {
+    return this.http.get<GetCategoriaResponse>(this.apiUrl);
   }
 }
