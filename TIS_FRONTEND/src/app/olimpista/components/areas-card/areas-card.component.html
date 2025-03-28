@@ -80,22 +80,38 @@
                 <button (click)="openEditModal(i)" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                   Editar
                 </button>
-                <button (click)="openConfirmModal(i)" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                <button (click)="toggleHabilitacion(categoria)" [class.bg-green-500]="!categoria.habilitacion"
+                  [class.bg-yellow-500]="categoria.habilitacion" class="text-white px-3 py-1 rounded text-sm">
                   {{ categoria.habilitacion ? 'Deshabilitar' : 'Habilitar' }}
                 </button>
+                <!-- Botón de eliminar -->
+                <button (click)="openDeleteModal(categoria.id)" class="text-white bg-red-500 px-3 py-1 rounded text-sm">
+                  Eliminar
+                </button>
               </div>
+              <h3 class="font-bold">nombre : {{ categoria.nombre_nivel }}</h3>
+              <p class="text-sm">descripcion : {{ categoria.descripcion || 'Sin descripción' }}</p>
+              <p class="text-sm">Fecha examen: {{ categoria.fecha_examen | date:'dd/MM/yyyy' }}</p>
+              <p class="text-sm">Costo: {{ categoria.costo }} Bs</p>
+              <p class="text-sm">Estado:
+                <span [class.text-green-500]="categoria.habilitacion" [class.text-red-500]="!categoria.habilitacion">
+                  {{ categoria.habilitacion ? 'Habilitado' : 'Deshabilitado' }}
+                </span>
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Mensaje si no hay categorías -->
+
       <ng-template #noCategorias>
         <p class="text-gray-500 text-sm italic">No hay categorías registradas.</p>
       </ng-template>
 
-      <!-- Botón para abrir el modal -->
-      <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" (click)="openModal()">
+
+      <!-- Botón para añadir nueva categoría -->
+      <button (click)="openModal()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
         Añadir categoría
       </button>
     </div>

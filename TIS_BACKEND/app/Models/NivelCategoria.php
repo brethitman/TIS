@@ -26,7 +26,7 @@ class NivelCategoria extends Model
     // Castear algunos campos para que se manejen de forma correcta
     protected $casts = [
         'fecha_examen' => 'date',
-        'costo' => 'decimal:2',
+        'costo' => 'integer',
         'habilitacion' => 'boolean',
     ];
 

@@ -1,4 +1,4 @@
-import { Component, Input,OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CategoriaService } from '../../service/categoria.service';
@@ -6,10 +6,11 @@ import { Area } from '../../interfaces/inscripcion.interface';
 import { NivelesCategoria } from '../../interfaces/categoria.interface';
 import { HttpClient } from '@angular/common/http';
 
+
 @Component({
   selector: 'app-areas-card',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './areas-card.component.html',
 })
 export class AreasCardComponent implements OnInit {
@@ -17,6 +18,7 @@ export class AreasCardComponent implements OnInit {
   @Input() categorias: NivelesCategoria[] = [];
 
   isModalOpen = false;
+  isDeleteModalOpen = false;
   isConfirmModalOpen = false;
   isEditModalOpen = false;
   isAreaEditModalOpen = false;
@@ -24,6 +26,7 @@ export class AreasCardComponent implements OnInit {
   maxDate: string = '';
   errorMessage: string = '';
   cardIndexToToggle: number | null = null;
+  categoriaToDelete: number | null = null;
 
   categoriaNombre: string = '';
   categoriaDescripcion: string = '';
@@ -40,8 +43,6 @@ export class AreasCardComponent implements OnInit {
   // Índices para operaciones
   categoriaIndexToToggle: number | null = null;
   categoriaIndexToEdit: number | null = null;
-  
-  constructor(private http: HttpClient, private categoriaService: CategoriaService) {}
 
   formData = {
     nombreCategoria: '',
@@ -73,6 +74,8 @@ export class AreasCardComponent implements OnInit {
     fecha_examen: '',
     costo: ''
   };
+
+  constructor(private http: HttpClient, private categoriaService: CategoriaService) { }
 
   //Funciones del Area Valeria
   openAreaEditModal() {
@@ -111,62 +114,53 @@ export class AreasCardComponent implements OnInit {
       });
   }
 
-//Funciones de categoria Andrea
-openConfirmModal(index: number) {
-  this.cardIndexToToggle = index;
-  this.isConfirmModalOpen = true;
-}
-
-closeConfirmModal() {
-  this.isConfirmModalOpen = false;
-  this.cardIndexToToggle = null;
-}
-
-toggleHabilitar() {
-  if (this.cardIndexToToggle !== null) {
-    this.cards[this.cardIndexToToggle].habilitada = !this.cards[this.cardIndexToToggle].habilitada;
-    console.log(
-      `Tarjeta en índice ${this.cardIndexToToggle} cambió su estado a: ${this.cards[this.cardIndexToToggle].habilitada ? 'Habilitada' : 'Deshabilitada'}`
-    );
-    this.closeConfirmModal();
+  //Funciones de categoria Andrea
+  openConfirmModal(index: number) {
+    this.cardIndexToToggle = index;
+    this.isConfirmModalOpen = true;
   }
-}
 
-openEditModal(index: number) {
-  this.cardIndexToEdit = index;
-  this.editedNombreArea = this.cards[index].nombre_area;
-  this.editedfechaExamen = this.cards[index].fecha_examen;
-  this.editedCosto = this.cards[index].costo;
-  this.isEditModalOpen = true;
-}
-
-closeEditModal() {
-  this.isEditModalOpen = false;
-  this.cardIndexToEdit = null;
-}
-
-saveEdit() {
-  if (this.cardIndexToEdit !== null) {
-    this.cards[this.cardIndexToEdit].nombre_area = this.editedNombreArea;
-    this.cards[this.cardIndexToEdit].fecha_examen = this.editedfechaExamen;
-    this.cards[this.cardIndexToEdit].costo = this.editedCosto;
-    console.log(`Tarjeta en índice ${this.cardIndexToEdit} editada.`);
-    this.closeEditModal();
+  closeConfirmModal() {
+    this.isConfirmModalOpen = false;
+    this.cardIndexToToggle = null;
   }
-}
-//Funciones de categoria Anahi
+
+  toggleHabilitar() {
+    if (this.cardIndexToToggle !== null) {
+      this.cards[this.cardIndexToToggle].habilitada = !this.cards[this.cardIndexToToggle].habilitada;
+      console.log(
+        `Tarjeta en índice ${this.cardIndexToToggle} cambió su estado a: ${this.cards[this.cardIndexToToggle].habilitada ? 'Habilitada' : 'Deshabilitada'}`
+      );
+      this.closeConfirmModal();
+    }
+  }
+
+  openEditModal(index: number) {
+    this.cardIndexToEdit = index;
+    this.editedNombreArea = this.cards[index].nombre_area;
+    this.editedfechaExamen = this.cards[index].fecha_examen;
+    this.editedCosto = this.cards[index].costo;
+    this.isEditModalOpen = true;
+  }
+
+  closeEditModal() {
+    this.isEditModalOpen = false;
+    this.cardIndexToEdit = null;
+  }
+
+  saveEdit() {
+    if (this.cardIndexToEdit !== null) {
+      this.cards[this.cardIndexToEdit].nombre_area = this.editedNombreArea;
+      this.cards[this.cardIndexToEdit].fecha_examen = this.editedfechaExamen;
+      this.cards[this.cardIndexToEdit].costo = this.editedCosto;
+      console.log(`Tarjeta en índice ${this.cardIndexToEdit} editada.`);
+      this.closeEditModal();
+    }
+  }
+  //Funciones de categoria Anahi
 
   disableManualInput(event: KeyboardEvent): void {
     event.preventDefault(); // Evita que se ingresen datos manualmente con el teclado
-  }
-
-  ngOnInit(): void {
-    const hoy = new Date();
-    this.minDate = hoy.toISOString().split('T')[0];
-
-    const dosAniosDespues = new Date();
-    dosAniosDespues.setFullYear(hoy.getFullYear() + 2);
-    this.maxDate = dosAniosDespues.toISOString().split('T')[0];
   }
 
   validateDate(event: Event): void {
@@ -185,7 +179,7 @@ saveEdit() {
   }
 
   // Helpers
-  private resetNuevaCategoria() {
+  private resetNuevaCategoria(): void {
     this.nuevaCategoria = {
       nombre_nivel: '',
       descripcion: '',
@@ -194,6 +188,22 @@ saveEdit() {
     };
   }
 
+  ngOnInit(): void {
+    this.cargarCategorias();
+  }
+
+  cargarCategorias(): void {
+    this.categoriaService.obtenerNivelesCategoria().subscribe({
+      next: (response) => {
+        this.categorias = response.nivelesCategoria.filter(
+          cat => cat.id_area === this.Area.id
+        );
+      },
+      error: (err) => {
+        console.error('Error al cargar categorías:', err);
+      }
+    });
+  }
 
   openModal(): void {
     this.isModalOpen = true;
@@ -201,32 +211,68 @@ saveEdit() {
 
   closeModal(): void {
     this.isModalOpen = false;
+    this.resetNuevaCategoria();
   }
 
-
-  // Guardar nueva categoría (localmente)
-  saveCategory() {
-    const nuevaCategoria: NivelesCategoria = {
-      id: 0, // Temporal
+  saveCategory(): void {
+    const categoriaData = {
       id_area: this.Area.id,
       nombre_nivel: this.nuevaCategoria.nombre_nivel,
-      descripcion: this.nuevaCategoria.descripcion,
-      fecha_examen: new Date(this.formatDate(this.nuevaCategoria.fecha_examen)),
-      costo: this.nuevaCategoria.costo,
-      habilitacion: true,
-      created_at: new Date(),
-      updated_at: new Date(),
+      descripcion: this.nuevaCategoria.descripcion || null,
+      fecha_examen: this.nuevaCategoria.fecha_examen ? new Date(this.nuevaCategoria.fecha_examen) : null,
+      costo: Number(this.nuevaCategoria.costo),
+      habilitacion: true
     };
-    this.categorias.push(nuevaCategoria);
-    this.closeModal();
+
+    this.categoriaService.crearNivelCategoria(categoriaData).subscribe({
+      next: (response) => {
+        this.categorias.push(response);
+        this.closeModal();
+      },
+      error: (err) => {
+        console.error('Error al crear categoría:', err);
+      }
+    });
   }
-  private formatDate(dateString: string): string {
-    if (dateString.includes('/')) {
-      const [day, month, year] = dateString.split('/');
-      return `${year}-${month}-${day}`;
+
+  openDeleteModal(categoriaId: number): void {
+    this.categoriaToDelete = categoriaId;
+    this.isDeleteModalOpen = true;
+  }
+
+  closeDeleteModal(): void {
+    this.isDeleteModalOpen = false;
+    this.categoriaToDelete = null;
+  }
+
+  confirmDelete(): void {
+    if (this.categoriaToDelete) {
+      this.categoriaService.eliminarNivel(this.categoriaToDelete).subscribe({
+        next: () => {
+          this.categorias = this.categorias.filter(
+            cat => cat.id !== this.categoriaToDelete
+          );
+          this.closeDeleteModal();
+        },
+        error: (err) => {
+          console.error('Error al eliminar categoría:', err);
+        }
+      });
     }
-    return dateString;
   }
 
-}
+  toggleHabilitacion(categoria: NivelesCategoria): void {
+    const nuevosDatos = {
+      habilitacion: !categoria.habilitacion
+    };
 
+    this.categoriaService.actualizarNivel(categoria.id, nuevosDatos).subscribe({
+      next: (response) => {
+        categoria.habilitacion = response.habilitacion;
+      },
+      error: (err) => {
+        console.error('Error al actualizar estado:', err);
+      }
+    });
+  }
+}
