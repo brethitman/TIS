@@ -40,6 +40,7 @@ export class AreasCardComponent implements OnInit {
   // Índices para operaciones
   categoriaIndexToToggle: number | null = null;
   categoriaIndexToEdit: number | null = null;
+  
   constructor(private http: HttpClient, private categoriaService: CategoriaService) {}
 
   formData = {
