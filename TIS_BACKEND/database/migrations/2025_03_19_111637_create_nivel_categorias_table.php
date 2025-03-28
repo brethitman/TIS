@@ -13,6 +13,7 @@ return new class extends Migration
             $table->id('id_nivel'); // Clave primaria autoincremental
             $table->unsignedBigInteger('id_area'); // Clave foránea
             $table->string('nombre_nivel', 100); // Nombre del nivel
+            $table->string('descripcion', 50); // Nombre del nivel
             $table->date('fecha_examen'); // Fecha de examen
             $table->decimal('costo', 10, 2); // Costo del nivel
             $table->boolean('habilitacion')->default(false); // Habilitación (por defecto false)

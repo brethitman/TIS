@@ -1,7 +1,9 @@
+//OJO PIOJO
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Area } from '../../interfaces/inscripcion.interface';
 import { CommonModule } from '@angular/common';
+import { NivelesCategoria } from '../../interfaces/categoria.interface';
 
 @Component({
   selector: 'app-areas-card',
@@ -11,27 +13,31 @@ import { CommonModule } from '@angular/common';
 })
 export class AreasCardComponent {
   @Input({ required: true }) Area!: Area;
+  @Input() categorias: NivelesCategoria[] = [];
 
   isModalOpen = false;
   isConfirmModalOpen = false;
   isEditModalOpen = false;
 
-  // Estructura de las tarjetas
-  cards: {
-    nombre_area: string;
-    descripcion: string;
-    habilitada: boolean;
-    costo: number;
-    fecha_examen: string; // Nueva propiedad añadida
-  }[] = [];
+  // Índices para operaciones
+  categoriaIndexToToggle: number | null = null;
+  categoriaIndexToEdit: number | null = null;
 
-  cardIndexToToggle: number | null = null;
-  cardIndexToEdit: number | null = null;
+  // Datos para nueva categoría
+  nuevaCategoria = {
+    nombre_nivel: '',
+    descripcion: '',
+    fecha_examen: '', // formato dd/mm/yyyy
+    costo: ''
+  };
 
-  // Propiedades para editar
-  editedNombreArea = '';
-  editedfechaExamen = '';
-  editedCosto = 0;
+  // Datos para edición
+  editedCategoria = {
+    nombre_nivel: '',
+    descripcion: '',
+    fecha_examen: '',
+    costo: ''
+  };
 
   // Abrir modal de añadir categoría
   openModal() {
@@ -41,69 +47,112 @@ export class AreasCardComponent {
   // Cerrar modal de añadir categoría
   closeModal() {
     this.isModalOpen = false;
+    this.resetNuevaCategoria();
   }
 
-  // Guardar una nueva categoría
+  // Guardar nueva categoría (localmente)
   saveCategory() {
-    console.log('Categoría guardada');
+    const nuevaCategoria: NivelesCategoria = {
+      id: 0, // Temporal
+      id_area: this.Area.id,
+      nombre_nivel: this.nuevaCategoria.nombre_nivel,
+      descripcion: this.nuevaCategoria.descripcion,
+      fecha_examen: new Date(this.formatDate(this.nuevaCategoria.fecha_examen)),
+      costo: this.nuevaCategoria.costo,
+      habilitacion: true,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
 
-    this.cards.push({
-      nombre_area: this.Area.nombre_area,
-      descripcion: this.Area.descripcion || 'No disponible',
-      habilitada: true,
-      costo: 0,
-      fecha_examen: '', // Inicializar fecha_examen vacía
-    });
-
+    this.categorias.push(nuevaCategoria);
     this.closeModal();
   }
 
   // Abrir modal de confirmación para habilitar/deshabilitar
   openConfirmModal(index: number) {
-    this.cardIndexToToggle = index;
+    this.categoriaIndexToToggle = index;
     this.isConfirmModalOpen = true;
   }
 
   // Cerrar modal de confirmación
   closeConfirmModal() {
     this.isConfirmModalOpen = false;
-    this.cardIndexToToggle = null;
+    this.categoriaIndexToToggle = null;
   }
 
   // Cambiar estado de habilitación
   toggleHabilitar() {
-    if (this.cardIndexToToggle !== null) {
-      this.cards[this.cardIndexToToggle].habilitada = !this.cards[this.cardIndexToToggle].habilitada;
-      console.log(
-        `Tarjeta en índice ${this.cardIndexToToggle} cambió su estado a: ${this.cards[this.cardIndexToToggle].habilitada ? 'Habilitada' : 'Deshabilitada'}`
-      );
+    if (this.categoriaIndexToToggle !== null) {
+      this.categorias[this.categoriaIndexToToggle].habilitacion = 
+        !this.categorias[this.categoriaIndexToToggle].habilitacion;
       this.closeConfirmModal();
     }
   }
 
-  // Abrir modal de edición
+  private formatDateForInput(date: Date | string | null): string {
+    if (!date) return ''; // Esto cubre tanto null como undefined
+    
+    // Si es string, intentamos convertirlo a Date
+    const d = typeof date === 'string' ? new Date(date) : date;
+    
+    // Verificamos si la fecha es válida
+    if (isNaN(d.getTime())) return '';
+    
+    return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+  }
+  
+  // Luego en openEditModal, asegúrate de manejar el caso null
   openEditModal(index: number) {
-    this.cardIndexToEdit = index;
-    this.editedNombreArea = this.cards[index].nombre_area;
-    this.editedfechaExamen = this.cards[index].fecha_examen;
-    this.editedCosto = this.cards[index].costo;
+    this.categoriaIndexToEdit = index;
+    const categoria = this.categorias[index];
+    
+    this.editedCategoria = {
+      nombre_nivel: categoria.nombre_nivel,
+      descripcion: categoria.descripcion || '',
+      fecha_examen: this.formatDateForInput(categoria.fecha_examen), // Ahora acepta null
+      costo: categoria.costo.toString()
+    };
+    
     this.isEditModalOpen = true;
   }
 
   // Cerrar modal de edición
   closeEditModal() {
     this.isEditModalOpen = false;
-    this.cardIndexToEdit = null;
+    this.categoriaIndexToEdit = null;
   }
 
   // Guardar cambios de edición
   saveEdit() {
-    if (this.cardIndexToEdit !== null) {
-      this.cards[this.cardIndexToEdit].nombre_area = this.editedNombreArea;
-      this.cards[this.cardIndexToEdit].fecha_examen = this.editedfechaExamen;
-      this.cards[this.cardIndexToEdit].costo = this.editedCosto;
-      console.log(`Tarjeta en índice ${this.cardIndexToEdit} editada.`);
+    if (this.categoriaIndexToEdit !== null) {
+      const categoria = this.categorias[this.categoriaIndexToEdit];
+      
+      categoria.nombre_nivel = this.editedCategoria.nombre_nivel;
+      categoria.descripcion = this.editedCategoria.descripcion;
+      categoria.fecha_examen = new Date(this.formatDate(this.editedCategoria.fecha_examen));
+      categoria.costo = this.editedCategoria.costo;
+      categoria.updated_at = new Date();
+      
       this.closeEditModal();
     }
   }
+
+  // Helpers
+  private resetNuevaCategoria() {
+    this.nuevaCategoria = {
+      nombre_nivel: '',
+      descripcion: '',
+      fecha_examen: '',
+      costo: ''
+    };
+  }
+
+  private formatDate(dateString: string): string {
+    if (dateString.includes('/')) {
+      const [day, month, year] = dateString.split('/');
+      return `${year}-${month}-${day}`;
+    }
+    return dateString;
+  }
+
 }

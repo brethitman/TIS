@@ -15,4 +15,9 @@ export class AreaService {
   createArea(area: Area): Observable<Area> {
     return this.http.post<Area>(this.apiUrl, area);
   }
+
+  addCategoriaToArea(areaId: number, categoria: string) {
+    // Aquí iría la lógica para enviar la categoría al backend
+    return this.http.post('/api/areas/' + areaId + '/categorias', { categoria });
+  }
 }

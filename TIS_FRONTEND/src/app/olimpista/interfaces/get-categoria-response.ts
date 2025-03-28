@@ -1,8 +1,10 @@
 import { NivelesCategoria } from "./categoria.interface";
+
+
 export interface GetCategoriaResponse {
-  nivelesCategoria: NivelesCategoria[];
-  links:            Links;
-  meta:             Meta;
+  nivelesCategorias: NivelesCategoria[];
+  links:             Links;
+  meta:              Meta;
 }
 
  interface Links {
@@ -19,4 +21,3 @@ export interface GetCategoriaResponse {
   per_page:     number;
   to:           number;
 }
-
