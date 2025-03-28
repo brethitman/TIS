@@ -160,7 +160,16 @@ export class AreasCardComponent implements OnInit {
   //Funciones de categoria Anahi
 
   disableManualInput(event: KeyboardEvent): void {
-    event.preventDefault(); // Evita que se ingresen datos manualmente con el teclado
+    event.preventDefault(); 
+  }
+
+  fechaLimite(): void {
+    const hoy = new Date();
+    this.minDate = hoy.toISOString().split('T')[0]; // Fecha actual (mínima)
+
+    const dosAniosDespues = new Date();
+    dosAniosDespues.setFullYear(hoy.getFullYear() + 2); // Fecha dos años después
+    this.maxDate = dosAniosDespues.toISOString().split('T')[0]; // Fecha máxima
   }
 
   validateDate(event: Event): void {
@@ -190,6 +199,7 @@ export class AreasCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargarCategorias();
+    this.fechaLimite();
   }
 
   cargarCategorias(): void {

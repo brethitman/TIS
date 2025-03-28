@@ -268,9 +268,8 @@
             <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
             <input type="date" placeholder="Ingresar fecha de examen"
               class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-              [(ngModel)]="categoriaFechaExamen" style="background-color: white;" [min]="minDate" [max]="maxDate"
-              (change)="validateDate($event)" [(ngModel)]="formData.fechaExamen" (keydown)="disableManualInput($event)"
-              required>
+              style="background-color: white;" [min]="minDate" [max]="maxDate" [(ngModel)]="formData.fechaExamen"
+              (keydown)="disableManualInput($event)" required>
             <!-- Costo de la Categoría -->
             <label class="text-sm mt-4 block" sytle="margin-top:3px transform: translateY(140)">Costo de la
               Categoría</label>
