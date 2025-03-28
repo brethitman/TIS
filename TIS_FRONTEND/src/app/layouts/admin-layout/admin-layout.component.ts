@@ -6,7 +6,7 @@ import { SearchEstudianteInputComponent } from "../../olimpista/components/searc
 
 @Component({
   selector: 'app-admin-layout',
-  standalone:true,
+  //standalone:true,
   imports: [NavMenuComponent, RouterOutlet,/* SearchEstudianteInputComponent*/],
   templateUrl: './admin-layout.component.html',
 
