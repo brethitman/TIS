@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CategoriaService } from '../../service/categoria.service';
 import { Area } from '../../interfaces/inscripcion.interface';
 import { NivelesCategoria } from '../../interfaces/categoria.interface';
+import { AreaService } from '../../service/area.service'; // Importamos el servicio de áreas
 
 @Component({
   selector: 'app-areas-card',
@@ -17,6 +18,7 @@ export class AreasCardComponent implements OnInit {
 
   isModalOpen = false;
   isDeleteModalOpen = false;
+  isEditAreaModalOpen = false; // Nuevo modal para editar área
   categoriaToDelete: number | null = null;
 
   nuevaCategoria = {
@@ -26,12 +28,49 @@ export class AreasCardComponent implements OnInit {
     costo: ''
   };
 
-  constructor(private categoriaService: CategoriaService) {}
+  areaEditData = { // Nuevo objeto para editar área
+    nombre_area: '',
+    descripcion: ''
+  };
+
+  constructor(
+    private categoriaService: CategoriaService,
+    private areaService: AreaService // Inyectamos el servicio
+  ) {}
 
   ngOnInit(): void {
     this.cargarCategorias();
   }
 
+  // Método para abrir el modal de edición de área
+  openEditAreaModal(): void {
+    this.areaEditData = {
+      nombre_area: this.Area.nombre_area,
+      descripcion: this.Area.descripcion || ''
+    };
+    this.isEditAreaModalOpen = true;
+  }
+
+  // Método para cerrar el modal de edición de área
+  closeEditAreaModal(): void {
+    this.isEditAreaModalOpen = false;
+  }
+
+  // Método para guardar los cambios del área
+  saveAreaChanges(): void {
+    this.areaService.updateArea(this.Area.id, this.areaEditData).subscribe({
+      next: (updatedArea) => {
+        this.Area.nombre_area = updatedArea.nombre_area;
+        this.Area.descripcion = updatedArea.descripcion;
+        this.closeEditAreaModal();
+      },
+      error: (err) => {
+        console.error('Error al actualizar el área:', err);
+      }
+    });
+  }
+
+  // Resto del código existente...
   cargarCategorias(): void {
     this.categoriaService.obtenerNivelesCategoria().subscribe({
       next: (response) => {

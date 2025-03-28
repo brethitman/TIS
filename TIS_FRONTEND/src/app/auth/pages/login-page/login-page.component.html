@@ -1,31 +1,62 @@
-<section class="flex items-center justify-center min-h-screen">
-  <form class="login__form">
-      <div>
-          <h1>Iniciar Sesion</h1>
-          <p class="text-sm text-gray-500">
-              Ingresa tus credenciales y comienza a gestionar tu inventario
-          </p>
+<section class="flex items-center justify-center min-h-screen bg-gray-50">
+  <form
+    (ngSubmit)="onSubmit()"
+    class="login__form bg-white p-8 rounded-lg shadow-md w-full max-w-sm border border-gray-200"
+  >
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-800">Iniciar Sesión</h1>
+      <p class="text-sm text-gray-500 mt-1">
+        Ingresa tus credenciales y comienza a gestionar tu inventario
+      </p>
+    </div>
+
+    @if (errorMessage) {
+      <div class="mb-4 p-3 bg-red-100 text-red-700 text-sm rounded">
+        {{ errorMessage }}
       </div>
+    }
 
+    <div class="mb-4">
       <input
-          type="email"
-          placeholder="Correo electronico"
+        [(ngModel)]="email"
+        name="email"
+        type="email"
+        placeholder="Correo electrónico"
+        class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+        required
       >
+    </div>
 
-
+    <div class="mb-6">
       <input
-          type="password"
-          placeholder="Contraseña"
+        [(ngModel)]="password"
+        name="password"
+        type="password"
+        placeholder="Contraseña"
+        class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
+        required
       >
+    </div>
 
-      <button
-          type="submit"
-          class="btn bg-black text-white"
-      >
-          Iniciar Sesion
-      </button>
+    <button
+      type="submit"
+      class="btn bg-black text-white w-full py-3 rounded hover:bg-gray-800 transition duration-200 flex justify-center items-center gap-2"
+      [disabled]="isLoading"
+    >
+      @if (isLoading) {
+        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>Validando...</span>
+      } @else {
+        <span>Iniciar Sesión</span>
+      }
+    </button>
 
-
+    <div class="mt-4 text-center text-sm text-gray-600">
+      ¿No tienes cuenta?
+      <a routerLink="/auth/register" class="text-black hover:underline">Regístrate</a>
+    </div>
   </form>
-
 </section>
