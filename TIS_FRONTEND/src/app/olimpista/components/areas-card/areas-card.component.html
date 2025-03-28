@@ -72,11 +72,15 @@
 
             <!-- Parte inferior blanca con detalles -->
             <div class="p-4">
-              <p class="text-sm"><strong>Fecha de examen:</strong> {{ categoria.fecha_examen | date:'dd/MM/yyyy' }}</p>
-              <p class="text-sm"><strong>Costo:</strong> {{ categoria.costo }} Bs</p>
+              <h3 class="font-bold">nombre : {{ categoria.nombre_nivel }}</h3>
+              <p class="text-sm">descripcion : {{ categoria.descripcion || 'Sin descripción' }}</p>
+              <p class="text-sm">Fecha examen: {{ categoria.fecha_examen | date:'dd/MM/yyyy' }}</p>
+              <p class="text-sm">Costo: {{ categoria.costo }} Bs</p>
+              <p class="text-sm">Estado:
+                <span [class.text-green-500]="categoria.habilitacion" [class.text-red-500]="!categoria.habilitacion">
+                  {{ categoria.habilitacion ? 'Habilitado' : 'Deshabilitado' }}
+                </span>
 
-              <!-- Botones de acción -->
-              <div class="mt-4 flex justify-between">
                 <button (click)="openEditModal(i)" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                   Editar
                 </button>
@@ -88,15 +92,6 @@
                 <button (click)="openDeleteModal(categoria.id)" class="text-white bg-red-500 px-3 py-1 rounded text-sm">
                   Eliminar
                 </button>
-              </div>
-              <h3 class="font-bold">nombre : {{ categoria.nombre_nivel }}</h3>
-              <p class="text-sm">descripcion : {{ categoria.descripcion || 'Sin descripción' }}</p>
-              <p class="text-sm">Fecha examen: {{ categoria.fecha_examen | date:'dd/MM/yyyy' }}</p>
-              <p class="text-sm">Costo: {{ categoria.costo }} Bs</p>
-              <p class="text-sm">Estado:
-                <span [class.text-green-500]="categoria.habilitacion" [class.text-red-500]="!categoria.habilitacion">
-                  {{ categoria.habilitacion ? 'Habilitado' : 'Deshabilitado' }}
-                </span>
               </p>
             </div>
           </div>
