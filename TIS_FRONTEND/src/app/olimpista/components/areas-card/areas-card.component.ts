@@ -37,6 +37,9 @@ export class AreasCardComponent implements OnInit {
   // Variables para edición de área (nuevas)
   editedAreaNombre = '';
   editedAreaDescripcion = '';
+  // Índices para operaciones
+  categoriaIndexToToggle: number | null = null;
+  categoriaIndexToEdit: number | null = null;
   constructor(private http: HttpClient, private categoriaService: CategoriaService) {}
 
   formData = {
@@ -53,6 +56,22 @@ export class AreasCardComponent implements OnInit {
     costo: number;
     fecha_examen: string;
   }[] = [];
+
+  // Datos para nueva categoría
+  nuevaCategoria = {
+    nombre_nivel: '',
+    descripcion: '',
+    fecha_examen: '', // formato dd/mm/yyyy
+    costo: ''
+  };
+
+  // Datos para edición
+  editedCategoria = {
+    nombre_nivel: '',
+    descripcion: '',
+    fecha_examen: '',
+    costo: ''
+  };
 
   //Funciones del Area Valeria
   openAreaEditModal() {
@@ -165,76 +184,49 @@ saveEdit() {
     }
   }
 
+  // Helpers
+  private resetNuevaCategoria() {
+    this.nuevaCategoria = {
+      nombre_nivel: '',
+      descripcion: '',
+      fecha_examen: '',
+      costo: ''
+    };
+  }
+
+
   openModal(): void {
     this.isModalOpen = true;
   }
 
   closeModal(): void {
     this.isModalOpen = false;
-    this.resetCategoriaForm();
   }
 
+
+  // Guardar nueva categoría (localmente)
   saveCategory() {
-    if (
-      !this.categoriaNombre.trim() ||
-      !this.categoriaDescripcion.trim() ||
-      !this.categoriaFechaExamen.trim() ||
-      !this.categoriaCosto.trim()
-    ) {
-      alert('Por favor, completa todos los campos.');
-      return;
-    }
-  
-    let fechaFormateada = this.categoriaFechaExamen;
-    if (this.categoriaFechaExamen.includes('/')) {
-      const partes = this.categoriaFechaExamen.split('/');
-      if (partes.length === 3) {
-        fechaFormateada = `${partes[2]}-${partes[1]}-${partes[0]}`; // yyyy-MM-dd
-      }
-    }
-  
-    console.log('Fecha formateada:', fechaFormateada);
-  
     const nuevaCategoria: NivelesCategoria = {
-      id: 0, // Se asignará en el backend
+      id: 0, // Temporal
       id_area: this.Area.id,
-      nombre_nivel: this.categoriaNombre,
-      descripcion: this.categoriaDescripcion,
-      fecha_examen: new Date(fechaFormateada),
-      costo: this.categoriaCosto, // El costo es ahora un string
+      nombre_nivel: this.nuevaCategoria.nombre_nivel,
+      descripcion: this.nuevaCategoria.descripcion,
+      fecha_examen: new Date(this.formatDate(this.nuevaCategoria.fecha_examen)),
+      costo: this.nuevaCategoria.costo,
       habilitacion: true,
       created_at: new Date(),
       updated_at: new Date(),
     };
-  
-    this.categoriaService.createCategoria(nuevaCategoria).subscribe({
-      next: (response) => {
-        console.log('Categoría guardada:', response);
-        alert('Categoría guardada con éxito');
-        this.categorias.push(response);
-        this.closeModal();
-      },
-      error: (error) => {
-        console.error('Error al guardar la categoría:', error);
-        alert('Error al guardar la categoría: ' + (error.message || 'Error desconocido'));
-      },
-    });
+    this.categorias.push(nuevaCategoria);
+    this.closeModal();
   }
-  resetCategoriaForm() {
-    this.categoriaNombre = '';
-    this.categoriaDescripcion = '';
-    this.categoriaFechaExamen = '';
-    this.categoriaCosto = ''; // Resetea el campo costo a string vacío
+  private formatDate(dateString: string): string {
+    if (dateString.includes('/')) {
+      const [day, month, year] = dateString.split('/');
+      return `${year}-${month}-${day}`;
+    }
+    return dateString;
   }
 
-  resetForm(): void {
-    this.formData = {
-      nombreCategoria: '',
-      seleccionCategoria: '',
-      fechaExamen: '',
-      costoCategoria: '',
-    };
-    this.errorMessage = '';
-  }
- 
 }
+
