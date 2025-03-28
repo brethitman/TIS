@@ -1,3 +1,4 @@
+
 export interface NivelesCategoria {
   id:           number;
   id_area:      number;

@@ -124,4 +124,6 @@ class NivelCategoriaController extends Controller
             ], 500);
         }
     }
+
 }
+
