@@ -21,3 +21,4 @@ export interface GetCategoriaResponse {
   per_page:     number;
   to:           number;
 }
+
