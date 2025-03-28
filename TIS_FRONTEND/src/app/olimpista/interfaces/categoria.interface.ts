@@ -4,7 +4,7 @@ export interface NivelesCategoria {
   nombre_nivel: string;
   descripcion:  null | string;
   fecha_examen: Date | null;
-  costo:        string;
+  costo:        number;
   habilitacion: boolean | null;
   created_at:   Date;
   updated_at:   Date;
