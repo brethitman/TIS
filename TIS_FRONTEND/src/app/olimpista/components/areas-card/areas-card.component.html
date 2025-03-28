@@ -1,6 +1,96 @@
 <div class="olimpista__card bg-blue-50 shadow-md rounded-lg overflow-hidden">
   <div class="p-4">
     <div class="border border-gray-200 p-4 bg-white rounded-lg">
+
+      <table class="min-w-full">
+        <tbody>
+          <div class="bg-[#0A056D] p-6 rounded-lg shadow-lg text-white">
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-xl font-bold">{{ Area.nombre_area }}</h3>
+              </div>
+              <div class="flex justify-between items-start">
+                <p class="text-sm flex-grow">{{ Area.descripcion || 'No disponible' }}</p>
+                <button (click)="openAreaEditModal()" class="text-blue-300 hover:text-white ml-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal de Edición del Área -->
+          <div *ngIf="isAreaEditModalOpen"
+            class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded-lg shadow-xl w-96">
+              <h2 class="text-xl font-bold mb-4">Editar Área</h2>
+
+              <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Nombre</label>
+                <input type="text" [(ngModel)]="editedAreaNombre"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+              </div>
+
+              <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Descripción</label>
+                <textarea [(ngModel)]="editedAreaDescripcion"
+                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+              </div>
+
+              <div class="flex justify-end space-x-2">
+                <button (click)="saveAreaEdit()"
+                  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  Guardar
+                </button>
+                <button (click)="closeAreaEditModal()"
+                  class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </tbody>
+      </table>
+    </div>
+    <!-- Contenedor de Categorías -->
+    <div class="border border-gray-200 p-4 bg-white rounded-lg">
+      <h4 class="text-md font-semibold text-gray-700 mb-3">Categorías</h4>
+
+      <!-- Verifica si hay categorías -->
+      <div *ngIf="categorias.length > 0; else noCategorias">
+        <div class="grid grid-cols-2 gap-4">
+          <div *ngFor="let categoria of categorias" class="bg-red-500 text-white p-3 rounded-lg shadow-md">
+            <p class="text-xs">{{ categoria.nombre_nivel}}</p>
+            <p class="text-xs">{{ categoria.descripcion }}</p>
+            <p class="text-xs">Costo: {{ categoria.costo }} Bs</p>
+            <p class="text-xs">Fecha Examen: {{ categoria.fecha_examen| date:'dd/MM/yyyy' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensaje si no hay categorías -->
+      <ng-template #noCategorias>
+        <p class="text-gray-500 text-sm italic">No hay categorías registradas.</p>
+      </ng-template>
+
+      <!-- Botón para abrir el modal -->
+      <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" (click)="openModal()">
+        Añadir categoría
+      </button>
+    </div>
+  </div>
+  <!-- Modal para añadir categoría -->
+  <div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center"
+    style="background-color: rgba(75, 85, 99, 0.3);">
+    <div class="bg-white p-5 rounded-lg shadow-lg max-w-md"
+      style="width: 600px; height: 500px; background-color:rgba(206, 223, 255, 100);">
+
+     <div class="olimpista__card bg-blue-50 shadow-md rounded-lg overflow-hidden">
+  <div class="p-4">
+    <div class="border border-gray-200 p-4 bg-white rounded-lg">
       
       <table class="min-w-full">
         <tbody>
@@ -49,47 +139,6 @@
           </div>
         </tbody>
       </table>
-      <!-- Contenedor donde se agregarán dinámicamente las cards -->
-      <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <div *ngFor="let card of cards; let i = index"
-          class="olimpista__card bg-white shadow-md rounded-lg overflow-hidden mt-4">
-          <div class="bg-teal-600 p-4 text-white">
-            <h3 class="text-lg font-semibold">{{ card.nombre_area }}</h3>
-            <p class="text-sm">2do Secundaria</p>
-          </div>
-          <div class="p-4">
-            <p class="text-sm"><strong>Fecha de examen:</strong> </p>
-            <p class="text-sm"><strong>Costo:</strong> </p>
-            <p class="text-sm"><strong>Ciudad:</strong> </p>
-            <p class="text-sm"><strong>Provincia:</strong></p>
-            <div class="mt-4 flex justify-between">
-              <button (click)="openEditModal(i)" class="px-4 py-2 bg-blue-500 text-white rounded">Editar</button>
-              <!-- Botón de deshabilitar/habilitar -->
-              <button (click)="openConfirmModal(i)" class="px-4 py-2 bg-red-500 text-white rounded">
-                {{ card.habilitada ? 'Deshabilitar' : 'Habilitar' }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded" (click)="openModal()">
-      Añadir categoría
-    </button>
-  </div>
-
-  <!-- Modal de Confirmación -->
-  <div *ngIf="isConfirmModalOpen" class="fixed inset-0 flex items-center justify-center bg-grey bg-opacity-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-      <h2 class="text-lg font-bold">Confirmación</h2>
-      <p class="text-sm text-gray-600">¿Estás seguro de que deseas {{ cardIndexToToggle !== null &&
-        cards[cardIndexToToggle]?.habilitada ? 'deshabilitar' : 'habilitar' }} esta categoría?</p>
-      <div class="mt-4 flex justify-end space-x-2">
-        <button (click)="toggleHabilitar()" class="px-4 py-2 bg-red-500 text-white rounded">
-          Sí, {{ cardIndexToToggle !== null && cards[cardIndexToToggle]?.habilitada ? 'deshabilitar' : 'habilitar' }}
-        </button>
-        <button (click)="closeConfirmModal()" class="px-4 py-2 bg-gray-300 rounded">Cancelar</button>
-      </div>
     </div>
 
     <!-- Contenedor de Categorías -->
@@ -185,85 +234,3 @@
     </form>
   </div>
 </div>
-
-<!-- Modal para añadir categoría -->
-<div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center"
-  style="background-color: rgba(75, 85, 99, 0.3);">
-  <div class="bg-white p-5 rounded-lg shadow-lg max-w-md"
-    style="width: 600px; height: 500px; background-color:rgba(206, 223, 255, 100);">
-
-    <!-- Título Principal -->
-    <h2 class="text-xl font-bold text-gray-900">Añadir Categoría</h2>
-    <p class="text-sm text-gray-500 mb-4">Introduce los detalles de la categoría.</p>
-
-    <!-- Nombre de Categoría -->
-    <label class="text-sm text-gray-700">Nombre de la Categoría</label>
-    <input type="text" placeholder="Ingresar nombre de la categoría"
-      class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-      style="background-color: white;">
-
-    <!-- Nivel Académico -->
-    <label class="text-sm text-gray-700 mt-4 block">Nivel Académico</label>
-    <select class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-      style="background-color: white;">
-      <option value="" disabled selected class="text-gray-400">Seleccionar nivel académico</option>
-      <option value="basico">Básico</option>
-      <option value="medio">Medio</option>
-      <option value="superior">Superior</option>
-      <option value="postgrado">Postgrado</option>
-    </select>
-
-    <!-- Fecha de examen -->
-    <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
-    <input type="date" placeholder="Ingresar fecha de examen"
-      class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-      style="background-color: white;">
-
-    <!-- Costo de la Categoría -->
-    <label class="text-sm text-gray-700 mt-4 block">Costo de la Categoría</label>
-    <input type="text" placeholder="Ingresar costo"
-      class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-      style="background-color: white;">
-
-    <!-- Botones de acción -->
-    <div class="mt-5 flex justify-end gap-55">
-      <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        (click)="saveCategory()">Aceptar</button>
-      <button class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" (click)="closeModal()">Cancelar</button>
-    </div>
-  </div>
-</div>
-<!-- Modal de Edición de Categoría -->
-<div *ngIf="isEditModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center"
-  style="background-color: rgba(75, 85, 99, 0.3);">
-  <div class="bg-white p-5 rounded-lg shadow-lg max-w-md" style="width: 600px; height: 400px;">
-    <h2 class="text-xl font-bold text-gray-900">Editar Categoría</h2>
-    <p class="text-sm text-gray-500 mb-4">Modifica los datos de la categoría.</p>
-
-    <!-- Nombre de Categoría -->
-    <label class="text-sm text-gray-700">Nombre de la Categoría</label>
-    <input type="text" [(ngModel)]="editedNombreArea"
-      class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
-
-    <!-- Descripción -->
-    <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
-    <input type="date" [(ngModel)]="editedfechaExamen"
-      class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
-
-    <!-- Costo de la Categoría -->
-    <label class="text-sm text-gray-700 mt-4 block">Costo</label>
-    <input type="text" [(ngModel)]="editedCosto"
-      class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
-
-    <!-- Botones -->
-    <div class="mt-5 flex justify-end gap-2">
-      <button (click)="saveEdit()" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-        Guardar
-      </button>
-      <button (click)="closeEditModal()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-        Cancelar
-      </button>
-    </div>
-  </div>
-</div>
-

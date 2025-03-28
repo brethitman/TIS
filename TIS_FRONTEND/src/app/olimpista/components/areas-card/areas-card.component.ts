@@ -1,6 +1,4 @@
-
 import { Component, Input,OnInit } from '@angular/core';
-
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CategoriaService } from '../../service/categoria.service';
@@ -11,7 +9,6 @@ import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-areas-card',
   standalone: true,
-
   imports: [FormsModule, CommonModule],
   templateUrl: './areas-card.component.html',
 })
