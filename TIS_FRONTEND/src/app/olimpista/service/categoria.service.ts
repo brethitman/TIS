@@ -12,13 +12,12 @@ export class CategoriaService {
 
   constructor(private http: HttpClient) {}
 
-  // Método para enviar los datos de la categoría al backend
-  createCategoria(nivelesCategoria: NivelesCategoria): Observable<NivelesCategoria> {
-    return this.http.post<NivelesCategoria>(this.apiUrl, nivelesCategoria);
+  createCategoria(categoria: NivelesCategoria): Observable<NivelesCategoria> {
+    return this.http.post<NivelesCategoria>(this.apiUrl, categoria);
   }
 
-  // Método opcional para obtener todas las categorías
-  getCategorias(): Observable<GetCategoriaResponse> {
-    return this.http.get<GetCategoriaResponse>(this.apiUrl);
+  // Método para obtener todas las categorías (opcional)
+  getCategorias(): Observable<NivelesCategoria[]> {
+    return this.http.get<NivelesCategoria[]>(this.apiUrl);
   }
 }

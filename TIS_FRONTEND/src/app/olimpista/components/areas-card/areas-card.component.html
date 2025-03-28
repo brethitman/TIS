@@ -169,7 +169,8 @@
     </div>
   </div>
 </div>
-<!-- Modal para añadir categoría -->
+
+<!-- Modal para añadir categoría (se mantiene igual) -->
 <div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center"
   style="background-color: rgba(75, 85, 99, 0.3);">
   <div class="bg-white p-5 rounded-lg shadow-lg max-w-md"
@@ -181,7 +182,6 @@
 
     <!-- Formulario para la categoría -->
     <form (ngSubmit)="saveCategory()">
-
       <!-- Nombre de Categoría -->
       <label class="text-sm text-gray-700">Nombre de la Categoría</label>
       <input type="text" name="categoriaNombre" placeholder="Ingresar nombre de la categoría"

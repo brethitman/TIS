@@ -1,3 +1,4 @@
+
 import { Component, Input,OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -64,6 +65,23 @@ export class AreasCardComponent implements OnInit {
   closeAreaEditModal() {
     this.isAreaEditModalOpen = false;
   }
+
+  // Datos para nueva categoría
+  nuevaCategoria = {
+    nombre_nivel: '',
+    descripcion: '',
+    fecha_examen: '', // formato dd/mm/yyyy
+    costo: ''
+  };
+
+  // Datos para edición
+  editedCategoria = {
+    nombre_nivel: '',
+    descripcion: '',
+    fecha_examen: '',
+    costo: ''
+  };
+
 
   saveAreaEdit() {
     if (!this.Area.id) {
@@ -134,7 +152,6 @@ saveEdit() {
     this.closeEditModal();
   }
 }
-
 //Funciones de categoria Anahi
 
   disableManualInput(event: KeyboardEvent): void {
@@ -191,8 +208,38 @@ saveEdit() {
       if (partes.length === 3) {
         fechaFormateada = `${partes[2]}-${partes[1]}-${partes[0]}`; // yyyy-MM-dd
       }
-    }
+
+  private formatDateForInput(date: Date | string | null): string {
+    if (!date) return ''; // Esto cubre tanto null como undefined
+    
+    // Si es string, intentamos convertirlo a Date
+    const d = typeof date === 'string' ? new Date(date) : date;
+    
+    // Verificamos si la fecha es válida
+    if (isNaN(d.getTime())) return '';
+    
+    return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
+  }
   
+  // Luego en openEditModal, asegúrate de manejar el caso null
+  openEditModal(index: number) {
+    this.categoriaIndexToEdit = index;
+    const categoria = this.categorias[index];
+    
+    this.editedCategoria = {
+      nombre_nivel: categoria.nombre_nivel,
+      descripcion: categoria.descripcion || '',
+      fecha_examen: this.formatDateForInput(categoria.fecha_examen), // Ahora acepta null
+      costo: categoria.costo.toString()
+    };
+    
+    this.isEditModalOpen = true;
+  }
+
+  // Cerrar modal de edición
+  
+
+    
     console.log('Fecha formateada:', fechaFormateada);
   
     const nuevaCategoria: NivelesCategoria = {
@@ -237,4 +284,24 @@ saveEdit() {
     this.errorMessage = '';
   }
  
+}
+
+  // Helpers
+  private resetNuevaCategoria() {
+    this.nuevaCategoria = {
+      nombre_nivel: '',
+      descripcion: '',
+      fecha_examen: '',
+      costo: ''
+    };
+  }
+
+  private formatDate(dateString: string): string {
+    if (dateString.includes('/')) {
+      const [day, month, year] = dateString.split('/');
+      return `${year}-${month}-${day}`;
+    }
+    return dateString;
+  }
+
 }

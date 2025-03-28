@@ -9,26 +9,28 @@ class NivelCategoria extends Model
 {
     use HasFactory;
 
+    // Definir la tabla y la clave primaria
     protected $table = 'nivel_categorias';
     protected $primaryKey = 'id_nivel';
 
+    // Definir los campos que se pueden asignar masivamente
     protected $fillable = [
         'id_area',
         'nombre_nivel',
+        'descripcion',
         'fecha_examen',
         'costo',
         'habilitacion',
     ];
 
+    // Castear algunos campos para que se manejen de forma correcta
     protected $casts = [
         'fecha_examen' => 'date',
         'costo' => 'decimal:2',
         'habilitacion' => 'boolean',
     ];
 
-    /**
-     * Obtener el área relacionada con este nivel/categoría.
-     */
+    // Definir la relación con el modelo Area
     public function area()
     {
         return $this->belongsTo(Area::class, 'id_area', 'id_area');
