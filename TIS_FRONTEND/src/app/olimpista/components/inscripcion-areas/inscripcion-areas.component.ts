@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AreaService } from '../../service/area.service';
 import { Area } from '../../interfaces/area.interface';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-inscripcion-areas',
@@ -18,6 +20,14 @@ export class InscripcionAreasComponent {
     descripcion: '',
     createdAt: new Date(),
     updatedAt: new Date(),
+  };
+
+  // Propiedades para las validaciones
+  errors = {
+    nombreArea: '',
+    cursos: '',
+    descripcion: '',
+    duplicado: ''
   };
 
   // Propiedades para el desplegable de cursos
@@ -53,28 +63,104 @@ export class InscripcionAreasComponent {
       const primero = selected[0].name;
       const ultimo = selected[selected.length - 1].name;
       this.area.descripcion = `de ${primero} a ${ultimo}`; 
+      this.errors.cursos = '';
     } else {
       this.area.descripcion = ''; // Si no hay cursos seleccionados, la descripción queda vacía
     }
   
     this.selectedGrades = selected.map((grade) => grade.name).join(', ');
+    
+    // Validar la longitud de la descripción
+    this.validateDescripcionLength();
+  }
+
+  // Validar el nombre del área
+  validateNombreArea(): boolean {
+    this.errors.nombreArea = '';
+    
+    // Validar que no esté vacío
+    if (!this.area.nombre_area || this.area.nombre_area.trim() === '') {
+      this.errors.nombreArea = 'El nombre del área es obligatorio';
+      return false;
+    }
+    
+    // Validar longitud mínima
+    if (this.area.nombre_area.length < 3) {
+      this.errors.nombreArea = 'El nombre del área debe tener al menos 3 caracteres';
+      return false;
+    }
+    
+    // Validar longitud máxima
+    if (this.area.nombre_area.length > 100) {
+      this.errors.nombreArea = 'El nombre del área debe tener máximo 100 caracteres';
+      return false;
+    }
+    
+    // Validar que no contenga caracteres especiales
+    const especialesRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+    if (especialesRegex.test(this.area.nombre_area)) {
+      this.errors.nombreArea = 'El nombre del área no debe contener caracteres especiales';
+      return false;
+    }
+    
+    // Validar que no sea solo números
+    const numerosRegex = /^\d+$/;
+    if (numerosRegex.test(this.area.nombre_area)) {
+      this.errors.nombreArea = 'El nombre del área no puede contener solo números';
+      return false;
+    }
+    
+    // Validar que solo tenga caracteres alfabéticos y espacios
+    const alfabeticoRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
+    if (!alfabeticoRegex.test(this.area.nombre_area)) {
+      this.errors.nombreArea = 'El nombre del área debe contener solo caracteres alfabéticos';
+      return false;
+    }
+    
+    return true;
+  }
+
+  // Validar que al menos un curso esté seleccionado
+  validateCursos(): boolean {
+    this.errors.cursos = '';
+    
+    const selected = this.grades.filter((grade) => grade.selected);
+    if (selected.length === 0) {
+      this.errors.cursos = 'Debe seleccionar al menos un curso';
+      return false;
+    }
+    
+    return true;
+  }
+
+  // Validar la longitud de la descripción
+  validateDescripcionLength(): boolean {
+    this.errors.descripcion = '';
+    
+    if (this.area.descripcion && this.area.descripcion.length > 50) {
+      this.errors.descripcion = 'La descripción debe tener máximo 50 caracteres';
+      return false;
+    }
+    
+    return true;
+  }
+
+  // Validar todos los campos
+  validateAll(): boolean {
+    const isNombreValid = this.validateNombreArea();
+    const isCursosValid = this.validateCursos();
+    const isDescripcionValid = this.validateDescripcionLength();
+    
+    return isNombreValid && isCursosValid && isDescripcionValid;
   }
 
   onSubmit(): void {
-    // Verificar que el nombre del área no esté vacío
-    if (!this.area.nombre_area || this.area.nombre_area.trim() === '') {
-      alert('El nombre del área es obligatorio');
+    // Limpiar mensaje de error de duplicado
+    this.errors.duplicado = '';
+    
+    // Realizar todas las validaciones
+    if (!this.validateAll()) {
       return;
-    }
-  
-    // Generar la descripción en el formato deseado
-    const selected = this.grades.filter((grade) => grade.selected);
-    if (selected.length > 0) {
-      const primero = selected[0].name;
-      const ultimo = selected[selected.length - 1].name;
-      this.area.descripcion = `de ${primero} a ${ultimo}`; // Sin "Descripción:"
-    } else {
-      this.area.descripcion = ''; // Si no hay cursos seleccionados, la descripción queda vacía
     }
   
     try {
@@ -91,17 +177,26 @@ export class InscripcionAreasComponent {
       console.log('Datos a enviar:', areaToSend);
   
       // Enviar el objeto completo
-      this.areaService.createArea(areaToSend).subscribe({
+      this.areaService.createArea(areaToSend).pipe(
+        catchError(error => {
+          // Verificar si el error es debido a un área duplicada
+          if (error.status === 409 || (error.error && error.error.message && error.error.message.includes('existe'))) {
+            this.errors.duplicado = 'El área ya existe y no puede ser duplicada';
+          } else {
+            console.error('Error al guardar el área:', error);
+            alert('Hubo un error al guardar el área: ' + (error.message || 'Error desconocido'));
+          }
+          return of(null);
+        })
+      ).subscribe({
         next: (response) => {
-          console.log('Área guardada:', response);
-          alert('Área guardada con éxito');
-          // Resetear el formulario
-          this.resetForm();
-        },
-        error: (error) => {
-          console.error('Error al guardar el área:', error);
-          alert('Hubo un error al guardar el área: ' + (error.message || 'Error desconocido'));
-        },
+          if (response) {
+            console.log('Área guardada:', response);
+            alert('Área guardada con éxito');
+            // Resetear el formulario
+            this.resetForm();
+          }
+        }
       });
     } catch (e) {
       console.error('Error en la ejecución:', e);
@@ -123,5 +218,13 @@ export class InscripcionAreasComponent {
     this.grades.forEach((grade) => (grade.selected = false));
     this.selectedGrades = '';
     this.isDropdownOpen = false;
+    
+    // Limpiar los errores
+    this.errors = {
+      nombreArea: '',
+      cursos: '',
+      descripcion: '',
+      duplicado: ''
+    };
   }
 }
