@@ -154,7 +154,6 @@ saveEdit() {
     this.closeEditModal();
   }
 }
-
 //Funciones de categoria Anahi
 
   disableManualInput(event: KeyboardEvent): void {
