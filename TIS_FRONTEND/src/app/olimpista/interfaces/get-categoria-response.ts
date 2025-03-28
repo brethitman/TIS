@@ -1,8 +1,8 @@
-import { NivelesCategoria } from "./categoria.interface";
+import { NivelCategoria } from "./categoria.interface";
 
 
 export interface GetCategoriaResponse {
-  nivelesCategorias: NivelesCategoria[];
+  nivelesCategorias: NivelCategoria[];
   links:             Links;
   meta:              Meta;
 }

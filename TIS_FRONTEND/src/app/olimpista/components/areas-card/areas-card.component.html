@@ -7,27 +7,34 @@
     <div class="border border-gray-200 p-4 bg-white rounded-lg">
       <h4 class="text-md font-semibold text-gray-700 mb-3">Categorías</h4>
 
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center py-4">
+        <span class="text-blue-500">Cargando categorías...</span>
+      </div>
+
       <!-- Verifica si hay categorías -->
-      <div *ngIf="categorias.length > 0; else noCategorias">
+      <div *ngIf="!loading && categorias.length > 0; else noCategorias">
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div *ngFor="let categoria of categorias; let i = index" class="bg-white shadow-md rounded-lg overflow-hidden">
             <!-- Parte superior con color teal -->
             <div class="bg-teal-600 p-4 text-white">
               <h3 class="text-lg font-semibold">{{ categoria.nombre_nivel }}</h3>
-              <p class="text-sm">{{ categoria.descripcion }}</p>
+              <p class="text-sm">{{ categoria.descripcion || 'Sin descripción' }}</p>
             </div>
             
             <!-- Parte inferior blanca con detalles -->
             <div class="p-4">
-              <p class="text-sm"><strong>Fecha de examen:</strong> {{ categoria.fecha_examen | date:'dd/MM/yyyy' }}</p>
-              <p class="text-sm"><strong>Costo:</strong> {{ categoria.costo }} Bs</p>
+              <p class="text-sm"><strong>Fecha de examen:</strong> {{ categoria.fecha_examen | date:'dd/MM/yyyy' || 'No definida' }}</p>
+              <p class="text-sm"><strong>Costo:</strong> {{ categoria.costo | currency:'Bs ' }}</p>
               
               <!-- Botones de acción -->
               <div class="mt-4 flex justify-between">
-                <button (click)="openEditModal(i)" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                <button (click)="openEditModal(i)" 
+                        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                   Editar
                 </button>
-                <button (click)="openConfirmModal(i)" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                <button (click)="openConfirmModal(i)" 
+                        class="px-4 py-2 {{ categoria.habilitacion ? 'bg-red-500' : 'bg-green-500' }} text-white rounded hover:{{ categoria.habilitacion ? 'bg-red-600' : 'bg-green-600' }}">
                   {{ categoria.habilitacion ? 'Deshabilitar' : 'Habilitar' }}
                 </button>
               </div>
@@ -38,11 +45,15 @@
 
       <!-- Mensaje si no hay categorías -->
       <ng-template #noCategorias>
-        <p class="text-gray-500 text-sm italic">No hay categorías registradas.</p>
+        <p class="text-gray-500 text-sm italic py-4">
+          {{ loading ? '' : 'No hay categorías registradas para esta área.' }}
+        </p>
       </ng-template>
 
       <!-- Botón para abrir el modal -->
-      <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" (click)="openModal()">
+      <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" 
+              (click)="openModal()"
+              [disabled]="loading">
         Añadir categoría
       </button>
     </div>
@@ -58,15 +69,21 @@
       categorias[categoriaIndexToToggle]?.habilitacion ? 'deshabilitar' : 'habilitar' }} esta categoría?
     </p>
     <div class="mt-4 flex justify-end space-x-2">
-      <button (click)="toggleHabilitar()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+      <button (click)="toggleHabilitar()" 
+              class="px-4 py-2 {{ categoriaIndexToToggle !== null && categorias[categoriaIndexToToggle]?.habilitacion ? 'bg-red-500' : 'bg-green-500' }} text-white rounded hover:{{ categoriaIndexToToggle !== null && categorias[categoriaIndexToToggle]?.habilitacion ? 'bg-red-600' : 'bg-green-600' }}"
+              [disabled]="loading">
         Sí, {{ categoriaIndexToToggle !== null && categorias[categoriaIndexToToggle]?.habilitacion ? 'deshabilitar' : 'habilitar' }}
       </button>
-      <button (click)="closeConfirmModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancelar</button>
+      <button (click)="closeConfirmModal()" 
+              class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              [disabled]="loading">
+        Cancelar
+      </button>
     </div>
   </div>
 </div>
 
-<!-- Modal para añadir categoría (se mantiene igual) -->
+<!-- Modal para añadir categoría -->
 <div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center"
   style="background-color: rgba(75, 85, 99, 0.3);">
   <div class="bg-white p-5 rounded-lg shadow-lg max-w-md"
@@ -84,17 +101,19 @@
     <input type="text" placeholder="Ingresar nombre de la categoría"
       class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
       [(ngModel)]="nuevaCategoria.nombre_nivel"
-      name="categoriaNombre" 
-      style="background-color: white;" oninput="this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '')">
+      name="nombre_nivel" 
+      required
+      [disabled]="loading"
+      style="background-color: white;">
 
     <!-- Nivel Académico -->
-    <label class="text-sm text-gray-700 mt-4 block">Nivel Académico</label>
+    <label class="text-sm text-gray-700 mt-4 block">Descripción/Nivel</label>
     <select class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
       [(ngModel)]="nuevaCategoria.descripcion"
-      name="categoriaDescripcion" 
+      name="descripcion" 
+      [disabled]="loading"
       style="background-color: white;">
-      <option value="" disabled selected class="text-gray-400"  
-        style="max-height: 5px; overflow-y: scroll; scrollbar-width: 2px;">Seleccionar nivel académico</option>
+      <option value="" disabled selected class="text-gray-400">Seleccionar nivel académico</option>
       <option value="1ro de Primaria">1ro de Primaria</option>
       <option value="2do de Primaria">2do de Primaria</option>
       <option value="3ro de Primaria">3ro de Primaria</option>
@@ -104,8 +123,8 @@
       <option value="1ro de Secundaria">1ro de Secundaria</option>
       <option value="2do de Secundaria">2do de Secundaria</option>
       <option value="3ro de Secundaria">3ro de Secundaria</option>
-      <option value="4ro de Secundaria">4to de Secundaria</option>
-      <option value="5tro de Secundaria">5to de Secundaria</option>
+      <option value="4to de Secundaria">4to de Secundaria</option>
+      <option value="5to de Secundaria">5to de Secundaria</option>
       <option value="6to de Secundaria">6to de Secundaria</option>
     </select>
 
@@ -114,21 +133,43 @@
     <input type="date" placeholder="Ingresar fecha de examen"
       class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
       [(ngModel)]="nuevaCategoria.fecha_examen"
-      name="categoriaFechaExamen"
+      name="fecha_examen"
+      [disabled]="loading"
       style="background-color: white;">
 
     <!-- Costo de la Categoría -->
     <label class="text-sm text-gray-700 mt-4 block">Costo de la Categoría</label>
-    <input type="text" placeholder="Ingresar costo"
+    <input type="number" placeholder="Ingresar costo"
       class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
       [(ngModel)]="nuevaCategoria.costo"
-      name="categoriaCosto"
-      style="background-color: white;" oninput="this.value = this.value.replace(/[^0-9 ]/g, '')">
+      name="costo"
+      required
+      min="0"
+      step="0.01"
+      [disabled]="loading"
+      style="background-color: white;">
+
+    <!-- Habilitación -->
+    <label class="text-sm text-gray-700 mt-4 block flex items-center">
+      <input type="checkbox" [(ngModel)]="nuevaCategoria.habilitacion" 
+             name="habilitacion" class="mr-2"
+             [disabled]="loading">
+      Habilitar categoría
+    </label>
 
     <!-- Botones de acción -->
     <div class="mt-5 flex justify-end gap-4">
-      <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Aceptar</button>
-      <button type="button" (click)="closeModal()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Cancelar</button>
+      <button type="submit" 
+              class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              [disabled]="loading">
+        {{ loading ? 'Guardando...' : 'Aceptar' }}
+      </button>
+      <button type="button" 
+              (click)="closeModal()" 
+              class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              [disabled]="loading">
+        Cancelar
+      </button>
     </div>
     </form>
   </div>
@@ -137,30 +178,64 @@
 <!-- Modal de Edición de Categoría -->
 <div *ngIf="isEditModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center"
   style="background-color: rgba(75, 85, 99, 0.3);">
-  <div class="bg-white p-5 rounded-lg shadow-lg max-w-md" style="width: 600px; height: 400px;">
+  <div class="bg-white p-5 rounded-lg shadow-lg max-w-md" style="width: 600px; height: 500px;">
     <h2 class="text-xl font-bold text-gray-900">Editar Categoría</h2>
     <p class="text-sm text-gray-500 mb-4">Modifica los datos de la categoría.</p>
 
     <form (ngSubmit)="saveEdit()">
       <!-- Nombre de Categoría -->
       <label class="text-sm text-gray-700">Nombre de la Categoría</label>
-      <input type="text" [(ngModel)]="editedCategoria.nombre_nivel" name="editedNombre"
-        class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
+      <input type="text" [(ngModel)]="editedCategoria.nombre_nivel" name="nombre_nivel"
+        class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400"
+        required
+        [disabled]="loading">
+
+      <!-- Descripción -->
+      <label class="text-sm text-gray-700 mt-4 block">Descripción/Nivel</label>
+      <select class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+        [(ngModel)]="editedCategoria.descripcion"
+        name="descripcion" 
+        [disabled]="loading">
+        <option value="" disabled selected class="text-gray-400">Seleccionar nivel académico</option>
+        <option value="1ro de Primaria">1ro de Primaria</option>
+        <option value="2do de Primaria">2do de Primaria</option>
+        <!-- Resto de opciones... -->
+      </select>
 
       <!-- Fecha de examen -->
       <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
-      <input type="date" [(ngModel)]="editedCategoria.fecha_examen" name="editedFecha"
-        class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
+      <input type="date" [(ngModel)]="editedCategoria.fecha_examen" name="fecha_examen"
+        class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400"
+        [disabled]="loading">
 
       <!-- Costo -->
       <label class="text-sm text-gray-700 mt-4 block">Costo</label>
-      <input type="text" [(ngModel)]="editedCategoria.costo" name="editedCosto"
-        class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
+      <input type="number" [(ngModel)]="editedCategoria.costo" name="costo"
+        class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400"
+        required min="0" step="0.01"
+        [disabled]="loading">
+
+      <!-- Habilitación -->
+      <label class="text-sm text-gray-700 mt-4 block flex items-center">
+        <input type="checkbox" [(ngModel)]="editedCategoria.habilitacion" 
+               name="habilitacion" class="mr-2"
+               [disabled]="loading">
+        Habilitar categoría
+      </label>
 
       <!-- Botones -->
       <div class="mt-5 flex justify-end gap-2">
-        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Guardar</button>
-        <button type="button" (click)="closeEditModal()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Cancelar</button>
+        <button type="submit" 
+                class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                [disabled]="loading">
+          {{ loading ? 'Guardando...' : 'Guardar' }}
+        </button>
+        <button type="button" 
+                (click)="closeEditModal()" 
+                class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                [disabled]="loading">
+          Cancelar
+        </button>
       </div>
     </form>
   </div>

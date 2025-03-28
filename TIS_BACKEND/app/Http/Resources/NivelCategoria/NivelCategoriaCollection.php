@@ -4,6 +4,8 @@ namespace App\Http\Resources\NivelCategoria;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Http\Resources\NivelCategoria\NivelCategoriaResource;
+
 
 class NivelCategoriaCollection extends ResourceCollection
 {

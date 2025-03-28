@@ -1,24 +1,26 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { NivelesCategoria } from '../interfaces/categoria.interface';
-import { GetCategoriaResponse } from '../interfaces/get-categoria-response'; 
+import { environment } from '../../../environments/environment'; 
+import { NivelCategoria } from '../interfaces/categoria.interface'; 
 
 @Injectable({
   providedIn: 'root'
 })
-export class CategoriaService {
-  private apiUrl = 'http://localhost:8000/api/categoria'; // Ajusta la URL según tu API
+export class NivelCategoriaService {
+  private apiUrl = 'http://localhost:8000/api/nivelCategoria';
 
   constructor(private http: HttpClient) {}
 
-  // Método para enviar los datos de la categoría al backend
-  createCategoria(categoria: NivelesCategoria): Observable<NivelesCategoria> {
-    return this.http.post<NivelesCategoria>(this.apiUrl, categoria);
+  getByAreaId(areaId: number): Observable<NivelCategoria[]> {
+    return this.http.get<NivelCategoria[]>(`${this.apiUrl}/area/${areaId}`);
   }
 
-  // Método para obtener todas las categorías (opcional)
-  getCategorias(): Observable<NivelesCategoria[]> {
-    return this.http.get<NivelesCategoria[]>(this.apiUrl);
+  create(categoria: Omit<NivelCategoria, 'id' | 'created_at' | 'updated_at'>): Observable<NivelCategoria> {
+    return this.http.post<NivelCategoria>(this.apiUrl, categoria);
+  }
+
+  update(id: number, categoria: Partial<NivelCategoria>): Observable<NivelCategoria> {
+    return this.http.put<NivelCategoria>(`${this.apiUrl}/${id}`, categoria);
   }
 }

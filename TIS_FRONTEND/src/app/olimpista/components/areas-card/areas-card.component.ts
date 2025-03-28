@@ -3,7 +3,7 @@ import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Area } from '../../interfaces/inscripcion.interface';
 import { CommonModule } from '@angular/common';
-import { NivelesCategoria } from '../../interfaces/categoria.interface';
+import { NivelCategoria } from '../../interfaces/categoria.interface'; 
 
 @Component({
   selector: 'app-areas-card',
@@ -13,7 +13,7 @@ import { NivelesCategoria } from '../../interfaces/categoria.interface';
 })
 export class AreasCardComponent {
   @Input({ required: true }) Area!: Area;
-  @Input() categorias: NivelesCategoria[] = [];
+  @Input() categorias: NivelCategoria[] = [];
 
   isModalOpen = false;
   isConfirmModalOpen = false;
@@ -52,20 +52,46 @@ export class AreasCardComponent {
 
   // Guardar nueva categoría (localmente)
   saveCategory() {
-    const nuevaCategoria: NivelesCategoria = {
-      id: 0, // Temporal
-      id_area: this.Area.id,
+    // Validación básica
+    if (!this.nuevaCategoria.nombre_nivel.trim()) {
+      alert('El nombre es requerido');
+      return;
+    }
+  
+    // Preparar datos para enviar al backend
+    const categoriaToSend = {
       nombre_nivel: this.nuevaCategoria.nombre_nivel,
-      descripcion: this.nuevaCategoria.descripcion,
-      fecha_examen: new Date(this.formatDate(this.nuevaCategoria.fecha_examen)),
+      descripcion: this.nuevaCategoria.descripcion || null,
+      fecha_examen: this.nuevaCategoria.fecha_examen || null,
       costo: this.nuevaCategoria.costo,
-      habilitacion: true,
-      created_at: new Date(),
-      updated_at: new Date(),
+      habilitacion: this.nuevaCategoria.habilitacion,
+      id_area: this.Area.id // Asegúrate que esto coincida con tu modelo backend
     };
-
-    this.categorias.push(nuevaCategoria);
-    this.closeModal();
+  
+    // Mostrar estado de carga
+    this.loading = true;
+  
+    // Llamar al servicio para guardar en backend
+    this.categoriaService.createCategoria(categoriaToSend).subscribe({
+      next: (categoriaGuardada) => {
+        // Agregar la nueva categoría al listado
+        this.categorias.push(categoriaGuardada);
+        
+        // Cerrar modal y resetear formulario
+        this.closeModal();
+        
+        // Mostrar feedback
+        alert('Categoría guardada con éxito');
+      },
+      error: (error) => {
+        console.error('Error al guardar:', error);
+        alert('Error al guardar categoría: ' + (error.error?.message || ''));
+        this.loading = false;
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
   }
 
   // Abrir modal de confirmación para habilitar/deshabilitar
