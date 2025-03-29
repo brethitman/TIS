@@ -1,8 +1,10 @@
-import { Component, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Area } from '../../interfaces/inscripcion.interface';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CategoriaService } from '../../service/categoria.service';
+import { Area } from '../../interfaces/inscripcion.interface';
 import { NivelesCategoria } from '../../interfaces/categoria.interface';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-areas-card',
@@ -10,17 +12,51 @@ import { NivelesCategoria } from '../../interfaces/categoria.interface';
   imports: [CommonModule, FormsModule],
   templateUrl: './areas-card.component.html',
 })
-export class AreasCardComponent {
+export class AreasCardComponent implements OnInit {
   @Input({ required: true }) Area!: Area;
   @Input() categorias: NivelesCategoria[] = [];
 
   isModalOpen = false;
+  isDeleteModalOpen = false;
   isConfirmModalOpen = false;
   isEditModalOpen = false;
+  isAreaEditModalOpen = false;
+  minDate: string = '';
+  maxDate: string = '';
+  errorMessage: string = '';
+  cardIndexToToggle: number | null = null;
+  categoriaToDelete: number | null = null;
 
+  categoriaNombre: string = '';
+  categoriaDescripcion: string = '';
+  categoriaFechaExamen: string = ''; // formato dd/mm/yyyy
+  categoriaCosto: string = ''; // Modificado para ser un string
+  cardIndexToEdit: number | null = null;
+  editedNombreArea = '';
+  editedfechaExamen = '';
+  editedCosto = 0;
+
+  // Variables para edición de área (nuevas)
+  editedAreaNombre = '';
+  editedAreaDescripcion = '';
   // Índices para operaciones
   categoriaIndexToToggle: number | null = null;
   categoriaIndexToEdit: number | null = null;
+
+  formData = {
+    nombreCategoria: '',
+    seleccionCategoria: '',
+    fechaExamen: '',
+    costoCategoria: '',
+  };
+
+  cards: {
+    nombre_area: string;
+    descripcion: string;
+    habilitada: boolean;
+    costo: number;
+    fecha_examen: string;
+  }[] = [];
 
   // Datos para nueva categoría
   nuevaCategoria = {
@@ -38,106 +74,123 @@ export class AreasCardComponent {
     costo: ''
   };
 
-  // Abrir modal de añadir categoría
-  openModal() {
-    this.isModalOpen = true;
+<<<<<<< HEAD
+  constructor(private categoriaService: CategoriaService) {}
+=======
+  constructor(private http: HttpClient, private categoriaService: CategoriaService) { }
+
+  //Funciones del Area Valeria
+  openAreaEditModal() {
+    this.editedAreaNombre = this.Area.nombre_area;
+    this.editedAreaDescripcion = this.Area.descripcion || '';
+    this.isAreaEditModalOpen = true;
   }
 
-  // Cerrar modal de añadir categoría
-  closeModal() {
-    this.isModalOpen = false;
-    this.resetNuevaCategoria();
+  closeAreaEditModal() {
+    this.isAreaEditModalOpen = false;
   }
 
-  // Guardar nueva categoría (localmente)
-  saveCategory() {
-    const nuevaCategoria: NivelesCategoria = {
-      id: 0, // Temporal
-      id_area: this.Area.id,
-      nombre_nivel: this.nuevaCategoria.nombre_nivel,
-      descripcion: this.nuevaCategoria.descripcion,
-      fecha_examen: new Date(this.formatDate(this.nuevaCategoria.fecha_examen)),
-      costo: this.nuevaCategoria.costo,
-      habilitacion: true,
-      created_at: new Date(),
-      updated_at: new Date(),
+  saveAreaEdit() {
+    if (!this.Area.id) {
+      console.error('ID del área no disponible');
+      return;
+    }
+
+    const updateData = {
+      nombre_area: this.editedAreaNombre,
+      descripcion: this.editedAreaDescripcion
     };
 
-    this.categorias.push(nuevaCategoria);
-    this.closeModal();
+    this.http.put(`/api/areas/${this.Area.id}`, updateData)
+      .subscribe({
+        next: (response: any) => {
+          console.log('Área actualizada exitosamente', response);
+          this.Area.nombre_area = this.editedAreaNombre;
+          this.Area.descripcion = this.editedAreaDescripcion;
+          this.closeAreaEditModal();
+        },
+        error: (error) => {
+          console.error('Error al actualizar el área', error);
+          // Aquí puedes agregar notificación de error al usuario
+        }
+      });
   }
 
-  // Abrir modal de confirmación para habilitar/deshabilitar
+  //Funciones de categoria Andrea
   openConfirmModal(index: number) {
-    this.categoriaIndexToToggle = index;
+    this.cardIndexToToggle = index;
     this.isConfirmModalOpen = true;
   }
 
-  // Cerrar modal de confirmación
   closeConfirmModal() {
     this.isConfirmModalOpen = false;
-    this.categoriaIndexToToggle = null;
+    this.cardIndexToToggle = null;
   }
 
-  // Cambiar estado de habilitación
   toggleHabilitar() {
-    if (this.categoriaIndexToToggle !== null) {
-      this.categorias[this.categoriaIndexToToggle].habilitacion = 
-        !this.categorias[this.categoriaIndexToToggle].habilitacion;
+    if (this.cardIndexToToggle !== null) {
+      this.cards[this.cardIndexToToggle].habilitada = !this.cards[this.cardIndexToToggle].habilitada;
+      console.log(
+        `Tarjeta en índice ${this.cardIndexToToggle} cambió su estado a: ${this.cards[this.cardIndexToToggle].habilitada ? 'Habilitada' : 'Deshabilitada'}`
+      );
       this.closeConfirmModal();
     }
   }
 
-  private formatDateForInput(date: Date | string | null): string {
-    if (!date) return ''; // Esto cubre tanto null como undefined
-    
-    // Si es string, intentamos convertirlo a Date
-    const d = typeof date === 'string' ? new Date(date) : date;
-    
-    // Verificamos si la fecha es válida
-    if (isNaN(d.getTime())) return '';
-    
-    return `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getFullYear()}`;
-  }
-  
-  // Luego en openEditModal, asegúrate de manejar el caso null
   openEditModal(index: number) {
-    this.categoriaIndexToEdit = index;
-    const categoria = this.categorias[index];
-    
-    this.editedCategoria = {
-      nombre_nivel: categoria.nombre_nivel,
-      descripcion: categoria.descripcion || '',
-      fecha_examen: this.formatDateForInput(categoria.fecha_examen), // Ahora acepta null
-      costo: categoria.costo.toString()
-    };
-    
+    this.cardIndexToEdit = index;
+    this.editedNombreArea = this.cards[index].nombre_area;
+    this.editedfechaExamen = this.cards[index].fecha_examen;
+    this.editedCosto = this.cards[index].costo;
     this.isEditModalOpen = true;
   }
 
-  // Cerrar modal de edición
   closeEditModal() {
     this.isEditModalOpen = false;
-    this.categoriaIndexToEdit = null;
+    this.cardIndexToEdit = null;
   }
 
-  // Guardar cambios de edición
   saveEdit() {
-    if (this.categoriaIndexToEdit !== null) {
-      const categoria = this.categorias[this.categoriaIndexToEdit];
-      
-      categoria.nombre_nivel = this.editedCategoria.nombre_nivel;
-      categoria.descripcion = this.editedCategoria.descripcion;
-      categoria.fecha_examen = new Date(this.formatDate(this.editedCategoria.fecha_examen));
-      categoria.costo = this.editedCategoria.costo;
-      categoria.updated_at = new Date();
-      
+    if (this.cardIndexToEdit !== null) {
+      this.cards[this.cardIndexToEdit].nombre_area = this.editedNombreArea;
+      this.cards[this.cardIndexToEdit].fecha_examen = this.editedfechaExamen;
+      this.cards[this.cardIndexToEdit].costo = this.editedCosto;
+      console.log(`Tarjeta en índice ${this.cardIndexToEdit} editada.`);
       this.closeEditModal();
+    }
+  }
+  //Funciones de categoria Anahi
+
+  disableManualInput(event: KeyboardEvent): void {
+    event.preventDefault(); 
+  }
+
+  fechaLimite(): void {
+    const hoy = new Date();
+    this.minDate = hoy.toISOString().split('T')[0]; // Fecha actual (mínima)
+
+    const dosAniosDespues = new Date();
+    dosAniosDespues.setFullYear(hoy.getFullYear() + 2); // Fecha dos años después
+    this.maxDate = dosAniosDespues.toISOString().split('T')[0]; // Fecha máxima
+  }
+
+  validateDate(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const selectedDate = new Date(input.value);
+    const currentDate = new Date(this.minDate);
+    const maxDate = new Date(this.maxDate);
+
+    if (selectedDate < currentDate) {
+      this.errorMessage = 'La fecha no debe ser anterior a la actual.';
+    } else if (selectedDate > maxDate) {
+      this.errorMessage = 'La fecha no debe ser mayor a dos años.';
+    } else {
+      this.errorMessage = '';
     }
   }
 
   // Helpers
-  private resetNuevaCategoria() {
+  private resetNuevaCategoria(): void {
     this.nuevaCategoria = {
       nombre_nivel: '',
       descripcion: '',
@@ -145,13 +198,94 @@ export class AreasCardComponent {
       costo: ''
     };
   }
+>>>>>>> 9642af6a6ed016fbc82d3e38750b77c0dae09ee4
 
-  private formatDate(dateString: string): string {
-    if (dateString.includes('/')) {
-      const [day, month, year] = dateString.split('/');
-      return `${year}-${month}-${day}`;
-    }
-    return dateString;
+  ngOnInit(): void {
+    this.cargarCategorias();
+    this.fechaLimite();
   }
 
+  cargarCategorias(): void {
+    this.categoriaService.obtenerNivelesCategoria().subscribe({
+      next: (response) => {
+        this.categorias = response.nivelesCategoria.filter(
+          cat => cat.id_area === this.Area.id
+        );
+      },
+      error: (err) => {
+        console.error('Error al cargar categorías:', err);
+      }
+    });
+  }
+
+  openModal(): void {
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+    this.resetNuevaCategoria();
+  }
+
+  saveCategory(): void {
+    const categoriaData = {
+      id_area: this.Area.id,
+      nombre_nivel: this.nuevaCategoria.nombre_nivel,
+      descripcion: this.nuevaCategoria.descripcion || null,
+      fecha_examen: this.nuevaCategoria.fecha_examen ? new Date(this.nuevaCategoria.fecha_examen) : null,
+      costo: Number(this.nuevaCategoria.costo),
+      habilitacion: true
+    };
+
+    this.categoriaService.crearNivelCategoria(categoriaData).subscribe({
+      next: (response) => {
+        this.categorias.push(response);
+        this.closeModal();
+      },
+      error: (err) => {
+        console.error('Error al crear categoría:', err);
+      }
+    });
+  }
+
+  openDeleteModal(categoriaId: number): void {
+    this.categoriaToDelete = categoriaId;
+    this.isDeleteModalOpen = true;
+  }
+
+  closeDeleteModal(): void {
+    this.isDeleteModalOpen = false;
+    this.categoriaToDelete = null;
+  }
+
+  confirmDelete(): void {
+    if (this.categoriaToDelete) {
+      this.categoriaService.eliminarNivel(this.categoriaToDelete).subscribe({
+        next: () => {
+          this.categorias = this.categorias.filter(
+            cat => cat.id !== this.categoriaToDelete
+          );
+          this.closeDeleteModal();
+        },
+        error: (err) => {
+          console.error('Error al eliminar categoría:', err);
+        }
+      });
+    }
+  }
+
+  toggleHabilitacion(categoria: NivelesCategoria): void {
+    const nuevosDatos = {
+      habilitacion: !categoria.habilitacion
+    };
+
+    this.categoriaService.actualizarNivel(categoria.id, nuevosDatos).subscribe({
+      next: (response) => {
+        categoria.habilitacion = response.habilitacion;
+      },
+      error: (err) => {
+        console.error('Error al actualizar estado:', err);
+      }
+    });
+  }
 }

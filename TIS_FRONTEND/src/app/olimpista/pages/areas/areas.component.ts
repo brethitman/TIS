@@ -3,9 +3,9 @@ import { InscripcionAreasComponent } from "../../components/inscripcion-areas/in
 import { AreasListComponent } from '../../components/areas-list/areas-list.component';
 import { AreasCardComponent } from "../../components/areas-card/areas-card.component";
 import { GetAreaResponse } from '../../interfaces/get-area-response';
-
 import { GetAreaService } from '../../service/get.area.service.ts.service';
 import { Area } from '../../interfaces/area.interface';
+
 
 @Component({
   selector: 'app-areas',
