@@ -56,4 +56,9 @@ export class CategoriaService {
   eliminarNivel(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+
+  getNivelesPorArea(areaId: number): Observable<NivelesCategoria[]> {
+    return this.http.get<NivelesCategoria[]>(`${this.apiUrl}/por-area/${areaId}`);
+  }
 }

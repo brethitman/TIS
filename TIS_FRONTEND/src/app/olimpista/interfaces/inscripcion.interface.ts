@@ -3,9 +3,14 @@ export interface Inscripcione {
   id:                number;
   fecha_inscripcion: Date;
   estado:            string;
-  olimpista:         Olimpista | null;
+  olimpista:         Olimpista;
+  olimpistaId: number;
   area:              Area;
+  areaId: number;
   tutor:             Tutor;
+  tutorId: number;
+  nivel:             NivelesCategoria;
+  nivelId: number;
   createdAt:         null;
   updatedAt:         null;
 }
@@ -30,6 +35,8 @@ export interface Olimpista {
   curso:            string;
   departamento:     string;
   provincia:        string;
+  tutorId: number;
+  tutor?: Tutor;
   createdAt:        Date;
   updatedAt:        Date;
 }
@@ -43,6 +50,18 @@ export interface Tutor {
   telefono:  string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface NivelesCategoria {
+  id:           number;
+  id_area:      number;
+  nombre_nivel: string;
+  descripcion:  null | string;
+  fecha_examen: Date | null;
+  costo:        number;
+  habilitacion: boolean | null;
+  created_at:   Date;
+  updated_at:   Date;
 }
 
 
