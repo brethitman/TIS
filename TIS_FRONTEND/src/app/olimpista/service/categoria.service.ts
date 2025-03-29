@@ -8,6 +8,9 @@ import { GetNIvelesCategoriaResponse } from '../interfaces/get-categoria-respons
   providedIn: 'root'
 })
 export class CategoriaService {
+  habilitarCategoria(id: number, nuevoEstado: boolean) {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl = 'http://localhost:8000/api/nivelCategoria'; // Corregido el endpoint
 
   constructor(private http: HttpClient) {}
