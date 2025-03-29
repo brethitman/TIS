@@ -116,23 +116,13 @@ export class AreasCardComponent implements OnInit {
 
   //Funciones de categoria Andrea
   openConfirmModal(index: number) {
-    this.cardIndexToToggle = index;
+    this.categoriaIndexToToggle= index;
     this.isConfirmModalOpen = true;
   }
 
-  closeConfirmModal() {
-    this.isConfirmModalOpen = false;
-    this.cardIndexToToggle = null;
-  }
-
-  toggleHabilitar() {
-    if (this.cardIndexToToggle !== null) {
-      this.cards[this.cardIndexToToggle].habilitada = !this.cards[this.cardIndexToToggle].habilitada;
-      console.log(
-        `Tarjeta en índice ${this.cardIndexToToggle} cambió su estado a: ${this.cards[this.cardIndexToToggle].habilitada ? 'Habilitada' : 'Deshabilitada'}`
-      );
-      this.closeConfirmModal();
-    }
+  closeConfirmModal(): void {
+    this.isConfirmModalOpen = false; 
+    this.categoriaIndexToToggle = null; 
   }
 
   openEditModal(index: number) {
@@ -271,18 +261,33 @@ export class AreasCardComponent implements OnInit {
     }
   }
 
-  toggleHabilitacion(categoria: NivelesCategoria): void {
-    const nuevosDatos = {
-      habilitacion: !categoria.habilitacion
-    };
-
-    this.categoriaService.actualizarNivel(categoria.id, nuevosDatos).subscribe({
-      next: (response) => {
-        categoria.habilitacion = response.habilitacion;
-      },
-      error: (err) => {
-        console.error('Error al actualizar estado:', err);
-      }
-    });
+  toggleHabilitacionModal(index: number): void {
+    this.categoriaIndexToToggle = index; // Guarda el índice de la categoría seleccionada
+    this.isConfirmModalOpen = true; // Muestra el modal
   }
+
+  toggleHabilitar(): void {
+    if (this.categoriaIndexToToggle !== null) {
+      const categoria = this.categorias[this.categoriaIndexToToggle]; // Obtiene la categoría seleccionada
+      const nuevoEstado = !categoria.habilitacion; // Cambia el estado de habilitación
+  
+      this.categoriaService.habilitarCategoria(categoria.id, nuevoEstado).subscribe({
+        next: (updatedCategoria) => {
+          categoria.habilitacion = updatedCategoria.habilitacion; // Actualiza la categoría en la UI
+          this.closeConfirmModal(); // Cierra el modal
+        },
+        error: (error) => {
+          console.error('Error al actualizar habilitación:', error);
+          this.closeConfirmModal(); // Cierra el modal aunque ocurra un error
+        }
+      });
+    }
+  }
+
+  getHabilitacionTexto(): string {
+    if (this.categoriaIndexToToggle === null) return ''; // Si no hay índice, devolver vacío
+    const habilitacion = this.categorias[this.categoriaIndexToToggle]?.habilitacion;
+    return habilitacion ? 'deshabilitar' : 'habilitar';
+  }
+  
 }
