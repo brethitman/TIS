@@ -56,4 +56,15 @@ export class CategoriaService {
   eliminarNivel(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  /**
+   * Modifica la habilitacion de las categorias 
+   * @param id ID del nivel a eliminar
+   * @returns observar si la categoria fue habilitada o no
+   */
+
+  habilitarCategoria(id: number, habilitacion: boolean | null): Observable<NivelesCategoria> {
+    const body = { habilitacion }; 
+    return this.http.patch<NivelesCategoria>(`${this.apiUrl}/${id}/habilitacion`, body);
+  }
 }
