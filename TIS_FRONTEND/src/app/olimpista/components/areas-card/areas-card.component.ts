@@ -99,7 +99,7 @@ export class AreasCardComponent implements OnInit {
       descripcion: this.editedAreaDescripcion
     };
 
-    this.http.put(/api/areas/${this.Area.id}, updateData)
+    this.http.put(`/api/areas/${this.Area.id}`, updateData)
       .subscribe({
         next: (response: any) => {
           console.log('Área actualizada exitosamente', response);
@@ -149,7 +149,7 @@ export class AreasCardComponent implements OnInit {
       this.cards[this.cardIndexToEdit].nombre_area = this.editedNombreArea;
       this.cards[this.cardIndexToEdit].fecha_examen = this.editedfechaExamen;
       this.cards[this.cardIndexToEdit].costo = this.editedCosto;
-      console.log(Tarjeta en índice ${this.cardIndexToEdit} editada.);
+      console.log(`Tarjeta en índice ${this.cardIndexToEdit} editada.`);
       this.closeEditModal();
     }
   }
