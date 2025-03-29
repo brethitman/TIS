@@ -1,145 +1,367 @@
 <div class="container">
-    <h1>Formulario de Inscripción</h1>
+  <!-- Estilos integrados en el mismo archivo -->
+  <style>
+    /* Estilos generales */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Cabecera con gradiente */
+    .header-banner {
+      background: linear-gradient(to right, #ff0000, #800080, #0000ff);
+      padding: 10px 20px;
+      margin-bottom: 20px;
+    }
+
+    .header-banner h1 {
+      color: white;
+      margin: 0;
+      font-weight: bold;
+      font-size: 24px;
+    }
+
+    /* Estilos para secciones */
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      border-bottom: 1px solid #000;
+      padding-bottom: 5px;
+    }
+
+    .section-subtitle {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 15px;
+      font-style: italic;
+    }
+
+    /* Cuadro de monto a pagar */
+    .monto-box {
+      border: 1px solid #ccc;
+      padding: 5px;
+      text-align: center;
+      height: 100%;
+    }
+
+    .monto-label {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .monto-value {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    /* Área informática */
+    .area-box {
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    .area-title {
+      background-color: #f8f9fa;
+      text-align: center;
+      padding: 10px;
+      margin: 0;
+      font-weight: bold;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .area-details {
+      padding: 15px;
+    }
+
+    /* Fecha y hora */
+    .fecha-hora-container {
+      display: flex;
+      margin-top: 5px;
+    }
+
+    .fecha, .hora {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+    }
+
+    .calendar-icon::before {
+      content: "📅";
+      margin-right: 5px;
+    }
+
+    .clock-icon::before {
+      content: "🕙";
+      margin-right: 5px;
+    }
+
+    .location-icon::before {
+      content: "📍";
+      margin-right: 5px;
+    }
+
+    /* Ubicación */
+    .ubicacion-container {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+      flex-wrap: wrap;
+    }
+
+    .mostrar-mapa {
+      color: blue;
+      text-decoration: underline;
+      margin-left: 10px;
+      font-size: 12px;
+    }
+
+    /* Form controls */
+    .form-control {
+      width: 100%;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    /* Botones */
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-lg {
+      font-size: 16px;
+      padding: 10px 20px;
+    }
+
+    /* Campos requeridos */
+    label:after {
+      content: "*";
+      color: red;
+    }
+
+    .error-message {
+      color: #dc3545;
+      font-size: 12px;
+      margin-top: 3px;
+    }
     
-    <form (ngSubmit)="onSubmit()" #form="ngForm">
-      <!-- Sección 1: Datos del estudiante -->
-      <div class="form-section card mb-4">
-        <div class="card-header bg-primary text-white">
-          <h2>Datos del estudiante</h2>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Nombres*</label>
-                <input type="text" class="form-control" 
-                      [(ngModel)]="olimpista.nombres" 
-                      name="nombres" 
-                      required
-                      #nombres="ngModel">
-                <div *ngIf="nombres.invalid && (nombres.dirty || nombres.touched)" class="error-message">
-                  Este campo es requerido
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Apellidos*</label>
-                <input type="text" class="form-control" 
-                      [(ngModel)]="olimpista.apellidos" 
-                      name="apellidos" 
-                      required
-                      #apellidos="ngModel">
-              </div>
-            </div>
-          </div>
+    /* Clases de Bootstrap que se están utilizando */
+    .mb-3 {
+      margin-bottom: 1rem;
+    }
+    
+    .mb-4 {
+      margin-bottom: 1.5rem;
+    }
+    
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      margin-right: -15px;
+      margin-left: -15px;
+    }
+    
+    .col-md-8 {
+      flex: 0 0 66.666667%;
+      max-width: 66.666667%;
+      padding-right: 15px;
+      padding-left: 15px;
+    }
+    
+    .col-md-6 {
+      flex: 0 0 50%;
+      max-width: 50%;
+      padding-right: 15px;
+      padding-left: 15px;
+    }
+    
+    .col-md-4 {
+      flex: 0 0 33.333333%;
+      max-width: 33.333333%;
+      padding-right: 15px;
+      padding-left: 15px;
+    }
+    
+    .text-center {
+      text-align: center;
+    }
+  </style>
   
-          <div class="form-group">
-            <label>C.I.*</label>
-            <input type="text" class="form-control" 
-                  [(ngModel)]="olimpista.ci" 
-                  name="ci" 
-                  required
-                  pattern="[0-9]+"
-                  minlength="6"
-                  #ci="ngModel">
-            <div *ngIf="ci.invalid && (ci.dirty || ci.touched)" class="error-message">
-              <div *ngIf="ci.errors?.['required']">Campo requerido</div>
-              <div *ngIf="ci.errors?.['pattern']">Solo números</div>
-              <div *ngIf="ci.errors?.['minlength']">Mínimo 6 dígitos</div>
-            </div>
-          </div>
-        </div>
-      </div>
-  
-      <!-- Sección 2: Datos del tutor -->
-      <div class="form-section card mb-4">
-        <div class="card-header bg-info text-white">
-          <h2>Datos del tutor</h2>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Nombres del tutor*</label>
-                <input type="text" class="form-control" 
-                      [(ngModel)]="tutor.nombres" 
-                      name="tutorNombres" 
-                      required
-                      #tutorNombres="ngModel">
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Apellidos del tutor*</label>
-                <input type="text" class="form-control" 
-                      [(ngModel)]="tutor.apellidos" 
-                      name="tutorApellidos" 
-                      required
-                      #tutorApellidos="ngModel">
-              </div>
-            </div>
-          </div>
-  
-          <div class="form-group">
-            <label>C.I. del tutor*</label>
-            <input type="text" class="form-control" 
-                  [(ngModel)]="tutor.ci" 
-                  name="tutorCi" 
-                  required
-                  pattern="[0-9]+"
-                  #tutorCi="ngModel">
-          </div>
-        </div>
-      </div>
-  
-      <!-- Sección 3: Áreas y categorías -->
-      <div class="form-section card mb-4">
-        <div class="card-header bg-success text-white">
-          <h2>Áreas a inscribir</h2>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Área*</label>
-                <select class="form-control" 
-                        [(ngModel)]="inscripcion.areaId" 
-                        name="area" 
-                        required
-                        (change)="cargarNivelesPorArea()"
-                        #area="ngModel">
-                  <option value="">Seleccione un área</option>
-                  <option *ngFor="let area of areas" [value]="area.id">
-                    {{ area.nombre_area }}
-                  </option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Nivel/Categoría</label>
-                <select class="form-control" 
-                        [(ngModel)]="inscripcion.nivelId" 
-                        name="nivel" 
-                        #nivel="ngModel"
-                        [disabled]="!inscripcion.area?.id">
-                  <option value="">Seleccione un nivel</option>
-                  <option *ngFor="let nivel of niveles" [value]="nivel.id">
-                    {{ nivel.nombre_nivel }}
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-  
-      <!-- Botón de envío -->
-      <div class="text-center">
-        <button type="submit" class="btn btn-primary btn-lg" [disabled]="form.invalid">
-          Guardar Inscripción
-        </button>
-      </div>
-    </form>
+  <div class="header-banner">
+    <h1>INSCRIPCIÓN</h1>
   </div>
+  
+  <form (ngSubmit)="onSubmit()" #form="ngForm">
+    <!-- Sección 1: Datos para la inscripción -->
+    <div class="form-section mb-4">
+      <h2 class="section-title">Datos para la inscripción:</h2>
+      <p class="section-subtitle">Llenar los siguientes datos para generar la boleta de pago correctamente</p>
+      
+      <div class="row mb-3">
+        <div class="col-md-8">
+          <div class="form-group">
+            <label>Nombre completo del estudiante a participar:</label>
+            <input type="text" class="form-control" 
+                  [(ngModel)]="olimpista.nombres" 
+                  name="nombres" 
+                  required
+                  #nombres="ngModel">
+            <div *ngIf="nombres.invalid && (nombres.dirty || nombres.touched)" class="error-message">
+              Este campo es requerido
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="monto-box">
+            <div class="monto-label">Monto a pagar</div>
+            <div class="monto-value">00.00Bs.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label>Carnet de Identidad(C.I.) del estudiante a participar:</label>
+        <input type="text" class="form-control" 
+              [(ngModel)]="olimpista.ci" 
+              name="ci" 
+              required
+              pattern="[0-9]+"
+              minlength="6"
+              #ci="ngModel">
+        <div *ngIf="ci.invalid && (ci.dirty || ci.touched)" class="error-message">
+          <div *ngIf="ci.errors?.['required']">Campo requerido</div>
+          <div *ngIf="ci.errors?.['pattern']">Solo números</div>
+          <div *ngIf="ci.errors?.['minlength']">Mínimo 6 dígitos</div>
+        </div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label>Nombre completo del tutor del estudiante:</label>
+        <input type="text" class="form-control" 
+              [(ngModel)]="tutor.nombres" 
+              name="tutorNombres" 
+              required
+              #tutorNombres="ngModel">
+      </div>
+
+      <div class="form-group mb-3">
+        <label>Carnet de Identidad(C.I.) del tutor del estudiante:</label>
+        <input type="text" class="form-control" 
+              [(ngModel)]="tutor.ci" 
+              name="tutorCi" 
+              required
+              pattern="[0-9]+"
+              #tutorCi="ngModel">
+      </div>
+    </div>
+
+    <!-- Sección 2: Exámenes de áreas seleccionadas -->
+    <div class="form-section mb-4">
+      <h2 class="section-title">Exámene(s) de la(s) área(s) seleccionada(s):</h2>
+      <p class="section-subtitle">Encuentra aquí la información sobre los exámenes de las áreas en las que te has inscrito.</p>
+      
+      <div class="area-box">
+        <h3 class="area-title">INFORMÁTICA</h3>
+        <div class="area-details">
+          <div class="fecha-hora">
+            <label>Fecha y Hora</label>
+            <div class="fecha-hora-container">
+              <div class="fecha">
+                <i class="calendar-icon"></i>
+                <span>24/01/2025</span>
+              </div>
+              <div class="hora">
+                <i class="clock-icon"></i>
+                <span>10:00 A.M.</span>
+              </div>
+            </div>
+          </div>
+          <div class="ubicacion">
+            <label>Ubicación</label>
+            <div class="ubicacion-container">
+              <i class="location-icon"></i>
+              <span>Edificio Coordinación UMSA Laboratorio de Sistemas Informática</span>
+              <a href="#" class="mostrar-mapa">Mostrar mapa</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección 3: Agregar más áreas -->
+    <div class="form-section mb-4">
+      <h2 class="section-title">Desea agregar más Áreas a su inscripción?</h2>
+      
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Área(s) a inscribir:</label>
+            <select class="form-control" 
+                    [(ngModel)]="inscripcion.areaId" 
+                    name="area" 
+                    required
+                    (change)="cargarNivelesPorArea()"
+                    #area="ngModel">
+              <option value="">Seleccione un área</option>
+              <option *ngFor="let area of areas" [value]="area.id">
+                {{ area.nombre_area }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label>Categoría(s) a inscribir:</label>
+            <select class="form-control" 
+                    [(ngModel)]="inscripcion.nivelId" 
+                    name="nivel" 
+                    #nivel="ngModel"
+                    [disabled]="!inscripcion.area?.id">
+              <option value="">Seleccione un nivel</option>
+              <option *ngFor="let nivel of niveles" [value]="nivel.id">
+                {{ nivel.nombre_nivel }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button type="button" class="btn btn-danger">Agregar área</button>
+      </div>
+    </div>
+
+    <!-- Botón de envío -->
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary btn-lg" [disabled]="form.invalid">
+        Guardar Inscripción
+      </button>
+    </div>
+  </form>
+</div>
