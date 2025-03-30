@@ -8,9 +8,7 @@ import { GetNIvelesCategoriaResponse } from '../interfaces/get-categoria-respons
   providedIn: 'root'
 })
 export class CategoriaService {
-  habilitarCategoria(id: number, nuevoEstado: boolean) {
-    throw new Error('Method not implemented.');
-  }
+  
   private apiUrl = 'http://localhost:8000/api/nivelCategoria'; // Corregido el endpoint
 
   constructor(private http: HttpClient) {}
@@ -58,5 +56,16 @@ export class CategoriaService {
    */
   eliminarNivel(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Modifica la habilitacion de las categorias 
+   * @param id ID del nivel a eliminar
+   * @returns observar si la categoria fue habilitada o no
+   */
+
+  habilitarCategoria(id: number, habilitacion: boolean | null): Observable<NivelesCategoria> {
+    const body = { habilitacion }; 
+    return this.http.patch<NivelesCategoria>(`${this.apiUrl}/${id}/habilitacion`, body);
   }
 }

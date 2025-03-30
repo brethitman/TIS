@@ -116,13 +116,13 @@ export class AreasCardComponent implements OnInit {
 
   //Funciones de categoria Andrea
   openConfirmModal(index: number) {
-    this.categoriaIndexToToggle = index;
+    this.categoriaIndexToToggle= index;
     this.isConfirmModalOpen = true;
   }
 
   closeConfirmModal(): void {
-    this.isConfirmModalOpen = false;
-    this.categoriaIndexToToggle = null;
+    this.isConfirmModalOpen = false; 
+    this.categoriaIndexToToggle = null; 
   }
 
   openEditModal(index: number) {
@@ -276,17 +276,17 @@ export class AreasCardComponent implements OnInit {
     if (this.categoriaIndexToToggle !== null) {
       const categoria = this.categorias[this.categoriaIndexToToggle]; // Obtiene la categoría seleccionada
       const nuevoEstado = !categoria.habilitacion; // Cambia el estado de habilitación
-
-     /* this.categoriaService.habilitarCategoria(categoria.id, nuevoEstado).subscribe({
-        next: (updatedCategoria: { habilitacion: boolean | null; }) => {
+  
+      this.categoriaService.habilitarCategoria(categoria.id, nuevoEstado).subscribe({
+        next: (updatedCategoria) => {
           categoria.habilitacion = updatedCategoria.habilitacion; // Actualiza la categoría en la UI
           this.closeConfirmModal(); // Cierra el modal
         },
-        error: (error: any) => {
+        error: (error) => {
           console.error('Error al actualizar habilitación:', error);
           this.closeConfirmModal(); // Cierra el modal aunque ocurra un error
         }
-      });*/
+      });
     }
   }
 
@@ -295,5 +295,5 @@ export class AreasCardComponent implements OnInit {
     const habilitacion = this.categorias[this.categoriaIndexToToggle]?.habilitacion;
     return habilitacion ? 'deshabilitar' : 'habilitar';
   }
-
+  
 }
