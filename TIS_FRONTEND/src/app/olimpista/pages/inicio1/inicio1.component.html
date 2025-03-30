@@ -1,1 +1,40 @@
-<p>inicio1 works!</p>
+<div class="contenedor-home">
+    <div class="home-img flex items-center justify-center h-[500px] w-full bg-blue-500" style="background: rgb(253,253,253); 
+             background: linear-gradient(0deg, rgba(253,253,253,1) 6%, rgba(151,58,58,1) 39%, rgba(113,110,165,1) 88%); 
+             height: 500px; width: 100%;">
+
+        <div class="imgane-banner">
+            <img src="icon/ohsans-i.png" alt="Imagen del Banner"
+                class="imge-banner max-w-[330px] h-auto rounded-lg animate-movimiento" />
+        </div>
+        <section class="banner-contenedor text-center text-white mr-5" 
+        style="margin-left: 30px; text-align: left;">
+            <h1 style="font-size: 50px;">OLIMPIADAS CIENTIFICAS<br />Oh! SANSI</h1>
+        </section>
+
+    </div>
+
+    <style>
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+
+        @keyframes movimiento {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(30px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .animate-movimiento {
+            animation: movimiento 2.5s linear infinite;
+        }
+    </style>
+</div>

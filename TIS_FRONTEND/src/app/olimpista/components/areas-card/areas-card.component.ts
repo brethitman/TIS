@@ -116,13 +116,13 @@ export class AreasCardComponent implements OnInit {
 
   //Funciones de categoria Andrea
   openConfirmModal(index: number) {
-    this.categoriaIndexToToggle= index;
+    this.categoriaIndexToToggle = index;
     this.isConfirmModalOpen = true;
   }
 
   closeConfirmModal(): void {
-    this.isConfirmModalOpen = false; 
-    this.categoriaIndexToToggle = null; 
+    this.isConfirmModalOpen = false;
+    this.categoriaIndexToToggle = null;
   }
 
   openEditModal(index: number) {
@@ -131,6 +131,12 @@ export class AreasCardComponent implements OnInit {
     this.editedfechaExamen = this.cards[index].fecha_examen;
     this.editedCosto = this.cards[index].costo;
     this.isEditModalOpen = true;
+    const categoria = this.categorias[index];
+    if (!categoria) {
+      console.error('La categoría no existe en la posición:', index);
+      return;
+    }
+    console.log(categoria.nombre_nivel); 
   }
 
   closeEditModal() {
@@ -150,7 +156,7 @@ export class AreasCardComponent implements OnInit {
   //Funciones de categoria Anahi
 
   disableManualInput(event: KeyboardEvent): void {
-    event.preventDefault(); 
+    event.preventDefault();
   }
 
   fechaLimite(): void {
@@ -270,7 +276,7 @@ export class AreasCardComponent implements OnInit {
     if (this.categoriaIndexToToggle !== null) {
       const categoria = this.categorias[this.categoriaIndexToToggle]; // Obtiene la categoría seleccionada
       const nuevoEstado = !categoria.habilitacion; // Cambia el estado de habilitación
-  
+
       this.categoriaService.habilitarCategoria(categoria.id, nuevoEstado).subscribe({
         next: (updatedCategoria) => {
           categoria.habilitacion = updatedCategoria.habilitacion; // Actualiza la categoría en la UI
@@ -289,5 +295,5 @@ export class AreasCardComponent implements OnInit {
     const habilitacion = this.categorias[this.categoriaIndexToToggle]?.habilitacion;
     return habilitacion ? 'deshabilitar' : 'habilitar';
   }
-  
+
 }

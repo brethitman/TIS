@@ -6,12 +6,36 @@
 
       <!-- MENU OPTIONS -->
       <ul class="nav__menu">
-          @for (option of menuOptions; track option.path) {
-            <li>
-                <a class="nav__link" routerLinkActive="nav__link--active" [routerLink]="option.path">{{option.name}}</a>
-            </li>
-          }
+        <!-- Primer botón: Home -->
+        <li>
+          <a class="nav__link" routerLinkActive="nav__link--active" [routerLink]="'/inicio/waba'">Home</a>
+        </li>
+      
+        <!-- Segundo botón: hover -->
+        <li>
+          <a class="nav__link hover:underline hover:text-blue-500" routerLinkActive="nav__link--active" [routerLink]="'/inicio/look'">Hover Effect</a>
+        </li>
+      
+        <!-- Tercer botón: con ícono y tooltip -->
+        <li>
+          <a
+            class="nav__link relative flex items-center gap-2"
+            routerLinkActive="nav__link--active"
+            [routerLink]="'/inicio/dodog'"
+          >
+            <span class="material-icons">person</span>
+            Admin
+          </a>
+          <!-- Tooltip -->
+          <span
+            class="tooltip absolute bg-gray-700 text-white text-xs rounded px-2 py-1"
+            style="top: 100%; left: 50%; transform: translateX(-50%); display: none;"
+          >
+            Solo para el administrador
+          </span>
+        </li>
       </ul>
+      
 
       <!-- BOTÓN CERRAR SESIÓN (solo muestra cuando está autenticado) -->
       @if (authService.isLoggedIn()) {
