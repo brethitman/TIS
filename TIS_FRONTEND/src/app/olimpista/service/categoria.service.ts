@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { map, catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { NivelesCategoria } from '../interfaces/categoria.interface';
 import { GetNIvelesCategoriaResponse } from '../interfaces/get-categoria-response';
 
@@ -57,8 +58,27 @@ export class CategoriaService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-
-  getNivelesPorArea(areaId: number): Observable<NivelesCategoria[]> {
-    return this.http.get<NivelesCategoria[]>(`${this.apiUrl}/por-area/${areaId}`);
-  }
+  /*getNivelesPorArea(areaId: number): Observable<GetNIvelesCategoriaResponse> {
+    return this.http.get<GetNIvelesCategoriaResponse>(`${this.apiUrl}/por-area/${areaId}`);
+  }*/
+  
+    getNivelesPorArea(areaId: number): Observable<NivelesCategoria[]> {
+      return this.http.get<any>(`${this.apiUrl}/por-area/${areaId}`).pipe(
+        map(response => {
+          // Verifica diferentes estructuras de respuesta
+          if (Array.isArray(response)) {
+            return response as NivelesCategoria[];
+          } else if (response.nivelesCategoria) {
+            return response.nivelesCategoria as NivelesCategoria[];
+          } else if (response.data) {
+            return response.data as NivelesCategoria[];
+          }
+          throw new Error('Formato de respuesta no reconocido');
+        }),
+        catchError(error => {
+          console.error('Error al obtener niveles por área:', error);
+          throw error;
+        })
+      );
+    }
 }

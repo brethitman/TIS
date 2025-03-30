@@ -12,6 +12,8 @@ import { NivelesCategoria } from '../../interfaces/categoria.interface';
 import { Olimpista } from '../../interfaces/olimpista-response';
 import { Tutor } from '../../interfaces/inscripcion.interface';
 import { Inscripcion } from '../../interfaces/inscripcion.interface';
+import { GetAreaResponse } from '../../interfaces/get-area-response';
+import { GetNIvelesCategoriaResponse } from '../../interfaces/get-categoria-response';
 
 @Component({
   selector: 'app-inicio2',
@@ -59,22 +61,86 @@ export class Inicio2Component implements OnInit {
     this.cargarAreas();
   }
 
+
   cargarAreas(): void {
     this.cargandoAreas = true;
-    this.areaService.getAreas().subscribe({
-      next: (areas) => {
-        this.areas = areas;
+    this.areaService.getAreas().subscribe(
+      (response: any) => {
+        this.areas = Array.isArray(response) ? response : response.areas || [];
         this.cargandoAreas = false;
       },
-      error: (err) => {
-        console.error('Error al cargar áreas:', err);
-        this.mensajeError = 'Error al cargar las áreas disponibles';
+      (error) => {
+        console.error('Error al cargar áreas:', error);
         this.cargandoAreas = false;
       }
-    });
+    );
   }
-
+  testNivelesCategoria(areaId: number): void {
+    this.niveles = [
+      {
+        id: 1,
+        id_area: areaId,
+        nombre_nivel: 'Básico',
+        descripcion: 'Nivel inicial',
+        fecha_examen: new Date('2023-12-15'),
+        costo: 100,
+        habilitacion: true,
+        created_at: new Date(),
+        updated_at: new Date()
+      },
+      {
+        id: 2,
+        id_area: areaId,
+        nombre_nivel: 'Avanzado',
+        descripcion: 'Nivel experto',
+        fecha_examen: new Date('2023-12-20'),
+        costo: 150,
+        habilitacion: true,
+        created_at: new Date(),
+        updated_at: new Date()
+      }
+    ];
+    
+    console.log('Datos de prueba cargados para área', areaId);
+  }
+  
   onAreaSeleccionada(): void {
+    const areaId = Number(this.inscripcionForm.get('areaId')?.value);
+    
+    if (areaId) {
+      this.cargandoNiveles = true;
+      this.inscripcionForm.get('nivelId')?.reset();
+      this.nivelSeleccionado = null;
+  
+      this.categoriaService.getNivelesPorArea(areaId).subscribe({
+        next: (niveles) => {
+          this.niveles = niveles;
+          this.cargandoNiveles = false;
+          console.log('Niveles cargados:', this.niveles);
+        },
+        error: (error) => {
+          console.error('Error:', error);
+          this.cargandoNiveles = false;
+        }
+      });
+    }
+  }
+  /*cargarNivelesPorArea(areaId: number): void {
+    this.cargandoNiveles = true;
+    this.categoriaService.getNivelesPorArea(areaId).subscribe({
+      next: (response: GetNIvelesCategoriaResponse) => {
+        this.niveles = response.nivelesCategoria;
+        this.cargandoNiveles = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar niveles:', err);
+        this.mensajeError = 'Error al cargar las categorías disponibles';
+        this.cargandoNiveles = false;
+      }
+    });
+  }*/
+
+  /*onAreaSeleccionada(): void {
     const areaId = this.inscripcionForm.get('areaId')?.value;
     if (areaId) {
       this.cargandoNiveles = true;
@@ -82,8 +148,8 @@ export class Inicio2Component implements OnInit {
       this.nivelSeleccionado = null;
       
       this.categoriaService.getNivelesPorArea(areaId).subscribe({
-        next: (niveles) => {
-          this.niveles = niveles;
+        next: (response: GetNIvelesCategoriaResponse) => {
+          this.niveles = response.nivelesCategoria; // Accede a la propiedad 'niveles' de la respuesta
           this.cargandoNiveles = false;
         },
         error: (err) => {
@@ -93,15 +159,11 @@ export class Inicio2Component implements OnInit {
         }
       });
     }
-  }
+  }*/
 
   onNivelSeleccionado(): void {
     const nivelId = this.inscripcionForm.get('nivelId')?.value;
-    if (nivelId) {
-      this.nivelSeleccionado = this.niveles.find(n => n.id === nivelId) || null; //ERROR EM id_nivel
-    } else {
-      this.nivelSeleccionado = null;
-    }
+    this.nivelSeleccionado = this.niveles.find(n => n.id === nivelId) || null;
   }
 
   onSubmit(): void {
@@ -140,5 +202,24 @@ export class Inicio2Component implements OnInit {
         });
       }
     });
+  }
+  getNombreAreaSeleccionada(): string {
+    const areaId = this.inscripcionForm.value.areaId;
+    const area = this.areas.find(a => a.id === areaId);
+    return area?.nombre_area || 'Área seleccionada';
+  }
+  
+  getFechaExamenFormateada(): string {
+    if (!this.nivelSeleccionado?.fecha_examen) {
+      return 'Por definir';
+    }
+    // Asumiendo que fecha_examen es string o Date
+    const fecha = new Date(this.nivelSeleccionado.fecha_examen);
+    return fecha.toLocaleDateString('es-ES'); // Formato dd/MM/yyyy
+  }
+  
+  agregarOtraArea(): void {
+    // Implementa la lógica para agregar múltiples áreas si es necesario
+    console.log('Funcionalidad para agregar otra área');
   }
 }

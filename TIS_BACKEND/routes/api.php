@@ -60,6 +60,8 @@ Route::apiResource('nivelCategoria', NivelCategoriaController::class);
 Route::get('/nivelCategoria',         [ NivelCategoriaController::class, 'index'     ]);
 Route::get('/nivelCategoria/{id}',    [ NivelCategoriaController::class, 'show'      ]);
 Route::post('/nivelCategoria',        [ NivelCategoriaController::class, 'store'     ]);
+//PRUEBA
+Route::get('/nivelCategoria/por-area/{areaId}', [NivelCategoriaController::class, 'porArea']);
 
 
 
