@@ -1,145 +1,103 @@
 <div class="container">
-    <h1>Formulario de Inscripción</h1>
-    
-    <form (ngSubmit)="onSubmit()" #form="ngForm">
-      <!-- Sección 1: Datos del estudiante -->
-      <div class="form-section card mb-4">
-        <div class="card-header bg-primary text-white">
-          <h2>Datos del estudiante</h2>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Nombres*</label>
-                <input type="text" class="form-control" 
-                      [(ngModel)]="olimpista.nombres" 
-                      name="nombres" 
-                      required
-                      #nombres="ngModel">
-                <div *ngIf="nombres.invalid && (nombres.dirty || nombres.touched)" class="error-message">
-                  Este campo es requerido
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Apellidos*</label>
-                <input type="text" class="form-control" 
-                      [(ngModel)]="olimpista.apellidos" 
-                      name="apellidos" 
-                      required
-                      #apellidos="ngModel">
+  <h1>Formulario de Inscripción</h1>
+  
+  <form (ngSubmit)="onSubmit()" #form="ngForm">
+    <!-- Sección 1: Datos del estudiante -->
+    <div class="form-section card mb-4">
+      <div class="card-header bg-primary text-white">
+        <h2>Datos del estudiante</h2>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Nombres*</label>
+              <input type="text" class="form-control" 
+                    [(ngModel)]="inscripcionForm.value.olimpistaNombres"
+                    name="olimpistaNombres" 
+                    required
+                    #olimpistaNombres="ngModel">
+              <div *ngIf="olimpistaNombres.invalid && (olimpistaNombres.dirty || olimpistaNombres.touched)" class="error-message">
+                Este campo es requerido
               </div>
             </div>
           </div>
-  
-          <div class="form-group">
-            <label>C.I.*</label>
-            <input type="text" class="form-control" 
-                  [(ngModel)]="olimpista.ci" 
-                  name="ci" 
-                  required
-                  pattern="[0-9]+"
-                  minlength="6"
-                  #ci="ngModel">
-            <div *ngIf="ci.invalid && (ci.dirty || ci.touched)" class="error-message">
-              <div *ngIf="ci.errors?.['required']">Campo requerido</div>
-              <div *ngIf="ci.errors?.['pattern']">Solo números</div>
-              <div *ngIf="ci.errors?.['minlength']">Mínimo 6 dígitos</div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Apellidos*</label>
+              <input type="text" class="form-control" 
+                    [(ngModel)]="inscripcionForm.value.olimpistaApellidos"
+                    name="olimpistaApellidos" 
+                    required
+                    #olimpistaApellidos="ngModel">
             </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>C.I.*</label>
+          <input type="text" class="form-control" 
+                [(ngModel)]="inscripcionForm.value.olimpistaCi"
+                name="olimpistaCi" 
+                required
+                pattern="[0-9]+"
+                minlength="6"
+                #olimpistaCi="ngModel">
+          <div *ngIf="olimpistaCi.invalid && (olimpistaCi.dirty || olimpistaCi.touched)" class="error-message">
+            <div *ngIf="olimpistaCi.errors?.['required']">Campo requerido</div>
+            <div *ngIf="olimpistaCi.errors?.['pattern']">Solo números</div>
+            <div *ngIf="olimpistaCi.errors?.['minlength']">Mínimo 6 dígitos</div>
           </div>
         </div>
       </div>
-  
-      <!-- Sección 2: Datos del tutor -->
-      <div class="form-section card mb-4">
-        <div class="card-header bg-info text-white">
-          <h2>Datos del tutor</h2>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Nombres del tutor*</label>
-                <input type="text" class="form-control" 
-                      [(ngModel)]="tutor.nombres" 
-                      name="tutorNombres" 
-                      required
-                      #tutorNombres="ngModel">
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Apellidos del tutor*</label>
-                <input type="text" class="form-control" 
-                      [(ngModel)]="tutor.apellidos" 
-                      name="tutorApellidos" 
-                      required
-                      #tutorApellidos="ngModel">
-              </div>
-            </div>
-          </div>
-  
-          <div class="form-group">
-            <label>C.I. del tutor*</label>
-            <input type="text" class="form-control" 
-                  [(ngModel)]="tutor.ci" 
-                  name="tutorCi" 
-                  required
-                  pattern="[0-9]+"
-                  #tutorCi="ngModel">
-          </div>
-        </div>
+    </div>
+
+    <!-- Sección 2: Datos del tutor -->
+    <div class="form-section card mb-4">
+      <div class="card-header bg-info text-white">
+        <h2>Datos del tutor</h2>
       </div>
-  
-      <!-- Sección 3: Áreas y categorías -->
-      <div class="form-section card mb-4">
-        <div class="card-header bg-success text-white">
-          <h2>Áreas a inscribir</h2>
-        </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Área*</label>
-                <select class="form-control" 
-                        [(ngModel)]="inscripcion.areaId" 
-                        name="area" 
-                        required
-                        (change)="cargarNivelesPorArea()"
-                        #area="ngModel">
-                  <option value="">Seleccione un área</option>
-                  <option *ngFor="let area of areas" [value]="area.id">
-                    {{ area.nombre_area }}
-                  </option>
-                </select>
-              </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Nombres del tutor*</label>
+              <input type="text" class="form-control" 
+                    [(ngModel)]="inscripcionForm.value.tutorNombres"
+                    name="tutorNombres" 
+                    required
+                    #tutorNombres="ngModel">
             </div>
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Nivel/Categoría</label>
-                <select class="form-control" 
-                        [(ngModel)]="inscripcion.nivelId" 
-                        name="nivel" 
-                        #nivel="ngModel"
-                        [disabled]="!inscripcion.area?.id">
-                  <option value="">Seleccione un nivel</option>
-                  <option *ngFor="let nivel of niveles" [value]="nivel.id">
-                    {{ nivel.nombre_nivel }}
-                  </option>
-                </select>
-              </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>Apellidos del tutor*</label>
+              <input type="text" class="form-control" 
+                    [(ngModel)]="inscripcionForm.value.tutorApellidos"
+                    name="tutorApellidos" 
+                    required
+                    #tutorApellidos="ngModel">
             </div>
           </div>
         </div>
+
+        <div class="form-group">
+          <label>C.I. del tutor*</label>
+          <input type="text" class="form-control" 
+                [(ngModel)]="inscripcionForm.value.tutorCi" 
+                name="tutorCi" 
+                required
+                pattern="[0-9]+"
+                #tutorCi="ngModel">
+        </div>
       </div>
-  
-      <!-- Botón de envío -->
-      <div class="text-center">
-        <button type="submit" class="btn btn-primary btn-lg" [disabled]="form.invalid">
-          Guardar Inscripción
-        </button>
-      </div>
-    </form>
-  </div>
+    </div>
+
+    <!-- Botón de envío -->
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary btn-lg" [disabled]="form.invalid">
+        Guardar Inscripción
+      </button>
+    </div>
+  </form>
+</div>

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { map, Observable } from 'rxjs';
-import { Inscripcione, Area, NivelesCategoria } from '../interfaces/inscripcion.interface';
+import { Inscripcion, Area, NivelesCategoria } from '../interfaces/inscripcion.interface';
 import { GetInscripcionResponse } from '../interfaces/get-inscripcion-response';
 
 @Injectable({
@@ -14,14 +14,14 @@ export class InscripcionService {
   private http = inject(HttpClient);
 
   // Método para obtener todas las inscripciones con paginación
-  public findAll(): Observable<Inscripcione[]> {
+  public findAll(): Observable<Inscripcion[]> {
     return this.http.get<GetInscripcionResponse>(`${environment.apiUrl}/inscripcion`)
       .pipe(
         map((resp) => resp.inscripciones) // Ahora accede correctamente a la lista de inscripciones
       );
   }
-  createInscripcion(inscripcion: Partial<Inscripcione>): Observable<Inscripcione> {
-    return this.http.post<Inscripcione>(this.apiUrl, inscripcion);
+  createInscripcion(inscripcion: Partial<Inscripcion>): Observable<Inscripcion> {
+    return this.http.post<Inscripcion>('/api//inscripcion', inscripcion);
   }
 
   getAreas(): Observable<Area[]> {
@@ -32,3 +32,10 @@ export class InscripcionService {
     return this.http.get<NivelesCategoria[]>(`${this.apiUrl}/niveles`);
   }
 }
+
+/*public findAll(): Observable<Inscrito[]> {
+  return this.http.get<GetInscritos>(`${environment.apiUrl}/inscripcion`)
+    .pipe(
+      map((resp) => resp.inscrito) // Ahora accede correctamente a la lista de inscripciones
+    );
+}*/

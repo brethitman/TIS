@@ -1,6 +1,6 @@
-import { Inscripcione } from "./inscripcion.interface";
+import { Inscripcion } from "./inscripcion.interface";
 export interface GetInscripcionResponse {
-  inscripciones: Inscripcione[];
+  inscripciones: Inscripcion[];
   links:         Links;
   meta:          Meta;
 }

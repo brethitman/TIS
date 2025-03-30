@@ -1,6 +1,6 @@
-import { Tutore } from './tutor.interface';
+import { Tutor } from './tutor.interface';
 export interface GetTutoresRespoce {
-  tutores: Tutore[];
+  tutores: Tutor[];
   links:   Links;
   meta:    Meta;
 }
