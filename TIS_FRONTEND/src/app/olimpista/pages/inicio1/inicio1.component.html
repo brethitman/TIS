@@ -1,1 +1,64 @@
-<p>inicio1 works!</p>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<section class="w-full bg-gradient-to-r from-red-600 to-purple-700 py-6 px-4 animate-gradient">
+    <h1 class="text-white text-3xl font-bold ">PRESENTACIÓN</h1>
+</section>
+
+<section class="flex flex-col md:flex-row justify-between items-center p-8 bg-white m-8">
+    <!-- Texto -->
+    <div class="md:w-2/3 text-center md:text-left space-y-4">
+        <p class="text-lg leading-relaxed animate_animated animatefadeInUp animate_delay-1s">
+            Las <strong>Olimpiadas Científicas en Bolivia</strong> son una competencia educativa anual que tiene como objetivo fomentar el talento y la creatividad de los estudiantes en áreas clave como <strong> ciencias, matemáticas, física, biología y tecnología.</strong> 
+        </p>
+        <p class="text-lg leading-relaxed animate_animated animatefadeInUp animate_delay-2s">
+            A través de este evento, buscamos incentivar el pensamiento crítico y la innovación, permitiendo a los jóvenes enfrentar desafíos que estimulan su capacidad de resolver problemas de manera creativa.
+        </p>
+        <p class="text-lg leading-relaxed animate_animated animatefadeInUp animate_delay-3s">
+            Además, las Olimpiadas promueven el trabajo en equipo, un valor esencial para el <strong> desarrollo personal y profesional de los estudiantes.</strong>  Nuestro propósito es inspirar a los jóvenes bolivianos a utilizar sus conocimientos para contribuir al progreso del país, brindándoles la oportunidad de destacar en un entorno académico y científico que abre puertas a nuevas oportunidades tanto a nivel nacional como internacional.
+        </p>
+    </div>
+
+    <!-- Mosaico de imágenes flotantes -->
+    <div class="md:w-1/3 mt-6 md:mt-0 relative grid grid-cols-2 gap-4">
+        <img src="https://www.infodiez.com/wp-content/uploads/2021/03/Medalla-oro_infodiez.jpg" alt="Medalla Olimpiada 1" class="w-full h-40 object-cover rounded-md shadow-md floating">
+        <img src="https://www.minedu.gob.bo/images/unicom/vd.jpeg" alt="Medalla Olimpiada 2" class="w-full h-40 object-cover rounded-md shadow-md floating">
+        <img src="https://www.lobodelaire.com/contenido/imagenes/noticias/2019/03/14/not-7140-1552531880olimpiadas-lda.jpg" alt="Medalla Olimpiada 3" class="w-full h-40 object-cover rounded-md shadow-md floating">
+        <img src="https://www.minedu.gob.bo/images/3333.png" alt="Medalla Olimpiada 4" class="w-full h-40 object-cover rounded-md shadow-md floating">
+    </div>
+</section>
+<section class="w-full bg-gradient-to-r from-red-600 to-purple-700 py-6 px-4 animate-gradient">
+    <h1 class="text-white text-3xl font-bold">INFORMACIÓN</h1>
+</section>
+
+<style>
+@keyframes float {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+}
+
+.floating {
+    animation: float 3s ease-in-out infinite;
+}
+
+img {
+    object-fit: cover;
+}
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.animate-gradient {
+    background: linear-gradient(270deg, #ff3b3f, #7f3fa0);
+    background-size: 400% 400%;
+    animation: gradientAnimation 5s ease infinite;
+}
+
+</style>
