@@ -1,42 +1,79 @@
-<div class="contenedor-home">
-    <div class="home-img flex items-center justify-center h-[500px] w-full bg-blue-500" style="background: rgb(253,253,253); 
+<div class="contenedor-home relative"> <!-- Añadido relative aquí -->
+    <div class="home-img flex items-center justify-center h-[500px] w-full" style="background: rgb(253,253,253); 
              background: linear-gradient(0deg, rgba(253,253,253,1) 6%, rgba(151,58,58,1) 39%, rgba(113,110,165,1) 88%); 
-             height: 500px; width: 100%;">
-
-        <div class="imgane-banner">
+             height: 500px; width: 100%; overflow: hidden; position: relative;"> <!-- Cambiado a relative -->
+        
+        <!-- Contenido del banner (imagen y texto) -->
+        <div class="imgane-banner" style="margin-left: 30px; z-index: 2;">
             <img src="icon/ohsans-i.png" alt="Imagen del Banner"
-                class="imge-banner max-w-[330px] h-auto rounded-lg animate-movimiento" />
+                class="imge-banner max-w-[340px] h-auto rounded-lg animate-movimiento" />
         </div>
-        <section class="banner-contenedor text-center text-white mr-5" style="margin-left: 30px; text-align: left;">
-            <h1 style="font-size: 50px;">OLIMPIADAS CIENTIFICAS<br />Oh! SANSI</h1>
+        <section class="banner-contenedor text-center text-white"
+            style="margin-left: 60px; text-align: left; z-index: 2;">
+            <h1 class="font-extrabolt bg-clip-text text-transparent bg-gradient-to-r from-slate-300 to-stone-100"
+                style="font-size: 50px;">
+                OLIMPIADAS CIENTIFICAS<br />Oh! SANSI</h1>
+            <h2 style="font-size: 30px; font-style: italic;"> Universidad Mayor de San Simon</h2>
         </section>
-
+        
+        <!-- Contenedor de burbujas corregido -->
+        <div class="burbujas absolute inset-0 overflow-hidden pointer-events-none" style="z-index: 1;">
+            <!-- Burbujas -->
+            <div class="burbuja"></div>
+            <div class="burbuja" style="width: 90px; height: 90px; left: 25%; animation-delay: 5s;"></div>
+            <div class="burbuja" style="width: 20px; height: 20px; left: 15%; animation-delay: 7s;"></div>
+            <div class="burbuja" style="width: 70px; height: 70px; left: 20%; animation-delay: 3s;"></div>
+            <div class="burbuja" style="width: 10px; height: 10px; left: 50%; animation-delay: 2s;"></div>
+            <div class="burbuja" style="width: 50px; height: 50px; left: 45%; animation-delay: 1s;"></div>
+            <div class="burbuja" style="width: 30px; height: 30px; left: 35%; animation-delay: 9s;"></div>
+            <div class="burbuja" style="width: 100px; height: 100px; left: 55%; animation-delay: 6s;"></div>
+        </div>
     </div>
-
-    <style>
-        @tailwind base;
-        @tailwind components;
-        @tailwind utilities;
-
-        @keyframes movimiento {
-            0% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(30px);
-            }
-
-            100% {
-                transform: translateY(0);
-            }
-        }
-
-        .animate-movimiento {
-            animation: movimiento 2.5s linear infinite;
-        }
-    </style>
 </div>
+
+<style>
+    /* Estilos para las burbujas */
+    .burbuja {
+        position: absolute;
+        background: white;
+        opacity: 0.3;
+        border-radius: 50%;
+        bottom: -100px;
+        animation: burbujas 3s linear infinite;
+        width: 80px;
+        height: 80px;
+        left: 10%;
+    }
+
+    @keyframes burbujas {
+        0% {
+            bottom: -100px;
+            opacity: 0;
+            transform: translateX(0);
+        }
+        30% {
+            transform: translateX(30px);
+        }
+        50% {
+            opacity: 0.4;
+        }
+        100% {
+            bottom: 100%;
+            opacity: 0;
+        }
+    }
+
+    /* Mantén tus otros estilos existentes */
+    @keyframes movimiento {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(30px); }
+        100% { transform: translateY(0); }
+    }
+    .animate-movimiento {
+        animation: movimiento 2.5s linear infinite;
+    }
+</style>
+
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <section class="w-full bg-gradient-to-r from-red-600 to-blue-700 py-6 px-4 animate-gradient">
@@ -63,7 +100,6 @@
             como internacional.
         </p>
     </div>
-
     <!-- Mosaico de imágenes flotantes -->
     <div class="md:w-1/3 mt-6 md:mt-0 relative grid grid-cols-2 gap-4">
         <img src="https://www.infodiez.com/wp-content/uploads/2021/03/Medalla-oro_infodiez.jpg"
