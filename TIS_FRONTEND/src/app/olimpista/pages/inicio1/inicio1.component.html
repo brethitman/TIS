@@ -1,17 +1,38 @@
 <div class="contenedor-home">
     <div class="home-img flex items-center justify-center h-[500px] w-full bg-blue-500" style="background: rgb(253,253,253); 
              background: linear-gradient(0deg, rgba(253,253,253,1) 6%, rgba(151,58,58,1) 39%, rgba(113,110,165,1) 88%); 
-             height: 500px; width: 100%;">
+             height: 500px; width: 100%; overflow: hidden;position: absolute;">
 
-        <div class="imgane-banner">
+        <div class="imgane-banner" style="overflow: hidden; margin-left: 30px; max-width: 100%;">
             <img src="icon/ohsans-i.png" alt="Imagen del Banner"
-                class="imge-banner max-w-[330px] h-auto rounded-lg animate-movimiento" />
+                class="imge-banner max-w-[340px] h-auto rounded-lg animate-movimiento" />
         </div>
-        <section class="banner-contenedor text-center text-white mr-5" 
-        style="margin-left: 30px; text-align: left;">
-            <h1 style="font-size: 50px;">OLIMPIADAS CIENTIFICAS<br />Oh! SANSI</h1>
+        <section class="banner-contenedor text-center text-white"
+            style="margin-left: 60px; text-align: left; overflow: hidden;max-width: 100%;">
+            <h1 class="font-extrabolt bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500"
+                style="font-size: 50px; ">
+                OLIMPIADAS CIENTIFICAS<br />Oh! SANSI</h1>
+            <h2 style="font-size: 30px; font-style: italic;"> Universidad Mayor de San Simon</h2>
         </section>
-
+        <div class="burbujas h-screen bg-blue-500">
+            <!-- Burbujas -->
+            <div class="burbuja bg-white opacity-30 rounded-full animate-burbuja absolute w-[80px] h-[80px] left-[10%]">
+            </div>
+            <div class="burbuja bg-white opacity-30 rounded-full animate-burbuja absolute w-[90px] h-[90px] left-[25%]"
+                style="animation-delay: 5s;"></div>
+            <div class="burbuja bg-white opacity-30 rounded-full animate-burbuja absolute w-[20px] h-[20px] left-[15%]"
+                style="animation-delay: 7s;"></div>
+            <div class="burbuja bg-white opacity-30 rounded-full animate-burbuja absolute w-[70px] h-[70px] left-[20%]"
+                style="animation-delay: 3s;"></div>
+            <div class="burbuja bg-white opacity-30 rounded-full animate-burbuja absolute w-[10px] h-[10px] left-[50%]"
+                style="animation-delay: 2s;"></div>
+            <div class="burbuja bg-white opacity-30 rounded-full animate-burbuja absolute w-[50px] h-[50px] left-[45%]"
+                style="animation-delay: 1s;"></div>
+            <div class="burbuja bg-white opacity-30 rounded-full animate-burbuja absolute w-[30px] h-[30px] left-[35%]"
+                style="animation-delay: 9s;"></div>
+            <div class="burbuja bg-white opacity-30 rounded-full animate-burbuja absolute w-[100px] h-[100px] left-[55%]"
+                style="animation-delay: 6s;"></div>
+        </div>
     </div>
 
     <style>
@@ -35,6 +56,32 @@
 
         .animate-movimiento {
             animation: movimiento 2.5s linear infinite;
+        }
+
+        /* Keyframes personalizados */
+        @keyframes burbujas {
+            0% {
+                bottom: -100px;
+                opacity: 0;
+            }
+
+            30% {
+                transform: translateX(30px);
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+
+            100% {
+                bottom: 100vh;
+                opacity: 0;
+            }
+        }
+
+        /* Clases de animación */
+        .animate-burbuja {
+            animation: burbujas 3s linear infinite;
         }
     </style>
 </div>
