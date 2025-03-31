@@ -20,13 +20,13 @@ export class NavMenuComponent {
   // Opciones cuando está autenticado
   private authMenuOptions: MenuOption[] = [
     { name: "REPORTES", path: "/admin/products" },
-    { name: "areas", path: "/admin/areas" },
+    { name: "Areas", path: "/admin/areas" },
     { name: "Registro", path: "/admin/sales" }
   ];
 
   // Opciones cuando no está autenticado
   private noAuthMenuOptions: MenuOption[] = [
-    { name: "pagina1", path: "/inicio/waba" },
+    { name: "Home", path: "/inicio/waba" },
     { name: "pagina2", path: "/inicio/look" },
     { name: "login", path: "/inicio/dodog" }
   ];

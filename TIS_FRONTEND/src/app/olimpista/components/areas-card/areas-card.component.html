@@ -85,73 +85,93 @@
             </span>
           </p>
 
-       <!-- Contenedor de botones alineados y centrados -->
-          <div class="flex justify-center space-x-2 mt-4">
-            <!-- Botón de Editar con ícono -->
-            <button (click)="openEditModal(i)" 
-              class="px-4 py-2 bg-blue-500 text-white rounded text-sm flex items-center space-x-2 transition-all duration-200 transform hover:bg-blue-600 hover:scale-105 active:scale-95">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-                <path d="M12.146 0.854a1 1 0 0 1 1.415 1.415l-9.5 9.5a1 1 0 0 1-.416.229l-3 1a1 1 0 0 1-.606-.606l1-3a1 1 0 0 1 .229-.416l9.5-9.5a1 1 0 0 1 1.415 1.415L7.207 6.5 9.5 7.207l4.646-4.646z"/>
-              </svg>
-              <span>Editar</span>
-            </button>
-
-            <!-- Botón de Habilitar/Deshabilitar con ícono -->
-            <button (click)="toggleHabilitacionModal(i)" 
-              [class.bg-green-500]="!categoria.habilitacion"
-              [class.bg-yellow-500]="categoria.habilitacion" 
-              class="text-white px-3 py-1 rounded text-sm flex items-center space-x-2 transition-all duration-200 transform hover:scale-105 active:scale-95"
-              [ngClass]="categoria.habilitacion ? 'hover:bg-yellow-600' : 'hover:bg-green-600'">
+                <button (click)="openEditModal(i)" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                  Editar
+                </button>
+                <button (click)="toggleHabilitacionModal(i)" [class.bg-green-500]="!categoria.habilitacion"
+                  [class.bg-yellow-500]="categoria.habilitacion" class="text-white px-3 py-1 rounded text-sm">
+                  {{ categoria.habilitacion ? 'Deshabilitar' : 'Habilitar' }}
+                </button>
+                <button (click)="openDeleteModal(categoria.id)" class="text-white bg-red-500 px-3 py-1 rounded text-sm">
+                  Eliminar
+                </button>
               
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi" 
-                [ngClass]="categoria.habilitacion ? 'bi-toggle-off' : 'bi-toggle-on'" viewBox="0 0 16 16">
-                <path *ngIf="categoria.habilitacion" d="M8 1a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm0 13a6 6 0 1 1 0-12 6 6 0 0 1 0 12z"/>
-                <path *ngIf="!categoria.habilitacion" d="M8 1a7 7 0 1 0 0 14 7 7 0 0 0 0-14zm0 13a6 6 0 1 1 0-12 6 6 0 0 1 0 12z"/>
-              </svg>
-              <span>{{ categoria.habilitacion ? 'Deshabilitar' : 'Habilitar' }}</span>
-            </button>
-
-            <!-- Botón de Eliminar con ícono -->
-            <button (click)="openDeleteModal(categoria.id)" 
-              class="text-white bg-red-500 px-3 py-1 rounded text-sm flex items-center space-x-2 transition-all duration-200 transform hover:bg-red-600 hover:scale-105 active:scale-95">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-              </svg>
-              <span>Eliminar</span>
-            </button>
+            </div>
           </div>
-
         </div>
       </div>
-    </div>
-  </div>
+      <!-- Modal de confirmación para eliminar -->
+      <div *ngIf="isDeleteModalOpen"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+          <div class="p-6">
+            <h2 class="text-xl font-bold mb-4">Confirmar eliminación</h2>
+            <p class="mb-4">¿Estás seguro que deseas eliminar esta categoría?</p>
 
- <!-- Modal de confirmación -->
-  <div *ngIf="isConfirmModalOpen" class="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50"
-  style="background-color: rgba(75, 85, 99, 0.3);">
-  <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-    <h2 class="text-lg font-bold">Mensaje de Confirmación</h2>
-    <p class="text-sm text-gray-600">
-      ¿Estás seguro de que deseas {{ getHabilitacionTexto() }} esta categoría?
-    </p>
-    <div class="mt-4 flex justify-end space-x-2">
-      <!-- Botón de Confirmar con animación -->
-      <button (click)="toggleHabilitar()" 
-        class="px-4 py-2 bg-red-500 text-white rounded transition-all duration-200 transform hover:bg-red-600 hover:scale-105 active:scale-95">
-        Sí, {{ getHabilitacionTexto() }}
-      </button>
-      <!-- Botón de Cancelar con animación -->
-      <button (click)="closeConfirmModal()" 
-        class="px-4 py-2 bg-gray-300 rounded transition-all duration-200 transform hover:bg-gray-400 hover:scale-105 active:scale-95">
-        Cancelar
-      </button>
-    </div>
-  </div>
-  </div>
+<<<<<<<<< Temporary merge branch 1
+            <div class="flex justify-end gap-2">
+              <button type="button" (click)="closeDeleteModal()"
+                class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
+                Cancelar
+              </button>
+              <button type="button" (click)="confirmDelete()"
+                class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Modal de Edición de Categoría -->
+      <div *ngIf="isEditModalOpen"
+        class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-96">
+          <h2 class="text-xl font-bold mb-4">Editar Categoría</h2>
+          <p class="text-sm text-gray-500 mb-4">Modifica los datos de la categoría.</p>
 
+          <form (ngSubmit)="saveEdit()">
+            <!-- Nombre de Categoría -->
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2">Nombre</label>
+              <input type="text" [(ngModel)]="editedCategoria.nombre_nivel" name="editedNombre"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
 
+            <!-- Descripción -->
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2">Descripción</label>
+              <input type="text" [(ngModel)]="editedCategoria.descripcion" name="editedDescripcion"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
 
+            <!-- Fecha de examen -->
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2">Fecha de examen</label>
+              <input type="date" [(ngModel)]="editedCategoria.fecha_examen" name="editedFecha"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+
+            <!-- Costo -->
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2">Costo</label>
+              <input type="text" [(ngModel)]="editedCategoria.costo" name="editedCosto"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+
+            <!-- Botones -->
+            <div class="flex justify-end space-x-2">
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Guardar
+              </button>
+              <button type="button" (click)="closeEditModal()"
+                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+=========
       <!-- Modal de confirmación -->
       <div *ngIf="isConfirmModalOpen" class="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50"
         style="background-color: rgba(75, 85, 99, 0.3); ">
@@ -175,7 +195,6 @@
       <ng-template #noCategorias>
         <p class="text-gray-500 text-sm italic">No hay categorías registradas.</p>
       </ng-template>
-
 
       <!-- Botón para añadir nueva categoría -->
       <button (click)="openModal()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
@@ -371,3 +390,4 @@
         </div>
       </form>
     </div>
+>>>>>>>>> Temporary merge branch 2

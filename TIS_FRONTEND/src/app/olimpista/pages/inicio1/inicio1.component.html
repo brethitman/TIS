@@ -1,12 +1,95 @@
+<<<<<<< HEAD
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 <section class="w-full bg-gradient-to-r from-red-600 to-purple-700 py-6 px-4 animate-gradient">
+=======
+<div class="contenedor-home relative"> <!-- Añadido relative aquí -->
+    <div class="home-img flex items-center justify-center h-[500px] w-full" style="background: rgb(253,253,253); 
+             background: linear-gradient(0deg, rgba(253,253,253,1) 6%, rgba(151,58,58,1) 39%, rgba(113,110,165,1) 88%); 
+             height: 500px; width: 100%; overflow: hidden; position: relative;"> <!-- Cambiado a relative -->
+        
+        <!-- Contenido del banner (imagen y texto) -->
+        <div class="imgane-banner" style="margin-left: 30px; z-index: 2;">
+            <img src="icon/ohsans-i.png" alt="Imagen del Banner"
+                class="imge-banner max-w-[340px] h-auto rounded-lg animate-movimiento" />
+        </div>
+        <section class="banner-contenedor text-center text-white"
+            style="margin-left: 60px; text-align: left; z-index: 2;">
+            <h1 class="font-extrabolt bg-clip-text text-transparent bg-gradient-to-r from-slate-300 to-stone-100"
+                style="font-size: 50px;">
+                OLIMPIADAS CIENTIFICAS<br />Oh! SANSI</h1>
+            <h2 style="font-size: 30px; font-style: italic;"> Universidad Mayor de San Simon</h2>
+        </section>
+        
+        <!-- Contenedor de burbujas corregido -->
+        <div class="burbujas absolute inset-0 overflow-hidden pointer-events-none" style="z-index: 1;">
+            <!-- Burbujas -->
+            <div class="burbuja"></div>
+            <div class="burbuja" style="width: 90px; height: 90px; left: 25%; animation-delay: 5s;"></div>
+            <div class="burbuja" style="width: 20px; height: 20px; left: 15%; animation-delay: 7s;"></div>
+            <div class="burbuja" style="width: 70px; height: 70px; left: 20%; animation-delay: 3s;"></div>
+            <div class="burbuja" style="width: 10px; height: 10px; left: 50%; animation-delay: 2s;"></div>
+            <div class="burbuja" style="width: 50px; height: 50px; left: 45%; animation-delay: 1s;"></div>
+            <div class="burbuja" style="width: 30px; height: 30px; left: 35%; animation-delay: 9s;"></div>
+            <div class="burbuja" style="width: 100px; height: 100px; left: 55%; animation-delay: 6s;"></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos para las burbujas */
+    .burbuja {
+        position: absolute;
+        background: white;
+        opacity: 0.3;
+        border-radius: 50%;
+        bottom: -100px;
+        animation: burbujas 3s linear infinite;
+        width: 80px;
+        height: 80px;
+        left: 10%;
+    }
+
+    @keyframes burbujas {
+        0% {
+            bottom: -100px;
+            opacity: 0;
+            transform: translateX(0);
+        }
+        30% {
+            transform: translateX(30px);
+        }
+        50% {
+            opacity: 0.4;
+        }
+        100% {
+            bottom: 100%;
+            opacity: 0;
+        }
+    }
+
+    /* Mantén tus otros estilos existentes */
+    @keyframes movimiento {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(30px); }
+        100% { transform: translateY(0); }
+    }
+    .animate-movimiento {
+        animation: movimiento 2.5s linear infinite;
+    }
+</style>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<section class="w-full bg-gradient-to-r from-red-600 to-blue-700 py-6 px-4 animate-gradient">
+>>>>>>> 7f5440ab9c0b351d27194209fef2b6b26a4a77cf
     <h1 class="text-white text-3xl font-bold ">PRESENTACIÓN</h1>
 </section>
 
 <section class="flex flex-col md:flex-row justify-between items-center p-8 bg-white m-8">
     <!-- Texto -->
     <div class="md:w-2/3 text-center md:text-left space-y-4">
+<<<<<<< HEAD
         <p class="text-lg leading-relaxed animate__animated animate__fadeInUp animate__delay-1s">
             Las <strong>Olimpiadas Científicas en Bolivia</strong> son una competencia educativa anual que tiene como objetivo fomentar el talento y la creatividad de los estudiantes en áreas clave como <strong> ciencias, matemáticas, física, biología y tecnología.</strong> 
         </p>
@@ -64,3 +147,178 @@ img {
 
 </style>
 
+=======
+        <p class="text-lg leading-relaxed animate_animated animatefadeInUp animate_delay-1s">
+            Las <strong>Olimpiadas Científicas en Bolivia</strong> son una competencia educativa anual que tiene como
+            objetivo fomentar el talento y la creatividad de los estudiantes en áreas clave como <strong> ciencias,
+                matemáticas, física, biología y tecnología.</strong>
+        </p>
+        <p class="text-lg leading-relaxed animate_animated animatefadeInUp animate_delay-2s">
+            A través de este evento, buscamos incentivar el pensamiento crítico y la innovación, permitiendo a los
+            jóvenes enfrentar desafíos que estimulan su capacidad de resolver problemas de manera creativa.
+        </p>
+        <p class="text-lg leading-relaxed animate_animated animatefadeInUp animate_delay-3s">
+            Además, las Olimpiadas promueven el trabajo en equipo, un valor esencial para el <strong> desarrollo
+                personal y profesional de los estudiantes.</strong> Nuestro propósito es inspirar a los jóvenes
+            bolivianos a utilizar sus conocimientos para contribuir al progreso del país, brindándoles la oportunidad de
+            destacar en un entorno académico y científico que abre puertas a nuevas oportunidades tanto a nivel nacional
+            como internacional.
+        </p>
+    </div>
+    <!-- Mosaico de imágenes flotantes -->
+    <div class="md:w-1/3 mt-6 md:mt-0 relative grid grid-cols-2 gap-4">
+        <img src="https://www.infodiez.com/wp-content/uploads/2021/03/Medalla-oro_infodiez.jpg"
+            alt="Medalla Olimpiada 1" class="w-full h-40 object-cover rounded-md shadow-md floating">
+        <img src="https://www.minedu.gob.bo/images/unicom/vd.jpeg" alt="Medalla Olimpiada 2"
+            class="w-full h-40 object-cover rounded-md shadow-md floating">
+        <img src="https://www.lobodelaire.com/contenido/imagenes/noticias/2019/03/14/not-7140-1552531880olimpiadas-lda.jpg"
+            alt="Medalla Olimpiada 3" class="w-full h-40 object-cover rounded-md shadow-md floating">
+        <img src="https://www.minedu.gob.bo/images/3333.png" alt="Medalla Olimpiada 4"
+            class="w-full h-40 object-cover rounded-md shadow-md floating">
+    </div>
+</section>
+
+<section class="w-full bg-gradient-to-r from-red-600 to-blue-700 py-6 px-4 animate-gradient">
+    <h1 class="text-white text-3xl font-bold">INFORMACIÓN</h1>
+</section>
+
+<div class="w-full bg-white py-12 px-8">
+    <div class="grid gap-8 md:grid-cols-3 md:gap-6 max-w-6xl mx-auto">
+        <!-- Tarjeta 1 - Fechas -->
+        <div
+            class="relative rounded-xl bg-white p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border-t-4 border-red-600">
+            <div
+                class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-red-600 to-blue-700 text-white shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </div>
+            <h2 class="text-center text-xl font-bold mb-4 mt-4 text-gray-800">FECHAS IMPORTANTES</h2>
+            <ul class="space-y-3 text-gray-700">
+                <li class="flex items-start">
+                    <span class="text-red-600 mr-2">•</span>
+                    <span><strong>Inscripciones:</strong> 15 Marzo - 30 Abril</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-blue-600 mr-2">•</span>
+                    <span><strong>Primera fase:</strong> 20 Mayo</span>
+                </li>
+                <li class="flex items-start">
+                    <span class="text-purple-600 mr-2">•</span>
+                    <span><strong>Final nacional:</strong> 15 Agosto</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Tarjeta 2 - Categorías -->
+        <div
+            class="relative rounded-xl bg-white p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border-t-4 border-blue-600">
+            <div
+                class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-purple-700 text-white shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+            </div>
+            <h2 class="text-center text-xl font-bold mb-4 mt-4 text-gray-800">AREAS</h2>
+            <div class="grid grid-cols-2 gap-3">
+                <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm text-center">Matemáticas</span>
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm text-center">Física</span>
+                <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm text-center">Química</span>
+                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm text-center">Biología</span>
+                <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm text-center">Astronomía</span>
+                <span
+                    class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm text-center">Informática</span>
+            </div>
+        </div>
+
+        <!-- Tarjeta 3 - Contacto -->
+        <div
+            class="relative rounded-xl bg-white p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border-t-4 border-purple-600">
+            <div
+                class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-red-600 text-white shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+            </div>
+            <h2 class="text-center text-xl font-bold mb-4 mt-4 text-gray-800">CONTACTO</h2>
+            <div class="space-y-3 text-gray-700">
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600 mr-2" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                    <span>+591 12345678</span>
+                </div>
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 mr-2" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span>{{ 'info@ohsansi.edu.bo' }}</span>
+                </div>
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600 mr-2" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>Av. Arce #1234, La Paz</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .floating {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+</style>
+<footer class="bg-gradient-to-r from-red-600 to-blue-700 py-6 px-4 text-white">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-center space-x-5 mb-4">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
+                class="hover:opacity-80 transition-opacity">
+                <img src="https://img.icons8.com/fluent/30/ffffff/facebook-new.png" alt="Facebook" />
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
+                class="hover:opacity-80 transition-opacity">
+                <img src="https://img.icons8.com/fluent/30/ffffff/linkedin-2.png" alt="LinkedIn" />
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
+                class="hover:opacity-80 transition-opacity">
+                <img src="https://img.icons8.com/fluent/30/ffffff/instagram-new.png" alt="Instagram" />
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
+                class="hover:opacity-80 transition-opacity">
+                <img src="https://img.icons8.com/fluent/30/ffffff/twitter.png" alt="Twitter" />
+            </a>
+        </div>
+        <p class="text-center text-sm">
+            © 2023 Oh! SANSI Olimpiadas Científicas. Todos los derechos reservados.
+        </p>
+    </div>
+</footer>
+>>>>>>> 7f5440ab9c0b351d27194209fef2b6b26a4a77cf
