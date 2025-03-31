@@ -11,10 +11,14 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login-page.component.html'
 })
 export class LoginPageComponent {
+togglePasswordVisibility() {
+throw new Error('Method not implemented.');
+}
   email = '';
   password = '';
   isLoading = false;
   errorMessage = '';
+passwordVisible: any;
 
   constructor(
     private authService: AuthService,
@@ -39,5 +43,8 @@ export class LoginPageComponent {
         this.errorMessage = 'Error en el servidor';
       }
     });
+  }
+  onCancel() {
+    this.router.navigate(['/inicio/waba']); // Cambia a ruta de Home
   }
 }

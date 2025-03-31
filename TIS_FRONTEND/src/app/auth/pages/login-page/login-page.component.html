@@ -1,62 +1,75 @@
-<section class="flex items-center justify-center min-h-screen bg-gray-50">
-  <form
-    (ngSubmit)="onSubmit()"
-    class="login__form bg-white p-8 rounded-lg shadow-md w-full max-w-sm border border-gray-200"
-  >
-    <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-800">Iniciar Sesión</h1>
-      <p class="text-sm text-gray-500 mt-1">
-        Ingresa tus credenciales y comienza a gestionar tu inventario
-      </p>
-    </div>
 
-    @if (errorMessage) {
-      <div class="mb-4 p-3 bg-red-100 text-red-700 text-sm rounded">
+
+<div class="home-img flex items-center justify-center h-[500px] w-full" 
+     style="background: rgb(253,253,253); 
+            background: linear-gradient(0deg, rgba(253,253,253,1) 6%, rgba(151,58,58,1) 39%, rgba(113,110,165,1) 88%); 
+            height: 100vh; width: 100%; overflow: hidden; position: relative;">
+  <!-- Formulario centrado sobre el gradiente -->
+  <section class="flex items-center justify-center absolute inset-0  px-4">
+    <form
+      (ngSubmit)="onSubmit()"
+      class="p-8 rounded-2xl shadow-lg w-full max-w-md border border-white"
+      style="background: rgba(255, 255, 255, 0.699);"
+    >
+      <div class="mb-6 text-center">
+        <h1 class="text-3xl font-bold text-gray-900">Bienvenido</h1>
+        <p class="text-gray-600 mt-2">Ingresa tus credenciales para continuar</p>
+      </div>
+
+      <div *ngIf="errorMessage" class="mb-4 p-3 bg-red-50 border border-red-400 text-red-700 text-sm rounded-lg">
         {{ errorMessage }}
       </div>
-    }
 
-    <div class="mb-4">
-      <input
-        [(ngModel)]="email"
-        name="email"
-        type="email"
-        placeholder="Correo electrónico"
-        class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
-        required
+      <div class="mb-4">
+        <label class="block text-gray-700 font-medium mb-1"><strong>Correo Electrónico</strong></label>
+        <input
+          [(ngModel)]="email"
+          name="email"
+          type="email"
+          placeholder="example@correo.com"
+          class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+          required
+        >
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-1"><strong>Contraseña</strong></label>
+        <input
+          [(ngModel)]="password"
+          name="password"
+          type="password"
+          placeholder="••••••••"
+          class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+          required
+        >
+      </div>
+
+      <!-- Botón de Iniciar Sesión  -->
+      <button
+        type="submit"
+        class="btn bg-black text-white w-full py-3 rounded-2xl hover:bg-gray-800 transition duration-200 flex justify-center items-center gap-2"
+        [disabled]="isLoading"
       >
-    </div>
+        <ng-container *ngIf="isLoading; else notLoading">
+          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Validando...</span>
+        </ng-container>
+        <ng-template #notLoading>
+          <span>Iniciar Sesión</span>
+        </ng-template>
+      </button>
 
-    <div class="mb-6">
-      <input
-        [(ngModel)]="password"
-        name="password"
-        type="password"
-        placeholder="Contraseña"
-        class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-black"
-        required
+      <!-- Botón de Cancelar -->
+      <button
+        type="button"
+        (click)="onCancel()"
+        class="btn bg-gray-50 text-black w-full py-3 rounded-2xl hover:bg-gray-300 transition duration-200 mt-4"
       >
-    </div>
-
-    <button
-      type="submit"
-      class="btn bg-black text-white w-full py-3 rounded hover:bg-gray-800 transition duration-200 flex justify-center items-center gap-2"
-      [disabled]="isLoading"
-    >
-      @if (isLoading) {
-        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        <span>Validando...</span>
-      } @else {
-        <span>Iniciar Sesión</span>
-      }
-    </button>
-
-    <div class="mt-4 text-center text-sm text-gray-600">
-      ¿No tienes cuenta?
-      <a routerLink="/auth/register" class="text-black hover:underline">Regístrate</a>
-    </div>
-  </form>
-</section>
+        Cancelar
+      </button>
+    </form>
+  </section>
+</div>
