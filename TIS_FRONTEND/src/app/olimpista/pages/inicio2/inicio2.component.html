@@ -1,19 +1,30 @@
 <div class="container">
-  <h1>Formulario de Inscripción</h1>
-<!-- Estilos integrados en el mismo archivo -->
+  <!-- Estilos integrados en el mismo archivo -->
 <style>
   /* Estilos generales */
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+  
   .container {
     max-width: 800px;
     margin: 0 auto;
     font-family: Arial, sans-serif;
+    position: relative;
   }
 
-  /* Cabecera con gradiente */
+  /* Cabecera con gradiente - modificada para ocupar todo el ancho */
   .header-banner {
     background: linear-gradient(to right, #ff0000, #800080, #0000ff);
-    padding: 10px 20px;
+    padding: 20px 20px; /* Aumentado de 10px a 20px para hacerlo más alto */
     margin-bottom: 20px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100vw;
+    box-sizing: border-box;
   }
 
   .header-banner h1 {
@@ -21,28 +32,29 @@
     margin: 0;
     font-weight: bold;
     font-size: 24px;
+    text-align: left;
+    max-width: 800px;
+    margin: 0 auto;
   }
-
   /* Estilos para secciones */
   .form-section {
     margin-bottom: 30px;
   }
 
   .section-title {
-    font-size: 16px;
+    font-size: 18px; 
     font-weight: bold;
     margin-bottom: 5px;
     border-bottom: 1px solid #000;
     padding-bottom: 5px;
-  }
+}
 
-  .section-subtitle {
-    font-size: 12px;
+.section-subtitle {
+    font-size: 14px; 
     color: #666;
     margin-bottom: 15px;
     font-style: italic;
-  }
-
+}
   /* Cuadro de monto a pagar */
   .monto-box {
     border: 1px solid #ccc;
@@ -128,12 +140,14 @@
     padding: 6px 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    font-size: 16px; /* Tamaño aumentado */
   }
 
   label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+      font-size: 16px; /* Tamaño aumentado */
   }
 
   /* Botones */
@@ -211,6 +225,80 @@
      .text-center {
        text-align: center;
      }
+
+     .footer {
+      background-color: #0a005b; /* Azul oscuro */
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 40px;
+      width: 100vw;
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      box-sizing: border-box;
+    }
+    
+    .support-info {
+      font-family: Arial, sans-serif;
+    }
+    
+    .support-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .support-email {
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: white;
+      text-decoration: none;
+      display: block;
+    }
+    
+    .support-phone {
+      font-size: 16px;
+    }
+    
+    .footer-logo-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    
+    .logo-ciencia {
+      max-width: 130px; /* Aumentado de 100px a 130px */
+      height: auto;
+      position: relative;
+      z-index: 2;
+      margin-right: 15px; /* Espacio entre los íconos */
+    }
+    
+    .logo-atomo {
+      max-width: 130px; /* Aumentado de 100px a 130px */
+      height: auto;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .animate-movimiento {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+      100% {
+        transform: translateY(0px);
+      }
+    }
    </style>
    
    <div class="header-banner">
@@ -428,4 +516,16 @@
     <span *ngIf="!cargandoNiveles">Guardar Inscripción</span> 
     <span *ngIf="cargandoNiveles" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 
   </button>
+</div>
+
+<div class="footer">
+  <div class="support-info">
+    <div class="support-title">Support</div>
+    <a href="mailto:bluenebuladigitalsolutions@gmail.com" class="support-email">bluenebuladigitalsolutionsgmail.com</a>
+    <div class="support-phone">+591 79766695</div>
+  </div>
+  <div class="footer-logo-container">
+    <img src="icon/ciencia.png" alt="Imagen" class="logo-ciencia animate-movimiento" />
+    <img src="icon/atomo.png" alt="Imagen" class="logo-atomo animate-movimiento" />
+  </div>
 </div>
