@@ -156,4 +156,19 @@ class NivelCategoriaController extends Controller
         }
     }
 
+
+
+
+    //PRUEBA
+    public function porArea($areaId)
+{
+    $niveles = NivelCategoria::where('id_area', $areaId)->get();
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Niveles de categoría por área',
+        'nivelesCategoria' => $niveles
+    ]);
 }
+}
+

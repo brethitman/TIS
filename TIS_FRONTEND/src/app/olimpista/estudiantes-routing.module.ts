@@ -15,8 +15,7 @@ const routes: Routes = [
    {
     path: 'Areas',
     component: AreasComponent,
-   },
-
+   }
 
 ];
 

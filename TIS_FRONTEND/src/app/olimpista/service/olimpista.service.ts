@@ -18,4 +18,11 @@ export class OlimpistaService {
         map((resp) => resp.olimpistas)
       );
   }
+  public create(olimpista: Partial<Olimpista>): Observable<Olimpista> {
+    return this.http.post<Olimpista>(
+      `${environment.apiUrl}/olimpista`, 
+      olimpista
+    );
+  
+}
 }

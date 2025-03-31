@@ -25,4 +25,6 @@ class AreaResource extends JsonResource
             'updatedAt'   => $this->updated_at,
         ];
     }
+
 }
+

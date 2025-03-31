@@ -25,4 +25,15 @@ export class AreaService {
    updateArea(areaId: number, area: Partial<Area>): Observable<Area> {
     return this.http.put<Area>(`${this.apiUrl}/${areaId}`, area);
   }
+
+
+  getAreas(): Observable<Area[]> {
+    return this.http.get<Area[]>(this.apiUrl);
+  }
+  
+  getAreaById(id: number): Observable<Area> {
+    return this.http.get<Area>(`${this.apiUrl}/${id}`);
+  }
+
+  
 }
