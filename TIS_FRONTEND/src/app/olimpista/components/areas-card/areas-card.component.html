@@ -55,31 +55,35 @@
         </tbody>
       </table>
     </div>
-    <!-- Contenedor de Categorías -->
-    <div class="border border-gray-200 p-4 bg-white rounded-lg">
-      <h4 class="text-md font-semibold text-gray-700 mb-3">Categorías</h4>
+   <!-- Contenedor de Categorías -->
+<div class="border border-gray-200 p-4 bg-white rounded-lg">
+  <h4 class="text-md font-semibold text-gray-700 mb-3">Categorías</h4>
 
-      <!-- Verifica si hay categorías -->
-      <div *ngIf="categorias.length > 0; else noCategorias">
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <div *ngFor="let categoria of categorias; let i = index"
-            class="bg-white shadow-md rounded-lg overflow-hidden">
-            <!-- Parte superior con color teal -->
-            <div class="bg-teal-600 p-4 text-white">
-              <h3 class="text-lg font-semibold">{{ categoria.nombre_nivel }}</h3>
-              <p class="text-sm">{{ categoria.descripcion }}</p>
-            </div>
+  <!-- Verifica si hay categorías -->
+  <div *ngIf="categorias.length > 0; else noCategorias">
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-8 m-8">
+      <div *ngFor="let categoria of categorias; let i = index" class="bg-white shadow-md rounded-lg overflow-hidden">
+       <!-- Parte superior con color personalizado y animación -->
+<!-- Parte superior con color personalizado y animación hacia la derecha con hover más claro -->
+<div class="bg-[#6E64C9] p-4 text-white transition-all duration-300 hover:bg-[#7A6EC9] hover:scale-105 transform origin-left">
+  <h3 class="text-lg font-semibold">{{ categoria.nombre_nivel }}</h3>
+  <p class="text-sm">{{ categoria.descripcion }}</p>
+</div>
 
-            <!-- Parte inferior blanca con detalles -->
-            <div class="p-4">
-              <h3 class="font-bold">nombre : {{ categoria.nombre_nivel }}</h3>
-              <p class="text-sm">descripcion : {{ categoria.descripcion || 'Sin descripción' }}</p>
-              <p class="text-sm">Fecha examen: {{ categoria.fecha_examen | date:'dd/MM/yyyy' }}</p>
-              <p class="text-sm">Costo: {{ categoria.costo }} Bs</p>
-              <p class="text-sm">Estado:
-                <span [class.text-green-500]="categoria.habilitacion" [class.text-red-500]="!categoria.habilitacion">
-                  {{ categoria.habilitacion ? 'Habilitado' : 'Deshabilitado' }}
-                </span>
+
+
+
+        <!-- Parte inferior blanca con detalles -->
+        <div class="p-4">
+          <h3 class="font-bold">Nombre : {{ categoria.nombre_nivel }}</h3>
+          <p class="text-sm">Descripcion : {{ categoria.descripcion || 'Sin descripción' }}</p>
+          <p class="text-sm">Fecha examen: {{ categoria.fecha_examen | date:'dd/MM/yyyy' }}</p>
+          <p class="text-sm">Costo: {{ categoria.costo }} Bs</p>
+          <p class="text-sm">Estado:
+            <span [class.text-green-500]="categoria.habilitacion" [class.text-red-500]="!categoria.habilitacion">
+              {{ categoria.habilitacion ? 'Habilitado' : 'Deshabilitado' }}
+            </span>
+          </p>
 
                 <button (click)="openEditModal(i)" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                   Editar
@@ -88,24 +92,23 @@
                   [class.bg-yellow-500]="categoria.habilitacion" class="text-white px-3 py-1 rounded text-sm">
                   {{ categoria.habilitacion ? 'Deshabilitar' : 'Habilitar' }}
                 </button>
-                <!-- Botón de eliminar -->
                 <button (click)="openDeleteModal(categoria.id)" class="text-white bg-red-500 px-3 py-1 rounded text-sm">
                   Eliminar
                 </button>
-              </p>
+              
             </div>
           </div>
         </div>
       </div>
       <!-- Modal de confirmación para eliminar -->
       <div *ngIf="isDeleteModalOpen"
-        class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50"
-        style="background-color: rgba(75, 85, 99, 0.3); ">
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
           <div class="p-6">
             <h2 class="text-xl font-bold mb-4">Confirmar eliminación</h2>
             <p class="mb-4">¿Estás seguro que deseas eliminar esta categoría?</p>
 
+<<<<<<<<< Temporary merge branch 1
             <div class="flex justify-end gap-2">
               <button type="button" (click)="closeDeleteModal()"
                 class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600">
@@ -119,7 +122,56 @@
           </div>
         </div>
       </div>
+      <!-- Modal de Edición de Categoría -->
+      <div *ngIf="isEditModalOpen"
+        class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-96">
+          <h2 class="text-xl font-bold mb-4">Editar Categoría</h2>
+          <p class="text-sm text-gray-500 mb-4">Modifica los datos de la categoría.</p>
 
+          <form (ngSubmit)="saveEdit()">
+            <!-- Nombre de Categoría -->
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2">Nombre</label>
+              <input type="text" [(ngModel)]="editedCategoria.nombre_nivel" name="editedNombre"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+
+            <!-- Descripción -->
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2">Descripción</label>
+              <input type="text" [(ngModel)]="editedCategoria.descripcion" name="editedDescripcion"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+
+            <!-- Fecha de examen -->
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2">Fecha de examen</label>
+              <input type="date" [(ngModel)]="editedCategoria.fecha_examen" name="editedFecha"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+
+            <!-- Costo -->
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2">Costo</label>
+              <input type="text" [(ngModel)]="editedCategoria.costo" name="editedCosto"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+
+            <!-- Botones -->
+            <div class="flex justify-end space-x-2">
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Guardar
+              </button>
+              <button type="button" (click)="closeEditModal()"
+                class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+=========
       <!-- Modal de confirmación -->
       <div *ngIf="isConfirmModalOpen" class="fixed inset-0 flex items-center justify-center bg-gray-600 bg-opacity-50"
         style="background-color: rgba(75, 85, 99, 0.3); ">
@@ -143,7 +195,6 @@
       <ng-template #noCategorias>
         <p class="text-gray-500 text-sm italic">No hay categorías registradas.</p>
       </ng-template>
-
 
       <!-- Botón para añadir nueva categoría -->
       <button (click)="openModal()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
@@ -310,8 +361,8 @@
     </div>
     <!-- Modal de Edición de Categoría -->
     <div *ngIf="isEditModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center"
-      style="background-color: rgba(75, 85, 99, 0.3);">
-      <div class="bg-white p-5 rounded-lg shadow-lg max-w-md" style="width: 600px; height: 400px;">
+    style="background-color: rgba(75, 85, 99, 0.3);">
+    <div class="bg-white p-5 rounded-lg shadow-lg max-w-md" style="width: 600px; height: 400px;">
       <h2 class="text-xl font-bold text-gray-900">Editar Categoría</h2>
       <p class="text-sm text-gray-500 mb-4">Modifica los datos de la categoría.</p>
 
@@ -319,26 +370,24 @@
         <!-- Nombre de Categoría -->
         <label class="text-sm text-gray-700">Nombre de la Categoría</label>
         <input type="text" [(ngModel)]="editedCategoria.nombre_nivel" name="editedNombre"
-        class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
+          class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
 
         <!-- Fecha de examen -->
         <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
         <input type="date" [(ngModel)]="editedCategoria.fecha_examen" name="editedFecha"
-        class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
+          class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
 
         <!-- Costo -->
         <label class="text-sm text-gray-700 mt-4 block">Costo</label>
         <input type="text" [(ngModel)]="editedCategoria.costo" name="editedCosto"
-        class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
+          class="mt-2 p-2 border border-gray-300 rounded w-full focus:ring-2 focus:ring-blue-400">
 
         <!-- Botones -->
         <div class="mt-5 flex justify-end gap-2">
-        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Guardar</button>
-        <button type="button" (click)="closeEditModal()"
-          class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Cancelar</button>
+          <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Guardar</button>
+          <button type="button" (click)="closeEditModal()"
+            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Cancelar</button>
         </div>
       </form>
-      </div>
     </div>
-  </div>
-</div>
+>>>>>>>>> Temporary merge branch 2
