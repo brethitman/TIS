@@ -4,6 +4,4 @@ export interface Area {
   descripcion: null | string;
   createdAt:   Date;
   updatedAt:   Date;
-
 }
-

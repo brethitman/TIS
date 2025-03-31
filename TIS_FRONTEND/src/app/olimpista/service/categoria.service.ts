@@ -8,7 +8,6 @@ import { GetNIvelesCategoriaResponse } from '../interfaces/get-categoria-respons
   providedIn: 'root'
 })
 export class CategoriaService {
-
   private apiUrl = 'http://localhost:8000/api/nivelCategoria'; // Corregido el endpoint
 
   constructor(private http: HttpClient) {}
