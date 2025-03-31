@@ -20,4 +20,20 @@ export class AreaService {
     // Aquí iría la lógica para enviar la categoría al backend
     return this.http.post('/api/areas/' + areaId + '/categorias', { categoria });
   }
+
+   // Método para actualizar un área
+   updateArea(areaId: number, area: Partial<Area>): Observable<Area> {
+    return this.http.put<Area>(`${this.apiUrl}/${areaId}`, area);
+  }
+
+
+  getAreas(): Observable<Area[]> {
+    return this.http.get<Area[]>(this.apiUrl);
+  }
+  
+  getAreaById(id: number): Observable<Area> {
+    return this.http.get<Area>(`${this.apiUrl}/${id}`);
+  }
+
+  
 }

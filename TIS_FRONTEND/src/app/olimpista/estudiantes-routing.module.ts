@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Route, Routes } from '@angular/router';
 import { AreasComponent } from './pages/areas/areas.component';
 import { OlimpistaPageComponent } from './pages/olimpista-page/olimpista-page.component';
+import { Inicio1Component } from './pages/inicio1/inicio1.component';
 
 const routes: Routes = [
    {
@@ -12,10 +13,9 @@ const routes: Routes = [
 
    },
    {
-    path: 'areas',
+    path: 'Areas',
     component: AreasComponent,
-  }
-
+   }
 
 ];
 
