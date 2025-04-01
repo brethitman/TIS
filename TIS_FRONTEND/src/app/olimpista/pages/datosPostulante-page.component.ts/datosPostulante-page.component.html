@@ -1,0 +1,531 @@
+<div class="container">
+    <!-- Estilos integrados en el mismo archivo -->
+  <style>
+    /* Estilos generales */
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      font-family: Arial, sans-serif;
+      position: relative;
+    }
+  
+    /* Cabecera con gradiente - modificada para ocupar todo el ancho */
+    .header-banner {
+      background: linear-gradient(to right, #ff0000, #800080, #0000ff);
+      padding: 20px 20px; /* Aumentado de 10px a 20px para hacerlo más alto */
+      margin-bottom: 20px;
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      box-sizing: border-box;
+    }
+  
+    .header-banner h1 {
+      color: white;
+      margin: 0;
+      font-weight: bold;
+      font-size: 24px;
+      text-align: left;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    /* Estilos para secciones */
+    .form-section {
+      margin-bottom: 30px;
+    }
+  
+    .section-title {
+      font-size: 18px; 
+      font-weight: bold;
+      margin-bottom: 5px;
+      border-bottom: 1px solid #000;
+      padding-bottom: 5px;
+  }
+  
+  .section-subtitle {
+      font-size: 14px; 
+      color: #666;
+      margin-bottom: 15px;
+      font-style: italic;
+  }
+    /* Cuadro de monto a pagar */
+    .monto-box {
+      border: 1px solid #ccc;
+      padding: 5px;
+      text-align: center;
+      height: 100%;
+    }
+  
+    .monto-label {
+      font-weight: bold;
+      font-size: 14px;
+    }
+  
+    .monto-value {
+      font-size: 16px;
+      font-weight: bold;
+    }
+  
+    /* Área informática */
+    .area-box {
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+  
+    .area-title {
+      background-color: #f8f9fa;
+      text-align: center;
+      padding: 10px;
+      margin: 0;
+      font-weight: bold;
+      border-bottom: 1px solid #ccc;
+    }
+  
+    .area-details {
+      padding: 15px;
+    }
+  
+    /* Fecha y hora */
+    .fecha-hora-container {
+      display: flex;
+      margin-top: 5px;
+    }
+  
+    .fecha, .hora {
+      display: flex;
+      align-items: center;
+      margin-right: 20px;
+    }
+  
+    .calendar-icon::before {
+      content: "📅";
+      margin-right: 5px;
+    }
+  
+    .clock-icon::before {
+      content: "🕙";
+      margin-right: 5px;
+    }
+  
+    .location-icon::before {
+      content: "📍";
+      margin-right: 5px;
+    }
+  
+    /* Ubicación */
+    .ubicacion-container {
+      display: flex;
+      align-items: center;
+      margin-top: 5px;
+      flex-wrap: wrap;
+    }
+  
+    .mostrar-mapa {
+      color: blue;
+      text-decoration: underline;
+      margin-left: 10px;
+      font-size: 12px;
+    }
+  
+    /* Form controls */
+    .form-control {
+      width: 100%;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px; /* Tamaño aumentado */
+    }
+  
+    label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+        font-size: 16px; /* Tamaño aumentado */
+    }
+  
+    /* Botones */
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  
+    .btn-primary {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  
+    .btn-lg {
+      font-size: 16px;
+      padding: 10px 20px;
+    }
+  
+    /* Campos requeridos */
+    label:after {
+      content: "*";
+      color: red;
+    }
+  
+    .error-message {
+      color: #dc3545;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+    /* Clases de Bootstrap que se están utilizando */
+    .mb-3 {
+         margin-bottom: 1rem;
+       }
+       
+       .mb-4 {
+         margin-bottom: 1.5rem;
+       }
+       
+       .row {
+         display: flex;
+         flex-wrap: wrap;
+         margin-right: -15px;
+         margin-left: -15px;
+       }
+       
+       .col-md-8 {
+         flex: 0 0 66.666667%;
+         max-width: 66.666667%;
+         padding-right: 15px;
+         padding-left: 15px;
+       }
+       
+       .col-md-6 {
+         flex: 0 0 50%;
+         max-width: 50%;
+         padding-right: 15px;
+         padding-left: 15px;
+       }
+       
+       .col-md-4 {
+         flex: 0 0 33.333333%;
+         max-width: 33.333333%;
+         padding-right: 15px;
+         padding-left: 15px;
+       }
+       
+       .text-center {
+         text-align: center;
+       }
+  
+       .footer {
+        background-color: #0a005b; /* Azul oscuro */
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 40px;
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        box-sizing: border-box;
+      }
+      
+      .support-info {
+        font-family: Arial, sans-serif;
+      }
+      
+      .support-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      
+      .support-email {
+        font-size: 16px;
+        margin-bottom: 5px;
+        color: white;
+        text-decoration: none;
+        display: block;
+      }
+      
+      .support-phone {
+        font-size: 16px;
+      }
+      
+      .footer-logo-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
+      
+      .logo-ciencia {
+        max-width: 130px; /* Aumentado de 100px a 130px */
+        height: auto;
+        position: relative;
+        z-index: 2;
+        margin-right: 15px; /* Espacio entre los íconos */
+      }
+      
+      .logo-atomo {
+        max-width: 130px; /* Aumentado de 100px a 130px */
+        height: auto;
+        position: relative;
+        z-index: 1;
+      }
+      
+      .animate-movimiento {
+        animation: float 3s ease-in-out infinite;
+      }
+      
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+     </style>
+     
+     <div class="header-banner">
+       <h1>INSCRIPCIÓN</h1>
+     </div>
+   
+     <form (ngSubmit)="onSubmit()" #form="ngForm">
+       <!-- Sección 1: Datos para la inscripción -->
+       <div class="form-section mb-4">
+         <h2 class="section-title">Datos para la inscripción:</h2>
+         <p class="section-subtitle">Llenar los siguientes datos para generar la boleta de pago correctamente</p>
+         
+         <div class="row mb-3">
+           <div class="col-md-8">
+             <div class="form-group">
+              <label>Nombre completo del estudiante a participar:</label>
+              <input type="text" class="form-control"
+              [(ngModel)]="inscripcionForm.value.olimpistaNombres" 
+              name="nombres" 
+              required
+              #nombres="ngModel">
+              <div *ngIf="nombres.invalid && (nombres.dirty || nombres.touched)" class="error-message">
+                Este campo es requerido
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Apellidos completos del estudiante a participar:</label>
+              <input type="text" class="form-control"
+              [(ngModel)]="inscripcionForm.value.olimpistaApellidos" 
+              name="nombres" 
+              required
+              #nombres="ngModel">
+              <div *ngIf="nombres.invalid && (nombres.dirty || nombres.touched)" class="error-message">
+                Este campo es requerido
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="monto-box">
+              <div class="monto-label">Monto a pagar</div>
+              <div class="monto-value">00.00Bs.</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group mb-3">
+          <label>Carnet de Identidad(C.I.) del estudiante a participar:</label>
+          <input type="text" class="form-control" 
+                [(ngModel)]="inscripcionForm.value.olimpistaCi" 
+                name="ci" 
+                required
+                pattern="[0-9]+"
+                minlength="6"
+                #ci="ngModel">
+          <div *ngIf="ci.invalid && (ci.dirty || ci.touched)" class="error-message">
+            <div *ngIf="ci.errors?.['required']">Campo requerido</div>
+            <div *ngIf="ci.errors?.['pattern']">Solo números</div>
+            <div *ngIf="ci.errors?.['minlength']">Mínimo 6 dígitos</div>
+          </div>
+        </div>
+   
+        <div class="form-group mb-3">
+          <label>Nombre completo del tutor del estudiante:</label>
+          <input type="text" class="form-control" 
+                [(ngModel)]="inscripcionForm.value.tutorNombres" 
+                name="tutorNombres" 
+                required
+                #tutorNombres="ngModel">
+        </div>
+  
+        <div class="form-group mb-3">
+          <label>Apellidos completos del tutor del estudiante:</label>
+          <input type="text" class="form-control" 
+                [(ngModel)]="inscripcionForm.value.tutorApellidos" 
+                name="tutorNombres" 
+                required
+                #tutorNombres="ngModel">
+        </div>
+  
+        <div class="form-group mb-3">
+          <label>Carnet de Identidad(C.I.) del tutor del estudiante:</label>
+          <input type="text" class="form-control" 
+                [(ngModel)]="inscripcionForm.value.tutorCi" 
+                name="tutorCi" 
+                required
+                pattern="[0-9]+"
+                #tutorCi="ngModel">
+        </div>
+      </div>
+  
+      <!-- Sección 2: Exámenes de áreas seleccionadas -->
+      <div class="form-section mb-4">
+        <h2 class="section-title">Exámene(s) de la(s) área(s) seleccionada(s):</h2>
+        <p class="section-subtitle">Encuentra aquí la información sobre los exámenes de las áreas en las que te has inscrito.</p>
+        
+        <div class="area-box">
+          <h3 class="area-title">INFORMÁTICA</h3>
+          <div class="area-details">
+            <div class="fecha-hora">
+              <label>Fecha y Hora</label>
+              <div class="fecha-hora-container">
+                <div class="fecha">
+                  <i class="calendar-icon"></i>
+                  <span>24/01/2025</span>
+                </div>
+                <div class="hora">
+                  <i class="clock-icon"></i>
+                  <span>10:00 A.M.</span>
+                </div>
+              </div>
+            </div>
+            <div class="ubicacion">
+              <label>Ubicación</label>
+              <div class="ubicacion-container">
+                <i class="location-icon"></i>
+                <span>Edificio Coordinación UMSA Laboratorio de Sistemas Informática</span>
+                <a href="#" class="mostrar-mapa">Mostrar mapa</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+   
+      <!-- Sección 3: Área y Categoría -->
+  <div class="form-section mb-4">
+    <h2 class="section-title">Seleccione Área y Categoría</h2>
+    
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>Área(s) a inscribir:*</label>
+          <select class="form-control" 
+                  [(ngModel)]="inscripcionForm.value.areaId" 
+                  name="areaId" 
+                  required
+                  (change)="onAreaSeleccionada()"
+                  #areaId="ngModel">
+            <option value="">Seleccione un área</option>
+            <option *ngFor="let area of areas" [value]="area.id">
+              {{ area.nombre_area }}
+            </option>
+          </select>
+          <div *ngIf="areaId.invalid && (areaId.dirty || areaId.touched)" class="error-message">
+            Debe seleccionar un área
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>Categoría(s) a inscribir:*</label>
+          <select class="form-control" 
+          [(ngModel)]="inscripcionForm.value.nivelId" 
+          name="nivelId" 
+          required
+          (change)="onNivelSeleccionado()"
+          #nivelId="ngModel"
+          [disabled]="!inscripcionForm.value.areaId || cargandoNiveles">
+    <option value="">Seleccione un nivel</option>
+    <!-- Muestra las opciones disponibles -->
+    <option *ngFor="let nivel of niveles" [value]="nivel.id">
+      {{ nivel.nombre_nivel }} ({{ nivel.costo }} Bs.)
+    </option>
+    <!-- Mensaje si no hay opciones -->
+    <option *ngIf="niveles.length === 0 && !cargandoNiveles && inscripcionForm.value.areaId" value="" disabled>
+      No hay categorías disponibles para esta área
+    </option>
+    <option *ngIf="cargandoNiveles" value="" disabled>
+      Cargando categorías...
+    </option>
+  </select>
+          <div *ngIf="nivelId.invalid && (nivelId.dirty || nivelId.touched)" class="error-message">
+            Debe seleccionar una categoría
+          </div>
+        </div>
+      </div>
+  
+    <!-- Información de la categoría seleccionada -->
+    <div *ngIf="nivelSeleccionado" class="card mt-3">
+      <div class="card-body">
+        <h5 class="card-title">
+          {{ getNombreAreaSeleccionada() }} - {{ nivelSeleccionado?.nombre_nivel }}
+        </h5>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="card-text">
+              <i class="bi bi-calendar-event"></i> 
+              <strong>Fecha examen:</strong> 
+              {{ getFechaExamenFormateada() }}
+            </p>
+          </div>
+          <div class="col-md-6">
+            <p class="card-text">
+              <i class="bi bi-cash"></i> 
+              <strong>Costo:</strong> 
+              {{ nivelSeleccionado.costo }} Bs. 
+            </p>
+          </div>
+        </div>
+        <p *ngIf="nivelSeleccionado.descripcion" class="card-text"> 
+          <i class="bi bi-info-circle"></i> 
+          {{ nivelSeleccionado.descripcion }} 
+        </p>
+      </div>
+    </div>
+  
+    <div class="text-center mt-3">
+      <button type="button" class="btn btn-danger" (click)="agregarOtraArea()"> 
+        <i class="bi bi-plus-circle"></i> Agregar otra área
+      </button>
+    </div>
+  </div>
+  
+  <!-- Botón de envío -->
+  <div class="text-center mt-4">
+    <button type="submit" class="btn btn-primary btn-lg" [disabled]="form.invalid || cargandoNiveles"> 
+      <span *ngIf="!cargandoNiveles">Guardar Inscripción</span> 
+      <span *ngIf="cargandoNiveles" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 
+    </button>
+  </div>
+  
+  <div class="footer">
+    <div class="support-info">
+      <div class="support-title">Support</div>
+      <a href="mailto:bluenebuladigitalsolutions@gmail.com" class="support-email">bluenebuladigitalsolutionsgmail.com</a>
+      <div class="support-phone">+591 79766695</div>
+    </div>
+    <div class="footer-logo-container">
+      <img src="icon/ciencia.png" alt="Imagen" class="logo-ciencia animate-movimiento" />
+      <img src="icon/atomo.png" alt="Imagen" class="logo-atomo animate-movimiento" />
+    </div>
+  </div>

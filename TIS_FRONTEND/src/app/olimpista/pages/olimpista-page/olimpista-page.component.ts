@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component } from '@angular/core';
 
 @Component({
@@ -8,4 +9,15 @@ import { Component } from '@angular/core';
 })
 export class OlimpistaPageComponent {
 
+  constructor(
+    private router: Router
+  ) {
+
+    };
+
+  
+  irADatosPostulante() {
+    this.router.navigate(['inicio/datosPostulante']);
+  }
 }
+
