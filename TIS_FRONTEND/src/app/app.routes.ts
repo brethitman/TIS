@@ -1,4 +1,6 @@
+import { Router } from '@angular/router';
 import { Routes } from '@angular/router';
+
 import { LoginPageComponent } from './auth/pages/login-page/login-page.component';
 import { RegisterPageComponent } from './auth/pages/register-page/register-page.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
@@ -8,6 +10,7 @@ import { Inicio1Component } from './olimpista/pages/inicio1/inicio1.component';
 import { Inicio2Component } from './olimpista/pages/inicio2/inicio2.component';
 import { Inicio3Component } from './olimpista/pages/inicio3/inicio3.component';
 import { OlimpistaPageComponent } from './olimpista/pages/olimpista-page/olimpista-page.component';
+
 
 export const routes: Routes = [
   {

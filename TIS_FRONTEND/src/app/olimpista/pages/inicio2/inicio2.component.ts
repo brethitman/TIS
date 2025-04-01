@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -38,7 +39,8 @@ export class Inicio2Component implements OnInit {
     private categoriaService: CategoriaService,
     private olimpistaService: OlimpistaService,
     private tutorService: TutorService,
-    private inscripcionService: InscripcionService
+    private inscripcionService: InscripcionService,
+    private router: Router
   ) {
     this.inscripcionForm = this.fb.group({
       // Datos del olimpista
@@ -221,5 +223,9 @@ export class Inicio2Component implements OnInit {
   agregarOtraArea(): void {
     // Implementa la lógica para agregar múltiples áreas si es necesario
     console.log('Funcionalidad para agregar otra área');
+  }
+  
+  irAOlimpistaForm() {
+    this.router.navigate(['/inicio/OlimpistaForm']);
   }
 }
