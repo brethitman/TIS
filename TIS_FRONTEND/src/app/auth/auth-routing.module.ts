@@ -4,6 +4,9 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { RegisterPageComponent } from './pages/register-page/register-page.component';
 import { OlimpistaPageComponent } from '../olimpista/pages/olimpista-page/olimpista-page.component'; 
 
+import { DatosPostulanteComponent } from '../olimpista/pages/datosPostulante-page.component.ts/datosPostulante-page.component'; 
+
+
 
 const routes: Routes = [
   {
@@ -18,7 +21,11 @@ const routes: Routes = [
     path: 'inicio/OlimpistaForm', 
     component: OlimpistaPageComponent,
   },
-    
+  {
+    path: 'inicio/datosPostulante', 
+    component: DatosPostulanteComponent,
+  },
+
   ];
 
 

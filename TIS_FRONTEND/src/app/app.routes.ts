@@ -10,6 +10,7 @@ import { Inicio1Component } from './olimpista/pages/inicio1/inicio1.component';
 import { Inicio2Component } from './olimpista/pages/inicio2/inicio2.component';
 import { Inicio3Component } from './olimpista/pages/inicio3/inicio3.component';
 import { OlimpistaPageComponent } from './olimpista/pages/olimpista-page/olimpista-page.component';
+import { DatosPostulanteComponent } from './olimpista/pages/datosPostulante-page.component.ts/datosPostulante-page.component'; 
 
 
 export const routes: Routes = [
@@ -54,6 +55,10 @@ export const routes: Routes = [
   {
     path: 'inicio/OlimpistaForm',
     component: OlimpistaPageComponent
+  },
+  {
+    path: 'inicio/datosPostulante',
+    component: DatosPostulanteComponent
   },
   // Ruta por defecto (opcional)
   {
