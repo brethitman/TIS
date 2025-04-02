@@ -4,10 +4,10 @@ import { Router } from '@angular/router';
  import { FormsModule } from '@angular/forms';
  import { FormBuilder, FormGroup, Validators } from '@angular/forms';
  import { AreaService } from '../../service/area.service';
- import { CategoriaService } from '../../service/categoria.service'; 
+ import { CategoriaService } from '../../service/categoria.service';
  import { OlimpistaService } from '../../service/olimpista.service';
- import { TutorService } from '../../service/tutor.service'; 
- import { InscripcionService } from '../../service/inscripcion.service'; 
+ import { TutorService } from '../../service/tutor.service';
+ import { InscripcionService } from '../../service/inscripcion.service';
  import { Area } from '../../interfaces/area.interface';
  import { NivelesCategoria } from '../../interfaces/categoria.interface';
  import { Olimpista } from '../../interfaces/olimpista-response';
@@ -15,13 +15,13 @@ import { Router } from '@angular/router';
  import { Inscripcion } from '../../interfaces/inscripcion.interface';
  import { GetAreaResponse } from '../../interfaces/get-area-response';
  import { GetNIvelesCategoriaResponse } from '../../interfaces/get-categoria-response';
- 
+
  @Component({
    selector: 'app-datosPostulante-page',
    templateUrl: './datosPostulante-page.component.html',
    standalone: true,
    imports: [CommonModule, FormsModule],
-   //styleUrls: ['./inicio2.component.css']
+
  })
  export class DatosPostulanteComponent implements OnInit {
    inscripcionForm: FormGroup;
@@ -32,7 +32,7 @@ import { Router } from '@angular/router';
    cargandoNiveles = false;
    mensajeExito = '';
    mensajeError = '';
- 
+
    constructor(
      private fb: FormBuilder,
      private areaService: AreaService,
@@ -47,23 +47,23 @@ import { Router } from '@angular/router';
        olimpistaNombres: ['', Validators.required],
        olimpistaApellidos: ['', Validators.required],
        olimpistaCi: ['', [Validators.required, Validators.minLength(6), Validators.pattern('^[0-9]*$')]],
-       
+
        // Datos del tutor
        tutorNombres: ['', Validators.required],
        tutorApellidos: ['', Validators.required],
        tutorCi: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-       
+
        // Datos de la inscripción
        areaId: ['', Validators.required],
        nivelId: ['', Validators.required]
      });
    }
- 
+
    ngOnInit(): void {
      this.cargarAreas();
    }
- 
- 
+
+
    cargarAreas(): void {
      this.cargandoAreas = true;
      this.areaService.getAreas().subscribe(
@@ -102,18 +102,18 @@ import { Router } from '@angular/router';
          updated_at: new Date()
        }
      ];
-     
+
      console.log('Datos de prueba cargados para área', areaId);
    }
-   
+
    onAreaSeleccionada(): void {
      const areaId = Number(this.inscripcionForm.get('areaId')?.value);
-     
+
      if (areaId) {
        this.cargandoNiveles = true;
        this.inscripcionForm.get('nivelId')?.reset();
        this.nivelSeleccionado = null;
-   
+
        this.categoriaService.getNivelesPorArea(areaId).subscribe({
          next: (niveles) => {
            this.niveles = niveles;
@@ -141,14 +141,14 @@ import { Router } from '@angular/router';
        }
      });
    }*/
- 
+
    /*onAreaSeleccionada(): void {
      const areaId = this.inscripcionForm.get('areaId')?.value;
      if (areaId) {
        this.cargandoNiveles = true;
        this.inscripcionForm.get('nivelId')?.reset();
        this.nivelSeleccionado = null;
-       
+
        this.categoriaService.getNivelesPorArea(areaId).subscribe({
          next: (response: GetNIvelesCategoriaResponse) => {
            this.niveles = response.nivelesCategoria; // Accede a la propiedad 'niveles' de la respuesta
@@ -162,17 +162,17 @@ import { Router } from '@angular/router';
        });
      }
    }*/
- 
+
    onNivelSeleccionado(): void {
      const nivelId = this.inscripcionForm.get('nivelId')?.value;
      this.nivelSeleccionado = this.niveles.find(n => n.id === nivelId) || null;
    }
- 
+
    onSubmit(): void {
      if (this.inscripcionForm.invalid) return;
-   
+
      const formValue = this.inscripcionForm.value;
-   
+
      this.olimpistaService.create({
        nombres: formValue.olimpistaNombres,
        apellidos: formValue.olimpistaApellidos,
@@ -193,7 +193,7 @@ import { Router } from '@angular/router';
                fecha_inscripcion: new Date(),
                estado: 'Pendiente'
              };
-             
+
              this.inscripcionService.createInscripcion(inscripcionData).subscribe({
                next: () => {
                  console.log('Inscripción exitosa');
@@ -210,7 +210,7 @@ import { Router } from '@angular/router';
      const area = this.areas.find(a => a.id === areaId);
      return area?.nombre_area || 'Área seleccionada';
    }
-   
+
    getFechaExamenFormateada(): string {
      if (!this.nivelSeleccionado?.fecha_examen) {
        return 'Por definir';
@@ -219,12 +219,12 @@ import { Router } from '@angular/router';
      const fecha = new Date(this.nivelSeleccionado.fecha_examen);
      return fecha.toLocaleDateString('es-ES'); // Formato dd/MM/yyyy
    }
-   
+
    agregarOtraArea(): void {
      // Implementa la lógica para agregar múltiples áreas si es necesario
      console.log('Funcionalidad para agregar otra área');
    }
-   
+
    irADatosOlimpistas() {
      this.router.navigate(['/inicio/OlimpistaForm']);
    }

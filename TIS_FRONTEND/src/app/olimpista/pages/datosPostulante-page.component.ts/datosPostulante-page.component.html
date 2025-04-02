@@ -10,7 +10,7 @@
     background-color: #f8f9fa;
     color: #333;
   }
-  
+
   .container {
     max-width: 800px;
     margin: 0 auto;
@@ -59,7 +59,7 @@
   }
 
   .section-title {
-    font-size: 20px; 
+    font-size: 20px;
     font-weight: bold;
     margin-bottom: 10px;
     border-bottom: 1px solid #000;
@@ -75,7 +75,7 @@
   }
 
   .section-subtitle {
-    font-size: 14px; 
+    font-size: 14px;
     color: #666;
     margin-bottom: 20px;
     font-style: italic;
@@ -311,11 +311,11 @@
   .mb-3 {
     margin-bottom: 1rem;
   }
-     
+
   .mb-4 {
     margin-bottom: 1.5rem;
   }
-     
+
   .mt-3 {
     margin-top: 1rem;
   }
@@ -323,35 +323,35 @@
   .mt-4 {
     margin-top: 1.5rem;
   }
-     
+
   .row {
     display: flex;
     flex-wrap: wrap;
     margin-right: -15px;
     margin-left: -15px;
   }
-     
+
   .col-md-8 {
     flex: 0 0 66.666667%;
     max-width: 66.666667%;
     padding-right: 15px;
     padding-left: 15px;
   }
-     
+
   .col-md-6 {
     flex: 0 0 50%;
     max-width: 50%;
     padding-right: 15px;
     padding-left: 15px;
   }
-     
+
   .col-md-4 {
     flex: 0 0 33.333333%;
     max-width: 33.333333%;
     padding-right: 15px;
     padding-left: 15px;
   }
-     
+
   .text-center {
     text-align: center;
   }
@@ -439,11 +439,11 @@
     box-sizing: border-box;
     box-shadow: 0 -4px 6px rgba(0,0,0,0.1);
   }
-    
+
   .support-info {
     font-family: 'Roboto', Arial, sans-serif;
   }
-    
+
   .support-title {
     font-size: 22px;
     font-weight: bold;
@@ -451,12 +451,12 @@
     display: flex;
     align-items: center;
   }
-    
+
   .support-title i {
     margin-right: 12px;
     font-size: 20px;
   }
-    
+
   .support-email {
     font-size: 16px;
     margin-bottom: 12px;
@@ -470,31 +470,31 @@
   .support-email:hover {
     color: #ccccff;
   }
-    
+
   .support-email i {
     margin-right: 12px;
     width: 16px;
     text-align: center;
   }
-    
+
   .support-phone {
     font-size: 16px;
     display: flex;
     align-items: center;
   }
-    
+
   .support-phone i {
     margin-right: 12px;
     width: 16px;
     text-align: center;
   }
-    
+
   .footer-logo-container {
     display: flex;
     flex-direction: row;
     align-items: center;
   }
-    
+
   .logo-ciencia {
     max-width: 130px;
     height: auto;
@@ -503,7 +503,7 @@
     margin-right: 15px;
     filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
   }
-    
+
   .logo-atomo {
     max-width: 130px;
     height: auto;
@@ -511,11 +511,11 @@
     z-index: 1;
     filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
   }
-    
+
   .animate-movimiento {
     animation: float 3s ease-in-out infinite;
   }
-    
+
   @keyframes float {
     0% {
       transform: translateY(0px);
@@ -554,7 +554,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <!-- Importar Roboto font -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
-   
+
 <div class="header-banner">
   <h1> INSCRIPCIÓN</h1>
 </div>
@@ -565,7 +565,7 @@
   <div class="form-section mb-4">
     <h2 class="section-title"><i class="fas fa-tasks"></i> Exámene(s) de la(s) área(s) seleccionada(s):</h2>
     <p class="section-subtitle">Encuentra aquí la información sobre los exámenes de las áreas en las que te has inscrito.</p>
-    
+
     <div class="area-box">
       <h3 class="area-title"><i class="fas fa-laptop-code"></i> INFORMÁTICA</h3>
       <div class="area-details">
@@ -599,14 +599,14 @@
   <!-- Sección 3: Área y Categoría -->
   <div class="form-section mb-4">
     <h2 class="section-title"><i class="fas fa-layer-group"></i> Seleccione Área y Categoría</h2>
-    
+
     <div class="row mb-3">
       <div class="col-md-6">
         <div class="form-group">
           <label class="required">Área(s) a inscribir:</label>
-          <select class="form-control" 
-                  [(ngModel)]="inscripcionForm.value.areaId" 
-                  name="areaId" 
+          <select class="form-control"
+                  [(ngModel)]="inscripcionForm.value.areaId"
+                  name="areaId"
                   required
                   (change)="onAreaSeleccionada()"
                   #areaId="ngModel">
@@ -623,9 +623,9 @@
       <div class="col-md-6">
         <div class="form-group">
           <label class="required">Categoría(s) a inscribir:</label>
-          <select class="form-control" 
-            [(ngModel)]="inscripcionForm.value.nivelId" 
-            name="nivelId" 
+          <select class="form-control"
+            [(ngModel)]="inscripcionForm.value.nivelId"
+            name="nivelId"
             required
             (change)="onNivelSeleccionado()"
             #nivelId="ngModel"
@@ -659,27 +659,27 @@
             <div class="col-md-6">
               <p class="card-text">
                 <i class="fas fa-calendar-alt"></i>
-                <strong>Fecha examen:</strong> 
+                <strong>Fecha examen:</strong>
                 {{ getFechaExamenFormateada() }}
               </p>
             </div>
             <div class="col-md-6">
               <p class="card-text">
                 <i class="fas fa-coins"></i>
-                <strong>Costo:</strong> 
-                {{ nivelSeleccionado.costo }} Bs. 
+                <strong>Costo:</strong>
+                {{ nivelSeleccionado.costo }} Bs.
               </p>
             </div>
           </div>
-          <p *ngIf="nivelSeleccionado.descripcion" class="card-text"> 
-            <i class="fas fa-info-circle"></i> 
-            {{ nivelSeleccionado.descripcion }} 
+          <p *ngIf="nivelSeleccionado.descripcion" class="card-text">
+            <i class="fas fa-info-circle"></i>
+            {{ nivelSeleccionado.descripcion }}
           </p>
         </div>
       </div>
 
       <div class="text-center mt-3">
-        <button type="button" class="btn btn-danger" (click)="agregarOtraArea()"> 
+        <button type="button" class="btn btn-danger" (click)="agregarOtraArea()">
           <i class="fas fa-plus-circle"></i> Agregar otra área
         </button>
       </div>
@@ -688,10 +688,10 @@
 
   <!-- Botón de envío -->
   <div class="text-center mt-4">
-    <button type="submit" class="btn btn-primary btn-lg" [disabled]="form.invalid || cargandoNiveles"> 
+    <button type="submit" class="btn btn-primary btn-lg" [disabled]="form.invalid || cargandoNiveles">
       <i class="fas fa-save"></i>
-      <span *ngIf="!cargandoNiveles">Guardar Inscripción</span> 
-      <span *ngIf="cargandoNiveles" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 
+      <span *ngIf="!cargandoNiveles">Guardar Inscripción</span>
+      <span *ngIf="cargandoNiveles" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
     </button>
   </div>
 </form>

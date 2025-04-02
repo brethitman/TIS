@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Area\AreaController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\BoletaPago\BoletaPagoController;
 use App\Http\Controllers\Inscripcion\InscripcionController;
 use App\Http\Controllers\NivelCategoria\NivelCategoriaController;
@@ -15,6 +16,9 @@ use App\Models\ComprobantePago;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+
+Route::post("/auth/login",[AuthController::class, "login"]);
 
 
 Route::get('/area',         [ AreaController::class, 'index'     ]);

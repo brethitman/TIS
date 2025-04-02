@@ -9,7 +9,7 @@
     font-family: 'Roboto', Arial, sans-serif;
     background-color: #f9f9f9;
   }
-  
+
   .container {
     max-width: 800px;
     margin: 0 auto;
@@ -57,7 +57,7 @@
   }
 
   .section-title {
-    font-size: 20px; 
+    font-size: 20px;
     font-weight: bold;
     margin-bottom: 8px;
     border-bottom: 2px solid #3f51b5;
@@ -74,7 +74,7 @@
   }
 
   .section-subtitle {
-    font-size: 14px; 
+    font-size: 14px;
     color: #666;
     margin-bottom: 20px;
     font-style: italic;
@@ -112,7 +112,7 @@
     font-size: 16px;
     color: #333;
   }
-  
+
   label i {
     margin-right: 8px;
     color: #666;
@@ -203,7 +203,7 @@
   /* Instrucciones para subir Excel */
   .excel-instructions {
     font-style: italic;
-    color: #666; 
+    color: #666;
     margin: 20px 0;
     line-height: 1.5;
     background-color: #f9f9f9;
@@ -226,7 +226,7 @@
   }
 
   .footer {
-    background-color: #0a005b; 
+    background-color: #0a005b;
     color: white;
     padding: 25px 20px;
     display: flex;
@@ -240,11 +240,11 @@
     box-sizing: border-box;
     box-shadow: 0 -4px 6px rgba(0,0,0,0.1);
   }
-  
+
   .support-info {
     font-family: 'Roboto', Arial, sans-serif;
   }
-  
+
   .support-title {
     font-size: 20px;
     font-weight: bold;
@@ -252,12 +252,12 @@
     display: flex;
     align-items: center;
   }
-  
+
   .support-title i {
     margin-right: 10px;
     font-size: 18px;
   }
-  
+
   .support-email {
     font-size: 16px;
     margin-bottom: 8px;
@@ -266,31 +266,31 @@
     display: flex;
     align-items: center;
   }
-  
+
   .support-email i {
     margin-right: 10px;
     width: 16px;
     text-align: center;
   }
-  
+
   .support-phone {
     font-size: 16px;
     display: flex;
     align-items: center;
   }
-  
+
   .support-phone i {
     margin-right: 10px;
     width: 16px;
     text-align: center;
   }
-  
+
   .footer-logo-container {
     display: flex;
     flex-direction: row;
     align-items: center;
   }
-  
+
   .logo-ciencia {
     max-width: 130px;
     height: auto;
@@ -299,7 +299,7 @@
     margin-right: 15px;
     filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
   }
-  
+
   .logo-atomo {
     max-width: 130px;
     height: auto;
@@ -307,11 +307,11 @@
     z-index: 1;
     filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
   }
-  
+
   .animate-movimiento {
     animation: float 3s ease-in-out infinite;
   }
-  
+
   @keyframes float {
     0% {
       transform: translateY(0px);
@@ -335,23 +335,23 @@
     justify-content: flex-end;
     margin-top: 30px;
   }
-  
+
   /* Efecto hover para los inputs */
   .form-control:hover {
     border-color: #aaa;
   }
-  
+
   /* Responsive adjustments */
   @media (max-width: 768px) {
     .footer {
       flex-direction: column;
       text-align: center;
     }
-    
+
     .footer-logo-container {
       margin-top: 20px;
     }
-    
+
     .support-email, .support-phone, .support-title {
       justify-content: center;
     }
@@ -362,51 +362,51 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-   
+
    <div class="header-banner">
      <h1><i></i> INSCRIPCIÓN</h1>
    </div>
- 
+
    <form id="inscripcionForm">
     <!-- Sección: Datos del tutor -->
     <div class="form-section">
       <h2 class="section-title"><i class="fas fa-user-shield"></i> Datos del tutor:</h2>
       <p class="section-subtitle">Llenar los siguientes datos para generar la boleta de pago correctamente</p>
-      
+
       <div class="form-group">
         <label class="required" for="tutorNombres"><i class="fas fa-user"></i> Nombre(s) del tutor del estudiante:</label>
         <input type="text" class="form-control" id="tutorNombres" name="tutorNombres" required>
       </div>
-  
+
       <div class="form-group">
         <label class="required" for="tutorApellidos"><i class="fas fa-signature"></i> Apellido(s) del tutor del estudiante:</label>
         <input type="text" class="form-control" id="tutorApellidos" name="tutorApellidos" required>
       </div>
-  
+
       <div class="form-group">
         <label class="required" for="tutorCi"><i class="fas fa-id-card"></i> Carnet de Identidad(C.I.) del tutor del estudiante:</label>
         <input type="text" class="form-control" id="tutorCi" name="tutorCi" required>
       </div>
-  
+
       <div class="form-group">
         <label class="required" for="tutorEmail"><i class="fas fa-envelope"></i> Correo electrónico:</label>
         <input type="email" class="form-control" id="tutorEmail" name="tutorEmail" required>
       </div>
     </div>
-  
+
     <!-- Instrucciones para varios estudiantes con texto en cursiva y color plomo -->
     <div class="excel-instructions">
       <p><i class="fas fa-info-circle"></i> Como tutor, puedes inscribir a varios estudiantes a la vez</p>
       <p><i class="fas fa-download"></i> Descarga la plantilla, completa los datos y súbela aquí</p>
       <p><i class="fas fa-check-circle"></i> Asegúrate de seguir el formato establecido</p>
     </div>
-  
+
     <div class="excel-button-container">
       <button type="button" class="btn btn-excel">
         <i class="fas fa-file-excel"></i> Subir Excel
       </button>
     </div>
-  
+
     <div class="buttons-container">
       <button type="button" class="btn btn-primary" (click)="irAOlimpistaForm()">Siguiente</button>
     </div>
