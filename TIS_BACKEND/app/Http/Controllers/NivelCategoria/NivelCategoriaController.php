@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\NivelCategoria;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreNivelCategoriaRequest;
 use App\Http\Resources\NivelCategoria\NivelCategoriaCollection;
 use App\Http\Resources\NivelCategoria\NivelCategoriaResource;
 use App\Models\NivelCategoria;
@@ -27,7 +28,7 @@ class NivelCategoriaController extends Controller
     /**
      * Almacena un nuevo nivel de categoría en la base de datos.
      */
-    public function store(Request $request)
+    public function store(StoreNivelCategoriaRequest $request)
     {
         try {
             // Validar los datos del request
@@ -130,19 +131,19 @@ class NivelCategoriaController extends Controller
         try {
             // Depura el valor recibido en el request
             \Log::info('Datos recibidos:', $request->all());
-    
+
             $nivelCategoria = NivelCategoria::findOrFail($id);
-    
+
             if ($request->has('habilitacion')) {
                 $nivelCategoria->habilitacion = $request->input('habilitacion');
                 $nivelCategoria->save();
-    
+
                 return response()->json([
                     'message' => 'Estado de habilitación actualizado exitosamente',
                     'nivelCategoria' => new NivelCategoriaResource($nivelCategoria),
                 ]);
             }
-    
+
             return response()->json(['error' => 'Campo habilitacion no proporcionado'], 400);
         } catch (ModelNotFoundException $e) {
             \Log::error('Nivel de categoría no encontrado:', ['id' => $id]);
@@ -156,19 +157,4 @@ class NivelCategoriaController extends Controller
         }
     }
 
-
-
-
-    //PRUEBA
-    public function porArea($areaId)
-{
-    $niveles = NivelCategoria::where('id_area', $areaId)->get();
-    
-    return response()->json([
-        'success' => true,
-        'message' => 'Niveles de categoría por área',
-        'nivelesCategoria' => $niveles
-    ]);
 }
-}
-
