@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inscripción Postulante</title>
+  <title>Inscripción</title>
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts - Roboto -->
@@ -32,27 +32,43 @@
 
     <!-- Form -->
     <form id="inscripcionForm" class="mb-12">
-      <!-- Datos del postulante section -->
+      <!-- Datos del tutor section -->
       <div class="bg-white mb-10 p-6 rounded-lg shadow-sm">
         <h2 class="text-xl font-bold mb-2 pb-2 border-b-2 border-indigo-700 text-gray-800 flex items-center">
-          <i class="fas fa-user-graduate mr-2 text-indigo-700 text-lg"></i> Datos del postulante:
+          <i class="fas fa-user-shield mr-2 text-indigo-700 text-lg"></i> Datos del tutor:
         </h2>
         <p class="text-gray-600 text-sm italic mb-6">Llenar los siguientes datos para generar la boleta de pago correctamente</p>
         
-        <!-- Campos del postulante -->
+        <!-- Tutor fields -->
         <div class="mb-5 relative">
-          <label for="olimpistaNombres" class="font-semibold text-gray-800 text-base flex items-center after:content-['_*'] after:text-red-600 after:font-bold">
-            <i class="fas fa-user mr-2 text-gray-600 text-base"></i> Nombre(s) del estudiante:
+          <label for="tutorNombres" class="font-semibold text-gray-800 text-base flex items-center after:content-['_*'] after:text-red-600 after:font-bold">
+            <i class="fas fa-user mr-2 text-gray-600 text-base"></i> Nombre(s) del tutor del estudiante:
           </label>
-          <input type="text" id="olimpistaNombres" name="olimpistaNombres" required 
+          <input type="text" id="tutorNombres" name="tutorNombres" required 
                  class="w-full px-3 py-2 border border-gray-300 rounded text-base h-10 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-200 hover:border-gray-400 transition">
         </div>
         
         <div class="mb-5 relative">
-          <label for="olimpistaApellidos" class="font-semibold text-gray-800 text-base flex items-center after:content-['_*'] after:text-red-600 after:font-bold">
-            <i class="fas fa-signature mr-2 text-gray-600 text-base"></i> Apellido(s) del estudiante:
+          <label for="tutorApellidos" class="font-semibold text-gray-800 text-base flex items-center after:content-['_*'] after:text-red-600 after:font-bold">
+            <i class="fas fa-signature mr-2 text-gray-600 text-base"></i> Apellido(s) del tutor del estudiante:
           </label>
-          <input type="text" id="olimpistaApellidos" name="olimpistaApellidos" required 
+          <input type="text" id="tutorApellidos" name="tutorApellidos" required 
+                 class="w-full px-3 py-2 border border-gray-300 rounded text-base h-10 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-200 hover:border-gray-400 transition">
+        </div>
+        
+        <div class="mb-5 relative">
+          <label for="tutorCi" class="font-semibold text-gray-800 text-base flex items-center after:content-['_*'] after:text-red-600 after:font-bold">
+            <i class="fas fa-id-card mr-2 text-gray-600 text-base"></i> Carnet de Identidad(C.I.) del tutor del estudiante:
+          </label>
+          <input type="text" id="tutorCi" name="tutorCi" required 
+                 class="w-full px-3 py-2 border border-gray-300 rounded text-base h-10 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-200 hover:border-gray-400 transition">
+        </div>
+        
+        <div class="mb-5 relative">
+          <label for="tutorEmail" class="font-semibold text-gray-800 text-base flex items-center after:content-['_*'] after:text-red-600 after:font-bold">
+            <i class="fas fa-envelope mr-2 text-gray-600 text-base"></i> Correo electrónico:
+          </label>
+          <input type="email" id="tutorEmail" name="tutorEmail" required 
                  class="w-full px-3 py-2 border border-gray-300 rounded text-base h-10 focus:border-indigo-700 focus:ring-2 focus:ring-indigo-200 hover:border-gray-400 transition">
         </div>
       </div>
@@ -60,13 +76,13 @@
       <!-- Excel instructions -->
       <div class="italic text-gray-600 my-5 leading-relaxed bg-gray-50 px-4 py-3 border-l-4 border-green-700 rounded-r">
         <p class="my-2 flex items-center">
-          <i class="fas fa-info-circle mr-2 text-green-700 w-4 text-center"></i> Como tutor, puedes inscribir a varios estudiantes a la vez.
+          <i class="fas fa-info-circle mr-2 text-green-700 w-4 text-center"></i> Como tutor, puedes inscribir a varios estudiantes a la vez
         </p>
         <p class="my-2 flex items-center">
-          <i class="fas fa-download mr-2 text-green-700 w-4 text-center"></i> Descarga la plantilla, completa los datos y súbela aquí.
+          <i class="fas fa-download mr-2 text-green-700 w-4 text-center"></i> Descarga la plantilla, completa los datos y súbela aquí
         </p>
         <p class="my-2 flex items-center">
-          <i class="fas fa-check-circle mr-2 text-green-700 w-4 text-center"></i> Asegúrate de seguir el formato establecido.
+          <i class="fas fa-check-circle mr-2 text-green-700 w-4 text-center"></i> Asegúrate de seguir el formato establecido
         </p>
       </div>
 
