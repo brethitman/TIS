@@ -15,12 +15,13 @@ import { Tutor } from '../../interfaces/inscripcion.interface';
 import { Inscripcion } from '../../interfaces/inscripcion.interface';
 import { GetAreaResponse } from '../../interfaces/get-area-response';
 import { GetNIvelesCategoriaResponse } from '../../interfaces/get-categoria-response';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-inicio2',
   templateUrl: './inicio2.component.html',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,ReactiveFormsModule],
   //styleUrls: ['./inicio2.component.css']
 })
 export class Inicio2Component implements OnInit {
