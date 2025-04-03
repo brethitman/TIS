@@ -2,4 +2,7 @@
     <p>Nombre: {{categoria.nombre_nivel}}</p>
     <p>Descripcion: {{categoria.descripcion}}</p>
     <p>costo: {{categoria.costo}}</p>
+    <div *ngIf="!categorias || categorias.length === 0" class="text-gray-500">
+        No hay categorías disponibles para esta área.
+      </div>
 </div>

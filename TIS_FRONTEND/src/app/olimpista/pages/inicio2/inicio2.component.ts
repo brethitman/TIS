@@ -10,11 +10,11 @@ import { CategoriasHomeComponent } from '../../components/categorias-home/catego
 
 @Component({
   selector: 'app-inicio2',
-  templateUrl: './inicio2.component.html',
+  templateUrl: './home-area.component.html',
   standalone: true,
   imports: [CommonModule, FormsModule, AreasCarruselComponent, CategoriasHomeComponent],
 })
-export class Inicio2Component {
+export class HomeAreaComponent {
 
   private GetAreaService = inject(GetAreaService);
   public area = signal<Area[]>([]);
