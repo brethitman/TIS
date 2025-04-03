@@ -1,11 +1,11 @@
 <div class="cont-principal">
   <h1>AREAS</h1>
-  <app-areas-carrusel [Area]="area()" ></app-areas-carrusel>
+  <app-areas-carrusel [Area]="area()" (areaSelected)="cargarCategoriasPorArea($event.id)"></app-areas-carrusel>
  
   <div class="cont-btn-titulo">
     <h2>CATEGORIAS DEL AREA</h2>
   </div>
   <div class="cont-categoria">
-    <app-categorias-home></app-categorias-home>
+    <app-categorias-home [categorias]="categorias"></app-categorias-home>
   </div>
   

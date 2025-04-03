@@ -18,6 +18,9 @@ export class Inicio2Component {
 
   private GetAreaService = inject(GetAreaService);
   public area = signal<Area[]>([]);
+  categorias: NivelesCategoria[] = [];
+
+  constructor(private categoriaService: CategoriaService) {}
 
   ngOnInit(): void {
     this.loadArea();
@@ -30,5 +33,15 @@ export class Inicio2Component {
         this.area.set(area); // Asigna los datos a la señal
       });
   }
-  
+  cargarCategoriasPorArea(areaId: number): void {
+    this.categoriaService.getNivelesPorArea(areaId).subscribe(
+      (categorias) => {
+        this.categorias = categorias;
+        console.log('Categorías:', categorias);
+      },
+      (error) => {
+        console.error('Error al cargar categorías:', error);
+      }
+    );
+  }
 }
