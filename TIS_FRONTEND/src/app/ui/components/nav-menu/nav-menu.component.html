@@ -17,11 +17,11 @@
             </li>
           }
         </ul>
-<!-- CLOSE SESION - Solo visible cuando está logueado -->
-@if (authService.isLoggedIn()) {
-  <div class="flex justify-end items-end">
-    <button class="btn text-xs hover:bg-red-100 rounded-2xl" (click)="logout()">Cerrar Sesion</button>
+      <!-- CLOSE SESION - Solo visible cuando está logueado -->
+      @if (authService.isLoggedIn()) {
+       <div class="flex justify-end items-end">
+         <button class="btn text-xs hover:bg-red-100 rounded-2xl" (click)="logout()">Cerrar Sesion</button>
+       </div>
+       }
   </div>
-}
-</div>
 </nav>
