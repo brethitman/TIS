@@ -34,6 +34,8 @@ export class Inscripcion1Component {
   validarDatos(): boolean {
     return !!this.tutorData.nombres &&
            !!this.tutorData.apellidos &&
-           !!this.tutorData.ci;
+           !!this.tutorData.ci &&
+           !!this.tutorData.correo &&
+           !!this.tutorData.telefono;
   }
 }
