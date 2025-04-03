@@ -1,0 +1,10 @@
+<div class="flex p-5 pl-[80px] pr-[80px]">
+    <div *ngFor="let area of Area" class="flex-grow background-color:red shadow-neutral-300/50">
+      <button
+        (click)="onAreaClick(area)" 
+        class="w-full px-4 py-2 border-b-[2px] border-transparent hover:bg-gray-200 hover:border-gray-400 focus:bg-blue-500 focus:text-white focus:outline-none">
+        {{ area.nombre_area }}
+      </button>
+    </div>
+  </div>
+  
