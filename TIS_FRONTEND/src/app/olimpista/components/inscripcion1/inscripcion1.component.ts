@@ -1,18 +1,39 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-inscripcion1',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './inscripcion1.component.html'
 })
 export class Inscripcion1Component {
-  constructor(private router: Router) {}
+  tutorData = {
+    nombres: '',
+    apellidos: '',
+    ci: '',
+    correo: '',
+    telefono: ''
+  };
+
+  @Output() continuar = new EventEmitter<void>();
+  @Output() tutorChanged = new EventEmitter<any>();
+
+  onTutorChange() {
+    this.tutorChanged.emit(this.tutorData);
+  }
 
   siguiente() {
-    this.router.navigate(['/inscripcion/paso2']);  // Esta ruta ahora existe en tu configuración
+    if (this.validarDatos()) {
+      this.onTutorChange();
+      this.continuar.emit();
+    }
+  }
+
+  validarDatos(): boolean {
+    return !!this.tutorData.nombres &&
+           !!this.tutorData.apellidos &&
+           !!this.tutorData.ci;
   }
 }

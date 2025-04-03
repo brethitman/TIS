@@ -13,12 +13,13 @@ use App\Http\Controllers\ComprobantePago\ComprobantePagoController;
 use App\Http\Resources\ComprobantePago\ComprobantePagoCollection;
 use App\Models\ComprobantePago;
 
+
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-
-Route::post("/auth/login",[AuthController::class, "login"]);
+Route::post('/auth/login', [AuthController::class, 'login']);
 
 
 Route::get('/area',         [ AreaController::class, 'index'     ]);
@@ -64,6 +65,8 @@ Route::apiResource('nivelCategoria', NivelCategoriaController::class);
 Route::get('/nivelCategoria',         [ NivelCategoriaController::class, 'index'     ]);
 Route::get('/nivelCategoria/{id}',    [ NivelCategoriaController::class, 'show'      ]);
 Route::post('/nivelCategoria',        [ NivelCategoriaController::class, 'store'     ]);
+
+Route::put('/nivelCategoria/{id}',        [ NivelCategoriaController::class, 'update'     ]);
 
 Route::patch('/nivelCategoria/{id}/habilitacion', [NivelCategoriaController::class, 'updateHabilitacion']); // Para actualizar solo habilitacio
 

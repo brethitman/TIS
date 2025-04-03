@@ -15,37 +15,31 @@ class AuthController extends Controller
     {
         $credentials = $request->validated();
 
-        if (Auth ::attempt($credentials))
-        {
-            return response()->json(["message" => "Credenciales incorrectas 401"]);
-
+        if (!Auth::attempt($credentials)) {
+            return response()->json(["message" => "Credenciales incorrectas"], 401);
         }
 
-        $user = User::find(Auth::user()['id']);
-
-        $token = $user->createToken("token")->plainTexttToken;
+        $user = User::find(Auth::user()->id);
+        $token = $user->createToken("token")->plainTextToken;
 
         return response()->json([
             "user" => $user,
             "token" => $token
-
-
         ]);
-
     }
 
-
-    public function logout(){
-
+    public function logout()
+    {
+        // Implementación pendiente
     }
 
-
-    public function register(){
-
+    public function register()
+    {
+        // Implementación pendiente
     }
 
-    public function checkToken(Request $request){
-
+    public function checkToken(Request $request)
+    {
+        // Implementación pendiente
     }
 }
-

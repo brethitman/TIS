@@ -1,18 +1,49 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-inscripcion2',
-  imports: [],
-  templateUrl: './inscripcion2.component.html',
-
+  standalone: true,
+  imports: [FormsModule, CommonModule],
+  templateUrl: './inscripcion2.component.html'
 })
 export class Inscripcion2Component {
+  olimpistaData = {
+    nombres: '',
+    apellidos: '',
+    ci: '',
+    fecha_nacimiento: '',
+    correo: '',
+    telefono: '',
+    colegio: '',
+    curso: '',
+    departamento: '',
+    provincia: ''
+  };
 
-constructor(private router: Router) {}
+  @Output() continuar = new EventEmitter<void>();
+  @Output() atras = new EventEmitter<void>();
+  @Output() olimpistaChanged = new EventEmitter<any>();
 
-  siguiente() {
-    this.router.navigate(['/inscripcion/paso3']);  // Esta ruta ahora existe en tu configuración
+  onOlimpistaChange() {
+    this.olimpistaChanged.emit(this.olimpistaData);
   }
 
+  siguiente() {
+    if (this.validarDatos()) {
+      this.onOlimpistaChange();
+      this.continuar.emit();
+    }
+  }
+
+  volver() {
+    this.atras.emit();
+  }
+
+  validarDatos(): boolean {
+    return !!this.olimpistaData.nombres &&
+           !!this.olimpistaData.apellidos &&
+           !!this.olimpistaData.ci;
+  }
 }
