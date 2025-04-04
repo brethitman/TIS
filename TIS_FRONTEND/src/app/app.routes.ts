@@ -81,5 +81,13 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'inicio/waba',
     pathMatch: 'full'
+<<<<<<< Updated upstream
+=======
+  },
+  // Ruta de respaldo para cualquier otra ruta no encontrada
+  {
+    path: '**',
+    redirectTo: 'inicio/'
+>>>>>>> Stashed changes
   }
 ];

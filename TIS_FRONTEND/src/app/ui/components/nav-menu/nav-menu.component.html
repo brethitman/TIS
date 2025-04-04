@@ -1,5 +1,8 @@
 <nav class="bg-white shadow-sm py-4">
+<<<<<<< Updated upstream
 <<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
   <div class="nav__container flex justify-between items-center w-full"
     style="width: 100%;justify-content: space-between;">
     <!-- LOGO -->
@@ -10,6 +13,7 @@
         <p class="text-xs" style="color: #0C1E34;">Universidad Mayor de San Simón</p>
       </div>
     </div>
+<<<<<<< Updated upstream
 
     <!-- MENU OPTIONS -->
     <div class="botones" style="justify-content: left; width: 200px; margin-left: 90px;">
@@ -47,29 +51,50 @@
     </div>
 =======
   <div class="nav__container">
+=======
+>>>>>>> Stashed changes
 
-      <!-- LOGO -->
+    <!-- MENU OPTIONS -->
+    <div class="botones" style="justify-content: left; width: 200px; margin-left: 90px;">
+      <ul class="nav__menu flex space-x-4">
+        <!-- Primer botón: Home -->
+        <li>
+          <a class="nav__link" routerLinkActive="nav__link--active" [routerLink]="'/inicio/'">Home</a>
+        </li>
+        <!-- Segundo botón: hover -->
+        <li>
+          <a class="nav__link hover:underline hover:text-blue-500" routerLinkActive="nav__link--active"
+            [routerLink]="'/inicio/look'">Hover</a>
+        </li>
+        <!-- Tercer botón: con ícono y tooltip -->
+        <li>
+          <button class="nav__link relative flex items-center gap-2 text-white px-4 py-2 rounded hover:text-blue-500"
+            style="background-color: transparent;" >
+            <a class="nav__link" routerLinkActive="nav__link--active" [routerLink]="'/inicio/dodog'"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="16" fill="currentColor"
+              class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
+              <path fill-rule="evenodd"
+                d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z" />
+              <path fill-rule="evenodd"
+                d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+            </svg></a>
+          </button>
+        </li>
+      </ul>
 
-       <h1 class="text base"    > Sansi Olimpiadas</h1>
-
-
-       <!-- MENU OPTIONS -->
-        <ul class="nav__menu">
-
-          @for (option  of menuOptions; track option.path) {
-
-            <li>
-                <a class="nav__link" routerLinkActive="nav__link--active" [routerLink]="option.path">{{option.name}}</a>
-
-            </li>
-          }
-        </ul>
-      <!-- CLOSE SESION - Solo visible cuando está logueado -->
+      <!-- BOTÓN CERRAR SESIÓN (solo muestra cuando está autenticado) 
       @if (authService.isLoggedIn()) {
+<<<<<<< Updated upstream
        <div class="flex justify-end items-end">
          <button class="btn text-xs hover:bg-red-100 rounded-2xl" (click)="logout()">Cerrar Sesion</button>
        </div>
        }
 >>>>>>> ojopiojo
+=======
+        <button (click)="logout()" class="btn text-xs hover:bg-red-100 rounded-2xl ml-4">
+          Cerrar Sesión
+        </button>
+      }-->
+    </div>
+>>>>>>> Stashed changes
   </div>
 </nav>

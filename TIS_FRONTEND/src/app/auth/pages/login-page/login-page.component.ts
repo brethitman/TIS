@@ -45,6 +45,6 @@ passwordVisible: any;
     });
   }
   onCancel() {
-    this.router.navigate(['/inicio/waba']); // Cambia a ruta de Home
+    this.router.navigate(['/inicio/']); // Cambia a ruta de Home
   }
 }
