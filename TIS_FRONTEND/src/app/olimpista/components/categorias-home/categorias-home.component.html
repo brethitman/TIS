@@ -1,44 +1,54 @@
-<p>categorias-home works!</p>
-<div class="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 to-green-200 p-4">
-    <div class="max-w-md w-full bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-500 hover:scale-105">
-        <div class="p-6">
-            <h1 class="text-2xl font-bold text-gray-800 mb-1">Guacamayo</h1>
-            <p class="text-gray-600 mb-4">5to a 6to Primaria</p>
-            
-            <div class="space-y-3 mb-6">
-                <div class="flex items-center">
-                    <svg class="h-5 w-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    <span class="text-gray-700">Viernes - 14 de Marzo</span>
-                </div>
-                
-                <div class="flex items-center">
-                    <svg class="h-5 w-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="text-gray-700">Costo: 10 Bs</span>
-                </div>
-                
-                <div class="flex items-center">
-                    <svg class="h-5 w-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    </svg>
-                    <span class="text-gray-700">Ciudad: Cochabamba</span>
-                </div>
-                
-                <div class="flex items-center">
-                    <svg class="h-5 w-5 text-gray-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                    </svg>
-                    <span class="text-gray-700">Provincia: Cercado</span>
+<div class="min-h-screen px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-2xl font-bold mb-8 text-left">Categorias</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20">
+
+        <div *ngFor="let categoria of categorias"
+            class="card bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-xl mx-2">
+            <!-- Header con imagen local -->
+            <div class="relative h-40 flex items-center justify-center bg-cover bg-center"
+                style="background-image: url('/icon/compu.jpg')">
+                <!-- Overlay para mejor contraste -->
+                <div class="absolute inset-0 bg-black/30"></div>
+                <!-- Icono centrado -->
+                <i class="fas fa-graduation-cap text-white text-5xl z-10"></i>
+                <!-- Texto en la parte inferior -->
+                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent z-10">
+                    <h2 class="text-xl font-bold text-white">{{categoria.nombre_nivel}}</h2>
+                    <p class="text-sm text-white/80">{{categoria.descripcion}}</p>
                 </div>
             </div>
-            
-            <button class="w-full py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition duration-300 ease-in-out">
-                Registrarse
-            </button>
+            <!-- Contenido -->
+            <div class="p-6" style="background-color: aliceblue;">
+                <div class="space-y-4 mb-6">
+                    <!-- Fecha -->
+                    <div class="flex items-center">
+                        <span class="text-gray-700">Viernes - 14 de Marzo</span>
+                    </div>
+                    <!-- Costo -->
+                    <div class="flex items-center">
+                        <span class="text-gray-700 font-medium">Costo: {{categoria.costo}} Bs</span>
+                    </div>
+                    <!-- Ubicación -->
+                    <div class="flex items-center">
+                        <div>
+                            <p class="text-gray-700">Ciudad: Cochabamba</p>
+                        </div>
+
+                    </div>
+                    <div class="flex items-center">
+                        <div>
+                            <p class="text-gray-700 text-sm">Provincia: Cercado</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón -->
+                <button
+                    class="w-full py-3 text-white font-semibold rounded-lg shadow-md flex items-center justify-center bg-[#9C9CA4] hover:bg-[#7c7c84] transition-colors duration-300">
+                    <span>Registrarse</span>
+                    <i class="fas fa-arrow-right ml-2 text-sm"></i>
+                </button>
+            </div>
         </div>
     </div>
 </div>
