@@ -4,9 +4,7 @@
 
       @for (Area of Area  ; track Area.id) {
 
-          <app-areas-card
-                   [Area]="Area"
-          ></app-areas-card>
+          <app-areas-card [Area]="Area"></app-areas-card>
       }@empty {
         <p class="text-center">No se encontraron resultados</p>
       }
@@ -14,5 +12,3 @@
      </ul>
   </div>
 </section>
-
-

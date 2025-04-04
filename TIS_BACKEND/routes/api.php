@@ -72,6 +72,7 @@ Route::patch('/nivelCategoria/{id}/habilitacion', [NivelCategoriaController::cla
 
 //PRUEBA
 Route::get('/nivelCategoria/por-area/{areaId}', [NivelCategoriaController::class, 'porArea']);
+Route::put('/nivelCategoria/{id}', [NivelCategoriaController::class, 'update']);
 
 
 // olimpista ENDPOINTS ---------------------------

@@ -9,10 +9,10 @@ import { GetNIvelesCategoriaResponse } from '../interfaces/get-categoria-respons
   providedIn: 'root'
 })
 export class CategoriaService {
-  
+
   private apiUrl = 'http://localhost:8000/api/nivelCategoria'; // Corregido el endpoint
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Crea un nuevo nivel de categoría
@@ -46,10 +46,12 @@ export class CategoriaService {
    * @param cambios Objeto con los cambios
    * @returns Observable con el nivel actualizado
    */
-  actualizarNivel(id: number, cambios: Partial<NivelesCategoria>): Observable<NivelesCategoria> {
+  actualizarNivel(
+    id: number,
+    cambios: { nombre_nivel: string; descripcion?: string | null; fecha_examen: Date | null; costo: number }
+  ): Observable<NivelesCategoria> {
     return this.http.put<NivelesCategoria>(`${this.apiUrl}/${id}`, cambios);
   }
-
   /**
    * Elimina un nivel de categoría
    * @param id ID del nivel a eliminar
@@ -62,34 +64,34 @@ export class CategoriaService {
   /*getNivelesPorArea(areaId: number): Observable<GetNIvelesCategoriaResponse> {
     return this.http.get<GetNIvelesCategoriaResponse>(`${this.apiUrl}/por-area/${areaId}`);
   }*/
-  
-    getNivelesPorArea(areaId: number): Observable<NivelesCategoria[]> {
-      return this.http.get<any>(`${this.apiUrl}/por-area/${areaId}`).pipe(
-        map(response => {
-          // Verifica diferentes estructuras de respuesta
-          if (Array.isArray(response)) {
-            return response as NivelesCategoria[];
-          } else if (response.nivelesCategoria) {
-            return response.nivelesCategoria as NivelesCategoria[];
-          } else if (response.data) {
-            return response.data as NivelesCategoria[];
-          }
-          throw new Error('Formato de respuesta no reconocido');
-        }),
-        catchError(error => {
-          console.error('Error al obtener niveles por área:', error);
-          throw error;
-        })
-      );
-    }
-    /**
-   * Modifica la habilitacion de las categorias 
-   * @param id ID del nivel a eliminar
-   * @returns observar si la categoria fue habilitada o no
-   */
+
+  getNivelesPorArea(areaId: number): Observable<NivelesCategoria[]> {
+    return this.http.get<any>(`${this.apiUrl}/por-area/${areaId}`).pipe(
+      map(response => {
+        // Verifica diferentes estructuras de respuesta
+        if (Array.isArray(response)) {
+          return response as NivelesCategoria[];
+        } else if (response.nivelesCategoria) {
+          return response.nivelesCategoria as NivelesCategoria[];
+        } else if (response.data) {
+          return response.data as NivelesCategoria[];
+        }
+        throw new Error('Formato de respuesta no reconocido');
+      }),
+      catchError(error => {
+        console.error('Error al obtener niveles por área:', error);
+        throw error;
+      })
+    );
+  }
+  /**
+ * Modifica la habilitacion de las categorias 
+ * @param id ID del nivel a eliminar
+ * @returns observar si la categoria fue habilitada o no
+ */
 
   habilitarCategoria(id: number, habilitacion: boolean | null): Observable<NivelesCategoria> {
-    const body = { habilitacion }; 
+    const body = { habilitacion };
     return this.http.patch<NivelesCategoria>(`${this.apiUrl}/${id}/habilitacion`, body);
   }
 }

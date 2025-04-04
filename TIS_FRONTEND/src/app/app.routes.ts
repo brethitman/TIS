@@ -11,10 +11,7 @@ import { OlimpistaPageComponent } from './olimpista/pages/olimpista-page/olimpis
 import { Inscripcion1Component } from './olimpista/components/inscripcion1/inscripcion1.component';
 import { Inscripcion2Component } from './olimpista/components/inscripcion2/inscripcion2.component';
 import { Inscripcion3Component } from './olimpista/components/inscripcion3/inscripcion3.component';
-//import { HomeAreaComponent } from './olimpista/pages/home-area/home-area.component';
-//import { DatosPostulanteComponent } from './olimpista/pages/datosPostulante-page.component.ts/datosPostulante-page.component';
-
-
+import { HomeAreaComponent } from './olimpista/pages/home-area/home-area.component';
 
 export const routes: Routes = [
   {
@@ -48,7 +45,7 @@ export const routes: Routes = [
   },
   {
     path: 'inicio/look',
-    component: Inicio2Component
+    component: HomeAreaComponent
   },
   {
     path: 'inicio/dodog',

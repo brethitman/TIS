@@ -99,42 +99,53 @@
         </div>
       </div>
       <!-- Modal de Edición de Categoría -->
-      <div *ngIf="isEditModalOpen"
-        class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+      <div *ngIf="isEditModalOpen" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
+        style="background-color: rgba(75, 85, 99, 0.3); ">
         <div class="bg-white p-6 rounded-lg shadow-xl w-96">
           <h2 class="text-xl font-bold mb-4">Editar Categoría</h2>
           <p class="text-sm text-gray-500 mb-4">Modifica los datos de la categoría.</p>
-
           <form (ngSubmit)="saveEdit()">
-            <!-- Nombre de Categoría -->
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2">Nombre</label>
-              <input type="text" [(ngModel)]="editedCategoria.nombre_nivel" name="editedNombre"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+              <input type="text" [(ngModel)]="editedCategoriaTemp.nombre_nivel" name="editedNombre"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                oninput="this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '')" required />
             </div>
-
-            <!-- Descripción -->
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2">Descripción</label>
-              <input type="text" [(ngModel)]="editedCategoria.descripcion" name="editedDescripcion"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+              <select
+                class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+                [(ngModel)]="editedCategoriaTemp.descripcion" name="editedDescripcion"
+                style="background-color: white;">
+                <option value="" disabled selected class="text-gray-400"
+                  style="max-height: 5px; overflow-y: scroll; scrollbar-width: 2px;">Seleccionar nivel académico
+                </option>
+                <option value="1ro de Primaria">1ro de Primaria</option>
+                <option value="2do de Primaria">2do de Primaria</option>
+                <option value="3ro de Primaria">3ro de Primaria</option>
+                <option value="4to de Primaria">4to de Primaria</option>
+                <option value="5to de Primaria">5to de Primaria</option>
+                <option value="6to de Primaria">6to de Primaria</option>
+                <option value="1ro de Secundaria">1ro de Secundaria</option>
+                <option value="2do de Secundaria">2do de Secundaria</option>
+                <option value="3ro de Secundaria">3ro de Secundaria</option>
+                <option value="4ro de Secundaria">4to de Secundaria</option>
+                <option value="5tro de Secundaria">5to de Secundaria</option>
+                <option value="6to de Secundaria">6to de Secundaria</option>
+              </select>
             </div>
-
-            <!-- Fecha de examen -->
-            <div class="mb-4">
-              <label class="block text-gray-700 text-sm font-bold mb-2">Fecha de examen</label>
-              <input type="date" [(ngModel)]="editedCategoria.fecha_examen" name="editedFecha"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            </div>
-
-            <!-- Costo -->
+            <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
+          <input type="date" name="editedFecha"
+            class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+            style="background-color: white;" [min]="minDate" [max]="maxDate" [(ngModel)]="editedCategoriaTemp.fecha_examen"
+            (keydown)="disableManualInput($event)" required>
+          <!-- Costo de la Categoría -->
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2">Costo</label>
-              <input type="text" [(ngModel)]="editedCategoria.costo" name="editedCosto"
-                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+              <input type="number" [(ngModel)]="editedCategoriaTemp.costo" name="editedCosto"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3)" required />
             </div>
-
-            <!-- Botones -->
             <div class="flex justify-end space-x-2">
               <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                 Guardar

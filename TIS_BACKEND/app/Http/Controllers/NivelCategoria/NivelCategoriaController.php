@@ -79,8 +79,21 @@ class NivelCategoriaController extends Controller
         try {
             $nivelCategoria = NivelCategoria::findOrFail($id);
 
+<<<<<<< HEAD
             // Actualizar el nivel de categoría con datos validados
             $nivelCategoria->update($request->validated());
+=======
+            // Validar los datos recibidos
+            $validatedData = $request->validate([
+                'nombre_nivel' => 'required|string|max:100',
+                'descripcion' => 'nullable|string',
+                'fecha_examen' => 'nullable|date',
+                'costo' => 'required|numeric|min:0',
+            ]);
+
+            // Actualizar el nivel de categoría
+            $nivelCategoria->update($validatedData);
+>>>>>>> 80bbd838ed8df61457313bd6cbff712c22adc3f3
 
             return response()->json([
                 'message' => 'Nivel de categoría actualizado exitosamente',
@@ -119,6 +132,7 @@ class NivelCategoriaController extends Controller
     }
 
     public function updateHabilitacion(Request $request, string $id)
+<<<<<<< HEAD
 {
     try {
         // Depura el valor recibido en el request
@@ -146,6 +160,51 @@ class NivelCategoriaController extends Controller
             'error' => 'No se pudo actualizar el nivel de categoría',
             'message' => $e->getMessage(),
         ], 500);
+=======
+    {
+        try {
+            // Depura el valor recibido en el request
+            \Log::info('Datos recibidos:', $request->all());
+
+            $nivelCategoria = NivelCategoria::findOrFail($id);
+
+            if ($request->has('habilitacion')) {
+                $nivelCategoria->habilitacion = $request->input('habilitacion');
+                $nivelCategoria->save();
+
+                return response()->json([
+                    'message' => 'Estado de habilitación actualizado exitosamente',
+                    'nivelCategoria' => new NivelCategoriaResource($nivelCategoria),
+                ]);
+            }
+
+            return response()->json(['error' => 'Campo habilitacion no proporcionado'], 400);
+        } catch (ModelNotFoundException $e) {
+            \Log::error('Nivel de categoría no encontrado:', ['id' => $id]);
+            return response()->json(['error' => 'Nivel de categoría no encontrado'], 404);
+        } catch (Exception $e) {
+            \Log::error('Error interno:', ['message' => $e->getMessage()]);
+            return response()->json([
+                'error' => 'No se pudo actualizar el nivel de categoría',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+
+
+    //PRUEBA
+    public function porArea($areaId)
+    {
+        $niveles = NivelCategoria::where('id_area', $areaId)->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Niveles de categoría por área',
+            'nivelesCategoria' => $niveles
+        ]);
+>>>>>>> 80bbd838ed8df61457313bd6cbff712c22adc3f3
     }
 }
 
