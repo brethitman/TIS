@@ -16,7 +16,7 @@ import { HttpClient } from '@angular/common/http';
 export class AreasCardComponent implements OnInit {
   @Input({ required: true }) Area!: Area;
   @Input() categorias: NivelesCategoria[] = [];
-  @Input({ required: true }) NivCategoria !: NivelesCategoria;
+  @Input({}) NivCategoria !: NivelesCategoria;
 
   isModalOpen = false;
   isDeleteModalOpen = false;
