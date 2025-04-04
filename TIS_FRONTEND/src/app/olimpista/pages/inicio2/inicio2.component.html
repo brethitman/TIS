@@ -1,11 +1,24 @@
+<div *ngIf="pasoActual === 1">
+  <app-inscripcion1
+    (continuar)="siguientePaso()"
+    (tutorChanged)="updateTutorData($event)">
+  </app-inscripcion1>
+</div>
 
-<div class="cont-principal">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-  <section class="w-full bg-gradient-to-r from-red-600 to-purple-700 py-4 px-4 animate-gradient">
-    <h1 class="text-white text-3xl font-bold ">AREAS</h1>
-  </section>
-  <app-areas-carrusel [Area]="area()" (areaSelected)="cargarCategoriasPorArea($event.id)"></app-areas-carrusel>
- 
-  <div class="cont-categoria">
-    <app-categorias-home [categorias]="categorias"></app-categorias-home>
-  </div>
+<div *ngIf="pasoActual === 2">
+  <app-inscripcion2
+    (continuar)="siguientePaso()"
+    (atras)="anteriorPaso()"
+    (olimpistaChanged)="updateOlimpistaData($event)">
+  </app-inscripcion2>
+</div>
+
+<div *ngIf="pasoActual === 3">
+  <app-inscripcion3
+    [tutorData]="formData.tutor"
+    [olimpistaData]="formData.olimpista"
+    (atras)="anteriorPaso()"
+    (submit)="submitInscripcion($event)"
+    (areaChanged)="updateAreaData($event)">
+  </app-inscripcion3>
+</div>

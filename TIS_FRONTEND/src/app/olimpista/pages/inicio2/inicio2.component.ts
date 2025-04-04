@@ -1,50 +1,67 @@
-
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Area } from '../../interfaces/area.interface';
-import { NivelesCategoria } from '../../interfaces/categoria.interface';
-import { GetAreaService } from '../../service/get.area.service.ts.service';
-import { AreasCarruselComponent } from '../../components/areas-carrusel/areas-carrusel.component';
-import { CategoriaService } from '../../service/categoria.service';
-import { CategoriasHomeComponent } from '../../components/categorias-home/categorias-home.component';
-
+import { Inscripcion1Component } from '../../components/inscripcion1/inscripcion1.component';
+import { Inscripcion2Component } from "../../components/inscripcion2/inscripcion2.component";
+import { Inscripcion3Component } from "../../components/inscripcion3/inscripcion3.component";
+import { InscripcionService } from '../../service/inscripcion.service';
 
 @Component({
   selector: 'app-inicio2',
   templateUrl: './inicio2.component.html',
   standalone: true,
-
-  imports: [CommonModule, FormsModule, AreasCarruselComponent, CategoriasHomeComponent],
+  imports: [CommonModule, FormsModule, Inscripcion1Component, Inscripcion2Component, Inscripcion3Component],
 })
 export class Inicio2Component {
+  pasoActual = 1;
+  formData: any = {
+    tutor: {},
+    olimpista: {},
+    areaId: null
+  };
 
-  private GetAreaService = inject(GetAreaService);
-  public area = signal<Area[]>([]);
-  categorias: NivelesCategoria[] = [];
+  constructor(private inscripcionService: InscripcionService) {}
 
-  constructor(private categoriaService: CategoriaService) {}
-
-  ngOnInit(): void {
-    this.loadArea();
+  siguientePaso() {
+    if (this.pasoActual < 3) {
+      this.pasoActual++;
+    }
   }
 
-  public loadArea() {
-    this.GetAreaService.findAll()
-      .subscribe(area => {
-        console.log('Áreas obtenidas:', area); // Verifica los datos recibidos
-        this.area.set(area); // Asigna los datos a la señal
-      });
+  anteriorPaso() {
+    if (this.pasoActual > 1) {
+      this.pasoActual--;
+    }
   }
-  cargarCategoriasPorArea(areaId: number): void {
-    this.categoriaService.getNivelesPorArea(areaId).subscribe(
-      (categorias) => {
-        this.categorias = categorias;
-        console.log('Categorías:', categorias);
+
+  updateTutorData(tutorData: any) {
+    this.formData.tutor = tutorData;
+    console.log('Datos del tutor actualizados:', this.formData.tutor);
+  }
+
+  updateOlimpistaData(olimpistaData: any) {
+    this.formData.olimpista = olimpistaData;
+    console.log('Datos del olimpista actualizados:', this.formData.olimpista);
+  }
+
+  updateAreaData(areaData: any) {
+    this.formData.areaId = areaData;
+    console.log('Área seleccionada:', this.formData.areaId);
+  }
+
+  submitInscripcion(formData: any) {
+    console.log('Enviando inscripción:', formData);
+
+    this.inscripcionService.crearInscripcionCompleta(formData).subscribe({
+      next: (response) => {
+        console.log('Inscripción exitosa', response);
+        // Redirigir o mostrar mensaje de éxito
+        alert('Inscripción completada con éxito!');
       },
-      (error) => {
-        console.error('Error al cargar categorías:', error);
+      error: (err) => {
+        console.error('Error en la inscripción', err);
+        alert('Error al completar la inscripción. Por favor intenta nuevamente.');
       }
-    );
+    });
   }
 }
