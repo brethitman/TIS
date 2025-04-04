@@ -3,8 +3,14 @@
 namespace App\Http\Controllers\Area;
 
 use App\Http\Controllers\Controller;
+<<<<<<< HEAD
 use App\Http\Resources\Area\AreaCollection;
 use App\Http\Resources\Area\AreaResource; 
+=======
+use App\Http\Requests\StoreAreaRequest;
+use App\Http\Resources\Area\AreaCollection;
+use App\Http\Resources\Area\AreaResource;
+>>>>>>> ojopiojo
 use App\Models\Area;
 use Illuminate\Http\Request;
 
@@ -25,7 +31,11 @@ class AreaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+<<<<<<< HEAD
     public function store(Request $request)
+=======
+    public function store(StoreAreaRequest $request)
+>>>>>>> ojopiojo
     {
         // Validar los datos recibidos
         $request->validate([

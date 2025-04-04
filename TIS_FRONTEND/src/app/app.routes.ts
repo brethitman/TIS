@@ -8,6 +8,10 @@ import { Inicio1Component } from './olimpista/pages/inicio1/inicio1.component';
 import { Inicio2Component } from './olimpista/pages/inicio2/inicio2.component';
 import { Inicio3Component } from './olimpista/pages/inicio3/inicio3.component';
 import { OlimpistaPageComponent } from './olimpista/pages/olimpista-page/olimpista-page.component';
+import { Inscripcion1Component } from './olimpista/components/inscripcion1/inscripcion1.component';
+import { Inscripcion2Component } from './olimpista/components/inscripcion2/inscripcion2.component';
+import { Inscripcion3Component } from './olimpista/components/inscripcion3/inscripcion3.component';
+//import { DatosPostulanteComponent } from './olimpista/pages/datosPostulante-page.component.ts/datosPostulante-page.component';
 
 export const routes: Routes = [
   {
@@ -29,13 +33,12 @@ export const routes: Routes = [
         loadChildren: () => import("./olimpista/estudiantes-routing.module").then(m => m.EstudiantesRoutingModule),
       },
       {
-
         path: 'areas',
         component: AreasComponent,
       },
     ]
   },
-  // Agrega estas nuevas rutas para las páginas de inicio
+
   {
     path: 'inicio/waba',
     component: Inicio1Component
@@ -49,9 +52,30 @@ export const routes: Routes = [
     component: Inicio3Component
   },
   {
+
+    path: 'inscripcion/paso1',
+    component: Inscripcion1Component
+  },
+  {
+    path: 'inscripcion/paso2',
+    component: Inscripcion2Component
+
+  },
+  {
+    path: 'inscripcion/paso3',
+    component: Inscripcion3Component
+
+  },
+  {
     path: 'inicio/OlimpistaForm',
     component: OlimpistaPageComponent
   },
+  /*
+  {
+    path: 'inicio/datosPostulante',
+    component: DatosPostulanteComponent
+  },*/
+
   // Ruta por defecto (opcional)
   {
     path: '',

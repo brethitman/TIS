@@ -1,3 +1,4 @@
+
 import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,10 +9,12 @@ import { AreasCarruselComponent } from '../../components/areas-carrusel/areas-ca
 import { CategoriaService } from '../../service/categoria.service';
 import { CategoriasHomeComponent } from '../../components/categorias-home/categorias-home.component';
 
+
 @Component({
   selector: 'app-inicio2',
   templateUrl: './inicio2.component.html',
   standalone: true,
+
   imports: [CommonModule, FormsModule, AreasCarruselComponent, CategoriasHomeComponent],
 })
 export class Inicio2Component {

@@ -2,13 +2,24 @@
 
 namespace App\Http\Controllers\NivelCategoria;
 
+<<<<<<< HEAD
 use App\Http\Controllers\Controller;
+=======
+use Exception;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreNivelCategoriaRequest;
+use App\Http\Requests\UpdateNivelCategoriaRequest;
+>>>>>>> ojopiojo
 use App\Http\Resources\NivelCategoria\NivelCategoriaCollection;
 use App\Http\Resources\NivelCategoria\NivelCategoriaResource;
 use App\Models\NivelCategoria;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+<<<<<<< HEAD
 use Exception;
+=======
+>>>>>>> ojopiojo
 
 class NivelCategoriaController extends Controller
 {
@@ -27,7 +38,11 @@ class NivelCategoriaController extends Controller
     /**
      * Almacena un nuevo nivel de categoría en la base de datos.
      */
+<<<<<<< HEAD
     public function store(Request $request)
+=======
+    public function store(StoreNivelCategoriaRequest $request)
+>>>>>>> ojopiojo
     {
         try {
             // Validar los datos del request
@@ -71,11 +86,16 @@ class NivelCategoriaController extends Controller
     /**
      * Actualiza un nivel de categoría existente.
      */
+<<<<<<< HEAD
     public function update(Request $request, string $id)
+=======
+    public function update(UpdateNivelCategoriaRequest $request, string $id)
+>>>>>>> ojopiojo
     {
         try {
             $nivelCategoria = NivelCategoria::findOrFail($id);
 
+<<<<<<< HEAD
             // Validar los datos recibidos
             $validatedData = $request->validate([
                 'id_area' => 'required|integer|exists:areas,id_area',
@@ -88,6 +108,10 @@ class NivelCategoriaController extends Controller
 
             // Actualizar el nivel de categoría
             $nivelCategoria->update($validatedData);
+=======
+            // Actualizar el nivel de categoría con datos validados
+            $nivelCategoria->update($request->validated());
+>>>>>>> ojopiojo
 
             return response()->json([
                 'message' => 'Nivel de categoría actualizado exitosamente',
@@ -126,6 +150,7 @@ class NivelCategoriaController extends Controller
     }
 
     public function updateHabilitacion(Request $request, string $id)
+<<<<<<< HEAD
     {
         try {
             // Depura el valor recibido en el request
@@ -172,3 +197,36 @@ class NivelCategoriaController extends Controller
 }
 }
 
+=======
+{
+    try {
+        // Depura el valor recibido en el request
+        Log::info('Datos recibidos:', $request->all());
+
+        $nivelCategoria = NivelCategoria::findOrFail($id);
+
+        if ($request->has('habilitacion')) {
+            $nivelCategoria->habilitacion = $request->input('habilitacion');
+            $nivelCategoria->save();
+
+            return response()->json([
+                'message' => 'Estado de habilitación actualizado exitosamente',
+                'nivelCategoria' => new NivelCategoriaResource($nivelCategoria),
+            ]);
+        }
+
+        return response()->json(['error' => 'Campo habilitacion no proporcionado'], 400);
+    } catch (ModelNotFoundException $e) {
+        Log::error('Nivel de categoría no encontrado:', ['id' => $id]);
+        return response()->json(['error' => 'Nivel de categoría no encontrado'], 404);
+    } catch (Exception $e) {
+        Log::error('Error interno:', ['message' => $e->getMessage()]);
+        return response()->json([
+            'error' => 'No se pudo actualizar el nivel de categoría',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+}
+>>>>>>> ojopiojo

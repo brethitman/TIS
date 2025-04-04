@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\Area\AreaController;
+<<<<<<< HEAD
+=======
+use App\Http\Controllers\Auth\AuthController;
+>>>>>>> ojopiojo
 use App\Http\Controllers\BoletaPago\BoletaPagoController;
 use App\Http\Controllers\Inscripcion\InscripcionController;
 use App\Http\Controllers\NivelCategoria\NivelCategoriaController;
@@ -12,10 +16,20 @@ use App\Http\Controllers\ComprobantePago\ComprobantePagoController;
 use App\Http\Resources\ComprobantePago\ComprobantePagoCollection;
 use App\Models\ComprobantePago;
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> ojopiojo
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+<<<<<<< HEAD
+=======
+Route::post('/auth/login', [AuthController::class, 'login']);
+
+>>>>>>> ojopiojo
 
 Route::get('/area',         [ AreaController::class, 'index'     ]);
 Route::get('/area/{id}',    [ AreaController::class, 'show'      ]);
@@ -61,6 +75,11 @@ Route::get('/nivelCategoria',         [ NivelCategoriaController::class, 'index'
 Route::get('/nivelCategoria/{id}',    [ NivelCategoriaController::class, 'show'      ]);
 Route::post('/nivelCategoria',        [ NivelCategoriaController::class, 'store'     ]);
 
+<<<<<<< HEAD
+=======
+Route::put('/nivelCategoria/{id}',        [ NivelCategoriaController::class, 'update'     ]);
+
+>>>>>>> ojopiojo
 Route::patch('/nivelCategoria/{id}/habilitacion', [NivelCategoriaController::class, 'updateHabilitacion']); // Para actualizar solo habilitacio
 
 //PRUEBA

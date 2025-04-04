@@ -19,4 +19,8 @@ export class GetAreaService {
         map((resp) => resp.areas)
       );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ojopiojo

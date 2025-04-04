@@ -1,0 +1,276 @@
+
+<div class="max-w-4xl mx-auto px-4">
+  <!-- Banner de cabecera -->
+  <div class="bg-gradient-to-r from-red-600 via-purple-800 to-blue-600 py-5 mb-8 w-screen relative left-1/2 transform -translate-x-1/2 shadow-md">
+    <h1 class="text-white font-bold text-2xl max-w-4xl mx-auto flex items-center">
+      <i class="fas fa-file-alt mr-3"></i> INSCRIPCIÓN
+    </h1>
+  </div>
+  <div class="flex items-center justify-center space-x-8 mb-6">
+    <!-- Paso 1 (activo) -->
+    <div class="flex flex-col items-center">
+      <div class="rounded-full h-10 w-10 flex items-center justify-center bg-[#5B2CB9] text-white">
+        1
+      </div>
+      <span class="text-xs mt-2">Paso 1</span>
+    </div>
+  
+    <!-- Paso 2 (pendiente) -->
+    <div class="flex flex-col items-center">
+      <div class="rounded-full h-10 w-10 flex items-center justify-center bg-gray-300 text-white">
+        2
+      </div>
+      <span class="text-xs mt-2">Paso 2</span>
+    </div>
+  
+    <!-- Paso 3 (pendiente) -->
+    <div class="flex flex-col items-center">
+      <div class="rounded-full h-10 w-10 flex items-center justify-center bg-gray-300 text-white">
+        3
+      </div>
+      <span class="text-xs mt-2">Paso 3</span>
+    </div>
+  </div>
+  <div class="bg-white p-6 rounded-lg shadow-sm mb-8">
+    <!-- Sección: Datos del tutor -->
+     
+    <div class="mb-8">
+      <h2 class="text-xl font-bold mb-2 pb-2 border-b-2 border-indigo-700 text-gray-800 flex items-center">
+        <i class="fas fa-user-shield mr-2 text-indigo-700"></i> Datos del tutor:
+      </h2>
+      <p class="text-sm text-gray-600 italic mb-6">Llenar los siguientes datos para generar la boleta de pago correctamente</p>
+
+      <div class="mb-5">
+        <label class="font-semibold text-gray-800 flex items-center mb-2">
+          <i class="fas fa-user mr-2 text-gray-600"></i> Nombre(s) del tutor del estudiante:
+          <span class="text-red-500 ml-1">*</span>
+        </label>
+          <input type="text"
+          [(ngModel)]="tutorData.nombres"
+          (keypress)="validarEntradaNombres($event)"
+          name="tutorNombres"
+          class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 h-10">
+          <span class="text-red-500 text-sm" *ngIf="nombreInvalido">
+            Solo se permiten letras.
+          </span>
+      </div>
+
+      <div class="mb-5">
+        <label class="font-semibold text-gray-800 flex items-center mb-2">
+          <i class="fas fa-signature mr-2 text-gray-600"></i> Apellido(s) del tutor del estudiante:
+          <span class="text-red-500 ml-1">*</span>
+        </label>
+          <input type="text"
+            maxlength="255"
+            [(ngModel)]="tutorData.apellidos"
+            (keypress)="validarEntradaApellidos($event)"
+            name="tutorApellidos"
+            class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 h-10">
+              <span class="text-red-500 text-sm" *ngIf="apellidoInvalido">
+                 Solo se permiten letras.
+              </span>
+      </div>
+
+      <div class="mb-5">
+        <label class="font-semibold text-gray-800 flex items-center mb-2">
+          <i class="fas fa-id-card mr-2 text-gray-600"></i> Carnet de Identidad(C.I.) del tutor del estudiante:
+          <span class="text-red-500 ml-1">*</span>
+        </label>
+          <input type="text"
+            [(ngModel)]="tutorData.ci"
+            (keypress)="validarEntradaCI($event)"
+            name="tutorCi"
+            class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 h-10">
+              <span class="text-red-500 text-sm" *ngIf="ciInvalido">
+                Formato inválido.
+              </span>
+      </div>
+
+      <div class="mb-5">
+        <label class="font-semibold text-gray-800 flex items-center mb-2">
+          <i class="fas fa-envelope mr-2 text-gray-600"></i> Correo electrónico:
+          <span class="text-red-500 ml-1">*</span>
+        </label>
+          <input type="email" [(ngModel)]="tutorData.correo" name="tutorCorreo"
+            (input)="onTutorChange()" class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 h-10">
+              <span class="text-red-500 text-sm" *ngIf="correoInvalido">
+                 Solo se aceptan dominios: gmail, hotmail, outlook o yahoo.
+              </span>
+      </div>
+
+      <div class="mb-5">
+        <label class="font-semibold text-gray-800 flex items-center mb-2">
+          <i class="fas fa-phone mr-2 text-gray-600"></i> Teléfono:
+          <span class="text-red-500 ml-1">*</span>
+        </label>
+          <input type="text"
+            maxlength="8"
+            [(ngModel)]="tutorData.telefono"
+            (keypress)="validarEntradaTelefono($event)"
+            name="tutorTelefono"
+            class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-100 h-10">
+              <span class="text-red-500 text-sm" *ngIf="telefonoInvalido">
+                Solo se permiten números.
+              </span>
+      </div>
+    </div>
+
+    
+
+    <!-- Botón Siguiente -->
+    <div class="flex justify-end mt-8">
+      <button (click)="siguiente()"
+              [disabled]="!tutorData.nombres || !tutorData.apellidos || !tutorData.ci || !tutorData.correo || !tutorData.telefono"
+              class="px-6 py-3 bg-red-600 text-white rounded shadow-md disabled:bg-gray-400">
+        Siguiente
+      </button>
+    </div>
+  </div>
+  <div class="container">
+
+
+
+    <!-- Estilos integrados en el mismo archivo -->
+  <style>
+    .btn-excel {
+    background-color: #3f51b5;
+    color: white;
+  }
+
+    /* Navegación */
+    .nav-bar {
+      background-color: #e0e0e0;
+      padding: 10px;
+      text-align: right;
+    }
+  
+    .nav-bar a {
+      margin-left: 15px;
+      text-decoration: none;
+      color: #333;
+    }
+  
+    /* Instrucciones para subir Excel */
+    .excel-instructions {
+      font-style: italic;
+      color: #777; /* Color plomo/gris */
+      margin: 15px 0;
+      line-height: 1.4;
+    }
+  
+    .footer {
+      background-color: #0a005b; /* Azul oscuro */
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 40px;
+      width: 100vw;
+      position: relative;
+      left: 50%;
+      transform: translateX(-50%);
+      box-sizing: border-box;
+    }
+    
+    .support-info {
+      font-family: Arial, sans-serif;
+    }
+    
+    .support-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .support-email {
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: white;
+      text-decoration: none;
+      display: block;
+    }
+    
+    .support-phone {
+      font-size: 16px;
+    }
+    
+    .footer-logo-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    
+    .logo-ciencia {
+      max-width: 130px; /* Aumentado de 100px a 130px */
+      height: auto;
+      position: relative;
+      z-index: 2;
+      margin-right: 15px; /* Espacio entre los íconos */
+    }
+    
+    .logo-atomo {
+      max-width: 130px; /* Aumentado de 100px a 130px */
+      height: auto;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .animate-movimiento {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+      100% {
+        transform: translateY(0px);
+      }
+    }
+  
+    .excel-button-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+  
+    .buttons-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+    
+    .excel-icon {
+      margin-left: 10px;
+      color: #217346; /* Color verde de Excel */
+      font-size: 24px;
+    }
+  </style>
+  <!-- Instrucciones para varios estudiantes con texto en cursiva y color plomo -->
+    <div class="excel-instructions">
+      <p>Como tutor, puedes varios estudiantes a la vez</p>
+      <p>Descarga la plantilla, completa los datos y súbela aquí</p>
+      <p>Asegúrate de seguir el formato</p>
+    </div>
+  
+    <div class="excel-button-container">
+      <button type="button" class="btn btn-excel">Subir Excel</button>
+      <!-- Ícono de Excel de Font Awesome -->
+      <i class="fa-solid fa-file-excel excel-icon"></i>
+    </div>
+
+  <div class="footer">
+    <div class="support-info">
+      <div class="support-title">Support</div>
+      <a href="mailto:bluenebuladigitalsolutions@gmail.com" class="support-email">bluenebuladigitalsolutionsgmail.com</a>
+      <div class="support-phone">+591 79766695</div>
+    </div>
+    <div class="footer-logo-container">
+      <img src="icon/ciencia.png" alt="Imagen" class="logo-ciencia animate-movimiento" />
+      <img src="icon/atomo.png" alt="Imagen" class="logo-atomo animate-movimiento" />
+    </div>
+  </div>

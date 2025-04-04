@@ -1,4 +1,5 @@
 <nav class="bg-white shadow-sm py-4">
+<<<<<<< HEAD
   <div class="nav__container flex justify-between items-center w-full"
     style="width: 100%;justify-content: space-between;">
     <!-- LOGO -->
@@ -44,5 +45,31 @@
         </button>
       }-->
     </div>
+=======
+  <div class="nav__container">
+
+      <!-- LOGO -->
+
+       <h1 class="text base"    > Sansi Olimpiadas</h1>
+
+
+       <!-- MENU OPTIONS -->
+        <ul class="nav__menu">
+
+          @for (option  of menuOptions; track option.path) {
+
+            <li>
+                <a class="nav__link" routerLinkActive="nav__link--active" [routerLink]="option.path">{{option.name}}</a>
+
+            </li>
+          }
+        </ul>
+      <!-- CLOSE SESION - Solo visible cuando está logueado -->
+      @if (authService.isLoggedIn()) {
+       <div class="flex justify-end items-end">
+         <button class="btn text-xs hover:bg-red-100 rounded-2xl" (click)="logout()">Cerrar Sesion</button>
+       </div>
+       }
+>>>>>>> ojopiojo
   </div>
 </nav>
