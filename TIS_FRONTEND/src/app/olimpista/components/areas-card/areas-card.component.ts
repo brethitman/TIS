@@ -33,7 +33,7 @@ export class AreasCardComponent implements OnInit {
   categoriaFechaExamen: string = ''; // formato dd/mm/yyyy
   categoriaCosto: string = ''; // Modificado para ser un string
   cardIndexToEdit: number | null = null;
-  editedNombreArea = '';
+  editedNombreCategoria = '';
   editedfechaExamen = '';
   editedCosto = 0;
 
@@ -52,7 +52,7 @@ export class AreasCardComponent implements OnInit {
   };
 
   cards: {
-    nombre_area: string;
+    nombre_Categoria: string;
     descripcion: string;
     habilitada: boolean;
     costo: number;
@@ -127,7 +127,7 @@ export class AreasCardComponent implements OnInit {
 
   openEditModal(index: number) {
     this.cardIndexToEdit = index;
-    this.editedNombreArea = this.cards[index].nombre_area;
+    this.editedNombreCategoria = this.cards[index].nombre_Categoria;
     this.editedfechaExamen = this.cards[index].fecha_examen;
     this.editedCosto = this.cards[index].costo;
     this.isEditModalOpen = true;
@@ -146,7 +146,7 @@ export class AreasCardComponent implements OnInit {
 
   saveEdit() {
     if (this.cardIndexToEdit !== null) {
-      this.cards[this.cardIndexToEdit].nombre_area = this.editedNombreArea;
+      this.cards[this.cardIndexToEdit].nombre_Categoria = this.editedNombreCategoria;
       this.cards[this.cardIndexToEdit].fecha_examen = this.editedfechaExamen;
       this.cards[this.cardIndexToEdit].costo = this.editedCosto;
       console.log(`Tarjeta en índice ${this.cardIndexToEdit} editada.`);

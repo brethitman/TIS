@@ -15,8 +15,10 @@ export class AreasCarruselComponent {
 
   @Output()
   areaSelected = new EventEmitter<Area>(); 
+  areaSeleccionada: any;
 
   onAreaClick(area: Area) {
     this.areaSelected.emit(area);
+    this.areaSeleccionada = area;
   }
 }
