@@ -63,5 +63,6 @@ export class Inicio2Component {
         alert('Error al completar la inscripción. Por favor intenta nuevamente.');
       }
     });
+
   }
 }

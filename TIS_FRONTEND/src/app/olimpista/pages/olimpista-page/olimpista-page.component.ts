@@ -1,7 +1,5 @@
-<<<<<<< HEAD
-=======
+
 import { Router } from '@angular/router';
->>>>>>> ojopiojo
 import { Component } from '@angular/core';
 
 @Component({
@@ -12,9 +10,7 @@ import { Component } from '@angular/core';
 })
 export class OlimpistaPageComponent {
 
-<<<<<<< HEAD
-}
-=======
+
   constructor(
     private router: Router
   ) {
@@ -27,4 +23,3 @@ export class OlimpistaPageComponent {
   }
 }
 
->>>>>>> ojopiojo
