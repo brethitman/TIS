@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\NivelCategoria;
 
-use Exception;
+
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreNivelCategoriaRequest;
-use App\Http\Requests\UpdateNivelCategoriaRequest;
 use App\Http\Resources\NivelCategoria\NivelCategoriaCollection;
 use App\Http\Resources\NivelCategoria\NivelCategoriaResource;
 use App\Models\NivelCategoria;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Exception;
 
 class NivelCategoriaController extends Controller
 {
@@ -30,7 +29,7 @@ class NivelCategoriaController extends Controller
     /**
      * Almacena un nuevo nivel de categoría en la base de datos.
      */
-    public function store(StoreNivelCategoriaRequest $request)
+    public function store(Request $request)
     {
         try {
             // Validar los datos del request
@@ -74,15 +73,11 @@ class NivelCategoriaController extends Controller
     /**
      * Actualiza un nivel de categoría existente.
      */
-    public function update(UpdateNivelCategoriaRequest $request, string $id)
+    public function update(Request $request, string $id)
     {
         try {
             $nivelCategoria = NivelCategoria::findOrFail($id);
 
-<<<<<<< HEAD
-            // Actualizar el nivel de categoría con datos validados
-            $nivelCategoria->update($request->validated());
-=======
             // Validar los datos recibidos
             $validatedData = $request->validate([
                 'nombre_nivel' => 'required|string|max:100',
@@ -93,7 +88,6 @@ class NivelCategoriaController extends Controller
 
             // Actualizar el nivel de categoría
             $nivelCategoria->update($validatedData);
->>>>>>> 80bbd838ed8df61457313bd6cbff712c22adc3f3
 
             return response()->json([
                 'message' => 'Nivel de categoría actualizado exitosamente',
@@ -132,39 +126,10 @@ class NivelCategoriaController extends Controller
     }
 
     public function updateHabilitacion(Request $request, string $id)
-<<<<<<< HEAD
-{
-    try {
-        // Depura el valor recibido en el request
-        Log::info('Datos recibidos:', $request->all());
-
-        $nivelCategoria = NivelCategoria::findOrFail($id);
-
-        if ($request->has('habilitacion')) {
-            $nivelCategoria->habilitacion = $request->input('habilitacion');
-            $nivelCategoria->save();
-
-            return response()->json([
-                'message' => 'Estado de habilitación actualizado exitosamente',
-                'nivelCategoria' => new NivelCategoriaResource($nivelCategoria),
-            ]);
-        }
-
-        return response()->json(['error' => 'Campo habilitacion no proporcionado'], 400);
-    } catch (ModelNotFoundException $e) {
-        Log::error('Nivel de categoría no encontrado:', ['id' => $id]);
-        return response()->json(['error' => 'Nivel de categoría no encontrado'], 404);
-    } catch (Exception $e) {
-        Log::error('Error interno:', ['message' => $e->getMessage()]);
-        return response()->json([
-            'error' => 'No se pudo actualizar el nivel de categoría',
-            'message' => $e->getMessage(),
-        ], 500);
-=======
     {
         try {
             // Depura el valor recibido en el request
-            \Log::info('Datos recibidos:', $request->all());
+            Log::info('Datos recibidos:', $request->all());
 
             $nivelCategoria = NivelCategoria::findOrFail($id);
 
@@ -180,10 +145,10 @@ class NivelCategoriaController extends Controller
 
             return response()->json(['error' => 'Campo habilitacion no proporcionado'], 400);
         } catch (ModelNotFoundException $e) {
-            \Log::error('Nivel de categoría no encontrado:', ['id' => $id]);
+            Log::error('Nivel de categoría no encontrado:', ['id' => $id]);
             return response()->json(['error' => 'Nivel de categoría no encontrado'], 404);
         } catch (Exception $e) {
-            \Log::error('Error interno:', ['message' => $e->getMessage()]);
+            Log::error('Error interno:', ['message' => $e->getMessage()]);
             return response()->json([
                 'error' => 'No se pudo actualizar el nivel de categoría',
                 'message' => $e->getMessage(),
@@ -204,8 +169,5 @@ class NivelCategoriaController extends Controller
             'message' => 'Niveles de categoría por área',
             'nivelesCategoria' => $niveles
         ]);
->>>>>>> 80bbd838ed8df61457313bd6cbff712c22adc3f3
     }
-}
-
 }
