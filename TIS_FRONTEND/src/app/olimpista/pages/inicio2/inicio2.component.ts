@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Inscripcion1Component } from '../../components/inscripcion1/inscripcion1.component';
@@ -19,8 +21,17 @@ export class Inicio2Component {
     olimpista: {},
     areaId: null
   };
+  categoriaId: number | null = null;
+  constructor(private inscripcionService: InscripcionService, private route: ActivatedRoute) {}
 
-  constructor(private inscripcionService: InscripcionService) {}
+  ngOnInit(): void {
+    // Capturamos el parámetro categoriaId de la URL
+    this.route.queryParams.subscribe(params => {
+      this.categoriaId = params['categoriaId']; // Aquí asignamos el valor del parámetro
+      console.log('Categoría seleccionada:', this.categoriaId);
+    });
+  }
+
 
   siguientePaso() {
     if (this.pasoActual < 3) {
