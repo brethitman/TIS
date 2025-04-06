@@ -1,225 +1,79 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AreaService } from '../../service/area.service';
-import { CategoriaService } from '../../service/categoria.service'; 
-import { OlimpistaService } from '../../service/olimpista.service';
-import { TutorService } from '../../service/tutor.service'; 
-import { InscripcionService } from '../../service/inscripcion.service'; 
-import { Area } from '../../interfaces/area.interface';
-import { NivelesCategoria } from '../../interfaces/categoria.interface';
-import { Olimpista } from '../../interfaces/olimpista-response';
-import { Tutor } from '../../interfaces/inscripcion.interface';
-import { Inscripcion } from '../../interfaces/inscripcion.interface';
-import { GetAreaResponse } from '../../interfaces/get-area-response';
-import { GetNIvelesCategoriaResponse } from '../../interfaces/get-categoria-response';
+import { Inscripcion1Component } from '../../components/inscripcion1/inscripcion1.component';
+import { Inscripcion2Component } from "../../components/inscripcion2/inscripcion2.component";
+import { Inscripcion3Component } from "../../components/inscripcion3/inscripcion3.component";
+import { InscripcionService } from '../../service/inscripcion.service';
 
 @Component({
   selector: 'app-inicio2',
   templateUrl: './inicio2.component.html',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  //styleUrls: ['./inicio2.component.css']
+  imports: [CommonModule, FormsModule, Inscripcion1Component, Inscripcion2Component, Inscripcion3Component],
 })
-export class Inicio2Component implements OnInit {
-  inscripcionForm: FormGroup;
-  areas: Area[] = [];
-  niveles: NivelesCategoria[] = [];
-  nivelSeleccionado: NivelesCategoria | null = null;
-  cargandoAreas = true;
-  cargandoNiveles = false;
-  mensajeExito = '';
-  mensajeError = '';
-
-  constructor(
-    private fb: FormBuilder,
-    private areaService: AreaService,
-    private categoriaService: CategoriaService,
-    private olimpistaService: OlimpistaService,
-    private tutorService: TutorService,
-    private inscripcionService: InscripcionService
-  ) {
-    this.inscripcionForm = this.fb.group({
-      // Datos del olimpista
-      olimpistaNombres: ['', Validators.required],
-      olimpistaApellidos: ['', Validators.required],
-      olimpistaCi: ['', [Validators.required, Validators.minLength(6), Validators.pattern('^[0-9]*$')]],
-      
-      // Datos del tutor
-      tutorNombres: ['', Validators.required],
-      tutorApellidos: ['', Validators.required],
-      tutorCi: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      
-      // Datos de la inscripción
-      areaId: ['', Validators.required],
-      nivelId: ['', Validators.required]
-    });
-  }
+export class Inicio2Component {
+  pasoActual = 1;
+  formData: any = {
+    tutor: {},
+    olimpista: {},
+    areaId: null
+  };
+  categoriaId: number | null = null;
+  constructor(private inscripcionService: InscripcionService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.cargarAreas();
+    // Capturamos el parámetro categoriaId de la URL
+    this.route.queryParams.subscribe(params => {
+      this.categoriaId = params['categoriaId']; // Aquí asignamos el valor del parámetro
+      console.log('Categoría seleccionada:', this.categoriaId);
+    });
   }
 
 
-  cargarAreas(): void {
-    this.cargandoAreas = true;
-    this.areaService.getAreas().subscribe(
-      (response: any) => {
-        this.areas = Array.isArray(response) ? response : response.areas || [];
-        this.cargandoAreas = false;
-      },
-      (error) => {
-        console.error('Error al cargar áreas:', error);
-        this.cargandoAreas = false;
-      }
-    );
-  }
-  testNivelesCategoria(areaId: number): void {
-    this.niveles = [
-      {
-        id: 1,
-        id_area: areaId,
-        nombre_nivel: 'Básico',
-        descripcion: 'Nivel inicial',
-        fecha_examen: new Date('2023-12-15'),
-        costo: 100,
-        habilitacion: true,
-        created_at: new Date(),
-        updated_at: new Date()
-      },
-      {
-        id: 2,
-        id_area: areaId,
-        nombre_nivel: 'Avanzado',
-        descripcion: 'Nivel experto',
-        fecha_examen: new Date('2023-12-20'),
-        costo: 150,
-        habilitacion: true,
-        created_at: new Date(),
-        updated_at: new Date()
-      }
-    ];
-    
-    console.log('Datos de prueba cargados para área', areaId);
-  }
-  
-  onAreaSeleccionada(): void {
-    const areaId = Number(this.inscripcionForm.get('areaId')?.value);
-    
-    if (areaId) {
-      this.cargandoNiveles = true;
-      this.inscripcionForm.get('nivelId')?.reset();
-      this.nivelSeleccionado = null;
-  
-      this.categoriaService.getNivelesPorArea(areaId).subscribe({
-        next: (niveles) => {
-          this.niveles = niveles;
-          this.cargandoNiveles = false;
-          console.log('Niveles cargados:', this.niveles);
-        },
-        error: (error) => {
-          console.error('Error:', error);
-          this.cargandoNiveles = false;
-        }
-      });
+  siguientePaso() {
+    if (this.pasoActual < 3) {
+      this.pasoActual++;
     }
   }
-  /*cargarNivelesPorArea(areaId: number): void {
-    this.cargandoNiveles = true;
-    this.categoriaService.getNivelesPorArea(areaId).subscribe({
-      next: (response: GetNIvelesCategoriaResponse) => {
-        this.niveles = response.nivelesCategoria;
-        this.cargandoNiveles = false;
+
+  anteriorPaso() {
+    if (this.pasoActual > 1) {
+      this.pasoActual--;
+    }
+  }
+
+  updateTutorData(tutorData: any) {
+    this.formData.tutor = tutorData;
+    console.log('Datos del tutor actualizados:', this.formData.tutor);
+  }
+
+  updateOlimpistaData(olimpistaData: any) {
+    this.formData.olimpista = olimpistaData;
+    console.log('Datos del olimpista actualizados:', this.formData.olimpista);
+  }
+
+  updateAreaData(areaData: any) {
+    this.formData.areaId = areaData;
+    console.log('Área seleccionada:', this.formData.areaId);
+  }
+
+  submitInscripcion(formData: any) {
+    console.log('Enviando inscripción:', formData);
+
+    this.inscripcionService.crearInscripcionCompleta(formData).subscribe({
+      next: (response) => {
+        console.log('Inscripción exitosa', response);
+        // Redirigir o mostrar mensaje de éxito
+        alert('Inscripción completada con éxito!');
       },
       error: (err) => {
-        console.error('Error al cargar niveles:', err);
-        this.mensajeError = 'Error al cargar las categorías disponibles';
-        this.cargandoNiveles = false;
+        console.error('Error en la inscripción', err);
+        alert('Error al completar la inscripción. Por favor intenta nuevamente.');
       }
     });
-  }*/
 
-  /*onAreaSeleccionada(): void {
-    const areaId = this.inscripcionForm.get('areaId')?.value;
-    if (areaId) {
-      this.cargandoNiveles = true;
-      this.inscripcionForm.get('nivelId')?.reset();
-      this.nivelSeleccionado = null;
-      
-      this.categoriaService.getNivelesPorArea(areaId).subscribe({
-        next: (response: GetNIvelesCategoriaResponse) => {
-          this.niveles = response.nivelesCategoria; // Accede a la propiedad 'niveles' de la respuesta
-          this.cargandoNiveles = false;
-        },
-        error: (err) => {
-          console.error('Error al cargar niveles:', err);
-          this.mensajeError = 'Error al cargar las categorías disponibles';
-          this.cargandoNiveles = false;
-        }
-      });
-    }
-  }*/
-
-  onNivelSeleccionado(): void {
-    const nivelId = this.inscripcionForm.get('nivelId')?.value;
-    this.nivelSeleccionado = this.niveles.find(n => n.id === nivelId) || null;
-  }
-
-  onSubmit(): void {
-    if (this.inscripcionForm.invalid) return;
-  
-    const formValue = this.inscripcionForm.value;
-  
-    this.olimpistaService.create({
-      nombres: formValue.olimpistaNombres,
-      apellidos: formValue.olimpistaApellidos,
-      ci: formValue.olimpistaCi
-    }).subscribe({
-      next: (olimpista) => {
-        this.tutorService.create({
-          nombres: formValue.tutorNombres,
-          apellidos: formValue.tutorApellidos,
-          ci: formValue.tutorCi
-        }).subscribe({
-          next: (tutor) => {
-            const inscripcionData = {
-              olimpistaId: olimpista.id,  // <-- Usa olimpistaId en lugar de id_olimpista
-              tutorId: tutor.id,
-              areaId: formValue.areaId,
-              nivelId: formValue.nivelId,
-              fecha_inscripcion: new Date(),
-              estado: 'Pendiente'
-            };
-            
-            this.inscripcionService.createInscripcion(inscripcionData).subscribe({
-              next: () => {
-                console.log('Inscripción exitosa');
-                this.inscripcionForm.reset();
-              }
-            });
-          }
-        });
-      }
-    });
-  }
-  getNombreAreaSeleccionada(): string {
-    const areaId = this.inscripcionForm.value.areaId;
-    const area = this.areas.find(a => a.id === areaId);
-    return area?.nombre_area || 'Área seleccionada';
-  }
-  
-  getFechaExamenFormateada(): string {
-    if (!this.nivelSeleccionado?.fecha_examen) {
-      return 'Por definir';
-    }
-    // Asumiendo que fecha_examen es string o Date
-    const fecha = new Date(this.nivelSeleccionado.fecha_examen);
-    return fecha.toLocaleDateString('es-ES'); // Formato dd/MM/yyyy
-  }
-  
-  agregarOtraArea(): void {
-    // Implementa la lógica para agregar múltiples áreas si es necesario
-    console.log('Funcionalidad para agregar otra área');
   }
 }

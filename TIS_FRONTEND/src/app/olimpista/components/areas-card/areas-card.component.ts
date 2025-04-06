@@ -16,6 +16,7 @@ import { HttpClient } from '@angular/common/http';
 export class AreasCardComponent implements OnInit {
   @Input({ required: true }) Area!: Area;
   @Input() categorias: NivelesCategoria[] = [];
+  @Input({}) NivCategoria !: NivelesCategoria;
 
   isModalOpen = false;
   isDeleteModalOpen = false;
@@ -33,16 +34,14 @@ export class AreasCardComponent implements OnInit {
   categoriaFechaExamen: string = ''; // formato dd/mm/yyyy
   categoriaCosto: string = ''; // Modificado para ser un string
   cardIndexToEdit: number | null = null;
-  editedNombreArea = '';
-  editedfechaExamen = '';
-  editedCosto = 0;
-
   // Variables para edición de área (nuevas)
   editedAreaNombre = '';
   editedAreaDescripcion = '';
   // Índices para operaciones
   categoriaIndexToToggle: number | null = null;
   categoriaIndexToEdit: number | null = null;
+  isEditOpenC = false; // Estado del modal
+  editIndex: number | null = null;
 
   formData = {
     nombreCategoria: '',
@@ -52,30 +51,33 @@ export class AreasCardComponent implements OnInit {
   };
 
   cards: {
-    nombre_area: string;
+    nombre_Categoria: string;
     descripcion: string;
     habilitada: boolean;
     costo: number;
     fecha_examen: string;
   }[] = [];
 
-  // Datos para nueva categoría
   nuevaCategoria = {
-    nombre_nivel: '',
-    descripcion: '',
-    fecha_examen: '', // formato dd/mm/yyyy
-    costo: ''
-  };
-
-  // Datos para edición
-  editedCategoria = {
     nombre_nivel: '',
     descripcion: '',
     fecha_examen: '',
     costo: ''
   };
 
+  editedCategoriaTemp = {
+    nombre_nivel: '',
+    descripcion: null as string | null,
+    fecha_examen: null as Date | null, // Permitir null en fecha_examen
+    costo: 0
+  };
+
   constructor(private http: HttpClient, private categoriaService: CategoriaService) { }
+
+  ngOnInit(): void {
+    this.cargarCategorias();
+    this.fechaLimite();
+  }
 
   //Funciones del Area Valeria
   openAreaEditModal() {
@@ -126,34 +128,58 @@ export class AreasCardComponent implements OnInit {
   }
 
   openEditModal(index: number) {
-    this.cardIndexToEdit = index;
-    this.editedNombreArea = this.cards[index].nombre_area;
-    this.editedfechaExamen = this.cards[index].fecha_examen;
-    this.editedCosto = this.cards[index].costo;
-    this.isEditModalOpen = true;
-    const categoria = this.categorias[index];
-    if (!categoria) {
-      console.error('La categoría no existe en la posición:', index);
+    if (index < 0 || index >= this.categorias.length) {
+      console.error('Índice fuera de rango:', index);
       return;
     }
-    console.log(categoria.nombre_nivel); 
-  }
 
+    const categoria = this.categorias[index];
+    this.editedCategoriaTemp = {
+      nombre_nivel: categoria.nombre_nivel,
+      descripcion: categoria.descripcion,
+      fecha_examen: categoria.fecha_examen,
+      costo: categoria.costo
+    };
+    this.editIndex = index;
+    this.isEditModalOpen = true;
+  }
   closeEditModal() {
-    this.isEditModalOpen = false;
-    this.cardIndexToEdit = null;
+    this.isEditModalOpen = false; // Corrige la referencia a isEditModalOpen
+    this.editIndex = null; // Reinicia el índice
+    this.editedCategoriaTemp = {
+      nombre_nivel: '',
+      descripcion: '',
+      fecha_examen: new Date(),
+      costo: 0
+    };
   }
 
   saveEdit() {
-    if (this.cardIndexToEdit !== null) {
-      this.cards[this.cardIndexToEdit].nombre_area = this.editedNombreArea;
-      this.cards[this.cardIndexToEdit].fecha_examen = this.editedfechaExamen;
-      this.cards[this.cardIndexToEdit].costo = this.editedCosto;
-      console.log(`Tarjeta en índice ${this.cardIndexToEdit} editada.`);
-      this.closeEditModal();
+    if (this.editIndex !== null && this.editIndex >= 0) {
+      const cambios = {
+        nombre_nivel: this.editedCategoriaTemp.nombre_nivel,
+        descripcion: this.editedCategoriaTemp.descripcion,
+        fecha_examen: this.editedCategoriaTemp.fecha_examen || new Date(),
+        costo: this.editedCategoriaTemp.costo
+      };
+
+      this.categoriaService.actualizarNivel(this.categorias[this.editIndex].id, cambios)
+        .subscribe(
+          (respuesta) => {
+            if (this.editIndex !== null && this.editIndex >= 0) {
+              this.categorias[this.editIndex] = { ...respuesta };
+            } else {
+              console.error('editIndex es inválido durante la actualización.');
+            }
+            this.closeEditModal(); // Cierra el modal después de guardar
+          },
+          (error) => {
+            console.error('Error al actualizar la categoría:', error);
+          }
+        );
+
     }
   }
-  //Funciones de categoria Anahi
 
   disableManualInput(event: KeyboardEvent): void {
     event.preventDefault();
@@ -191,11 +217,6 @@ export class AreasCardComponent implements OnInit {
       fecha_examen: '',
       costo: ''
     };
-  }
-
-  ngOnInit(): void {
-    this.cargarCategorias();
-    this.fechaLimite();
   }
 
   cargarCategorias(): void {

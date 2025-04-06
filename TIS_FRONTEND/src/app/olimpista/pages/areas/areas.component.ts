@@ -34,9 +34,5 @@ export class AreasComponent {
   }
   public addArea(newArea: Area): void {
     this.areas.update((currentAreas) => [...currentAreas, newArea]);
-
-
-
-
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
+import { Router } from '@angular/router';  // Asegúrate de importar Router
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,8 @@ export class AuthService {
     { email: 'admin@example.com', password: 'admin123' },
     { email: 'user@example.com', password: 'user123' }
   ];
+
+  constructor(private router: Router) {}  // Inyecta Router en el constructor
 
   login(email: string, password: string): Observable<boolean> {
     const isValidUser = this.mockUsers.some(
@@ -32,6 +35,9 @@ export class AuthService {
 
   logout(): void {
     this.isAuthenticatedSubject.next(false);
+
+    // Redirigir a la página de inicio (Home) después de cerrar sesión
+    this.router.navigate(['/inicio/waba']);  // Asegúrate de que esta sea la ruta correcta para Home
   }
 
   isLoggedIn(): boolean {
