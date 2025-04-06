@@ -78,7 +78,7 @@ export class AreasCardComponent implements OnInit {
     this.cargarCategorias();
     this.fechaLimite();
   }
-
+  
   //Funciones del Area Valeria
   openAreaEditModal() {
     this.editedAreaNombre = this.Area.nombre_area;
