@@ -237,8 +237,6 @@ export class AreasCardComponent implements OnInit {
   }
 
   saveCategory(): void {
-    console.log('Fecha de examen antes de enviar:', this.nuevaCategoria.fecha_examen);
-    console.log('Costo antes de enviar:', this.nuevaCategoria.costo);
     const categoriaData = {
       id_area: this.Area.id,
       nombre_nivel: this.nuevaCategoria.nombre_nivel,
@@ -251,14 +249,21 @@ export class AreasCardComponent implements OnInit {
 
     this.categoriaService.crearNivelCategoria(categoriaData).subscribe({
       next: (response) => {
-        this.categorias.push(response);
+        console.log('Respuesta del backend:', response);
+        // Actualizamos la lista de categorías
+        this.categorias = [...this.categorias, response];
+        console.log('Lista de categorías actualizada:', this.categorias);
+        this.cdr.detectChanges(); // (opcional si sigue siendo necesario)
         this.closeModal();
       },
       error: (err) => {
         console.error('Error al crear categoría:', err);
       }
     });
-  }
+}
+
+  
+
 
   toggleHabilitacionModal(index: number): void {
     this.categoriaIndexToToggle = index;
@@ -268,24 +273,23 @@ export class AreasCardComponent implements OnInit {
   toggleHabilitar(): void {
     if (this.categoriaIndexToToggle !== null) {
       const categoria = this.categorias[this.categoriaIndexToToggle];
-      const nuevoEstado = !categoria.habilitacion; // Cambia el estado localmente
+      const nuevoEstado = !categoria.habilitacion; 
   
-      console.log('Estado antes de cambiar:', categoria.habilitacion); // Verifica el estado actual
+      console.log('Estado antes de cambiar:', categoria.habilitacion); 
   
       this.categoriaService.habilitarCategoria(categoria.id, nuevoEstado).subscribe({
         next: (updatedCategoria) => {
-          // Asegúrate de acceder correctamente a nivelCategoria
           if (updatedCategoria && updatedCategoria.nivelCategoria) {
-            categoria.habilitacion = updatedCategoria.nivelCategoria.habilitacion; // Actualiza localmente
-            console.log('Estado actualizado desde el backend:', categoria.habilitacion); // Verifica el nuevo estado
+            categoria.habilitacion = updatedCategoria.nivelCategoria.habilitacion;
+            console.log('Estado actualizado desde el backend:', categoria.habilitacion); 
           } else {
             console.error('La respuesta del backend no contiene nivelCategoria o habilitacion es undefined.');
           }
-          this.closeConfirmModal(); // Cierra el modal
+          this.closeConfirmModal(); 
         },
         error: (error) => {
           console.error('Error al actualizar habilitación:', error);
-          this.closeConfirmModal(); // Cierra el modal aunque ocurra un error
+          this.closeConfirmModal(); 
         }
       });
     }
