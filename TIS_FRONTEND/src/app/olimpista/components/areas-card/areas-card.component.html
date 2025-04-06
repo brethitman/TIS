@@ -187,11 +187,10 @@
 
 
     <!-- Modal para añadir categoría-->
-    <div *ngIf="isModalOpen"
-      class="fixed inset-0 bg-gray-600 flex justify-center items-center justify-center z-50"
-      style="background-color: rgba(75, 85, 99, 0.3); overflow-y: auto;">
-      <div class="bg-white p-5 rounded-lg shadow-lg max-w-md"
-        style="width: 600px; height: 500px; background-color:rgba(255, 255, 255, 1);">
+    <div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center justify-center z-50"
+      style="background-color: rgba(75, 85, 99, 0.3);">
+      <div class="bg-white p-5 rounded-lg shadow-lg max-w-md w-[600px] max-h-screen overflow-y-auto"
+        style="background-color:rgba(255, 255, 255, 1);">
 
         <!-- Título Principal -->
         <h2 class="text-xl font-bold text-gray-900">Añadir Categoría</h2>
@@ -274,7 +273,6 @@
               <span *ngIf="costoRef.errors?.['pattern']">Solo se permiten números</span>
             </div>
           </div>
-          <!-- Botones de acción -->
           <div class="mt-5 flex justify-end gap-4">
             <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Aceptar</button>
             <button type="button" (click)="closeModal()"
