@@ -17,6 +17,7 @@
   <app-inscripcion3
     [tutorData]="formData.tutor"
     [olimpistaData]="formData.olimpista"
+    [categoria]="categoriaSeleccionada"
     (atras)="anteriorPaso()"
     (submit)="submitInscripcion($event)"
     (areaChanged)="updateAreaData($event)">

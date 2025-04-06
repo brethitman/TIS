@@ -15,7 +15,9 @@ export class CategoriasHomeComponent {
 
   constructor(private router: Router) {}
 
-  onRegisterClick(): void {
-    this.router.navigate(['/inicio2']);  // Redirige a la ruta '/inicio2'
+  onRegisterClick(categoria: NivelesCategoria): void {
+    this.router.navigate(['/inicio2'], {
+      queryParams: { categoriaId: categoria.id }  // Envía el ID como parámetro
+    });
   }
 }

@@ -7,6 +7,8 @@ import { Inscripcion1Component } from '../../components/inscripcion1/inscripcion
 import { Inscripcion2Component } from "../../components/inscripcion2/inscripcion2.component";
 import { Inscripcion3Component } from "../../components/inscripcion3/inscripcion3.component";
 import { InscripcionService } from '../../service/inscripcion.service';
+import { CategoriaService } from '../../service/categoria.service';
+import { NivelesCategoria } from '../../interfaces/categoria.interface';
 
 @Component({
   selector: 'app-inicio2',
@@ -22,17 +24,35 @@ export class Inicio2Component {
     areaId: null
   };
   categoriaId: number | null = null;
-  constructor(private inscripcionService: InscripcionService, private route: ActivatedRoute) {}
+  categoriaSeleccionada: NivelesCategoria | null = null;
+
+  constructor(
+    private inscripcionService: InscripcionService,
+    private categoriaService: CategoriaService, // 👈 Inyectamos el servicio
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     // Capturamos el parámetro categoriaId de la URL
     this.route.queryParams.subscribe(params => {
       this.categoriaId = params['categoriaId']; // Aquí asignamos el valor del parámetro
       console.log('Categoría seleccionada:', this.categoriaId);
+
+      if (this.categoriaId) {
+        this.categoriaService.obtenerNivelPorId(this.categoriaId).subscribe({
+          next: (categoria) => {
+            this.categoriaSeleccionada = categoria;
+            console.log('Categoría obtenida:', this.categoriaSeleccionada);
+          },
+          error: (err) => {
+            console.error('Error al obtener la categoría:', err);
+          }
+        });
+      }
     });
   }
 
-
+  
   siguientePaso() {
     if (this.pasoActual < 3) {
       this.pasoActual++;

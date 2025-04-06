@@ -4,6 +4,7 @@ import { Area } from '../../interfaces/area.interface';
 import { GetAreaResponse } from '../../interfaces/get-area-response';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { NivelesCategoria } from '../../interfaces/categoria.interface';
 
 @Component({
   selector: 'app-inscripcion3',
@@ -14,6 +15,7 @@ import { CommonModule } from '@angular/common';
 export class Inscripcion3Component implements OnInit {
   @Input() tutorData: any;
   @Input() olimpistaData: any;
+  @Input() categoria: NivelesCategoria | null = null;
 
   areas: Area[] = [];
   selectedAreaId: number | null = null;
