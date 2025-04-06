@@ -90,8 +90,8 @@ export class CategoriaService {
  * @returns observar si la categoria fue habilitada o no
  */
 
-  habilitarCategoria(id: number, habilitacion: boolean | null): Observable<NivelesCategoria> {
+  habilitarCategoria(id: number, habilitacion: boolean): Observable<any> {
     const body = { habilitacion };
-    return this.http.patch<NivelesCategoria>(`${this.apiUrl}/${id}/habilitacion`, body);
+    return this.http.patch(`${this.apiUrl}/${id}/habilitacion`, body);
   }
 }

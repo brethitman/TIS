@@ -19,6 +19,8 @@ export class AreasCardComponent implements OnInit {
   @Input() categorias: NivelesCategoria[] = [];
   @Input({}) NivCategoria !: NivelesCategoria;
 
+  private progreso: boolean = false;
+
   isModalOpen = false;
   isDeleteModalOpen = false;
   isConfirmModalOpen = false;
@@ -241,7 +243,7 @@ export class AreasCardComponent implements OnInit {
       id_area: this.Area.id,
       nombre_nivel: this.nuevaCategoria.nombre_nivel,
       descripcion: this.nuevaCategoria.descripcion || null,
-      fecha_examen: this.nuevaCategoria.fecha_examen? new Date(this.nuevaCategoria.fecha_examen) : null,
+      fecha_examen: this.nuevaCategoria.fecha_examen ? new Date(this.nuevaCategoria.fecha_examen) : null,
       costo: Number(this.nuevaCategoria.costo),
       habilitacion: true,
     };
@@ -259,21 +261,27 @@ export class AreasCardComponent implements OnInit {
   }
 
   toggleHabilitacionModal(index: number): void {
-    this.categoriaIndexToToggle = index; 
-    this.isConfirmModalOpen = true; 
+    this.categoriaIndexToToggle = index;
+    this.isConfirmModalOpen = true;
   }
 
   toggleHabilitar(): void {
     if (this.categoriaIndexToToggle !== null) {
-      const categoria = this.categorias[this.categoriaIndexToToggle]; 
-      const nuevoEstado = !categoria.habilitacion; 
-
+      const categoria = this.categorias[this.categoriaIndexToToggle];
+      const nuevoEstado = !categoria.habilitacion; // Cambia el estado localmente
+  
+      console.log('Estado antes de cambiar:', categoria.habilitacion); // Verifica el estado actual
+  
       this.categoriaService.habilitarCategoria(categoria.id, nuevoEstado).subscribe({
         next: (updatedCategoria) => {
-          categoria.habilitacion = updatedCategoria.habilitacion; 
-          console.log("Este es la habilitacion toggle",updatedCategoria)
-          this.cdr.detectChanges();
-          this.closeConfirmModal(); 
+          // Asegúrate de acceder correctamente a nivelCategoria
+          if (updatedCategoria && updatedCategoria.nivelCategoria) {
+            categoria.habilitacion = updatedCategoria.nivelCategoria.habilitacion; // Actualiza localmente
+            console.log('Estado actualizado desde el backend:', categoria.habilitacion); // Verifica el nuevo estado
+          } else {
+            console.error('La respuesta del backend no contiene nivelCategoria o habilitacion es undefined.');
+          }
+          this.closeConfirmModal(); // Cierra el modal
         },
         error: (error) => {
           console.error('Error al actualizar habilitación:', error);
@@ -282,12 +290,11 @@ export class AreasCardComponent implements OnInit {
       });
     }
   }
+  
 
   getHabilitacionTexto(): string {
-    if (this.categoriaIndexToToggle === null) return ''; 
+    if (this.categoriaIndexToToggle === null) return '';
     const habilitacion = this.categorias[this.categoriaIndexToToggle]?.habilitacion;
-    console.log("Este es la habilitacion",habilitacion),
-    console.log("Este es la habilitacion Index",this.categoriaIndexToToggle)
     return habilitacion ? 'deshabilitar' : 'habilitar';
   }
 
