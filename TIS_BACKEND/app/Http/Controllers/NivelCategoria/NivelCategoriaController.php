@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\NivelCategoria;
 
+
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\NivelCategoria\NivelCategoriaCollection;
 use App\Http\Resources\NivelCategoria\NivelCategoriaResource;
@@ -127,7 +129,7 @@ class NivelCategoriaController extends Controller
     {
         try {
             // Depura el valor recibido en el request
-            \Log::info('Datos recibidos:', $request->all());
+            Log::info('Datos recibidos:', $request->all());
 
             $nivelCategoria = NivelCategoria::findOrFail($id);
 
@@ -143,10 +145,10 @@ class NivelCategoriaController extends Controller
 
             return response()->json(['error' => 'Campo habilitacion no proporcionado'], 400);
         } catch (ModelNotFoundException $e) {
-            \Log::error('Nivel de categoría no encontrado:', ['id' => $id]);
+            Log::error('Nivel de categoría no encontrado:', ['id' => $id]);
             return response()->json(['error' => 'Nivel de categoría no encontrado'], 404);
         } catch (Exception $e) {
-            \Log::error('Error interno:', ['message' => $e->getMessage()]);
+            Log::error('Error interno:', ['message' => $e->getMessage()]);
             return response()->json([
                 'error' => 'No se pudo actualizar el nivel de categoría',
                 'message' => $e->getMessage(),
@@ -169,4 +171,3 @@ class NivelCategoriaController extends Controller
         ]);
     }
 }
-
