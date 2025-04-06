@@ -236,9 +236,6 @@ export class AreasCardComponent implements OnInit {
     this.resetNuevaCategoria();
   }
 
-<<<<<<< HEAD
-  saveCategory(): void {
-=======
   saveCategory(form: NgForm): void {
     if (form.invalid) {
       // Marcar todos los campos como "touched" para mostrar errores
@@ -256,9 +253,7 @@ export class AreasCardComponent implements OnInit {
       console.warn('Todos los campos son requeridos');
       return;
     }
-    console.log('Fecha de examen antes de enviar:', this.nuevaCategoria.fecha_examen);
-    console.log('Costo antes de enviar:', this.nuevaCategoria.costo);
->>>>>>> 5c823f7e3f8b44862912bc74da3dba3c9d4f0f55
+
     const categoriaData = {
       id_area: this.Area.id,
       nombre_nivel: this.nuevaCategoria.nombre_nivel,
@@ -272,8 +267,7 @@ export class AreasCardComponent implements OnInit {
     this.categoriaService.crearNivelCategoria(categoriaData).subscribe({
       next: (response) => {
         console.log('Respuesta del backend:', response);
-        // Actualizamos la lista de categorías
-        this.categorias = [...this.categorias, response];
+        this.categorias = [...this.categorias, response.nivelCategoria];
         console.log('Lista de categorías actualizada:', this.categorias);
         this.cdr.detectChanges(); // (opcional si sigue siendo necesario)
         this.closeModal();
@@ -283,9 +277,6 @@ export class AreasCardComponent implements OnInit {
       }
     });
 }
-
-  
-
 
   toggleHabilitacionModal(index: number): void {
     this.categoriaIndexToToggle = index;

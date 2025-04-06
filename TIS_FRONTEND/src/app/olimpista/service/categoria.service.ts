@@ -19,7 +19,7 @@ export class CategoriaService {
    * @param nivelCategoria Datos del nivel a crear
    * @returns Observable con la respuesta del servidor
    */
-  crearNivelCategoria(nivelCategoria: Omit<NivelesCategoria, 'id' | 'created_at' | 'updated_at'>): Observable<NivelesCategoria> {
+  crearNivelCategoria(nivelCategoria: Omit<NivelesCategoria, 'id' | 'created_at' | 'updated_at'>): Observable<any> {
     return this.http.post<NivelesCategoria>(this.apiUrl, nivelCategoria);
   }
 
