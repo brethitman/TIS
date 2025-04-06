@@ -78,12 +78,10 @@ class NivelCategoriaController extends Controller
 
             // Validar los datos recibidos
             $validatedData = $request->validate([
-                'id_area' => 'required|integer|exists:areas,id_area',
                 'nombre_nivel' => 'required|string|max:100',
                 'descripcion' => 'nullable|string',
                 'fecha_examen' => 'nullable|date',
                 'costo' => 'required|numeric|min:0',
-                'habilitacion' => 'nullable|boolean',
             ]);
 
             // Actualizar el nivel de categoría
@@ -130,19 +128,19 @@ class NivelCategoriaController extends Controller
         try {
             // Depura el valor recibido en el request
             \Log::info('Datos recibidos:', $request->all());
-    
+
             $nivelCategoria = NivelCategoria::findOrFail($id);
-    
+
             if ($request->has('habilitacion')) {
                 $nivelCategoria->habilitacion = $request->input('habilitacion');
                 $nivelCategoria->save();
-    
+
                 return response()->json([
                     'message' => 'Estado de habilitación actualizado exitosamente',
                     'nivelCategoria' => new NivelCategoriaResource($nivelCategoria),
                 ]);
             }
-    
+
             return response()->json(['error' => 'Campo habilitacion no proporcionado'], 400);
         } catch (ModelNotFoundException $e) {
             \Log::error('Nivel de categoría no encontrado:', ['id' => $id]);
@@ -161,14 +159,14 @@ class NivelCategoriaController extends Controller
 
     //PRUEBA
     public function porArea($areaId)
-{
-    $niveles = NivelCategoria::where('id_area', $areaId)->get();
-    
-    return response()->json([
-        'success' => true,
-        'message' => 'Niveles de categoría por área',
-        'nivelesCategoria' => $niveles
-    ]);
-}
+    {
+        $niveles = NivelCategoria::where('id_area', $areaId)->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Niveles de categoría por área',
+            'nivelesCategoria' => $niveles
+        ]);
+    }
 }
 

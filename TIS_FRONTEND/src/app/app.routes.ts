@@ -8,6 +8,7 @@ import { Inicio1Component } from './olimpista/pages/inicio1/inicio1.component';
 import { Inicio2Component } from './olimpista/pages/inicio2/inicio2.component';
 import { Inicio3Component } from './olimpista/pages/inicio3/inicio3.component';
 import { OlimpistaPageComponent } from './olimpista/pages/olimpista-page/olimpista-page.component';
+import { HomeAreaComponent } from './olimpista/pages/home-area/home-area.component';
 
 export const routes: Routes = [
   {
@@ -42,7 +43,7 @@ export const routes: Routes = [
   },
   {
     path: 'inicio/look',
-    component: Inicio2Component
+    component: HomeAreaComponent
   },
   {
     path: 'inicio/dodog',
