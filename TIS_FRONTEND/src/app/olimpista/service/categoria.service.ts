@@ -49,7 +49,7 @@ export class CategoriaService {
   actualizarNivel(
     id: number,
     cambios: { nombre_nivel: string; descripcion?: string | null; fecha_examen: Date | null; costo: number }
-  ): Observable<NivelesCategoria> {
+  ): Observable<any> {
     return this.http.put<NivelesCategoria>(`${this.apiUrl}/${id}`, cambios);
   }
   /**

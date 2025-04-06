@@ -162,7 +162,7 @@ export class AreasCardComponent implements OnInit {
         .subscribe(
           (respuesta) => {
             if (this.editIndex !== null && this.editIndex >= 0) {
-              this.categorias[this.editIndex] = { ...respuesta };
+              this.categorias[this.editIndex] = { ...respuesta.nivelCategoria };
             } else {
               console.error('editIndex es inválido durante la actualización.');
             }
