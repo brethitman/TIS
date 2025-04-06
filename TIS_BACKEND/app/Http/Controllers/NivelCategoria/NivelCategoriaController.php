@@ -128,9 +128,6 @@ class NivelCategoriaController extends Controller
     public function updateHabilitacion(Request $request, string $id)
     {
         try {
-            // Depura el valor recibido en el request
-            Log::info('Datos recibidos:', $request->all());
-
             $nivelCategoria = NivelCategoria::findOrFail($id);
 
             if ($request->has('habilitacion')) {
@@ -139,25 +136,15 @@ class NivelCategoriaController extends Controller
 
                 return response()->json([
                     'message' => 'Estado de habilitación actualizado exitosamente',
-                    'nivelCategoria' => new NivelCategoriaResource($nivelCategoria),
+                    'nivelCategoria' => $nivelCategoria, // Esto devuelve la categoría actualizada
                 ]);
             }
 
             return response()->json(['error' => 'Campo habilitacion no proporcionado'], 400);
         } catch (ModelNotFoundException $e) {
-            Log::error('Nivel de categoría no encontrado:', ['id' => $id]);
             return response()->json(['error' => 'Nivel de categoría no encontrado'], 404);
-        } catch (Exception $e) {
-            Log::error('Error interno:', ['message' => $e->getMessage()]);
-            return response()->json([
-                'error' => 'No se pudo actualizar el nivel de categoría',
-                'message' => $e->getMessage(),
-            ], 500);
         }
     }
-
-
-
 
     //PRUEBA
     public function porArea($areaId)

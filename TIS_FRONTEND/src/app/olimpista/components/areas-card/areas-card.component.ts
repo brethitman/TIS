@@ -19,6 +19,8 @@ export class AreasCardComponent implements OnInit {
   @Input() categorias: NivelesCategoria[] = [];
   @Input({}) NivCategoria !: NivelesCategoria;
 
+  private progreso: boolean = false;
+
   isModalOpen = false;
   isDeleteModalOpen = false;
   isConfirmModalOpen = false;
@@ -160,7 +162,7 @@ export class AreasCardComponent implements OnInit {
         .subscribe(
           (respuesta) => {
             if (this.editIndex !== null && this.editIndex >= 0) {
-              this.categorias[this.editIndex] = { ...respuesta };
+              this.categorias[this.editIndex] = { ...respuesta.nivelCategoria };
             } else {
               console.error('editIndex es inválido durante la actualización.');
             }
@@ -251,13 +253,12 @@ export class AreasCardComponent implements OnInit {
       console.warn('Todos los campos son requeridos');
       return;
     }
-    console.log('Fecha de examen antes de enviar:', this.nuevaCategoria.fecha_examen);
-    console.log('Costo antes de enviar:', this.nuevaCategoria.costo);
+
     const categoriaData = {
       id_area: this.Area.id,
       nombre_nivel: this.nuevaCategoria.nombre_nivel,
       descripcion: this.nuevaCategoria.descripcion || null,
-      fecha_examen: this.nuevaCategoria.fecha_examen? new Date(this.nuevaCategoria.fecha_examen) : null,
+      fecha_examen: this.nuevaCategoria.fecha_examen ? new Date(this.nuevaCategoria.fecha_examen) : null,
       costo: Number(this.nuevaCategoria.costo),
       habilitacion: true,
     };
@@ -265,45 +266,52 @@ export class AreasCardComponent implements OnInit {
 
     this.categoriaService.crearNivelCategoria(categoriaData).subscribe({
       next: (response) => {
-        this.categorias.push(response);
+        console.log('Respuesta del backend:', response);
+        this.categorias = [...this.categorias, response.nivelCategoria];
+        console.log('Lista de categorías actualizada:', this.categorias);
+        this.cdr.detectChanges(); // (opcional si sigue siendo necesario)
         this.closeModal();
       },
       error: (err) => {
         console.error('Error al crear categoría:', err);
       }
     });
-  }
+}
 
   toggleHabilitacionModal(index: number): void {
-    this.categoriaIndexToToggle = index; 
-    this.isConfirmModalOpen = true; 
+    this.categoriaIndexToToggle = index;
+    this.isConfirmModalOpen = true;
   }
 
   toggleHabilitar(): void {
     if (this.categoriaIndexToToggle !== null) {
-      const categoria = this.categorias[this.categoriaIndexToToggle]; 
+      const categoria = this.categorias[this.categoriaIndexToToggle];
       const nuevoEstado = !categoria.habilitacion; 
-
+  
+      console.log('Estado antes de cambiar:', categoria.habilitacion); 
+  
       this.categoriaService.habilitarCategoria(categoria.id, nuevoEstado).subscribe({
         next: (updatedCategoria) => {
-          categoria.habilitacion = updatedCategoria.habilitacion; 
-          console.log("Este es la habilitacion toggle",updatedCategoria)
-          this.cdr.detectChanges();
+          if (updatedCategoria && updatedCategoria.nivelCategoria) {
+            categoria.habilitacion = updatedCategoria.nivelCategoria.habilitacion;
+            console.log('Estado actualizado desde el backend:', categoria.habilitacion); 
+          } else {
+            console.error('La respuesta del backend no contiene nivelCategoria o habilitacion es undefined.');
+          }
           this.closeConfirmModal(); 
         },
         error: (error) => {
           console.error('Error al actualizar habilitación:', error);
-          this.closeConfirmModal(); // Cierra el modal aunque ocurra un error
+          this.closeConfirmModal(); 
         }
       });
     }
   }
+  
 
   getHabilitacionTexto(): string {
-    if (this.categoriaIndexToToggle === null) return ''; 
+    if (this.categoriaIndexToToggle === null) return '';
     const habilitacion = this.categorias[this.categoriaIndexToToggle]?.habilitacion;
-    console.log("Este es la habilitacion",habilitacion),
-    console.log("Este es la habilitacion Index",this.categoriaIndexToToggle)
     return habilitacion ? 'deshabilitar' : 'habilitar';
   }
 
