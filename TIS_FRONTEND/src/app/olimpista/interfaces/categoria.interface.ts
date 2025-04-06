@@ -10,3 +10,8 @@ export interface NivelesCategoria {
   created_at:   Date;
   updated_at:   Date;
 }
+
+export interface BackendResponse {
+  message: string;
+  nivelCategoria: NivelesCategoria;
+}

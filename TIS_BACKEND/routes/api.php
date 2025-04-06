@@ -68,7 +68,8 @@ Route::post('/nivelCategoria',        [ NivelCategoriaController::class, 'store'
 
 Route::put('/nivelCategoria/{id}',        [ NivelCategoriaController::class, 'update'     ]);
 
-Route::patch('/nivelCategoria/{id}/habilitacion', [NivelCategoriaController::class, 'updateHabilitacion']); // Para actualizar solo habilitacio
+Route::patch('/nivelCategoria/{id}/habilitacion', [NivelCategoriaController::class, 'updateHabilitacion']);
+ // Para actualizar solo habilitacio
 
 //PRUEBA
 Route::get('/nivelCategoria/por-area/{areaId}', [NivelCategoriaController::class, 'porArea']);

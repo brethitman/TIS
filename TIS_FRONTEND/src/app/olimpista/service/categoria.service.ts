@@ -19,7 +19,7 @@ export class CategoriaService {
    * @param nivelCategoria Datos del nivel a crear
    * @returns Observable con la respuesta del servidor
    */
-  crearNivelCategoria(nivelCategoria: Omit<NivelesCategoria, 'id' | 'created_at' | 'updated_at'>): Observable<NivelesCategoria> {
+  crearNivelCategoria(nivelCategoria: Omit<NivelesCategoria, 'id' | 'created_at' | 'updated_at'>): Observable<any> {
     return this.http.post<NivelesCategoria>(this.apiUrl, nivelCategoria);
   }
 
@@ -49,7 +49,7 @@ export class CategoriaService {
   actualizarNivel(
     id: number,
     cambios: { nombre_nivel: string; descripcion?: string | null; fecha_examen: Date | null; costo: number }
-  ): Observable<NivelesCategoria> {
+  ): Observable<any> {
     return this.http.put<NivelesCategoria>(`${this.apiUrl}/${id}`, cambios);
   }
   /**
@@ -90,8 +90,8 @@ export class CategoriaService {
  * @returns observar si la categoria fue habilitada o no
  */
 
-  habilitarCategoria(id: number, habilitacion: boolean | null): Observable<NivelesCategoria> {
+  habilitarCategoria(id: number, habilitacion: boolean): Observable<any> {
     const body = { habilitacion };
-    return this.http.patch<NivelesCategoria>(`${this.apiUrl}/${id}/habilitacion`, body);
+    return this.http.patch(`${this.apiUrl}/${id}/habilitacion`, body);
   }
 }

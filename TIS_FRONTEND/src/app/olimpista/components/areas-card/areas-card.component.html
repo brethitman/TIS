@@ -59,16 +59,18 @@
 <div class="border border-gray-200 p-4 bg-white rounded-lg">
   <h4 class="text-md font-semibold text-gray-700 mb-3">Categorías</h4>
 
-  <!-- Verifica si hay categorías -->
-  <div *ngIf="categorias.length > 0; else noCategorias">
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 m-8">
-      <div *ngFor="let categoria of categorias; let i = index" class="flex flex-col bg-white shadow-md rounded-lg overflow-hidden">
-        
-        <!-- Parte superior con color personalizado y animación -->
-        <div class="bg-[#6E64C9] p-4 text-white transition-all duration-300 hover:bg-[#7A6EC9] hover:scale-105 transform origin-left">
-          <h3 class="text-lg font-semibold">{{ categoria.nombre_nivel }}</h3>
-          <p class="text-sm">{{ categoria.descripcion }}</p>
-        </div>
+      <!-- Verifica si hay categorías -->
+      <div *ngIf="categorias.length > 0; else noCategorias">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-8 m-8">
+          <div *ngFor="let categoria of categorias; let i = index"
+            class="bg-white shadow-md rounded-lg overflow-hidden">
+            <!-- Parte superior con color personalizado y animación -->
+            <!-- Parte superior con color personalizado y animación hacia la derecha con hover más claro -->
+            <div
+              class="bg-[#6E64C9] p-4 text-white transition-all duration-300 hover:bg-[#7A6EC9] hover:scale-105 transform origin-left">
+              <h3 class="text-lg font-semibold">{{ categoria.nombre_nivel }}</h3>
+              <p class="text-sm">{{ categoria.descripcion }}</p>
+            </div>
 
         <!-- Parte inferior blanca con detalles -->
         <div class="p-4 flex flex-col space-y-3">
