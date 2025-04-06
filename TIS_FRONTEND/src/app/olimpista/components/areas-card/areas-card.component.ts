@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CategoriaService } from '../../service/categoria.service';
 import { Area } from '../../interfaces/inscripcion.interface';
@@ -27,7 +28,6 @@ export class AreasCardComponent implements OnInit {
   maxDate: string = '';
   errorMessage: string = '';
   cardIndexToToggle: number | null = null;
-  categoriaToDelete: number | null = null;
 
   categoriaNombre: string = '';
   categoriaDescripcion: string = '';
@@ -42,13 +42,6 @@ export class AreasCardComponent implements OnInit {
   categoriaIndexToEdit: number | null = null;
   isEditOpenC = false; // Estado del modal
   editIndex: number | null = null;
-
-  formData = {
-    nombreCategoria: '',
-    seleccionCategoria: '',
-    fechaExamen: '',
-    costoCategoria: '',
-  };
 
   cards: {
     nombre_Categoria: string;
@@ -72,7 +65,7 @@ export class AreasCardComponent implements OnInit {
     costo: 0
   };
 
-  constructor(private http: HttpClient, private categoriaService: CategoriaService) { }
+  constructor(private http: HttpClient, private categoriaService: CategoriaService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.cargarCategorias();
@@ -242,14 +235,17 @@ export class AreasCardComponent implements OnInit {
   }
 
   saveCategory(): void {
+    console.log('Fecha de examen antes de enviar:', this.nuevaCategoria.fecha_examen);
+    console.log('Costo antes de enviar:', this.nuevaCategoria.costo);
     const categoriaData = {
       id_area: this.Area.id,
       nombre_nivel: this.nuevaCategoria.nombre_nivel,
       descripcion: this.nuevaCategoria.descripcion || null,
-      fecha_examen: this.nuevaCategoria.fecha_examen ? new Date(this.nuevaCategoria.fecha_examen) : null,
+      fecha_examen: this.nuevaCategoria.fecha_examen? new Date(this.nuevaCategoria.fecha_examen) : null,
       costo: Number(this.nuevaCategoria.costo),
-      habilitacion: true
+      habilitacion: true,
     };
+    console.log('Datos enviados al backend:', categoriaData);
 
     this.categoriaService.crearNivelCategoria(categoriaData).subscribe({
       next: (response) => {
@@ -262,46 +258,22 @@ export class AreasCardComponent implements OnInit {
     });
   }
 
-  openDeleteModal(categoriaId: number): void {
-    this.categoriaToDelete = categoriaId;
-    this.isDeleteModalOpen = true;
-  }
-
-  closeDeleteModal(): void {
-    this.isDeleteModalOpen = false;
-    this.categoriaToDelete = null;
-  }
-
-  confirmDelete(): void {
-    if (this.categoriaToDelete) {
-      this.categoriaService.eliminarNivel(this.categoriaToDelete).subscribe({
-        next: () => {
-          this.categorias = this.categorias.filter(
-            cat => cat.id !== this.categoriaToDelete
-          );
-          this.closeDeleteModal();
-        },
-        error: (err) => {
-          console.error('Error al eliminar categoría:', err);
-        }
-      });
-    }
-  }
-
   toggleHabilitacionModal(index: number): void {
-    this.categoriaIndexToToggle = index; // Guarda el índice de la categoría seleccionada
-    this.isConfirmModalOpen = true; // Muestra el modal
+    this.categoriaIndexToToggle = index; 
+    this.isConfirmModalOpen = true; 
   }
 
   toggleHabilitar(): void {
     if (this.categoriaIndexToToggle !== null) {
-      const categoria = this.categorias[this.categoriaIndexToToggle]; // Obtiene la categoría seleccionada
-      const nuevoEstado = !categoria.habilitacion; // Cambia el estado de habilitación
+      const categoria = this.categorias[this.categoriaIndexToToggle]; 
+      const nuevoEstado = !categoria.habilitacion; 
 
       this.categoriaService.habilitarCategoria(categoria.id, nuevoEstado).subscribe({
         next: (updatedCategoria) => {
-          categoria.habilitacion = updatedCategoria.habilitacion; // Actualiza la categoría en la UI
-          this.closeConfirmModal(); // Cierra el modal
+          categoria.habilitacion = updatedCategoria.habilitacion; 
+          console.log("Este es la habilitacion toggle",updatedCategoria)
+          this.cdr.detectChanges();
+          this.closeConfirmModal(); 
         },
         error: (error) => {
           console.error('Error al actualizar habilitación:', error);
@@ -312,8 +284,10 @@ export class AreasCardComponent implements OnInit {
   }
 
   getHabilitacionTexto(): string {
-    if (this.categoriaIndexToToggle === null) return ''; // Si no hay índice, devolver vacío
+    if (this.categoriaIndexToToggle === null) return ''; 
     const habilitacion = this.categorias[this.categoriaIndexToToggle]?.habilitacion;
+    console.log("Este es la habilitacion",habilitacion),
+    console.log("Este es la habilitacion Index",this.categoriaIndexToToggle)
     return habilitacion ? 'deshabilitar' : 'habilitar';
   }
 
