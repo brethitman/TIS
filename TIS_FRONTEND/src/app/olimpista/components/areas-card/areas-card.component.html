@@ -64,7 +64,7 @@
       <div *ngIf="categorias.length > 0; else noCategorias">
         <div class="grid grid-cols-2 md:grid-cols-3 gap-8 m-8">
           <div *ngFor="let categoria of categorias; let i = index"
-            class="bg-white shadow-md rounded-lg overflow-hidden">
+            class="flex bg-white shadow-md rounded-lg overflow-hidden">
             <!-- Parte superior con color personalizado y animación -->
             <!-- Parte superior con color personalizado y animación hacia la derecha con hover más claro -->
             <div
@@ -76,7 +76,6 @@
             <!-- Parte inferior blanca con detalles -->
             <div class="p-4">
               <h3 class="font-bold">Nombre : {{ categoria.nombre_nivel }}</h3>
-              <p class="text-sm">Descripcion : {{ categoria.descripcion || 'Sin descripción' }}</p>
               <p class="text-sm">Fecha examen: {{ categoria.fecha_examen | date:'dd/MM/yyyy' }}</p>
               <p class="text-sm">Costo: {{ categoria.costo }} Bs</p>
               <p class="text-sm">Estado:
@@ -231,8 +230,8 @@
           <!-- Fecha de examen -->
           <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
           <input type="date" placeholder="Ingresar fecha de examen"
-            class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-            style="background-color: white;" [min]="minDate" [max]="maxDate" [(ngModel)]="formData.fechaExamen"
+            class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400" name="categoriaFechaExamen"
+            style="background-color: white;" [min]="minDate" [max]="maxDate" [(ngModel)]="nuevaCategoria.fecha_examen"
             (keydown)="disableManualInput($event)" required>
           <!-- Costo de la Categoría -->
           <label class="text-sm mt-4 block" sytle="margin-top:3px transform: translateY(140)">Costo de la
@@ -240,7 +239,7 @@
           <input type="text" placeholder="Ingresar costo"
             class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
             style="background-color: white;" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3)"
-            [(ngModel)]="formData.costoCategoria" required>
+            [(ngModel)]="nuevaCategoria.costo" name="categoriaCosto" required>
 
           <!-- Botones de acción -->
           <div class="mt-5 flex justify-end gap-4">
