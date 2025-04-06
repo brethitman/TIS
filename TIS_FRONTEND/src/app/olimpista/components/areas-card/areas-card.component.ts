@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 import { CategoriaService } from '../../service/categoria.service';
 import { Area } from '../../interfaces/inscripcion.interface';
 import { NivelesCategoria } from '../../interfaces/categoria.interface';
@@ -234,7 +234,23 @@ export class AreasCardComponent implements OnInit {
     this.resetNuevaCategoria();
   }
 
-  saveCategory(): void {
+  saveCategory(form: NgForm): void {
+    if (form.invalid) {
+      // Marcar todos los campos como "touched" para mostrar errores
+      Object.keys(form.controls).forEach(key => {
+        form.controls[key].markAsTouched();
+      });
+      
+      console.warn('Formulario inválido. No se puede guardar la categoría.');
+      return;
+    }
+  
+    // Verificación adicional de campos requeridos
+    if (!this.nuevaCategoria.nombre_nivel || !this.nuevaCategoria.descripcion || 
+        !this.nuevaCategoria.fecha_examen || !this.nuevaCategoria.costo) {
+      console.warn('Todos los campos son requeridos');
+      return;
+    }
     console.log('Fecha de examen antes de enviar:', this.nuevaCategoria.fecha_examen);
     console.log('Costo antes de enviar:', this.nuevaCategoria.costo);
     const categoriaData = {
