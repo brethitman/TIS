@@ -1,11 +1,11 @@
 <div class="mx-auto p-6 bg-white shadow-md rounded-lg">
-  <h2 class="text-xl font-bold mb-4">Registrar nueva area</h2>
+  <h2 class="text-xl font-bold mb-4">Registrar nueva área</h2>
   
   <form #areaForm="ngForm" (ngSubmit)="onSubmit()" class="space-y-4">
     <div class="flex flex-row items-center space-x-4">
       <!-- Campo de Nombre del área -->
       <div class="flex-1">
-        <label for="nombre_area" class="sr-only">Nombre del area</label>
+        <label for="nombre_area" class="sr-only">Nombre del área</label>
         <input
           type="text"
           id="nombre_area"
@@ -32,7 +32,7 @@
           (click)="toggleDropdown()"
           [class]="errors.cursos ? 'px-4 py-2 border border-red-500 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500' : 'px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'"
         >
-          Seleccion de cursos
+          Selección de cursos
         </button>
         
         <!-- Dropdown de cursos -->
@@ -74,7 +74,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
           </svg>
-          Añadir area
+          Añadir área
         </div>
       </button>
     </div>
@@ -88,7 +88,7 @@
     
     <!-- Mostrar cursos seleccionados automáticamente -->
     <div *ngIf="selectedGrades" class="mt-4 text-sm text-gray-700">
-      <p>Seleccionados: {{ selectedGrades }}</p>
+      <p>Descripción: {{ selectedGrades }}</p>
       <div *ngIf="errors.descripcion" class="flex items-center text-red-500 text-sm mt-1">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
