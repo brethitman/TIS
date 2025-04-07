@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AreaService } from '../../service/area.service';
@@ -13,6 +13,7 @@ import { of } from 'rxjs';
   templateUrl: './inscripcion-areas.component.html',
 })
 export class InscripcionAreasComponent {
+  @Output() areaCreated = new EventEmitter<Area>();
   // Propiedades para el formulario de áreas
   area: Area = {
     id: 0,
@@ -180,11 +181,14 @@ export class InscripcionAreasComponent {
       this.areaService.createArea(areaToSend).pipe(
         catchError(error => {
           // Verificar si el error es debido a un área duplicada
-          if (error.status === 409 || (error.error && error.error.message && error.error.message.includes('existe'))) {
-            this.errors.duplicado = 'El área ya existe y no puede ser duplicada';
+          if (error.status === 422 && error.error && error.error.errors && error.error.errors.nombre_area) {
+            // Error de validación del backend (área duplicada)
+            this.errors.duplicado = 'Esta área ya existe en el sistema. Por favor, utilice un nombre diferente.';
+          } else if (error.status === 409 || (error.error && error.error.message && error.error.message.includes('existe'))) {
+            this.errors.duplicado = 'Esta área ya existe en el sistema. Por favor, utilice un nombre diferente.';
           } else {
             console.error('Error al guardar el área:', error);
-            alert('Hubo un error al guardar el área: ' + (error.message || 'Error desconocido'));
+            this.errors.duplicado = 'Ha ocurrido un error al intentar guardar el área. Por favor, intente nuevamente.';
           }
           return of(null);
         })
@@ -193,6 +197,8 @@ export class InscripcionAreasComponent {
           if (response) {
             console.log('Área guardada:', response);
             alert('Área guardada con éxito');
+            // Emitir el evento con la nueva área
+            this.areaCreated.emit(response);
             // Resetear el formulario
             this.resetForm();
           }
