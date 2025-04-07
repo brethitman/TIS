@@ -64,7 +64,7 @@ class AreaController extends Controller
 
         // Validar los datos recibidos
         $request->validate([
-            'nombre_area' => 'required|string|max:100|unique:areas,nombre_area,'.$id.',id_area',
+            'nombre_area' => 'required|string|max:100|unique:areas,nombre_area,' . $id . ',id_area',
             'descripcion' => 'nullable|string|max:255',
         ]);
 
@@ -92,4 +92,16 @@ class AreaController extends Controller
             'message' => 'Área eliminada exitosamente'
         ]);
     }
+
+    public function getAreaById($id)
+    {
+        $area = Area::find($id); 
+
+        if ($area) {
+            return response()->json(['area' => $area], 200); 
+        } else {
+            return response()->json(['error' => 'Área no encontrada'], 404); // Mensaje de error si no se encuentra
+        }
+    }
+
 }

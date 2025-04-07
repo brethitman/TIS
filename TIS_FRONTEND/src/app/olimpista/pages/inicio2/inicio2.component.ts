@@ -25,10 +25,13 @@ export class Inicio2Component {
   constructor(private inscripcionService: InscripcionService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    // Capturamos el parámetro categoriaId de la URL
-    this.route.queryParams.subscribe(params => {
-      this.categoriaId = params['categoriaId']; // Aquí asignamos el valor del parámetro
-      console.log('Categoría seleccionada:', this.categoriaId);
+    this.route.queryParams.subscribe((params) => {
+      this.formData.areaId = params['idArea'];
+      this.formData.nombreCategoria = params['nombreCategoria'];
+      this.formData.descripcionC = params['descripcionC'];
+      this.formData.costo = params['costo'];
+  
+      console.log('Parámetros recibidos de Card:', this.formData);
     });
   }
 

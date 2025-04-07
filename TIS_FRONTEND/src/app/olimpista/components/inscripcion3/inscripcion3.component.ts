@@ -4,6 +4,7 @@ import { Area } from '../../interfaces/area.interface';
 import { GetAreaResponse } from '../../interfaces/get-area-response';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AreaService } from '../../service/area.service';
 
 @Component({
   selector: 'app-inscripcion3',
@@ -14,22 +15,43 @@ import { CommonModule } from '@angular/common';
 export class Inscripcion3Component implements OnInit {
   @Input() tutorData: any;
   @Input() olimpistaData: any;
+  @Input() areaId!: number; 
+  @Input() nombreCategoria!: string;
+  @Input() descripcionC!: string;
+  @Input() costo!: number;
 
   areas: Area[] = [];
+  area: Area | null = null;
   selectedAreaId: number | null = null;
   isLoading = true;
   error = false;
   isSaving = false;
   errorMessage: string | null = null;
+  areaNombre: string | null = null;
 
   @Output() atras = new EventEmitter<void>();
   @Output() submit = new EventEmitter<any>();
   @Output() areaChanged = new EventEmitter<number>();
 
-  constructor(private inscripcionService: InscripcionService) {}
+  constructor(private inscripcionService: InscripcionService, private areaService: AreaService) {}
 
   ngOnInit(): void {
     this.loadAreas();
+    this.cargarNombreArea();
+  }
+
+  onSubmit(): void {
+    const formData = {
+      tutor: this.tutorData,
+      olimpista: this.olimpistaData,
+      areaId: this.areaId,
+      nombreCategoria: this.nombreCategoria,
+      descripcionC: this.descripcionC,
+      costo: this.costo,
+    };
+
+    console.log('Enviando formulario de inscripción:', formData);
+    this.submit.emit(formData);
   }
 
   loadAreas(): void {
@@ -46,9 +68,17 @@ export class Inscripcion3Component implements OnInit {
       }
     });
   }
-
-  getSelectedArea(): Area | undefined {
-    return this.areas.find(area => area.id === this.selectedAreaId);
+  cargarNombreArea(): void{
+    this.areaService.getAreaById(this.areaId).subscribe({
+      next: (response) => {
+        this.areaNombre = response.area.nombre_area;
+        console.log('Área cargada:', this.area);
+      },
+      error: (err) => {
+        console.error('Error al obtener el área:', err);
+        this.errorMessage = 'No se pudo cargar el área. Por favor verifica el ID.';
+      },
+    });
   }
 
   onAreaChange(): void {
