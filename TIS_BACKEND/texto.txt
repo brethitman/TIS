@@ -1,0 +1,3 @@
+por si nos trae problemas mas adelante
+
+C:\Users\Ffcg\Videos\ARREGLAR_INSCRIPCION\TIS-josue4\TIS_BACKEND\vendor\laravel\framework\src\Illuminate\Http\Request.php
