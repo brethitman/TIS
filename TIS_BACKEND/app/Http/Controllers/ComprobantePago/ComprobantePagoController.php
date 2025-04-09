@@ -3,19 +3,22 @@
 namespace App\Http\Controllers\ComprobantePago;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ComprobantePago\ComprobantePagoResource;
+use App\Http\Resources\ComprobantePago\ComprobantePagoResource
+use App\Http\Resources\ComprobantePagoCollection;
 use App\Models\ComprobantePago;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ComprobantePagoController extends Controller
 {
-    // No debería haber ninguna referencia a ComprobantePagoCollection aquí
+    protected $resource = ComprobantePagoResource::class;
+    protected $collectionResource = ComprobantePagoCollection::class;
 
     public function index()
     {
         $comprobantes = ComprobantePago::with(['boletaPago', 'boletaPago.inscripcion'])->orderBy("created_at", "desc")->paginate(10);
         return ComprobantePagoResource::collection($comprobantes);
+
     }
 
     /**

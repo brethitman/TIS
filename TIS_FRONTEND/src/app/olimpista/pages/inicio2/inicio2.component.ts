@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Inscripcion1Component } from '../../components/inscripcion1/inscripcion1.component';
@@ -77,6 +76,5 @@ export class Inicio2Component {
         alert('Error al completar la inscripción. Por favor intenta nuevamente.');
       }
     });
-
   }
 }

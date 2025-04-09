@@ -13,23 +13,20 @@ class Area extends Model
     protected $primaryKey = 'id_area';
 
     protected $fillable = [
+        'id_olimpiada',
         'nombre_area',
-        'descripcion', // Mantenemos el nuevo campo
+        'descripcion',
     ];
 
-    /**
-     * Obtener las inscripciones relacionadas con esta área
-     */
-    public function inscripciones()
+    public function olimpiada()
     {
-        return $this->hasMany(Inscripcion::class, 'id_area', 'id_area');
+        return $this->belongsTo(Olimpiada::class, 'id_olimpiada', 'id_olimpiada');
     }
 
-    /**
-     * Obtener los niveles o categorías relacionados con esta área
-     */
     public function nivelCategorias()
     {
         return $this->hasMany(NivelCategoria::class, 'id_area', 'id_area');
     }
+
+    // Eliminar relación con inscripciones ya que en BD se relaciona con nivel
 }

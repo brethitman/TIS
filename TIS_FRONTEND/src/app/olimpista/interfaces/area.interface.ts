@@ -1,7 +1,7 @@
 export interface Area {
   id:          number;
   nombre_area: string;
-  descripcion: null | string;
+  descripcion: string | null;
   createdAt:   Date;
   updatedAt:   Date;
 }
