@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\ComprobantePago;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ComprobantePago\ComprobantePagoResource
+use App\Http\Resources\ComprobantePago\ComprobantePagoResource;
 use App\Http\Resources\ComprobantePagoCollection;
 use App\Models\ComprobantePago;
 use Illuminate\Http\Request;
