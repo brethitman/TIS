@@ -1,0 +1,24 @@
+<div *ngIf="pasoActual === 1">
+  <app-inscripcion1
+    (continuar)="siguientePaso()"
+    (tutorChanged)="updateTutorData($event)">
+  </app-inscripcion1>
+</div>
+
+<div *ngIf="pasoActual === 2">
+  <app-inscripcion2
+    (continuar)="siguientePaso()"
+    (atras)="anteriorPaso()"
+    (olimpistaChanged)="updateOlimpistaData($event)">
+  </app-inscripcion2>
+</div>
+
+<div *ngIf="pasoActual === 3">
+  <app-inscripcion3
+    [tutorData]="formData.tutor"
+    [olimpistaData]="formData.olimpista"
+    (atras)="anteriorPaso()"
+    (submit)="submitInscripcion($event)"
+    (areaChanged)="updateAreaData($event)">
+  </app-inscripcion3>
+</div>
