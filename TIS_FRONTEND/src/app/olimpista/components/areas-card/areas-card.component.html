@@ -68,18 +68,18 @@
             <!-- Parte superior con color personalizado y animación hacia la derecha con hover más claro -->
             <div
               class="bg-[#6E64C9] p-4 text-white transition-all duration-300 hover:bg-[#7A6EC9] hover:scale-105 transform origin-left">
-              <h3 class="text-lg font-semibold">{{ categoria?.nombre_nivel}}</h3>
-              <p class="text-sm">{{ categoria?.descripcion }}</p>
+              <h3 class="text-lg font-semibold">{{ categoria.nombre_nivel }}</h3>
+              <p class="text-sm">{{ categoria.descripcion }}</p>
             </div>
 
             <!-- Parte inferior blanca con detalles -->
             <div class="p-4">
-              <h3 class="font-bold">Nombre : {{ categoria?.nombre_nivel }}</h3>
-              <p class="text-sm">Fecha examen: {{ categoria?.fecha_examen | date:'dd/MM/yyyy' }}</p>
-              <p class="text-sm">Costo: {{ categoria?.costo }} Bs</p>
+              <h3 class="font-bold">Nombre : {{ categoria.nombre_nivel}}</h3>
+              <p class="text-sm">Fecha examen: {{ categoria.fecha_examen | date:'dd/MM/yyyy' }}</p>
+              <p class="text-sm">Costo: {{ categoria.costo }} Bs</p>
               <p class="text-sm">Estado:
-                <span [class.text-green-500]="categoria?.habilitacion" [class.text-red-500]="!categoria?.habilitacion">
-                  {{ categoria?.habilitacion ? 'Habilitado' : 'Deshabilitado' }}
+                <span [class.text-green-500]="categoria.habilitacion" [class.text-red-500]="!categoria.habilitacion">
+                  {{ categoria.habilitacion ? 'Habilitado' : 'Deshabilitado' }}
                 </span>
               </p>
 
@@ -87,9 +87,9 @@
                 <button (click)="openEditModal(i)" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                   Editar
                 </button>
-                <button (click)="toggleHabilitacionModal(i)" [class.bg-green-500]="!categoria?.habilitacion"
-                  [class.bg-red-500]="categoria?.habilitacion" class="px-4 py-2 text-white rounded hover:bg-opacity-90">
-                  {{ categoria?.habilitacion ? 'Deshabilitar' : 'Habilitar' }}
+                <button (click)="toggleHabilitacionModal(i)" [class.bg-green-500]="!categoria.habilitacion"
+                  [class.bg-red-500]="categoria.habilitacion" class="px-4 py-2 text-white rounded hover:bg-opacity-90">
+                  {{ categoria.habilitacion ? 'Deshabilitar' : 'Habilitar' }}
                 </button>
               </div>
 
