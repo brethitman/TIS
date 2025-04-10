@@ -10,7 +10,9 @@
                 <h3 class="text-xl font-bold">{{ Area.nombre_area }}</h3>
               </div>
               <div class="flex justify-between items-start">
-                <p class="text-sm flex-grow">{{ Area.descripcion || 'No disponible' }}</p>
+                <p class="text-sm flex-grow">
+                  <strong>Descripción:</strong> {{ Area.descripcion || 'No disponible' }}
+                </p>                
                 <button (click)="openAreaEditModal()" class="text-blue-300 hover:text-white ml-2">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">

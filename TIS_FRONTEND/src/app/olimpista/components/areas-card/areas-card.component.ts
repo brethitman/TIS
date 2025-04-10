@@ -100,18 +100,22 @@ export class AreasCardComponent implements OnInit {
     };
 
     this.http.put(`/api/areas/${this.Area.id}`, updateData)
-      .subscribe({
-        next: (response: any) => {
-          console.log('Área actualizada exitosamente', response);
-          this.Area.nombre_area = this.editedAreaNombre;
-          this.Area.descripcion = this.editedAreaDescripcion;
-          this.closeAreaEditModal();
-        },
-        error: (error) => {
-          console.error('Error al actualizar el área', error);
-          // Aquí puedes agregar notificación de error al usuario
-        }
-      });
+    .subscribe({
+      next: (response: any) => {
+        console.log('Área actualizada exitosamente', response);
+        // Actualiza el objeto Area completo para trigger de detección de cambios
+        this.Area = {
+          ...this.Area,
+          nombre_area: this.editedAreaNombre,
+          descripcion: this.editedAreaDescripcion
+        };
+        this.closeAreaEditModal();
+        this.cdr.detectChanges(); // Forzar detección de cambios
+      },
+      error: (error) => {
+        console.error('Error al actualizar el área', error);
+      }
+    });
   }
 
   //Funciones de categoria Andrea
