@@ -74,8 +74,7 @@
 
             <!-- Parte inferior blanca con detalles -->
             <div class="p-4">
-              <h3 class="font-bold">Nombre : {{ categoria.nombre_nivel }}</h3>
-              <p class="text-sm">Descripcion : {{ categoria.descripcion || 'Sin descripción' }}</p>
+              <h3 class="font-bold">Nombre : {{ categoria.nombre_nivel}}</h3>
               <p class="text-sm">Fecha examen: {{ categoria.fecha_examen | date:'dd/MM/yyyy' }}</p>
               <p class="text-sm">Costo: {{ categoria.costo }} Bs</p>
               <p class="text-sm">Estado:
@@ -115,8 +114,7 @@
               <label class="block text-gray-700 text-sm font-bold mb-2">Descripción</label>
               <select
                 class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-                [(ngModel)]="editedCategoriaTemp.descripcion" name="editedDescripcion"
-                style="background-color: white;">
+                [(ngModel)]="editedCategoriaTemp.descripcion" name="editedDescripcion" style="background-color: white;">
                 <option value="" disabled selected class="text-gray-400"
                   style="max-height: 5px; overflow-y: scroll; scrollbar-width: 2px;">Seleccionar nivel académico
                 </option>
@@ -135,11 +133,11 @@
               </select>
             </div>
             <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
-          <input type="date" name="editedFecha"
-            class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-            style="background-color: white;" [min]="minDate" [max]="maxDate" [(ngModel)]="editedCategoriaTemp.fecha_examen"
-            (keydown)="disableManualInput($event)" required>
-          <!-- Costo de la Categoría -->
+            <input type="date" name="editedFecha"
+              class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+              style="background-color: white;" [min]="minDate" [max]="maxDate" 
+              [(ngModel)]="editedCategoriaTemp.fecha_examen" (keydown)="disableManualInput($event)" required>
+            <!-- Costo de la Categoría -->
             <div class="mb-4">
               <label class="block text-gray-700 text-sm font-bold mb-2">Costo</label>
               <input type="number" [(ngModel)]="editedCategoriaTemp.costo" name="editedCosto"
@@ -186,62 +184,95 @@
         Añadir categoría
       </button>
     </div>
-    <!-- Modal para añadir categoría (se mantiene igual) -->
-    <div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center"
+
+
+    <!-- Modal para añadir categoría-->
+    <div *ngIf="isModalOpen" class="fixed inset-0 bg-gray-600 flex justify-center items-center justify-center z-50"
       style="background-color: rgba(75, 85, 99, 0.3);">
-      <div class="bg-white p-5 rounded-lg shadow-lg max-w-md"
-        style="width: 600px; height: 500px; background-color:rgba(206, 223, 255, 100);">
+      <div class="bg-white p-5 rounded-lg shadow-lg max-w-md w-[600px] max-h-screen overflow-y-auto"
+        style="background-color:rgba(255, 255, 255, 1);">
 
         <!-- Título Principal -->
         <h2 class="text-xl font-bold text-gray-900">Añadir Categoría</h2>
         <p class="text-sm text-gray-500 mb-4">Introduce los detalles de la categoría.</p>
 
         <!-- Formulario para la categoría -->
-        <form (ngSubmit)="saveCategory()">
-
+        <form #categoryForm="ngForm" (ngSubmit)="saveCategory(categoryForm)">
           <!-- Nombre de Categoría -->
-          <label class="text-sm text-gray-700">Nombre de la Categoría</label>
-          <input type="text" placeholder="Ingresar nombre de la categoría"
-            class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-            [(ngModel)]="nuevaCategoria.nombre_nivel" name="categoriaNombre" style="background-color: white;"
-            oninput="this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '')" required>
+          <div class="mb-4">
+            <label class="text-sm text-gray-700">Nombre de la Categoría</label>
+            <input type="text" #nombreRef="ngModel" placeholder="Ingresar nombre de la categoría"
+              class="mt-2 p-2 border rounded w-full focus:outline-none focus:ring-2" [ngClass]="{
+                     'border-gray-300 focus:ring-blue-400': !(nombreRef.touched && nombreRef.invalid),
+                     'border-red-500 focus:ring-red-400': nombreRef.touched && nombreRef.invalid
+                   }" [(ngModel)]="nuevaCategoria.nombre_nivel" name="categoriaNombre" style="background-color: white;"
+              oninput="this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, '')" required>
+
+            <div *ngIf="nombreRef.touched && nombreRef.invalid" class="text-red-500 text-xs mt-1">
+              El nombre de la categoría es requerido
+            </div>
+          </div>
 
           <!-- Nivel Académico -->
-          <label class="text-sm text-gray-700 mt-4 block">Nivel Académico</label>
-          <select
-            class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-            [(ngModel)]="nuevaCategoria.descripcion" name="categoriaDescripcion" style="background-color: white;">
-            <option value="" disabled selected class="text-gray-400"
-              style="max-height: 5px; overflow-y: scroll; scrollbar-width: 2px;">Seleccionar nivel académico</option>
-            <option value="1ro de Primaria">1ro de Primaria</option>
-            <option value="2do de Primaria">2do de Primaria</option>
-            <option value="3ro de Primaria">3ro de Primaria</option>
-            <option value="4to de Primaria">4to de Primaria</option>
-            <option value="5to de Primaria">5to de Primaria</option>
-            <option value="6to de Primaria">6to de Primaria</option>
-            <option value="1ro de Secundaria">1ro de Secundaria</option>
-            <option value="2do de Secundaria">2do de Secundaria</option>
-            <option value="3ro de Secundaria">3ro de Secundaria</option>
-            <option value="4ro de Secundaria">4to de Secundaria</option>
-            <option value="5tro de Secundaria">5to de Secundaria</option>
-            <option value="6to de Secundaria">6to de Secundaria</option>
-          </select>
+          <div class="mb-4">
+            <label class="text-sm text-gray-700 mt-4 block">Nivel Académico</label>
+            <select #descripcionRef="ngModel" class="mt-2 p-2 border rounded w-full focus:outline-none focus:ring-2"
+              [ngClass]="{
+                      'border-gray-300 focus:ring-blue-400': !(descripcionRef.touched && descripcionRef.invalid),
+                      'border-red-500 focus:ring-red-400': descripcionRef.touched && descripcionRef.invalid
+                    }" [(ngModel)]="nuevaCategoria.descripcion" name="categoriaDescripcion"
+              style="background-color: white;" required>
+              <option value="" disabled selected class="text-gray-400">Seleccionar nivel académico</option>
+              <option value="1ro de Primaria">1ro de Primaria</option>
+              <option value="2do de Primaria">2do de Primaria</option>
+              <option value="3ro de Primaria">3ro de Primaria</option>
+              <option value="4to de Primaria">4to de Primaria</option>
+              <option value="5to de Primaria">5to de Primaria</option>
+              <option value="6to de Primaria">6to de Primaria</option>
+              <option value="1ro de Secundaria">1ro de Secundaria</option>
+              <option value="2do de Secundaria">2do de Secundaria</option>
+              <option value="3ro de Secundaria">3ro de Secundaria</option>
+              <option value="4ro de Secundaria">4to de Secundaria</option>
+              <option value="5tro de Secundaria">5to de Secundaria</option>
+              <option value="6to de Secundaria">6to de Secundaria</option>
+            </select>
+
+            <div *ngIf="descripcionRef.touched && descripcionRef.invalid" class="text-red-500 text-xs mt-1">
+              Debe seleccionar un nivel académico
+            </div>
+          </div>
 
           <!-- Fecha de examen -->
-          <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
-          <input type="date" placeholder="Ingresar fecha de examen"
-            class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-            style="background-color: white;" [min]="minDate" [max]="maxDate" [(ngModel)]="formData.fechaExamen"
-            (keydown)="disableManualInput($event)" required>
-          <!-- Costo de la Categoría -->
-          <label class="text-sm mt-4 block" sytle="margin-top:3px transform: translateY(140)">Costo de la
-            Categoría</label>
-          <input type="text" placeholder="Ingresar costo"
-            class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-            style="background-color: white;" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3)"
-            [(ngModel)]="formData.costoCategoria" required>
+          <div class="mb-4">
+            <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
+            <input type="date" #fechaRef="ngModel" placeholder="Ingresar fecha de examen"
+              class="mt-2 p-2 border rounded w-full focus:outline-none focus:ring-2" [ngClass]="{
+                     'border-gray-300 focus:ring-blue-400': !(fechaRef.touched && fechaRef.invalid),
+                     'border-red-500 focus:ring-red-400': fechaRef.touched && fechaRef.invalid
+                   }" name="categoriaFechaExamen" style="background-color: white;" [min]="minDate" [max]="maxDate"
+              [(ngModel)]="nuevaCategoria.fecha_examen" (keydown)="disableManualInput($event)" required>
 
-          <!-- Botones de acción -->
+            <div *ngIf="fechaRef.touched && fechaRef.invalid" class="text-red-500 text-xs mt-1">
+              La fecha de examen es requerida
+            </div>
+          </div>
+
+          <!-- Costo de la Categoría -->
+          <div class="mb-4">
+            <label class="text-sm mt-4 block">Costo de la Categoría</label>
+            <input type="text" #costoRef="ngModel" placeholder="Ingresar costo"
+              class="mt-2 p-2 border rounded w-full focus:outline-none focus:ring-2" [ngClass]="{
+                     'border-gray-300 focus:ring-blue-400': !(costoRef.touched && costoRef.invalid),
+                     'border-red-500 focus:ring-red-400': costoRef.touched && costoRef.invalid
+                   }" style="background-color: white;"
+              oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 3)" [(ngModel)]="nuevaCategoria.costo"
+              name="categoriaCosto" required pattern="[0-9]+">
+
+            <div *ngIf="costoRef.touched && costoRef.invalid" class="text-red-500 text-xs mt-1">
+              <span *ngIf="costoRef.errors?.['required']">El costo es requerido</span>
+              <span *ngIf="costoRef.errors?.['pattern']">Solo se permiten números</span>
+            </div>
+          </div>
           <div class="mt-5 flex justify-end gap-4">
             <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Aceptar</button>
             <button type="button" (click)="closeModal()"

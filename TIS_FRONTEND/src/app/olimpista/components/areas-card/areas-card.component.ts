@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { CommonModule} from '@angular/common';
+import { ChangeDetectorRef } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 import { CategoriaService } from '../../service/categoria.service';
 import { Area } from '../../interfaces/inscripcion.interface';
 import { NivelesCategoria } from '../../interfaces/categoria.interface';
@@ -18,6 +19,8 @@ export class AreasCardComponent implements OnInit {
   @Input() categorias: NivelesCategoria[] = [];
   @Input({}) NivCategoria !: NivelesCategoria;
 
+  private progreso: boolean = false;
+
   isModalOpen = false;
   isDeleteModalOpen = false;
   isConfirmModalOpen = false;
@@ -27,7 +30,6 @@ export class AreasCardComponent implements OnInit {
   maxDate: string = '';
   errorMessage: string = '';
   cardIndexToToggle: number | null = null;
-  categoriaToDelete: number | null = null;
 
   categoriaNombre: string = '';
   categoriaDescripcion: string = '';
@@ -42,13 +44,6 @@ export class AreasCardComponent implements OnInit {
   categoriaIndexToEdit: number | null = null;
   isEditOpenC = false; // Estado del modal
   editIndex: number | null = null;
-
-  formData = {
-    nombreCategoria: '',
-    seleccionCategoria: '',
-    fechaExamen: '',
-    costoCategoria: '',
-  };
 
   cards: {
     nombre_Categoria: string;
@@ -72,13 +67,13 @@ export class AreasCardComponent implements OnInit {
     costo: 0
   };
 
-  constructor(private http: HttpClient, private categoriaService: CategoriaService) { }
+  constructor(private http: HttpClient, private categoriaService: CategoriaService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.cargarCategorias();
     this.fechaLimite();
   }
-
+  
   //Funciones del Area Valeria
   openAreaEditModal() {
     this.editedAreaNombre = this.Area.nombre_area;
@@ -137,9 +132,12 @@ export class AreasCardComponent implements OnInit {
     this.editedCategoriaTemp = {
       nombre_nivel: categoria.nombre_nivel,
       descripcion: categoria.descripcion,
-      fecha_examen: categoria.fecha_examen,
+      fecha_examen: categoria.fecha_examen 
+      ? new Date(categoria.fecha_examen) 
+      : null,
       costo: categoria.costo
     };
+    console.log("Visualizacion del modal de Editar",this.editedCategoriaTemp)
     this.editIndex = index;
     this.isEditModalOpen = true;
   }
@@ -167,7 +165,7 @@ export class AreasCardComponent implements OnInit {
         .subscribe(
           (respuesta) => {
             if (this.editIndex !== null && this.editIndex >= 0) {
-              this.categorias[this.editIndex] = { ...respuesta };
+              this.categorias[this.editIndex] = { ...respuesta.nivelCategoria };
             } else {
               console.error('editIndex es inválido durante la actualización.');
             }
@@ -222,9 +220,11 @@ export class AreasCardComponent implements OnInit {
   cargarCategorias(): void {
     this.categoriaService.obtenerNivelesCategoria().subscribe({
       next: (response) => {
-        this.categorias = response.nivelesCategoria.filter(
-          cat => cat.id_area === this.Area.id
-        );
+        console.log('Respuesta del backend:', response);
+        this.categorias = response.nivelesCategoria.filter(cat => {
+          console.log('Comparando:', cat.id_area, 'con', this.Area.id);
+          return cat.id_area === this.Area.id;
+        });
       },
       error: (err) => {
         console.error('Error al cargar categorías:', err);
@@ -241,78 +241,81 @@ export class AreasCardComponent implements OnInit {
     this.resetNuevaCategoria();
   }
 
-  saveCategory(): void {
+  saveCategory(form: NgForm): void {
+    if (form.invalid) {
+      // Marcar todos los campos como "touched" para mostrar errores
+      Object.keys(form.controls).forEach(key => {
+        form.controls[key].markAsTouched();
+      });
+      
+      console.warn('Formulario inválido. No se puede guardar la categoría.');
+      return;
+    }
+  
+    // Verificación adicional de campos requeridos
+    if (!this.nuevaCategoria.nombre_nivel || !this.nuevaCategoria.descripcion || 
+        !this.nuevaCategoria.fecha_examen || !this.nuevaCategoria.costo) {
+      console.warn('Todos los campos son requeridos');
+      return;
+    }
+
     const categoriaData = {
       id_area: this.Area.id,
       nombre_nivel: this.nuevaCategoria.nombre_nivel,
       descripcion: this.nuevaCategoria.descripcion || null,
       fecha_examen: this.nuevaCategoria.fecha_examen ? new Date(this.nuevaCategoria.fecha_examen) : null,
       costo: Number(this.nuevaCategoria.costo),
-      habilitacion: true
+      habilitacion: true,
     };
+    console.log('Datos enviados al backend:', categoriaData);
 
     this.categoriaService.crearNivelCategoria(categoriaData).subscribe({
       next: (response) => {
-        this.categorias.push(response);
+        console.log('Respuesta del backend:', response);
+        this.categorias = [...this.categorias, response.nivelCategoria];
+        console.log('Lista de categorías actualizada:', this.categorias);
+        this.cdr.detectChanges(); // (opcional si sigue siendo necesario)
         this.closeModal();
       },
       error: (err) => {
         console.error('Error al crear categoría:', err);
       }
     });
-  }
-
-  openDeleteModal(categoriaId: number): void {
-    this.categoriaToDelete = categoriaId;
-    this.isDeleteModalOpen = true;
-  }
-
-  closeDeleteModal(): void {
-    this.isDeleteModalOpen = false;
-    this.categoriaToDelete = null;
-  }
-
-  confirmDelete(): void {
-    if (this.categoriaToDelete) {
-      this.categoriaService.eliminarNivel(this.categoriaToDelete).subscribe({
-        next: () => {
-          this.categorias = this.categorias.filter(
-            cat => cat.id !== this.categoriaToDelete
-          );
-          this.closeDeleteModal();
-        },
-        error: (err) => {
-          console.error('Error al eliminar categoría:', err);
-        }
-      });
-    }
-  }
+}
 
   toggleHabilitacionModal(index: number): void {
-    this.categoriaIndexToToggle = index; // Guarda el índice de la categoría seleccionada
-    this.isConfirmModalOpen = true; // Muestra el modal
+    this.categoriaIndexToToggle = index;
+    this.isConfirmModalOpen = true;
   }
 
   toggleHabilitar(): void {
     if (this.categoriaIndexToToggle !== null) {
-      const categoria = this.categorias[this.categoriaIndexToToggle]; // Obtiene la categoría seleccionada
-      const nuevoEstado = !categoria.habilitacion; // Cambia el estado de habilitación
-
+      const categoria = this.categorias[this.categoriaIndexToToggle];
+      const nuevoEstado = !categoria.habilitacion; 
+  
+      console.log('Estado antes de cambiar:', categoria.habilitacion); 
+  
       this.categoriaService.habilitarCategoria(categoria.id, nuevoEstado).subscribe({
         next: (updatedCategoria) => {
-          categoria.habilitacion = updatedCategoria.habilitacion; // Actualiza la categoría en la UI
-          this.closeConfirmModal(); // Cierra el modal
+          if (updatedCategoria && updatedCategoria.nivelCategoria) {
+            categoria.habilitacion = updatedCategoria.nivelCategoria.habilitacion;
+            console.log('Estado actualizado desde el backend:', categoria.habilitacion); 
+          } else {
+            console.error('La respuesta del backend no contiene nivelCategoria o habilitacion es undefined.');
+          }
+          this.closeConfirmModal(); 
         },
         error: (error) => {
           console.error('Error al actualizar habilitación:', error);
-          this.closeConfirmModal(); // Cierra el modal aunque ocurra un error
+          this.closeConfirmModal(); 
         }
       });
     }
   }
+  
 
   getHabilitacionTexto(): string {
-    if (this.categoriaIndexToToggle === null) return ''; // Si no hay índice, devolver vacío
+    if (this.categoriaIndexToToggle === null) return '';
     const habilitacion = this.categorias[this.categoriaIndexToToggle]?.habilitacion;
     return habilitacion ? 'deshabilitar' : 'habilitar';
   }

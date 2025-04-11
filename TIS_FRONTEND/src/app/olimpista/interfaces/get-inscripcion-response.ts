@@ -5,14 +5,14 @@ export interface GetInscripcionResponse {
   meta:          Meta;
 }
 
- interface Links {
+ export interface Links {
   first: string;
   last:  null;
   prev:  null;
   next:  null;
 }
 
- interface Meta {
+ export interface Meta {
   current_page: number;
   from:         number;
   path:         string;

@@ -129,6 +129,13 @@
 
       <!-- Selector de área -->
       <div *ngIf="!isLoading && !error">
+        <div class="mb-4">
+          <h1>Area y categoria a la que desea inscribirse</h1>
+          <h5>Nombre de Area: {{ areaNombre}} </h5>
+          <h4>Nombre de Categoria: {{nombreCategoria}}</h4>
+          <h4>Nivel de la Categoria: {{descripcionC}}</h4>
+          <h4>Costo de la categoria: {{costo}}</h4>
+        </div>
         <h2 class="text-xl font-bold mb-4 pb-2 border-b-2 border-indigo-700 text-gray-800 flex items-center">
           <i class="fas fa-layer-group mr-2 text-indigo-700"></i> Seleccione el Área
         </h2>

@@ -10,6 +10,7 @@ use App\Http\Controllers\Tutor\TutorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ComprobantePago\ComprobantePagoController;
+use App\Http\Controllers\Olimpiada\OlimpiadaController;
 use App\Http\Resources\ComprobantePago\ComprobantePagoCollection;
 use App\Models\ComprobantePago;
 
@@ -21,7 +22,7 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/auth/login', [AuthController::class, 'login']);
 
-
+//----da bien -----GET POST da bien
 Route::get('/area',         [ AreaController::class, 'index'     ]);
 Route::get('/area/{id}',    [ AreaController::class, 'show'      ]);
 Route::post('/area',        [ AreaController::class, 'store'     ]);
@@ -29,29 +30,29 @@ Route::put('/area/{id}',    [ AreaController::class, 'update'    ]); // Actualiz
 Route::delete('/area/{id}', [ AreaController::class, 'destroy'   ]); // Eliminar un área
 
 
-// tutor ENDPOINTS
+// tutor ENDPOINTS--da bien ---GET POST da bien
 Route::get('/tutor',         [ TutorController::class, 'index'     ]);
 Route::get('/tutor/{id}',    [ TutorController::class, 'show'      ]);
 Route::post('/tutor',        [ TutorController::class, 'store'     ]);
 
 
 
-// boleta ENDPOINTS
+// boleta ENDPOINTS--da bien---GET POST da bien
 
 Route::get('/boleta',         [ BoletaPagoController::class, 'index'     ]);
 Route::get('/boleta/{id}',    [ BoletaPagoController::class, 'show'      ]);
 Route::post('/boleta',        [ BoletaPagoController::class, 'store'     ]);
 
 
-//ojo
-// comprobante ENDPOINTS
+//ver lueguito
+// comprobante ENDPOINTS--da bien solo GEt
 Route::get('/comprobante',         [ ComprobantePagoController::class, 'index'     ]);
 Route::get('/comprobante/{id}',    [ ComprobantePagoController::class, 'show'      ]);
 Route::post('/comprobante',        [ ComprobantePagoController::class, 'store'     ]);
 
 
 
-// inscripcion ENDPOINTS
+// inscripcion ENDPOINTS   GET POST da bien
 
 Route::get('/inscripcion',         [ InscripcionController::class, 'index'     ]);
 Route::get('/inscripcion/{id}',    [ InscripcionController::class, 'show'      ]);
@@ -60,7 +61,8 @@ Route::post('/inscripcion',        [ InscripcionController::class, 'store'     ]
 
 
 
-// categoria ENDPOINTS
+// categoria ENDPOINTS  ---- GET POST da bien
+
 Route::apiResource('nivelCategoria', NivelCategoriaController::class);
 Route::get('/nivelCategoria',         [ NivelCategoriaController::class, 'index'     ]);
 Route::get('/nivelCategoria/{id}',    [ NivelCategoriaController::class, 'show'      ]);
@@ -72,11 +74,20 @@ Route::patch('/nivelCategoria/{id}/habilitacion', [NivelCategoriaController::cla
 
 //PRUEBA
 Route::get('/nivelCategoria/por-area/{areaId}', [NivelCategoriaController::class, 'porArea']);
-Route::put('/nivelCategoria/{id}', [NivelCategoriaController::class, 'update']);
 
 
-// olimpista ENDPOINTS ---------------------------
+// olimpista ENDPOINTS ----------  GET POST da bien
 
 Route::get('/olimpista',         [ OlimpistaController::class, 'index'     ]);
 Route::get('/olimpista/{id}',    [ OlimpistaController::class, 'show'      ]);
 Route::post('/olimpista',        [ OlimpistaController::class, 'store'     ]);
+
+
+//olimpiada
+
+// olimpista ENDPOINTS --------------------------- GET POST da bien
+
+Route::get('/olimpiada',         [ OlimpiadaController::class, 'index'     ]);
+Route::get('/olimpiada/{id}',    [ OlimpiadaController::class, 'show'      ]);
+Route::post('/olimpiada',        [ OlimpiadaController::class, 'store'     ]);
+

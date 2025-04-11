@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Inscripcion1Component } from '../../components/inscripcion1/inscripcion1.component';
@@ -33,22 +32,13 @@ export class Inicio2Component {
   ) {}
 
   ngOnInit(): void {
-    // Capturamos el parámetro categoriaId de la URL
-    this.route.queryParams.subscribe(params => {
-      this.categoriaId = params['categoriaId']; // Aquí asignamos el valor del parámetro
-      console.log('Categoría seleccionada:', this.categoriaId);
-
-      if (this.categoriaId) {
-        this.categoriaService.obtenerNivelPorId(this.categoriaId).subscribe({
-          next: (categoria) => {
-            this.categoriaSeleccionada = categoria;
-            console.log('Categoría obtenida:', this.categoriaSeleccionada);
-          },
-          error: (err) => {
-            console.error('Error al obtener la categoría:', err);
-          }
-        });
-      }
+    this.route.queryParams.subscribe((params) => {
+      this.formData.areaId = params['idArea'];
+      this.formData.nombreCategoria = params['nombreCategoria'];
+      this.formData.descripcionC = params['descripcionC'];
+      this.formData.costo = params['costo'];
+  
+      console.log('Parámetros recibidos de Card:', this.formData);
     });
   }
 
@@ -94,6 +84,5 @@ export class Inicio2Component {
         alert('Error al completar la inscripción. Por favor intenta nuevamente.');
       }
     });
-
   }
 }
