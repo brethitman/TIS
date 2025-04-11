@@ -16,10 +16,9 @@ class OlimpiadaController extends Controller
 
     public function index()
     {
-        $olimpiadas = Olimpiada::with('areas')->orderBy('fecha_inicio', 'desc')->get();
-        return response()->json([
-            'olimpiadas' => $this->resource::collection($olimpiadas)
-        ]);
+        $olimpiadas = Olimpiada::with('areas')->orderBy('fecha_inicio', 'desc')->simplePaginate (10);
+        return new olimpiadaCollection($olimpiadas);
+
     }
 
     public function store(Request $request)

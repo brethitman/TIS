@@ -1,9 +1,8 @@
-import { NivelesCategoria } from "./categoria.interface";
-
-export interface GetNivelesCategoriaResponse {
-  nivelesCategoria: NivelesCategoria[];
-  links:            Links;
-  meta:             Meta;
+import { Olimpiada } from "./area.interface";
+export interface GetOlimpiadaResponse {
+  olimpiadas: Olimpiada[];
+  links:      Links;
+  meta:       Meta;
 }
 
  interface Links {

@@ -20,3 +20,5 @@ export interface GetBoletaResponse {
   per_page:     number;
   to:           number;
 }
+
+

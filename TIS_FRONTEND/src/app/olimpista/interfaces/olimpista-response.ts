@@ -1,4 +1,3 @@
-
 export interface Olimpista {
   id:               number;
   nombres:          string;
@@ -11,7 +10,7 @@ export interface Olimpista {
   curso:            string;
   departamento:     string;
   provincia:        string;
-  tutorId?: number;
   createdAt:        Date;
   updatedAt:        Date;
 }
+

@@ -1,35 +1,34 @@
 
-
 export interface Inscripcione {
   id:                number;
   fecha_inscripcion: Date;
   estado:            string;
   olimpista:         Olimpista;
-  area:              Area;
   tutor:             Tutor;
   nivel:             Nivel;
-  createdAt:         Date | null;
-  updatedAt:         Date | null;
-}
-
-export interface Area {
-  id:          number;
-  nombre_area: string;
-  descripcion: null;
-  createdAt:   Date;
-  updatedAt:   Date;
+  createdAt:         Date;
+  updatedAt:         Date;
 }
 
 export interface Nivel {
   id:           number;
-  id_area:      number;
   nombre_nivel: string;
   descripcion:  string;
-  fecha_examen: null;
-  costo:        number;
-  habilitacion: null;
-  created_at:   Date;
-  updated_at:   Date;
+  fecha_examen: Date;
+  costo:        string;
+  habilitacion: boolean;
+  area:         Area;
+  createdAt:    Date;
+  updatedAt:    Date;
+}
+
+export interface Area {
+  id:           number;
+  id_olimpiada: number;
+  nombre_area:  string;
+  descripcion:  string;
+  createdAt:    Date;
+  updatedAt:    Date;
 }
 
 export interface Olimpista {
@@ -58,4 +57,3 @@ export interface Tutor {
   createdAt: Date;
   updatedAt: Date;
 }
-
