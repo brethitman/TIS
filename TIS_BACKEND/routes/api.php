@@ -37,7 +37,6 @@ Route::post('/tutor',        [ TutorController::class, 'store'     ]);
 
 
 // boleta ENDPOINTS
-
 Route::get('/boleta',         [ BoletaPagoController::class, 'index'     ]);
 Route::get('/boleta/{id}',    [ BoletaPagoController::class, 'show'      ]);
 Route::post('/boleta',        [ BoletaPagoController::class, 'store'     ]);
@@ -52,7 +51,6 @@ Route::post('/comprobante',        [ ComprobantePagoController::class, 'store'  
 
 
 // inscripcion ENDPOINTS
-
 Route::get('/inscripcion',         [ InscripcionController::class, 'index'     ]);
 Route::get('/inscripcion/{id}',    [ InscripcionController::class, 'show'      ]);
 Route::post('/inscripcion',        [ InscripcionController::class, 'store'     ]);
@@ -77,7 +75,6 @@ Route::put('/nivelCategoria/{id}', [NivelCategoriaController::class, 'update']);
 
 
 // olimpista ENDPOINTS ---------------------------
-
 Route::get('/olimpista',         [ OlimpistaController::class, 'index'     ]);
 Route::get('/olimpista/{id}',    [ OlimpistaController::class, 'show'      ]);
 Route::post('/olimpista',        [ OlimpistaController::class, 'store'     ]);
