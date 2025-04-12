@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule} from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CategoriaService } from '../../service/categoria.service';
@@ -132,9 +132,12 @@ export class AreasCardComponent implements OnInit {
     this.editedCategoriaTemp = {
       nombre_nivel: categoria.nombre_nivel,
       descripcion: categoria.descripcion,
-      fecha_examen: categoria.fecha_examen,
+      fecha_examen: categoria.fecha_examen 
+      ? new Date(categoria.fecha_examen) 
+      : null,
       costo: categoria.costo
     };
+    console.log("Visualizacion del modal de Editar",this.editedCategoriaTemp)
     this.editIndex = index;
     this.isEditModalOpen = true;
   }

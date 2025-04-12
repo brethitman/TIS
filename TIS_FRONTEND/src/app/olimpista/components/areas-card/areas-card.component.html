@@ -55,9 +55,9 @@
         </tbody>
       </table>
     </div>
-   <!-- Contenedor de Categorías -->
-<div class="border border-gray-200 p-4 bg-white rounded-lg">
-  <h4 class="text-md font-semibold text-gray-700 mb-3">Categorías</h4>
+    <!-- Contenedor de Categorías -->
+    <div class="border border-gray-200 p-4 bg-white rounded-lg">
+      <h4 class="text-md font-semibold text-gray-700 mb-3">Categorías</h4>
 
       <!-- Verifica si hay categorías -->
       <div *ngIf="categorias.length > 0; else noCategorias">
@@ -72,34 +72,31 @@
               <p class="text-sm">{{ categoria.descripcion }}</p>
             </div>
 
-        <!-- Parte inferior blanca con detalles -->
-        <div class="p-4 flex flex-col space-y-3">
-          <h3 class="font-bold">Nombre: {{ categoria.nombre_nivel }}</h3>
-          <p class="text-sm">Fecha examen: {{ categoria.fecha_examen | date:'dd/MM/yyyy' }}</p>
-          <p class="text-sm">Costo: {{ categoria.costo }} Bs</p>
-          <p class="text-sm">Estado:
-            <span [class.text-green-500]="categoria.habilitacion" [class.text-red-500]="!categoria.habilitacion">
-              {{ categoria.habilitacion ? 'Habilitado' : 'Deshabilitado' }}
-            </span>
-          </p>
+            <!-- Parte inferior blanca con detalles -->
+            <div class="p-4">
+              <h3 class="font-bold">Nombre : {{ categoria.nombre_nivel }}</h3>
+              <p class="text-sm">Fecha examen: {{ categoria.fecha_examen | date:'dd/MM/yyyy' }}</p>
+              <p class="text-sm">Costo: {{ categoria.costo }} Bs</p>
+              <p class="text-sm">Estado:
+                <span [class.text-green-500]="categoria.habilitacion" [class.text-red-500]="!categoria.habilitacion">
+                  {{ categoria.habilitacion ? 'Habilitado' : 'Deshabilitado' }}
+                </span>
+              </p>
 
-          <!-- Botones responsive -->
-          <div class="flex flex-col sm:flex-row sm:space-x-2 mt-3">
-            <button (click)="openEditModal(i)" class="w-full sm:w-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mb-2 sm:mb-0">
-              Editar
-            </button>
-            <button (click)="toggleHabilitacionModal(i)" [class.bg-green-500]="!categoria.habilitacion"
-              [class.bg-red-500]="categoria.habilitacion" class="w-full sm:w-auto px-4 py-2 text-white rounded hover:bg-opacity-90">
-              {{ categoria.habilitacion ? 'Deshabilitar' : 'Habilitar' }}
-            </button>
+              <div class="flex space-x-2 mt-3">
+                <button (click)="openEditModal(i)" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                  Editar
+                </button>
+                <button (click)="toggleHabilitacionModal(i)" [class.bg-green-500]="!categoria.habilitacion"
+                  [class.bg-red-500]="categoria.habilitacion" class="px-4 py-2 text-white rounded hover:bg-opacity-90">
+                  {{ categoria.habilitacion ? 'Deshabilitar' : 'Habilitar' }}
+                </button>
+              </div>
+
+            </div>
           </div>
         </div>
-
       </div>
-    </div>
-  </div>
-
-
       <!-- Modal de Edición de Categoría -->
       <div *ngIf="isEditModalOpen" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
         style="background-color: rgba(75, 85, 99, 0.3); ">
@@ -138,7 +135,7 @@
             <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
             <input type="date" name="editedFecha"
               class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-              style="background-color: white;" [min]="minDate" [max]="maxDate"
+              style="background-color: white;" [min]="minDate" [max]="maxDate" 
               [(ngModel)]="editedCategoriaTemp.fecha_examen" (keydown)="disableManualInput($event)" required>
             <!-- Costo de la Categoría -->
             <div class="mb-4">
