@@ -1,0 +1,14 @@
+<div class="olimpiada-card">
+    <h3>{{ olimpiada.nombre_olimpiada }}</h3>
+    <div>
+      <label for="fechaInicio">Fecha de Inicio:</label>
+      <input type="date" id="fechaInicio" [(ngModel)]="fechaInicioString">
+    </div>
+    <div>
+      <label for="fechaFinal">Fecha Final:</label>
+      <input type="date" id="fechaFinal" [(ngModel)]="fechaFinalString">
+    </div>
+    <button (click)="saveOlimpiada()">Guardar Olimpiada</button>
+  </div>
+  
+  
