@@ -4,6 +4,6 @@ export interface Olimpiada {
     descripcion_olimpiada: string;
     fecha_inicio: Date;
     fecha_final: Date;
-    createdAt?: string;
-    updatedAt?: string;
+    createdAt:   Date;
+    updatedAt:   Date;
   }

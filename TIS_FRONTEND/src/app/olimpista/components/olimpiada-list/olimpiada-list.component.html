@@ -1,15 +1,14 @@
 <section class="pt-8 pb-8">
     <div class="container">
-      <ul class="olimpistas__list">
-        
-        <!-- Recorremos la lista de olimpiadas y creamos una card para cada una -->
-        <ng-container *ngFor="let olimpiada of olimpiadas; trackBy: trackOlimpiada">
-          <app-olimpiada-card [olimpiada]="olimpiada"></app-olimpiada-card>
-        </ng-container>
+        <ul class="olimpistas__list">
   
-        <!-- Si no hay olimpiadas, mostramos un mensaje -->
-        <p *ngIf="olimpiadas.length === 0" class="text-center">No se encontraron resultados</p>
-      </ul>
+        @for (olimpiada of olimpiadas; track olimpiada.id) {
+  
+            <app-olimpiada-card [olimpiada]="olimpiada"></app-olimpiada-card>
+        }@empty {
+          <p class="text-center">No se encontraron resultados</p>
+        }
+  
+       </ul>
     </div>
   </section>
-  

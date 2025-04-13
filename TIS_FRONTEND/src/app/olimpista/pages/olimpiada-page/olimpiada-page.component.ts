@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { InscripcionOlimpiadaComponent } from '../../components/inscripcion-olimpiada/inscripcion-olimpiada.component';
 import { OlimpiadaCardComponent } from '../../components/olimpiada-card/olimpiada-card.component';
 import { OlimpiadaListComponent } from '../../components/olimpiada-list/olimpiada-list.component';
 import { Olimpiada } from '../../interfaces/olimpiada.interfacel';
@@ -8,13 +9,13 @@ import { GetOlimpiadaService } from '../../service/get.olimpiada.service';
 @Component({
   selector: 'app-olimpiada-page',
   standalone: true,
-  imports: [OlimpiadaCardComponent, OlimpiadaListComponent],
+  imports: [InscripcionOlimpiadaComponent, OlimpiadaListComponent],
   templateUrl: './olimpiada-page.component.html',
 })
-export class OlimpiadaPageComponent implements OnInit {
-    private olimpiadaService = inject(GetOlimpiadaService); // Usa GetOlimpiadaService, no OlimpiadaService
-  
-    // Definir la variable reactiva para almacenar las olimpiadas
+export class OlimpiadaPageComponent {
+
+    private GetOlimpiadaService = inject(GetOlimpiadaService);
+
     public olimpiadas = signal<Olimpiada[]>([]);
   
     ngOnInit(): void {
@@ -22,11 +23,12 @@ export class OlimpiadaPageComponent implements OnInit {
     }
   
     // Cargar las olimpiadas
-    public loadOlimpiadas(): void {
-      this.olimpiadaService.findAll()  // Llamar al método findAll del servicio GetOlimpiadaService
-        .subscribe((olimpiadas: Olimpiada[]) => {
-          this.olimpiadas.set(olimpiadas);
+    public loadOlimpiadas() {
+      this.GetOlimpiadaService.findAll()  // Llamar al método findAll del servicio GetOlimpiadaService
+        .subscribe((Olimpiada) => {
+          this.olimpiadas.set(Olimpiada);
         });
+        console.log(this.olimpiadas);
     }
   
     // Agregar una nueva olimpiada
