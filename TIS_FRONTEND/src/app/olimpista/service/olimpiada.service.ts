@@ -45,4 +45,8 @@ export class OlimpiadaService {
   getAreasByOlimpiada(olimpiadaId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/${olimpiadaId}/areas`);
   }
+
+  deleteOlimpiada(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }

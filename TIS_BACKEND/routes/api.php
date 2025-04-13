@@ -91,6 +91,8 @@ Route::get('/olimpiada',         [ OlimpiadaController::class, 'index'     ]);
 Route::get('/olimpiada/{id}',    [ OlimpiadaController::class, 'show'      ]);
 Route::post('/olimpiada',        [ OlimpiadaController::class, 'store'     ]);
 
+Route::delete('/olimpiada/{id}', [ OlimpiadaController::class, 'destroy'   ]);
+
 // ÁREAS de una olimpiada específica
 Route::get('/olimpiada/{id}/con-areas', [OlimpiadaController::class, 'showWithAreas']);
 

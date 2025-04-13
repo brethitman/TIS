@@ -12,4 +12,8 @@ import { Olimpiada } from '../../interfaces/olimpiada.interfacel';
 })
 export class OlimpiadaListComponent {
   @Input({ required: true }) Olimpiada!: any[];
+
+  onOlimpiadaEliminada(id: number): void {
+    this.Olimpiada = this.Olimpiada.filter(o => o.id !== id);
+  }
 }
