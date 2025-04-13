@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Olimpiada } from '../../interfaces/olimpiada.interfacel';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-olimpiada-card',
   standalone: true,
@@ -16,7 +16,7 @@ export class OlimpiadaCardComponent implements OnInit {
   isDeleteModalOpen = false;
   isEditModalOpen = false;
 
-  constructor() { }
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     // No se necesita inicialización adicional
@@ -50,5 +50,6 @@ export class OlimpiadaCardComponent implements OnInit {
 
   onButton3Click(): void {
     console.log('Botón 3 clickeado');
+    this.router.navigate(['/admin/products']);
   }
 }

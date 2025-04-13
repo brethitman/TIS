@@ -1,12 +1,19 @@
-<div class="bg-[#0b0069] py-5 mb-8 w-screen relative left-1/2 transform -translate-x-1/2 shadow-md">
-  <h1 class="text-white font-bold text-2xl max-w-4xl mx-auto flex items-center px-4">
-    <i class="fas fa-file-alt mr-3"></i> ADMINISTRADOR
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+
+
+<div class="bg-[#0b0069] py-5 mb-8 w-screen shadow-md">
+  <h1 class="text-white font-bold text-2xl flex items-center px-4">
+     ADMINISTRADOR
   </h1>
 </div>
 
+
 <div class="container mx-auto p-4">
-  <h2 class="text-2xl font-bold mb-4">Registrar nueva Olimpiada</h2>
-  
+  <h2 class="text-2xl font-bold mb-4 text-gray-500">Registrar nueva Olimpiada</h2>
+
   <form (ngSubmit)="onSubmit()" class="space-y-4">
     <!-- Nombre de la olimpiada -->
     <div>
@@ -77,10 +84,35 @@
       </button>
       <button 
         type="submit" 
-        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        class="px-4 py-2 bg-[#0b0069] text-white  hover:bg-[#0a005f] flex items-center gap-2 font-bold"
       >
-        Guardar Olimpiada
+        <i class="fas fa-plus"></i> Añadir Olimpiada
       </button>
+
+
     </div>
   </form>
+ <!-- Modal de éxito o error -->
+ <div *ngIf="mostrarModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-transparent">
+
+  <div class="bg-gray-100 rounded-xl shadow-2xl p-6 max-w-md w-full text-center relative animate-fade-in">
+
+    <div *ngIf="modalTipo === 'exito'" class="text-green-600 text-4xl mb-3">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    <div *ngIf="modalTipo === 'error'" class="text-red-600 text-4xl mb-3">
+      <i class="fas fa-exclamation-circle"></i>
+    </div>
+    <p class="text-lg text-gray-700 mb-6">{{ modalMensaje }}</p>
+    <button 
+      (click)="ocultarModal()" 
+      class="px-4 py-2 bg-[#0b0069] text-white rounded-md hover:bg-[#0a005f] transition"
+    >
+      Cerrar
+    </button>
+  </div>
+</div>
+
+
+
 </div>

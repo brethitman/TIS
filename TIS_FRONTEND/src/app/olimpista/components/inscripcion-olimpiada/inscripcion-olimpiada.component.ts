@@ -12,6 +12,7 @@ import { of } from 'rxjs';
   imports: [FormsModule, CommonModule],
   templateUrl: './inscripcion-olimpiada.component.html',
 })
+
 export class InscripcionOlimpiadaComponent {
   // Propiedades para el formulario de olimpiada
   olimpiada: Olimpiada = {
@@ -33,6 +34,11 @@ export class InscripcionOlimpiadaComponent {
   };
 
   constructor(private olimpiadaService: OlimpiadaService) {}
+  mensajeExito: string = '';
+  mensajeError: string = '';
+  mostrarModal: boolean = false;
+modalTipo: 'exito' | 'error' = 'exito';
+modalMensaje: string = '';
 
   // Validar el nombre de la olimpiada
   validateNombreOlimpiada(): boolean {
@@ -130,18 +136,17 @@ export class InscripcionOlimpiadaComponent {
   }
 
   onSubmit(): void {
-    // Limpiar mensaje de error de duplicado
     this.errors.duplicado = '';
-    
-    // Realizar todas las validaciones
+    this.ocultarModal();
+  
     if (!this.validateAll()) {
+      this.mostrarModalError('Completa correctamente todos los campos antes de enviar.');
       return;
     }
   
     try {
-      // Creamos una copia del objeto olimpiada para enviar
       const olimpiadaToSend: Olimpiada = {
-        id: 0, // Valor temporal
+        id: 0,
         nombre_olimpiada: this.olimpiada.nombre_olimpiada,
         descripcion_olimpiada: this.olimpiada.descripcion_olimpiada,
         fecha_inicio: this.olimpiada.fecha_inicio,
@@ -150,36 +155,50 @@ export class InscripcionOlimpiadaComponent {
         updatedAt: new Date(),
       };
   
-      // Verificar los datos antes de enviarlos
-      console.log('Datos a enviar:', olimpiadaToSend);
-  
-      // Enviar el objeto completo
       this.olimpiadaService.createOlimpiada(olimpiadaToSend).pipe(
         catchError(error => {
-          // Verificar si el error es debido a una olimpiada duplicada
-          if (error.status === 409 || (error.error && error.error.message && error.error.message.includes('existe'))) {
+          if (error.status === 409 || (error.error?.message?.includes('existe'))) {
             this.errors.duplicado = 'La olimpiada ya existe y no puede ser duplicada';
+            this.mostrarModalError(this.errors.duplicado);
           } else {
             console.error('Error al guardar la olimpiada:', error);
-            alert('Hubo un error al guardar la olimpiada: ' + (error.message || 'Error desconocido'));
+            this.mostrarModalError('Hubo un error al guardar la olimpiada. Intenta nuevamente.');
           }
           return of(null);
         })
       ).subscribe({
         next: (response) => {
           if (response) {
-            console.log('Olimpiada guardada:', response);
-            alert('Olimpiada guardada con éxito');
-            // Resetear el formulario
+            this.mostrarModalExito('¡Olimpiada guardada con éxito!');
             this.resetForm();
           }
         }
       });
     } catch (e) {
       console.error('Error en la ejecución:', e);
-      alert('Ocurrió un error inesperado');
+      this.mostrarModalError('Ocurrió un error inesperado.');
     }
   }
+  
+  // Métodos para controlar el modal
+  mostrarModalExito(mensaje: string) {
+    this.modalTipo = 'exito';
+    this.modalMensaje = mensaje;
+    this.mostrarModal = true;
+  }
+  
+  mostrarModalError(mensaje: string) {
+    this.modalTipo = 'error';
+    this.modalMensaje = mensaje;
+    this.mostrarModal = true;
+  }
+  
+  ocultarModal() {
+    this.mostrarModal = false;
+    this.modalMensaje = '';
+  }
+  
+  
 
   // Método para resetear el formulario
   resetForm() {
@@ -201,4 +220,5 @@ export class InscripcionOlimpiadaComponent {
       duplicado: ''
     };
   }
+  
 }
