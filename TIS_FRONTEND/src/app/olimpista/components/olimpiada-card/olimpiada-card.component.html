@@ -37,12 +37,12 @@
   
       <!-- Botón Añadir Área -->
       <button 
-        (click)="onButton3Click()" 
-        class="bg-blue-900 hover:bg-blue-800 text-white px-5 py-2 rounded font-medium"
-      >
-        Añadir Area
-      </button>
-    </div>
+  (click)="navegarAAreas()" 
+  class="bg-blue-900 hover:bg-blue-800 text-white px-5 py-2 rounded font-medium"
+  title="Ver áreas de esta olimpiada"
+>
+  Añadir/Ver Áreas
+</button>
 
   <!-- Modal de confirmación (con fondo transparente) -->
   <div *ngIf="mostrarConfirmacion" class="fixed inset-0 z-[9999] flex items-center justify-center bg-transparent">

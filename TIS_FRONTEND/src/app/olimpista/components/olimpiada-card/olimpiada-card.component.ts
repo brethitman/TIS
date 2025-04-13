@@ -93,4 +93,15 @@ export class OlimpiadaCardComponent implements OnInit {
   onButton3Click(): void {
     this.router.navigate(['/admin/products']);
   }
+
+  navegarAAreas(): void {
+    if (this.olimpiada?.id) {
+      // Navegación con parámetro de ruta
+      this.router.navigate(['/admin/olimpiadas', this.olimpiada.id, 'areas'])
+        .catch(err => {
+          console.error('Error de navegación:', err);
+          // Puedes mostrar un mensaje al usuario aquí
+        });
+    }
+  }
 }
