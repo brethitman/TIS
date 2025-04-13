@@ -91,3 +91,10 @@ Route::get('/olimpiada',         [ OlimpiadaController::class, 'index'     ]);
 Route::get('/olimpiada/{id}',    [ OlimpiadaController::class, 'show'      ]);
 Route::post('/olimpiada',        [ OlimpiadaController::class, 'store'     ]);
 
+// ÁREAS de una olimpiada específica
+Route::get('/olimpiada/{id}/con-areas', [OlimpiadaController::class, 'showWithAreas']);
+
+Route::prefix('/{olimpiadaId}/areas')->group(function () {
+    Route::get('/{olimpiadaId}/areas', [AreaController::class, 'getByOlimpiada']);
+    Route::post('/{olimpiadaId}/areas', [AreaController::class, 'storeInOlimpiada']);
+});
