@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inscripción - Paso 3</title>
+  <title>Inscripción</title>
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts - Roboto -->
@@ -44,7 +44,7 @@
     <!-- Header Banner -->
     <div class="bg-gradient-to-r from-red-600 via-purple-800 to-blue-600 py-6 mb-8 relative left-1/2 transform -translate-x-1/2 w-screen px-5 shadow-md">
       <h1 class="text-white m-0 font-bold text-2xl max-w-4xl mx-auto flex items-center tracking-wide">
-        <i class="fas fa-file-alt mr-3"></i> INSCRIPCIÓN - PASO 3
+        <i class="fas fa-file-alt mr-3"></i> INSCRIPCIÓN
       </h1>
     </div>
 
@@ -74,6 +74,44 @@
         <span class="text-xs mt-2">Paso 3</span>
       </div>
     </div>
+
+    <!-- Contenedor principal -->
+<div class="bg-white p-6 rounded-lg shadow-sm mb-8">
+  <!-- Encabezado con el nombre de la categoría y el monto -->
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-bold text-gray-800">
+      {{ categoria?.nombre_nivel }}
+    </h2>
+    <div class="bg-gray-100 text-gray-700 px-4 py-2 rounded shadow">
+      Monto a pagar: 
+      <span class="font-semibold">{{ categoria?.costo }} Bs</span>
+    </div>
+  </div>
+
+  <!-- Fecha y hora -->
+  <div class="mb-4">
+    <h3 class="font-bold text-gray-800">Fecha y Hora</h3>
+    <!-- Asumiendo que fecha_examen es un string o un Date,
+         si quieres formatear la fecha con un pipe, hazlo así:
+         {{ categoria?.fecha_examen | date:'fullDate' }} -->
+    <p>
+      {{ categoria?.fecha_examen }} - 
+      <span class="italic">10:00 A.M.</span>
+    </p>
+  </div>
+
+  <!-- Ubicación -->
+  <div class="mb-4">
+    <h3 class="font-bold text-gray-800">Ubicación</h3>
+    <p>Bolivia, Cochabamba, UMSS, Laboratorio de Sistemas Informático</p>
+    <!-- El botón de "Mostrar mapa" lo omitimos como pediste -->
+  </div>
+
+  <!-- Resto de tu contenido, selector de áreas, etc... -->
+  <!-- (Lo que ya tienes en tu inscripcion3.component.html) -->
+  
+  <!-- Botones (Anterior / Finalizar) -->
+</div>
 
     <!-- Contenido principal -->
     <div class="bg-white p-6 rounded-lg shadow-sm mb-8">
