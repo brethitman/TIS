@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-inscripcion1',
@@ -17,8 +18,11 @@ export class Inscripcion1Component {
     telefono: ''
   };
 
+  archivoSeleccionado: File | null = null;
+
   @Output() continuar = new EventEmitter<void>();
   @Output() tutorChanged = new EventEmitter<any>();
+  constructor(private http: HttpClient) {}
 
     // Flags para mostrar mensajes de error
     nombreInvalido = false;
@@ -138,5 +142,29 @@ export class Inscripcion1Component {
     this.telefonoInvalido = true;
     event.preventDefault();
     return false;
+  }
+  seleccionarArchivo() {
+    const input = document.getElementById('archivoExcel') as HTMLInputElement;
+    input.click();
+  }
+  archivoElegido(event: any) {
+    this.archivoSeleccionado = event.target.files[0];
+    if (this.archivoSeleccionado) {
+      this.subirArchivo();
+    }
+  }
+
+  subirArchivo() {
+    const formData = new FormData();
+    formData.append('archivo', this.archivoSeleccionado as File);
+    console.log("Reciviendo Archivo..", this.archivoSeleccionado)
+    this.http.post('/olimpistaExel', formData)
+      .subscribe({
+        next: (response) => {
+          console.log('Respuesta del servidor:', response); // Ahora estás utilizando 'response'
+          alert('Archivo subido exitosamente');
+        },
+        error: (error) => console.error('Error al subir el archivo', error)
+      });
   }
 }
