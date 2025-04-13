@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `areas` (
-  `id_area` bigint(20) UNSIGNED NOT NULL,
+  `id_area` bigint(20) UNSIGNED 8ui89uNOT NULL,
   `nombre_area` varchar(100) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
