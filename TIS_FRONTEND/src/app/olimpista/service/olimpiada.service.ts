@@ -1,32 +1,29 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Olimpiada } from '../interfaces/olimpiada.interfacel';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OlimpiadaService {
-  private apiUrl = 'http://localhost:8000/api/olimpiada';
+
+  private apiUrl = 'http://localhost:8000/api/olimpiada';  // Reemplaza con la URL real de tu API
 
   constructor(private http: HttpClient) { }
 
-  getOlimpiadas(): Observable<any> {
-    return this.http.get(`${this.apiUrl}`);
+  // Obtener todas las olimpiadas
+  obtenerOlimpiadas(): Observable<Olimpiada[]> {
+    return this.http.get<Olimpiada[]>(this.apiUrl);
   }
 
-  getOlimpiadaWithAreas(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/${id}/con-areas`);
+  // Crear una nueva olimpiada
+  crearOlimpiada(olimpiada: Olimpiada): Observable<Olimpiada> {
+    return this.http.post<Olimpiada>(this.apiUrl, olimpiada);
   }
 
-  createOlimpiada(olimpiada: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}`, olimpiada);
-  }
-
-  updateOlimpiada(id: number, olimpiada: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, olimpiada);
-  }
-
-  deleteOlimpiada(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  // Obtener olimpiada por ID
+  obtenerOlimpiadaPorId(id: number): Observable<Olimpiada> {
+    return this.http.get<Olimpiada>(`${this.apiUrl}/${id}`);
   }
 }
