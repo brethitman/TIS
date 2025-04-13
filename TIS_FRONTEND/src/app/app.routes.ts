@@ -37,9 +37,15 @@ export const routes: Routes = [
         loadChildren: () => import("./olimpista/estudiantes-routing.module").then(m => m.EstudiantesRoutingModule),
       },
       {
+        path: 'Olimpiadas',
+        component: OlimpiadaPageComponent,
+      },
+
+      /*{
         path: 'areas',
         component: AreasComponent,
-      },
+      },*/
+
     ]
   },
   // Rutas públicas
@@ -47,10 +53,17 @@ export const routes: Routes = [
     path: 'inicio/waba',
     component: Inicio1Component
   },
+
   {
     path: 'inicio/look',
-    component: HomeAreaComponent
+    component: OlimpiadaPageComponent
   },
+
+  /*{
+    path: 'inicio/look',
+    component: HomeAreaComponent
+  },*/
+
   {
     path: 'inicio/dodog',
     component: Inicio3Component
@@ -74,10 +87,7 @@ export const routes: Routes = [
     component: OlimpistaPageComponent
   },
   { path: 'inicio2', component: Inicio2Component },
-  {
-    path: 'olimpiada-page',
-    component: OlimpiadaPageComponent
-  },
+  
   
   /*
   {

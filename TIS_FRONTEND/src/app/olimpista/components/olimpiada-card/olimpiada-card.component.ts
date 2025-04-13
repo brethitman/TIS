@@ -1,26 +1,54 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Olimpiada } from '../../interfaces/olimpiada.interfacel';
 
 @Component({
   selector: 'app-olimpiada-card',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './olimpiada-card.component.html',
-  //styleUrls: ['./olimpiada-card.component.css']
 })
-export class OlimpiadaCardComponent {
-    @Input() olimpiada!: Olimpiada;
-    @Output() onEditar = new EventEmitter<number>();
-    @Output() onEliminar = new EventEmitter<number>();
-    @Output() onVerAreas = new EventEmitter<number>();
-  
-    editar(): void {
-      this.onEditar.emit(this.olimpiada.id);
-    }
-  
-    eliminar(): void {
-      this.onEliminar.emit(this.olimpiada.id);
-    }
-  
-    verOAnadirAreas(): void {
-      this.onVerAreas.emit(this.olimpiada.id);
-    }
+export class OlimpiadaCardComponent implements OnInit {
+  @Input({ required: true }) olimpiada!: Olimpiada;
+
+  // Variables para modales (simplificadas)
+  isModalOpen = false;
+  isDeleteModalOpen = false;
+  isEditModalOpen = false;
+
+  constructor() { }
+
+  ngOnInit(): void {
+    // No se necesita inicialización adicional
+  }
+
+  // Métodos para abrir/cerrar modales (sin funcionalidad real)
+  openEditModal(): void {
+    this.isEditModalOpen = true;
+  }
+
+  closeEditModal(): void {
+    this.isEditModalOpen = false;
+  }
+
+  openDeleteModal(): void {
+    this.isDeleteModalOpen = true;
+  }
+
+  closeDeleteModal(): void {
+    this.isDeleteModalOpen = false;
+  }
+
+  // Métodos de botones (sin funcionalidad)
+  onButton1Click(): void {
+    console.log('Botón 1 clickeado');
+  }
+
+  onButton2Click(): void {
+    console.log('Botón 2 clickeado');
+  }
+
+  onButton3Click(): void {
+    console.log('Botón 3 clickeado');
+  }
 }

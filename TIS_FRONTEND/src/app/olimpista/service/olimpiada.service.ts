@@ -7,23 +7,42 @@ import { Olimpiada } from '../interfaces/olimpiada.interfacel';
   providedIn: 'root'
 })
 export class OlimpiadaService {
+  private apiUrl = 'http://localhost:8000/api/olimpiada'; // URL base para endpoints de olimpiada
 
-  private apiUrl = 'http://localhost:8000/api/olimpiada';  // Reemplaza con la URL real de tu API
-
-  constructor(private http: HttpClient) { }
-
-  // Obtener todas las olimpiadas
-  obtenerOlimpiadas(): Observable<Olimpiada[]> {
-    return this.http.get<Olimpiada[]>(this.apiUrl);
-  }
+  constructor(private http: HttpClient) {}
 
   // Crear una nueva olimpiada
-  crearOlimpiada(olimpiada: Olimpiada): Observable<Olimpiada> {
+  createOlimpiada(olimpiada: Olimpiada): Observable<Olimpiada> {
     return this.http.post<Olimpiada>(this.apiUrl, olimpiada);
   }
 
-  // Obtener olimpiada por ID
-  obtenerOlimpiadaPorId(id: number): Observable<Olimpiada> {
+  // Obtener todas las olimpiadas
+  getOlimpiadas(): Observable<Olimpiada[]> {
+    return this.http.get<Olimpiada[]>(this.apiUrl);
+  }
+
+  // Obtener una olimpiada por ID
+  getOlimpiadaById(id: number): Observable<Olimpiada> {
     return this.http.get<Olimpiada>(`${this.apiUrl}/${id}`);
+  }
+
+  // Actualizar una olimpiada
+  updateOlimpiada(olimpiadaId: number, olimpiada: Partial<Olimpiada>): Observable<Olimpiada> {
+    return this.http.put<Olimpiada>(`${this.apiUrl}/${olimpiadaId}`, olimpiada);
+  }
+
+  // Obtener una olimpiada con sus áreas relacionadas
+  getOlimpiadaWithAreas(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}/con-areas`);
+  }
+
+  // Método para agregar un área a una olimpiada (si es necesario)
+  addAreaToOlimpiada(olimpiadaId: number, areaData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${olimpiadaId}/areas`, areaData);
+  }
+
+  // Obtener áreas de una olimpiada específica
+  getAreasByOlimpiada(olimpiadaId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${olimpiadaId}/areas`);
   }
 }
