@@ -83,6 +83,11 @@ export const routes: Routes = [
 
   },
   {
+    path: 'admin/olimpiadas/:olimpiadaId/areas',
+    component: AreasComponent,
+
+  },
+  {
     path: 'inicio/OlimpistaForm',
     component: OlimpistaPageComponent
   },

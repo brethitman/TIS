@@ -33,5 +33,10 @@ export class AreaService {
   getAreaById(id: number): Observable<{ area: Area }> {
     return this.http.get<{ area: Area }>(`${this.apiUrl}/${id}`);
   }
+
+
+  getAreasByOlimpiada(olimpiadaId: number): Observable<Area[]> {
+    return this.http.get<Area[]>(`${this.apiUrl}/olimpiada/${olimpiadaId}/areas`);
+  }
   
 }

@@ -4,7 +4,9 @@
   
         @for (olimpiada of Olimpiada; track olimpiada.id) {
   
-            <app-olimpiada-card [olimpiada]="olimpiada"></app-olimpiada-card>
+            <app-olimpiada-card [olimpiada]="olimpiada"
+            (olimpiadaEliminada)="onOlimpiadaEliminada($event)"
+            ></app-olimpiada-card>
         }@empty {
           <p class="text-center">No se encontraron resultados</p>
         }
