@@ -1,57 +1,47 @@
-<div class="bg-white rounded-lg shadow-md p-6 mb-4">
-    <!-- Encabezado de la card -->
-    <div class="flex justify-between items-start mb-4">
-      <h3 class="text-xl font-bold text-gray-800">{{ olimpiada.nombre_olimpiada }}</h3>
-      <span class="text-sm text-gray-500">
-        {{ olimpiada.fecha_inicio | date:'shortDate' }} - {{ olimpiada.fecha_final | date:'shortDate' }}
-      </span>
-    </div>
-    
-    <!-- Descripción -->
-    <p class="text-gray-600 mb-4">{{ olimpiada.descripcion_olimpiada }}</p>
-    
-    <!-- Botones de acción -->
-    <div class="flex justify-end space-x-2">
-      <button 
-        (click)="onButton1Click()"
-        class="px-3 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition"
-      >
-        Botón 1
-      </button>
-      <button 
-        (click)="onButton2Click()"
-        class="px-3 py-1 bg-green-100 text-green-600 rounded hover:bg-green-200 transition"
-      >
-        Botón 2
-      </button>
-      <button 
-        (click)="onButton3Click()"
-        class="px-3 py-1 bg-red-100 text-red-600 rounded hover:bg-red-200 transition"
-      >
-        Botón 3
-      </button>
-    </div>
+<div class="bg-white rounded-lg shadow-md mb-4 border relative">
+    <!-- Botón eliminar (esquina superior derecha) -->
+    <button 
+      (click)="onButton1Click()" 
+      class="absolute top-2 right-2 bg-red-600 text-white rounded w-6 h-6 flex items-center justify-center hover:bg-red-700"
+      title="Eliminar"
+    >
+      ✕
+    </button>
   
-    <!-- Modales (placeholder sin funcionalidad) -->
-    <div *ngIf="isEditModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-lg p-6 max-w-md w-full">
-        <h3 class="text-lg font-bold mb-4">Editar Olimpiada (placeholder)</h3>
-        <p class="mb-4">Aquí iría el formulario de edición</p>
-        <div class="flex justify-end space-x-2">
-          <button (click)="closeEditModal()" class="px-3 py-1 bg-gray-200 rounded">Cancelar</button>
-          <button class="px-3 py-1 bg-blue-500 text-white rounded">Guardar</button>
-        </div>
-      </div>
-    </div>
+    <!-- Encabezado -->
+<div class="bg-gradient-to-r from-red-600 to-blue-600 text-white px-4 py-3 rounded-t-lg flex justify-between items-center">
+    <h3 class="text-2xl font-bold">{{ olimpiada.nombre_olimpiada }}</h3>
   
-    <div *ngIf="isDeleteModalOpen" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-lg p-6 max-w-md w-full">
-        <h3 class="text-lg font-bold mb-4">Eliminar Olimpiada (placeholder)</h3>
-        <p class="mb-4">¿Estás seguro de que deseas eliminar esta olimpiada?</p>
-        <div class="flex justify-end space-x-2">
-          <button (click)="closeDeleteModal()" class="px-3 py-1 bg-gray-200 rounded">Cancelar</button>
-          <button class="px-3 py-1 bg-red-500 text-white rounded">Eliminar</button>
-        </div>
+    <!-- Botón editar -->
+    <button (click)="onButton2Click()" class="mr-8" title="Editar">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white hover:text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 11l-3 9 9-3 6.364-6.364a2 2 0 00-2.828-2.828L9 11z" />
+      </svg>
+    </button>
+  </div>
+  
+    <!-- Cuerpo -->
+    <div class="px-6 py-4">
+      <div class="mb-2">
+        <span class="font-semibold">Descripcion :</span>
+        <p class="text-gray-700 ml-2 whitespace-pre-line">{{ olimpiada.descripcion_olimpiada }}</p>
       </div>
+      <div class="mb-2">
+        <span class="font-semibold">Fecha inicio :</span>
+        <span class="text-gray-700 ml-2">{{ olimpiada.fecha_inicio | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="mb-4">
+        <span class="font-semibold">Fecha fin :</span>
+        <span class="text-gray-700 ml-2">{{ olimpiada.fecha_final | date:'dd/MM/yyyy' }}</span>
+      </div>
+  
+      <!-- Botón Añadir Área -->
+      <button 
+        (click)="onButton3Click()" 
+        class="bg-blue-900 hover:bg-blue-800 text-white px-5 py-2 rounded font-medium"
+      >
+        Añadir Area
+      </button>
     </div>
   </div>
+  

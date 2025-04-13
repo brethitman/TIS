@@ -2,7 +2,7 @@
     <div class="container">
         <ul class="olimpistas__list">
   
-        @for (olimpiada of olimpiadas; track olimpiada.id) {
+        @for (olimpiada of Olimpiada; track olimpiada.id) {
   
             <app-olimpiada-card [olimpiada]="olimpiada"></app-olimpiada-card>
         }@empty {
