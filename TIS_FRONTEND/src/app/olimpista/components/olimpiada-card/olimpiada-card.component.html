@@ -91,37 +91,46 @@
       </button>
     </div>
   </div>
-  <!-- Modal de edición -->
+ <!-- Modal de edición -->
 <div *ngIf="isEditModalOpen" class="fixed inset-0 z-50 flex items-center justify-center px-2 bg-gray-300/60">
-  <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+  <div class="rounded-2xl shadow-lg w-full max-w-md p-6 relative" style="background-color: #CEDFFF;">
     <h2 class="text-xl font-bold mb-4">Editar Olimpiada</h2>
 
     <form>
       <div class="mb-4">
         <label class="block font-semibold mb-1">Nombre:</label>
-        <input [(ngModel)]="editableOlimpiada.nombre_olimpiada" name="nombre" class="w-full border rounded px-3 py-2" />
+        <input [(ngModel)]="editableOlimpiada.nombre_olimpiada" name="nombre"
+               class="w-full border rounded px-3 py-2 bg-white" />
       </div>
 
       <div class="mb-4">
         <label class="block font-semibold mb-1">Descripción:</label>
-        <textarea [(ngModel)]="editableOlimpiada.descripcion_olimpiada" name="descripcion" class="w-full border rounded px-3 py-2"></textarea>
+        <textarea [(ngModel)]="editableOlimpiada.descripcion_olimpiada" name="descripcion"
+                  class="w-full border rounded px-3 py-2 bg-white"></textarea>
       </div>
 
       <div class="mb-4">
         <label class="block font-semibold mb-1">Fecha Inicio:</label>
-        <input type="date" [(ngModel)]="editableOlimpiada.fecha_inicio" name="fechaInicio" class="w-full border rounded px-3 py-2" />
+        <input type="date" [(ngModel)]="editableOlimpiada.fecha_inicio" name="fechaInicio"
+               class="w-full border rounded px-3 py-2 bg-white" />
       </div>
 
       <div class="mb-4">
         <label class="block font-semibold mb-1">Fecha Fin:</label>
-        <input type="date" [(ngModel)]="editableOlimpiada.fecha_final" name="fechaFinal" class="w-full border rounded px-3 py-2" />
+        <input type="date" [(ngModel)]="editableOlimpiada.fecha_final" name="fechaFinal"
+               class="w-full border rounded px-3 py-2 bg-white" />
       </div>
 
       <div *ngIf="errorMessage" class="text-red-600 font-medium mb-4">{{ errorMessage }}</div>
 
       <div class="flex justify-end space-x-2">
-        <button type="button" (click)="closeEditModal()" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded">Cancelar</button>
-        <button type="button" (click)="saveEdit()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Aceptar</button>
+        <button type="button" (click)="closeEditModal()"
+          class="text-white px-4 py-2 rounded hover:opacity-90"
+          style="background-color: #FF351B;">Cancelar</button>
+
+        <button type="button" (click)="saveEdit()"
+          class="text-white px-4 py-2 rounded hover:opacity-90"
+          style="background-color: #2C2699;">Aceptar</button>
       </div>
     </form>
   </div>

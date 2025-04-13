@@ -27,9 +27,10 @@ export class OlimpiadaService {
   }
 
   // Actualizar una olimpiada
-  updateOlimpiada(id: number, data: Partial<Olimpiada>): Observable<Olimpiada> {
-    return this.http.put<Olimpiada>(`${this.apiUrl}/${id}`, data);
+  updateOlimpiada(id: number, olimpiada: Partial<Olimpiada>) {
+    return this.http.put(`/api/olimpiadas/${id}`, olimpiada); // Ajusta el endpoint según tu API real
   }
+  
 
   // Obtener una olimpiada con sus áreas relacionadas
   getOlimpiadaWithAreas(id: number): Observable<any> {
