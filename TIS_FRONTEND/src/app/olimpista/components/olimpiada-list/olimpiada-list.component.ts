@@ -10,5 +10,5 @@ import { Olimpiada } from '../../interfaces/olimpiada.interfacel';
   templateUrl: './olimpiada-list.component.html',
 })
 export class OlimpiadaListComponent {
-  @Input({ required: true }) olimpiadas!: Olimpiada[];
+  @Input({ required: true }) Olimpiada!: any[];
 }
