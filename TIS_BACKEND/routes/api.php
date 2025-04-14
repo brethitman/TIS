@@ -3,6 +3,7 @@
 use App\Http\Controllers\Area\AreaController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\BoletaPago\BoletaPagoController;
+use App\Http\Controllers\ExelController\ExelController;
 use App\Http\Controllers\Inscripcion\InscripcionController;
 use App\Http\Controllers\NivelCategoria\NivelCategoriaController;
 use App\Http\Controllers\Olimpista\OlimpistaController;
@@ -81,7 +82,7 @@ Route::get('/nivelCategoria/por-area/{areaId}', [NivelCategoriaController::class
 Route::get('/olimpista',         [ OlimpistaController::class, 'index'     ]);
 Route::get('/olimpista/{id}',    [ OlimpistaController::class, 'show'      ]);
 Route::post('/olimpista',        [ OlimpistaController::class, 'store'     ]);
-Route::post('/olimpistaExel', [OlimpistaController::class, 'importarExcel'])->name('olimpista.importar');
+Route::post('/olimpistasExel', [ExelController::class, 'importarExcel'])->name('Excel.importar');
 
 
 //olimpiada

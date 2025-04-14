@@ -158,7 +158,7 @@ export class Inscripcion1Component {
     const formData = new FormData();
     formData.append('archivo', this.archivoSeleccionado as File);
     console.log("Reciviendo Archivo..", this.archivoSeleccionado)
-    this.http.post('/olimpistaExel', formData)
+    this.http.post('http://localhost:8000/api/olimpistasExel', formData)
       .subscribe({
         next: (response) => {
           console.log('Respuesta del servidor:', response); // Ahora estás utilizando 'response'
