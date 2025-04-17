@@ -81,6 +81,7 @@ Route::get('/nivelCategoria/por-area/{areaId}', [NivelCategoriaController::class
 Route::get('/olimpista',         [ OlimpistaController::class, 'index'     ]);
 Route::get('/olimpista/{id}',    [ OlimpistaController::class, 'show'      ]);
 Route::post('/olimpista',        [ OlimpistaController::class, 'store'     ]);
+Route::post('/olimpistaExel', [OlimpistaController::class, 'importarExcel'])->name('olimpista.importar');
 
 
 //olimpiada

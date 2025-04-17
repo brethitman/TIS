@@ -221,9 +221,9 @@ export class AreasCardComponent implements OnInit {
     this.categoriaService.obtenerNivelesCategoria().subscribe({
       next: (response) => {
         console.log('Respuesta del backend:', response);
-        this.categorias = response.nivelesCategoria.filter(cat => {
-          console.log('Comparando:', cat.id_area, 'con', this.Area.id);
-          return cat.id_area === this.Area.id;
+        this.categorias = response.nivelesCategoria.filter(catg => {
+          console.log('Comparando:', catg.id, 'con', this.Area.id);
+          return catg.id_area === this.Area.id;
         });
       },
       error: (err) => {

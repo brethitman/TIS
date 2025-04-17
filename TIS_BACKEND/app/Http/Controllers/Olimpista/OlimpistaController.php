@@ -7,6 +7,7 @@ use App\Http\Resources\Olimpista\OlimpistaCollection;
 use App\Http\Resources\Olimpista\OlimpistaResource;
 use App\Models\Olimpista;
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class OlimpistaController extends Controller
 {
@@ -18,7 +19,7 @@ class OlimpistaController extends Controller
      */
     public function index()
     {
-        $olimpistas = Olimpista::orderBy("created_at", "desc")->simplePaginate (10);
+        $olimpistas = Olimpista::orderBy("created_at", "desc")->simplePaginate(10);
         return new OlimpistaCollection($olimpistas);
     }
 
@@ -100,5 +101,40 @@ class OlimpistaController extends Controller
         return response()->json([
             'message' => 'Olimpista eliminado exitosamente'
         ]);
+    }
+
+    //Aqui se va a guardar la lista de los olimpistas
+    public function importarExcel(Request $request)
+    {
+        // Validar archivo
+        $request->validate([
+            'archivo' => 'required|mimes:xlsx,xls'
+        ]);
+
+        $archivo = $request->file('archivo');
+        $spreadsheet = IOFactory::load($archivo->getPathname());
+        $hoja = $spreadsheet->getActiveSheet();
+        $filas = $hoja->toArray();
+
+        foreach ($filas as $key => $fila) {
+            // Ignorar la cabecera del archivo
+            if ($key == 0)
+                continue;
+
+            Olimpista::create([
+                'nombres' => $fila[0],  // Columna A en Excel
+                'apellidos' => $fila[1],  // Columna B
+                'ci' => $fila[2],
+                'fecha_nacimiento' => $fila[3],
+                'correo' => $fila[4],
+                'telefono' => $fila[5],
+                'colegio' => $fila[6],
+                'curso' => $fila[7],
+                'departamento' => $fila[8],
+                'provincia' => $fila[9],
+            ]);
+        }
+
+        return response()->json(['mensaje' => 'Datos importados con éxito']);
     }
 }

@@ -10,7 +10,9 @@
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "maatwebsite/excel": "^1.1",
         "phpoffice/phpspreadsheet": "^4.1",
+        "psr/simple-cache": "2.0",
         "tailflow/laravel-orion": "^2.23"
     },
     "require-dev": {
