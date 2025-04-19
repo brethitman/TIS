@@ -74,7 +74,7 @@
 
             <!-- Parte inferior blanca con detalles -->
             <div class="p-4">
-              <h3 class="font-bold">Nombre : {{ categoria.nombre_nivel }}</h3>
+              <h3 class="font-bold">Nombre : {{ categoria.nombre_nivel}}</h3>
               <p class="text-sm">Fecha examen: {{ categoria.fecha_examen | date:'dd/MM/yyyy' }}</p>
               <p class="text-sm">Costo: {{ categoria.costo }} Bs</p>
               <p class="text-sm">Estado:
@@ -135,7 +135,7 @@
             <label class="text-sm text-gray-700 mt-4 block">Fecha de examen</label>
             <input type="date" name="editedFecha"
               class="mt-2 p-2 border border-gray-300 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-              style="background-color: white;" [min]="minDate" [max]="maxDate" placeholder="{{ editedCategoriaTemp.fecha_examen | date:'dd/MM/yyyy' }}"
+              style="background-color: white;" [min]="minDate" [max]="maxDate" 
               [(ngModel)]="editedCategoriaTemp.fecha_examen" (keydown)="disableManualInput($event)" required>
             <!-- Costo de la Categoría -->
             <div class="mb-4">

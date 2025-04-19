@@ -157,7 +157,10 @@
 
       <!-- Botón Subir Excel -->
       <div class="flex items-center mb-5">
-        <button type="button" class="bg-green-700 text-white px-4 py-2 rounded flex items-center justify-center h-10 shadow-md hover:bg-green-800 transition">
+        <input type="file" id="archivoExcel" (change)="archivoElegido($event)" style="display: none;" />
+        <button type="button" 
+        class="bg-green-700 text-white px-4 py-2 rounded flex items-center justify-center h-10 shadow-md hover:bg-green-800 transition"
+        (click)="seleccionarArchivo()">
           <i class="fas fa-file-excel mr-2"></i> Subir Excel
         </button>
       </div>

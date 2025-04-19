@@ -220,9 +220,11 @@ export class AreasCardComponent implements OnInit {
   cargarCategorias(): void {
     this.categoriaService.obtenerNivelesCategoria().subscribe({
       next: (response) => {
-        this.categorias = response.nivelesCategoria.filter(
-          cat => cat.id_area === this.Area.id
-        );
+        console.log('Respuesta del backend:', response);
+        this.categorias = response.nivelesCategoria.filter(catg => {
+          console.log('Comparando:', catg.id, 'con', this.Area.id);
+          return catg.id_area === this.Area.id;
+        });
       },
       error: (err) => {
         console.error('Error al cargar categorías:', err);

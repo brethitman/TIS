@@ -14,50 +14,35 @@ class Inscripcion extends Model
 
     protected $fillable = [
         'id_olimpista',
-        'id_area',
+        'id_nivel', // Solo id_nivel según BD
         'id_tutor',
         'fecha_inscripcion',
         'estado'
     ];
 
-    /**
-     * Los atributos que deben convertirse a tipos nativos.
-     *
-     * @var array
-     */
     protected $casts = [
         'fecha_inscripcion' => 'date',
     ];
 
-    /**
-     * Obtener el olimpista relacionado con esta inscripción
-     */
     public function olimpista()
     {
         return $this->belongsTo(Olimpista::class, 'id_olimpista', 'id_olimpista');
     }
 
-    /**
-     * Obtener el área relacionada con esta inscripción
-     */
-    public function area()
-    {
-        return $this->belongsTo(Area::class, 'id_area', 'id_area');
-    }
-
-    /**
-     * Obtener el tutor relacionado con esta inscripción
-     */
     public function tutor()
     {
         return $this->belongsTo(Tutor::class, 'id_tutor', 'id_tutor');
     }
 
-    /**
-     * Obtener las boletas de pago relacionadas con esta inscripción
-     */
+    public function nivel()
+    {
+        return $this->belongsTo(NivelCategoria::class, 'id_nivel', 'id_nivel');
+    }
+
     public function boletasPago()
     {
         return $this->hasMany(BoletaPago::class, 'id_inscripcion', 'id_inscripcion');
     }
+
+    // Eliminar relación con area ya que no existe en BD
 }

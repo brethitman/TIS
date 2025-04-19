@@ -7,6 +7,7 @@ use App\Http\Resources\Olimpista\OlimpistaCollection;
 use App\Http\Resources\Olimpista\OlimpistaResource;
 use App\Models\Olimpista;
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class OlimpistaController extends Controller
 {
@@ -18,7 +19,7 @@ class OlimpistaController extends Controller
      */
     public function index()
     {
-        $olimpistas = Olimpista::orderBy("created_at", "desc")->simplePaginate (10);
+        $olimpistas = Olimpista::orderBy("created_at", "desc")->simplePaginate(10);
         return new OlimpistaCollection($olimpistas);
     }
 
