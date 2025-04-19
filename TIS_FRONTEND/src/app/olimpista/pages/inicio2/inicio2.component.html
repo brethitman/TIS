@@ -1,24 +1,32 @@
-<div *ngIf="pasoActual === 1">
-  <app-inscripcion1
-    (continuar)="siguientePaso()"
-    (tutorChanged)="updateTutorData($event)">
-  </app-inscripcion1>
-</div>
+<div class="container mx-auto px-4 py-8">
+  <!-- Header y botón de acción -->
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Gestión de Olimpiadas</h1>
+    <button
+      (click)="toggleFormulario()"
+      class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      {{ mostrarFormulario ? 'Cancelar' : 'Nueva Olimpiada' }}
+    </button>
+  </div>
 
-<div *ngIf="pasoActual === 2">
-  <app-inscripcion2
-    (continuar)="siguientePaso()"
-    (atras)="anteriorPaso()"
-    (olimpistaChanged)="updateOlimpistaData($event)">
-  </app-inscripcion2>
-</div>
+  <!-- Formulario de creación (condicional) -->
+  <div *ngIf="mostrarFormulario" class="mb-8 animate-fade-in">
+    <app-crear-olimpiada (onSuccess)="onOlimpiadaCreada($event)" class="block"></app-crear-olimpiada>
+  </div>
 
-<div *ngIf="pasoActual === 3">
-  <app-inscripcion3
-    [tutorData]="formData.tutor"
-    [olimpistaData]="formData.olimpista"
-    (atras)="anteriorPaso()"
-    (submit)="submitInscripcion($event)"
-    (areaChanged)="updateAreaData($event)">
-  </app-inscripcion3>
+  <!-- Listado de olimpiadas con sus áreas -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <app-olimpiada-list [Olimpiada]="olimpiadas()" ></app-olimpiada-list>
+
+  </div>
+  <app-area-list
+  [Area]="area()"
+  (onAreaUpdated)="handleAreaUpdated($event)"
+></app-area-list>
+
+
 </div>

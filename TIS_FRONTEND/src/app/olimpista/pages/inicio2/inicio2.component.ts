@@ -1,66 +1,71 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Inscripcion1Component } from '../../components/inscripcion1/inscripcion1.component';
-import { Inscripcion2Component } from "../../components/inscripcion2/inscripcion2.component";
-import { Inscripcion3Component } from "../../components/inscripcion3/inscripcion3.component";
-import { InscripcionService } from '../../service/inscripcion.service';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { GetOlimpiadaService } from '../../service/get.olimpiada.service';
+import { OlimpiadaListComponent } from '../../components/olimpiada-list/olimpiada-list.component';
+import { CrearOlimpiadaComponent } from '../../components/crear-olimpiada/crear-olimpiada.component';
+import { Olimpiada } from '../../interfaces/olimpiada-interfase';
+import { GetAreaService } from '../../service/get.area.service.ts.service';
+import { Area } from '../../interfaces/area.interface';
+import { AreaListComponent } from "../../components/area-list/area-list.component";
+
 
 @Component({
   selector: 'app-inicio2',
-  templateUrl: './inicio2.component.html',
   standalone: true,
-  imports: [CommonModule, FormsModule, Inscripcion1Component, Inscripcion2Component, Inscripcion3Component],
+  imports: [CommonModule, OlimpiadaListComponent, CrearOlimpiadaComponent, AreaListComponent],
+  templateUrl:'./inicio2.component.html'
 })
-export class Inicio2Component {
-  pasoActual = 1;
-  formData: any = {
-    tutor: {},
-    olimpista: {},
-    areaId: null
-  };
+export class Inicio2Component implements OnInit {
+  private getOlimpiadaService = inject(GetOlimpiadaService);
+  public olimpiadas = signal<Olimpiada[]>([]);  // Corregido el tipo
+  mostrarFormulario = false;
 
-  constructor(private inscripcionService: InscripcionService) {}
+  private GetAreaService = inject(GetAreaService);
+  public area = signal<Area[]>([]);  // Corregido el tipo
 
-  siguientePaso() {
-    if (this.pasoActual < 3) {
-      this.pasoActual++;
-    }
+  ngOnInit(): void {
+    this.loadOlimpiada();
+   this.loadArea();
   }
 
-  anteriorPaso() {
-    if (this.pasoActual > 1) {
-      this.pasoActual--;
-    }
+  loadOlimpiada(): void {
+    this.getOlimpiadaService.findAll()
+      .subscribe(olimpiadas => {
+        this.olimpiadas.set(olimpiadas);  // Se asegura de actualizar correctamente el estado
+      });
   }
 
-  updateTutorData(tutorData: any) {
-    this.formData.tutor = tutorData;
-    console.log('Datos del tutor actualizados:', this.formData.tutor);
+  onOlimpiadaCreada(nuevaOlimpiada: Olimpiada): void {
+    this.mostrarFormulario = false;
+    this.olimpiadas.update(current => [...current, nuevaOlimpiada]);
   }
 
-  updateOlimpistaData(olimpistaData: any) {
-    this.formData.olimpista = olimpistaData;
-    console.log('Datos del olimpista actualizados:', this.formData.olimpista);
+  toggleFormulario(): void {
+    this.mostrarFormulario = !this.mostrarFormulario;
   }
 
-  updateAreaData(areaData: any) {
-    this.formData.areaId = areaData;
-    console.log('Área seleccionada:', this.formData.areaId);
+
+
+  loadArea(): void {
+    this.GetAreaService.findAll()
+      .subscribe(area => {
+        this.area.set(area);  // Se asegura de actualizar correctamente el estado
+      });
   }
 
-  submitInscripcion(formData: any) {
-    console.log('Enviando inscripción:', formData);
 
-    this.inscripcionService.crearInscripcionCompleta(formData).subscribe({
-      next: (response) => {
-        console.log('Inscripción exitosa', response);
-        // Redirigir o mostrar mensaje de éxito
-        alert('Inscripción completada con éxito!');
+  handleAreaUpdated(updatedArea: Area) {
+    this.GetAreaService.updateArea(updatedArea).subscribe({
+      next: (areaActualizada) => {
+        console.log('Área actualizada:', areaActualizada);
+        // Forzar recarga de datos desde el servidor
+        this.loadArea();
       },
       error: (err) => {
-        console.error('Error en la inscripción', err);
-        alert('Error al completar la inscripción. Por favor intenta nuevamente.');
+        console.error('Error en la solicitud:', err);
+        if (err.status === 400) {
+          alert('Error en los datos: ' + JSON.stringify(err.error.errors));
+        }
       }
     });
   }

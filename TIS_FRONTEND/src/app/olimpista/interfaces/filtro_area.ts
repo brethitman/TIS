@@ -1,6 +1,5 @@
 
-
-export interface Area {
+export interface AreaElement {
   id:           number;
   id_olimpiada: number;
   nombre_area:  string;
@@ -16,7 +15,7 @@ export interface Nivele {
   id_area:      number;
   nombre_nivel: string;
   descripcion:  string;
-  fecha_examen: Date;
+  fecha_examen: Date ;
   costo:        string;
   habilitacion: boolean;
   created_at:   Date;
@@ -32,7 +31,3 @@ export interface Olimpiada {
   created_at:            Date;
   updated_at:            Date;
 }
-
-
-
-

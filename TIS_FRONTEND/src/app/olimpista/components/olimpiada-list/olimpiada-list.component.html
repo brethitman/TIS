@@ -2,12 +2,11 @@
   <div class="container">
       <ul class="olimpistas__list">
 
-      @for (Area of Area  ; track Area.id) {
+      @for (Olimpiada of Olimpiada  ; track Olimpiada.id) {
 
-
-          <app-areas-card
-                   [Area]="Area"
-          ></app-areas-card>
+         <app-olimpiada-card
+            [Olimpiada]="Olimpiada"
+         ></app-olimpiada-card>
       }@empty {
         <p class="text-center">No se encontraron resultados</p>
       }
@@ -15,5 +14,4 @@
      </ul>
   </div>
 </section>
-
 

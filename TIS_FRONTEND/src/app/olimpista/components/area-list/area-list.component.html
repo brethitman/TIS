@@ -1,18 +1,12 @@
+<!-- area-list.component.html -->
 <section class="pt-8 pb-8">
   <div class="container">
       <ul class="olimpistas__list">
-
-      @for (Inscripcione of Inscripcione  ; track Inscripcione.id) {
-
-            <app-inscritos-card    [Inscripcione]="Inscripcione"
-
-            ></app-inscritos-card>
+      @for (areaItem of Area; track areaItem.id) { <!-- Cambiar variable y track -->
+         <app-area-card [Area]="areaItem"></app-area-card>
       }@empty {
         <p class="text-center">No se encontraron resultados</p>
       }
-
      </ul>
   </div>
 </section>
-
-

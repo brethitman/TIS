@@ -3,13 +3,13 @@ import { map, catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { NivelesCategoria } from '../interfaces/categoria.interface';
-import { GetNIvelesCategoriaResponse } from '../interfaces/get-categoria-response';
+import { GetNivelesCategoriaResponse } from '../interfaces/get-categoria-response';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoriaService {
-  
+
   private apiUrl = 'http://localhost:8000/api/nivelCategoria'; // Corregido el endpoint
 
   constructor(private http: HttpClient) {}
@@ -27,8 +27,8 @@ export class CategoriaService {
    * Obtiene todos los niveles de categoría
    * @returns Observable con la lista paginada de niveles
    */
-  obtenerNivelesCategoria(): Observable<GetNIvelesCategoriaResponse> {
-    return this.http.get<GetNIvelesCategoriaResponse>(this.apiUrl);
+  obtenerNivelesCategoria(): Observable<GetNivelesCategoriaResponse> {
+    return this.http.get<GetNivelesCategoriaResponse>(this.apiUrl);
   }
 
   /**
@@ -62,7 +62,7 @@ export class CategoriaService {
   /*getNivelesPorArea(areaId: number): Observable<GetNIvelesCategoriaResponse> {
     return this.http.get<GetNIvelesCategoriaResponse>(`${this.apiUrl}/por-area/${areaId}`);
   }*/
-  
+
     getNivelesPorArea(areaId: number): Observable<NivelesCategoria[]> {
       return this.http.get<any>(`${this.apiUrl}/por-area/${areaId}`).pipe(
         map(response => {
@@ -83,13 +83,33 @@ export class CategoriaService {
       );
     }
     /**
-   * Modifica la habilitacion de las categorias 
+   * Modifica la habilitacion de las categorias
    * @param id ID del nivel a eliminar
    * @returns observar si la categoria fue habilitada o no
    */
 
   habilitarCategoria(id: number, habilitacion: boolean | null): Observable<NivelesCategoria> {
-    const body = { habilitacion }; 
+    const body = { habilitacion };
     return this.http.patch<NivelesCategoria>(`${this.apiUrl}/${id}/habilitacion`, body);
+  }
+
+  getNivelesByArea(areaId: number): Observable<NivelesCategoria[]> {
+    return this.http.get<any>(`${this.apiUrl}/por-area/${areaId}`).pipe(
+      map(response => {
+        // Maneja diferentes formatos de respuesta
+        if (Array.isArray(response)) {
+          return response;
+        } else if (response.data) {
+          return response.data;
+        } else if (response.nivelesCategoria) {
+          return response.nivelesCategoria;
+        }
+        throw new Error('Formato de respuesta no reconocido');
+      }),
+      catchError(error => {
+        console.error('Error al obtener niveles por área:', error);
+        return []; // Devuelve array vacío en caso de error
+      })
+    );
   }
 }

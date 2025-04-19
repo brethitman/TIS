@@ -13,6 +13,7 @@ class Tutor extends Model
     protected $primaryKey = 'id_tutor';
 
     protected $fillable = [
+        'id_inscripcion',
         'nombres',
         'apellidos',
         'ci',
@@ -20,11 +21,11 @@ class Tutor extends Model
         'telefono'
     ];
 
-    /**
-     * Obtener las inscripciones relacionadas con el tutor
-     */
-    public function inscripciones()
+
+
+    public function inscripcion()
     {
-        return $this->hasMany(Inscripcion::class, 'id_tutor', 'id_tutor');
+        return $this->belongsTo(Inscripcion::class, 'id_inscripcion', 'id_inscripcion');
     }
+
 }

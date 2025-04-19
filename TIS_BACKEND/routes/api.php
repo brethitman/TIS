@@ -29,6 +29,7 @@ Route::get('/area/{id}',    [ AreaController::class, 'show'      ]);
 Route::post('/area',        [ AreaController::class, 'store'     ]);
 Route::put('/area/{id}',    [ AreaController::class, 'update'    ]); // Actualizar un área existente
 Route::delete('/area/{id}', [ AreaController::class, 'destroy'   ]); // Eliminar un área
+Route::get('/areas/olimpiada/{id}', [AreaController::class, 'getByOlimpiadaId']);
 
 
 // tutor ENDPOINTS--da bien ---GET POST da bien
