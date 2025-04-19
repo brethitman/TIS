@@ -30,33 +30,62 @@ public function importarExcel(Request $request)
     }
     return response()->json(['error' => 'No se recibió ningún archivo'], 400);
 }
-public function leerExcel($archivo){
-
+public function leerExcel($archivo) {
     $spreadsheet = IOFactory::load($archivo->getPathname());
     $hoja = $spreadsheet->getActiveSheet();
     $filas = $hoja->toArray();
-    $listaDatos = [];
+
+    $listaEstudiantes = [];
+    $listaTutor = [];
+    $maxEstudiantes = 6; 
 
     foreach ($filas as $key => $fila) {
-
-        if ($key == 0) {
+        // Ignorar las primeras filas de cabecera
+        if ($key < 3) {
             continue;
         }
-        $listaDatos[] = [
-            'nombres' => $fila[0],
-            'apellidos' => $fila[1],
-            'ci' => $fila[2],
-            'fecha_nacimiento' => $fila[3],
-            'correo' => $fila[4],
-            'telefono' => $fila[5],
-            'colegio' => $fila[6],
-            'curso' => $fila[7],
-            'departamento' => $fila[8],
-            'provincia' => $fila[9],
-        ];
+
+        // Leer estudiantes (máximo 6)
+        if (count($listaEstudiantes) < $maxEstudiantes) {
+            if (!empty($fila[0])) {
+                $listaEstudiantes[] = [
+                    'nombres' => $fila[0],
+                    'apellidos' => $fila[1],
+                    'ci' => $fila[2],
+                    'fecha_nacimiento' => $fila[3],
+                    'correo' => $fila[4],
+                    'telefono' => $fila[5],
+                    'colegio' => $fila[6],
+                    'curso' => $fila[7],
+                    'departamento' => $fila[8],
+                    'provincia' => $fila[9],
+                    'Olimpiada' => $fila[10],
+                    'Area' => $fila[11],
+                    'Categoria' => $fila[12],
+                ];
+            }
+            continue; 
+        }
+
+        if ($key >= 13) {
+            if (!empty($fila[0])) { 
+                $listaTutor[] = [
+                    'nombre_tutor' => $fila[0],
+                    'apellidos_tutor' => $fila[1],
+                    'telefono_tutor' => $fila[2],
+                    'correo_tutor' => $fila[3],
+                ];
+            }
+        }
+        if ($key >= 19) {
+            break;
+        }
     }
 
-    return $listaDatos;
+    return [
+        'estudiantes' => $listaEstudiantes,
+        'tutor' => $listaTutor
+    ];
 }
 
 }
