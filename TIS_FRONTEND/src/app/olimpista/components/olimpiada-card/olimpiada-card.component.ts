@@ -120,8 +120,6 @@ export class OlimpiadaCardComponent implements OnInit {
     console.log('Datos a guardar:', this.editableOlimpiada);
   }
 
-  
-
   formatDateToInput(date: Date): string {
     const d = new Date(date);
     return d.toISOString().split('T')[0]; // YYYY-MM-DD
