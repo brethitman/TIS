@@ -13,6 +13,7 @@ import { Inscripcion2Component } from './olimpista/components/inscripcion2/inscr
 import { Inscripcion3Component } from './olimpista/components/inscripcion3/inscripcion3.component';
 import { HomeAreaComponent } from './olimpista/pages/home-area/home-area.component';
 import { OlimpiadaPageComponent } from './olimpista/pages/olimpiada-page/olimpiada-page.component';
+import { VentanaInformacionOlimpiadaComponent } from './olimpista/pages/ventana-informacion-olimpiada/ventana-informacion-olimpiada.component';
 //import { DatosPostulanteComponent } from './olimpista/pages/datosPostulante-page.component.ts/datosPostulante-page.component';
 
 
@@ -92,6 +93,11 @@ export const routes: Routes = [
     component: OlimpistaPageComponent
   },
   { path: 'inicio2', component: Inicio2Component },
+
+  { 
+    path: 'ventana-informacion-olimpiada/:id', 
+    component: VentanaInformacionOlimpiadaComponent 
+  },
   
   
   /*

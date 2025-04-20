@@ -128,7 +128,7 @@
             </section>
         
 <!-- Grid de olimpiadas -->
-<div class="min-h-screen px-4 sm:px-6 lg:px-8 py-8">
+<div class="container mx-auto px-4 py-12">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
       @for (olimpiada of olimpiadas(); track olimpiada.id) {
         <div class="rounded-xl shadow-lg overflow-hidden border border-gray-300 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -147,8 +147,10 @@
           </div>
   
           <!-- Botón -->
-          <div class="bg-white p-4 pt-0 rounded-b-xl text-center">
-            <button class="bg-[#2C2699] text-white font-semibold px-6 py-2 rounded-md hover:bg-[#1E1A7A] transition">
+          <div class="bg-white p-4 pt-4 rounded-b-xl text-center">
+            <button 
+            (click)="navigateToOlimpiadaInfo(olimpiada.id)"
+            class="bg-[#2C2699] text-white font-semibold px-6 py-2 rounded-md hover:bg-[#1E1A7A] transition transform hover:scale-105">
               Registrar
             </button>
           </div>
@@ -159,9 +161,8 @@
         </div>
       }
     </div>
-  </div>
-            
-        </div>
+      </div>
+
         
         <section class="w-full bg-gradient-to-r from-red-600 to-purple-700 py-6 px-4 animate-gradient">
             <h1 class="text-white text-3xl font-bold">INFORMACIÓN</h1>
@@ -214,7 +215,7 @@
 
     
     <div class="inf-cont">
-        <div class="w-full bg-white py-12 px-8">
+        <div class="container mx-auto px-4 py-12">
             <div class="grid gap-8 md:grid-cols-3 md:gap-6 max-w-6xl mx-auto">
                 <!-- Tarjeta 1 - Fechas -->
                 <div
@@ -340,3 +341,5 @@
             </p>
         </div>
     </footer>
+
+</div>

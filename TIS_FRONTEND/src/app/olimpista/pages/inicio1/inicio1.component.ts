@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { GetOlimpiadaService } from '../../service/get.olimpiada.service';
 import { Olimpiada } from '../../interfaces/olimpiada.interfacel';
 import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-inicio1',
@@ -12,6 +13,7 @@ import { DatePipe } from '@angular/common';
 })
 export class Inicio1Component implements OnInit {
   private getOlimpiadaService = inject(GetOlimpiadaService);
+  private router = inject(Router);
   public olimpiadas = signal<Olimpiada[]>([]);
 
   ngOnInit(): void {
@@ -31,5 +33,8 @@ export class Inicio1Component implements OnInit {
         this.olimpiadas.set([]);
       }
     });
+  }
+  public navigateToOlimpiadaInfo(olimpiadaId: number): void {
+    this.router.navigate(['/ventana-informacion-olimpiada', olimpiadaId]);
   }
 }
