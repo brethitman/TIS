@@ -1,6 +1,6 @@
-import { Tutor } from './tutor.interface';
-export interface GetTutoresRespoce {
-  tutores: Tutor[];
+import { Tutore } from "./tutor.interface";
+export interface GetTutoresResponse {
+  tutores: Tutore[];
   links:   Links;
   meta:    Meta;
 }
@@ -19,3 +19,4 @@ export interface Meta {
   per_page:     number;
   to:           number;
 }
+

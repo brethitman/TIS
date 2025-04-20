@@ -1,17 +1,22 @@
-
 export interface NivelesCategoria {
   id:           number;
-  id_area:      number;
   nombre_nivel: string;
-  descripcion:  null | string;
-  fecha_examen: Date | null;
-  costo:        number;
-  habilitacion: boolean | null;
-  created_at:   Date;
-  updated_at:   Date;
+  descripcion:  string;
+  fecha_examen: Date;
+  costo:        string;
+  habilitacion: boolean;
+  area:         Area;
+  createdAt:    Date;
+  updatedAt:    Date;
 }
 
-export interface BackendResponse {
-  message: string;
-  nivelCategoria: NivelesCategoria;
+export interface Area {
+  id:           number;
+  id_olimpiada: number;
+  nombre_area:  string;
+  descripcion:  string;
+  createdAt:    Date;
+  updatedAt:    Date;
 }
+
+

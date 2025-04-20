@@ -32,10 +32,7 @@ class BoletaPago extends Model
     /**
      * Obtener la inscripción relacionada con esta boleta de pago
      */
-    public function inscripcion()
-    {
-        return $this->belongsTo(Inscripcion::class, 'id_inscripcion', 'id_inscripcion');
-    }
+
 
     /**
      * Obtener los comprobantes de pago relacionados con esta boleta
@@ -43,5 +40,11 @@ class BoletaPago extends Model
     public function comprobantesPago()
     {
         return $this->hasMany(ComprobantePago::class, 'id_boleta', 'id_boleta');
+    }
+
+
+    public function inscripcion()
+    {
+        return $this->hasMany(BoletaPago::class, 'id_inscripcion', 'id_inscripcion');
     }
 }

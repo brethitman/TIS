@@ -19,3 +19,5 @@ export interface GetInscripcionResponse {
   per_page:     number;
   to:           number;
 }
+
+

@@ -8,13 +8,12 @@ import { Inicio1Component } from './olimpista/pages/inicio1/inicio1.component';
 import { Inicio2Component } from './olimpista/pages/inicio2/inicio2.component';
 import { Inicio3Component } from './olimpista/pages/inicio3/inicio3.component';
 import { OlimpistaPageComponent } from './olimpista/pages/olimpista-page/olimpista-page.component';
+import { Inicio4Component } from './olimpista/pages/inicio4/inicio4.component';
+/*
 import { Inscripcion1Component } from './olimpista/components/inscripcion1/inscripcion1.component';
 import { Inscripcion2Component } from './olimpista/components/inscripcion2/inscripcion2.component';
 import { Inscripcion3Component } from './olimpista/components/inscripcion3/inscripcion3.component';
-import { HomeAreaComponent } from './olimpista/pages/home-area/home-area.component';
-//import { DatosPostulanteComponent } from './olimpista/pages/datosPostulante-page.component.ts/datosPostulante-page.component';
-
-
+*/
 
 export const routes: Routes = [
   {
@@ -48,12 +47,23 @@ export const routes: Routes = [
   },
   {
     path: 'inicio/look',
-    component: HomeAreaComponent
+    component: Inicio2Component
   },
   {
     path: 'inicio/dodog',
     component: Inicio3Component
   },
+  {
+    path: 'inicio/dodog',
+    component: Inicio3Component
+  },
+  {
+    path: 'inicio/mmmm',
+    component: Inicio4Component
+  },
+
+
+  /*
   {
     path: 'inscripcion/paso1',
     component: Inscripcion1Component
@@ -68,18 +78,13 @@ export const routes: Routes = [
     component: Inscripcion3Component
 
   },
+*/
+
   {
     path: 'inicio/OlimpistaForm',
     component: OlimpistaPageComponent
   },
-  { path: 'inicio2', component: Inicio2Component },
-  
-  /*
-  {
-    path: 'inicio/datosPostulante',
-    component: DatosPostulanteComponent
-  },*/
-  // Ruta por defecto (opcional)
+  // Ruta por defecto
   {
     path: '',
     redirectTo: 'inicio/waba',

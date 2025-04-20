@@ -23,7 +23,7 @@ export class EstudiantesModule { }
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Asegúrate de importar FormsModule
 import { HttpClientModule } from '@angular/common/http';
-import { InscripcionAreasComponent } from './components/inscripcion-areas/inscripcion-areas.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -32,7 +32,8 @@ import { InscripcionAreasComponent } from './components/inscripcion-areas/inscri
   imports: [
     CommonModule,
     FormsModule, // Asegúrate de que FormsModule esté aquí
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ]
 })
 export class EstudiantesModule { }

@@ -17,7 +17,7 @@ class InscripcionController extends Controller
 
     public function index()
     {
-        $inscripciones = Inscripcion::with(['olimpista', 'tutor', 'nivel.area'])
+        $inscripciones = Inscripcion::with(['olimpistas', 'tutors', 'boletasPago', 'areas'])
             ->orderBy("created_at", "desc")
             ->simplePaginate(10);
 
@@ -29,47 +29,53 @@ class InscripcionController extends Controller
         $validated = $request->validate([
             'fecha_inscripcion' => 'required|date',
             'estado' => 'required|in:Pendiente,Pagado,Verificado',
-            'id_nivel' => 'required|exists:nivel_categorias,id_nivel',
-            'olimpista' => 'required|array',
-            'olimpista.nombres' => 'required|string|max:255',
-            'olimpista.apellidos' => 'required|string|max:255',
-            'olimpista.ci' => 'required|string|max:20|unique:olimpistas,ci', // <- esto es nuevo
-            'olimpista.fecha_nacimiento' => 'required|date',
-            'olimpista.correo' => 'required|email|max:255',
-            'olimpista.telefono' => 'required|string|max:20',
-            'olimpista.colegio' => 'required|string|max:255',
-            'olimpista.curso' => 'required|string|max:50',
-            'olimpista.departamento' => 'required|string|max:100',
-            'olimpista.provincia' => 'required|string|max:100',
-            'tutor' => 'required|array',
-            'tutor.nombres' => 'required|string|max:255',
-            'tutor.apellidos' => 'required|string|max:255',
-            'tutor.ci' => 'required|string|max:20|unique:tutors,ci',
-            'tutor.correo' => 'required|email|max:255',
-            'tutor.telefono' => 'required|string|max:20'
+            'olimpistas' => 'required|array|min:1',
+            'olimpistas.*.nombres' => 'required|string|max:255',
+            'olimpistas.*.apellidos' => 'required|string|max:255',
+            'olimpistas.*.ci' => 'required|string|max:20|unique:olimpistas,ci|distinct',
+            'olimpistas.*.fecha_nacimiento' => 'required|date',
+            'olimpistas.*.correo' => 'required|email|max:255',
+            'olimpistas.*.telefono' => 'required|string|max:20',
+            'olimpistas.*.colegio' => 'required|string|max:255',
+            'olimpistas.*.curso' => 'required|string|max:50',
+            'olimpistas.*.departamento' => 'required|string|max:100',
+            'olimpistas.*.provincia' => 'required|string|max:100',
+            'tutors' => 'required|array|min:1',
+            'tutors.*.nombres' => 'required|string|max:255',
+            'tutors.*.apellidos' => 'required|string|max:255',
+            'tutors.*.ci' => 'required|string|max:20|unique:tutors,ci|distinct',
+            'tutors.*.correo' => 'required|email|max:255',
+            'tutors.*.telefono' => 'required|string|max:20',
+            'areas' => 'required|array|min:1',
+            'areas.*' => 'required|integer|exists:areas,id_area', // Validamos que cada ID exista en la tabla 'areas' usando 'id_area'
         ]);
-
-
-        $olimpista = Olimpista::create($validated['olimpista']);
-        $tutor = Tutor::create($validated['tutor']);
 
         $inscripcion = Inscripcion::create([
             'fecha_inscripcion' => $validated['fecha_inscripcion'],
-            'estado' => $validated['estado'],
-            'id_olimpista' => $olimpista->id_olimpista,
-            'id_tutor' => $tutor->id_tutor,
-            'id_nivel' => $validated['id_nivel'] // Solo id_nivel
+            'estado' => $validated['estado']
         ]);
+
+        foreach ($validated['olimpistas'] as $olimpistaData) {
+            $inscripcion->olimpistas()->create($olimpistaData);
+        }
+
+        foreach ($validated['tutors'] as $tutorData) {
+            $inscripcion->tutors()->create($tutorData);
+        }
+
+        // Asigna las áreas existentes a la inscripción actualizando 'id_inscripcion'
+        \App\Models\Area::whereIn('id_area', $validated['areas'])
+            ->update(['id_inscripcion' => $inscripcion->id_inscripcion]);
 
         return response()->json([
             'message' => 'Inscripción creada exitosamente',
-            'inscripcion' => new InscripcionResource($inscripcion->load(['olimpista', 'tutor', 'nivel.area']))
+            'inscripcion' => new InscripcionResource($inscripcion->load(['olimpistas', 'tutors', 'boletasPago', 'areas']))
         ], 201);
     }
 
     public function show(string $id)
     {
-        $inscripcion = Inscripcion::with(['olimpista', 'tutor', 'nivel.area'])->findOrFail($id);
+        $inscripcion = Inscripcion::with(['olimpistas', 'tutors', 'boletasPago', 'areas'])->findOrFail($id);
         return new InscripcionResource($inscripcion);
     }
 
@@ -78,18 +84,15 @@ class InscripcionController extends Controller
         $inscripcion = Inscripcion::findOrFail($id);
 
         $request->validate([
-            'id_olimpista' => 'required|exists:olimpistas,id_olimpista',
-            'id_tutor' => 'required|exists:tutors,id_tutor',
-            'id_nivel' => 'required|exists:nivel_categorias,id_nivel', // Actualizado
-            'fecha_inscripcion' => 'required|date',
-            'estado' => 'required|in:Pendiente,Pagado,Verificado',
+            'fecha_inscripcion' => 'sometimes|date',
+            'estado' => 'sometimes|in:Pendiente,Pagado,Verificado'
         ]);
 
-        $inscripcion->update($request->all());
+        $inscripcion->update($request->only(['fecha_inscripcion', 'estado']));
 
         return response()->json([
             'message' => 'Inscripción actualizada exitosamente',
-            'inscripcion' => new InscripcionResource($inscripcion->load(['olimpista', 'tutor', 'nivel.area']))
+            'inscripcion' => new InscripcionResource($inscripcion->load(['olimpistas', 'tutors', 'boletasPago', 'areas']))
         ]);
     }
 

@@ -30,8 +30,9 @@ export class AreaService {
     return this.http.get<Area[]>(this.apiUrl);
   }
 
-  getAreaById(id: number): Observable<{ area: Area }> {
-    return this.http.get<{ area: Area }>(`${this.apiUrl}/${id}`);
+
+  getAreaById(id: number): Observable<Area> {
+    return this.http.get<Area>(`${this.apiUrl}/${id}`);
   }
-  
+
 }

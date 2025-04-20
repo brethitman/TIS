@@ -1,84 +1,77 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable, catchError, throwError } from 'rxjs';
-import { GetAreaResponse } from '../interfaces/get-area-response';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment.development';
+import { catchError, map, Observable, throwError } from 'rxjs';
+import { Inscripcione, Area, Olimpista, Tutor } from '../interfaces/inscripcion.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InscripcionService {
-  private apiUrl = 'http://localhost:8000/api';
-  private httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    })
-  };
+  private http = inject(HttpClient);
+  private readonly apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
-
-  crearInscripcionCompleta(datos: any): Observable<any> {
-    // Validación básica de datos antes de enviar
-    if (!datos.olimpista || !datos.tutor || !datos.areaId) {
+  crearInscripcionCompleta(datos: {
+    olimpistas: Olimpista[];
+    tutors: Tutor[];
+    areas: number[]; // Cambiamos el tipo de areas a number[]
+  }): Observable<Inscripcione> {
+    if (!datos.olimpistas || !datos.tutors || !datos.areas) {
       return throwError(() => new Error('Datos incompletos para la inscripción'));
     }
 
     const payload = {
-      fecha_inscripcion: new Date().toISOString().split('T')[0], // Formato YYYY-MM-DD
-      estado: 'Pendiente',
-      olimpista: {
-        nombres: datos.olimpista.nombres || '',
-        apellidos: datos.olimpista.apellidos || '',
-        ci: datos.olimpista.ci || '',
-        fecha_nacimiento: datos.olimpista.fecha_nacimiento || '',
-        correo: datos.olimpista.correo || '',
-        telefono: datos.olimpista.telefono || '',
-        colegio: datos.olimpista.colegio || '',
-        curso: datos.olimpista.curso || '',
-        departamento: datos.olimpista.departamento || '',
-        provincia: datos.olimpista.provincia || ''
-      },
-      tutor: {
-        nombres: datos.tutor.nombres || '',
-        apellidos: datos.tutor.apellidos || '',
-        ci: datos.tutor.ci || '',
-        correo: datos.tutor.correo || '',
-        telefono: datos.tutor.telefono || ''
-      },
-      id_area: Number(datos.areaId) // Asegura que sea un número
+      fecha_inscripcion: new Date().toISOString().split('T')[0],
+      estado: 'Pendiente', // Puedes hacerlo dinámico si lo necesitas
+      olimpistas: datos.olimpistas.map(olimp => ({
+        nombres: olimp.nombres,
+        apellidos: olimp.apellidos,
+        ci: olimp.ci,
+        fecha_nacimiento: olimp.fecha_nacimiento,
+        correo: olimp.correo,
+        telefono: olimp.telefono,
+        colegio: olimp.colegio,
+        curso: olimp.curso,
+        departamento: olimp.departamento,
+        provincia: olimp.provincia
+      })),
+      tutors: datos.tutors.map(tutor => ({
+        nombres: tutor.nombres,
+        apellidos: tutor.apellidos,
+        ci: tutor.ci,
+        correo: tutor.correo,
+        telefono: tutor.telefono
+      })),
+      areas: datos.areas // Enviamos directamente el array de IDs
     };
 
-    console.log('Enviando payload:', payload); // Para depuración
-
-    return this.http.post(`${this.apiUrl}/inscripcion`, payload, this.httpOptions).pipe(
-      catchError(this.handleError)
-    );
+    return this.http.post<{ inscripcion: Inscripcione }>(`${this.apiUrl}/inscripcion`, payload) // Ajustamos la clave de la respuesta a 'inscripcion'
+      .pipe(
+        map(response => response.inscripcion), // Mapeamos directamente a response.inscripcion
+        catchError(this.handleError)
+      );
   }
 
-  getAreas(): Observable<GetAreaResponse> {
-    return this.http.get<GetAreaResponse>(`${this.apiUrl}/area`, this.httpOptions).pipe(
-      catchError(this.handleError)
-    );
+  getAreas(): Observable<Area[]> {
+    return this.http.get<{ areas: Area[] }>(`${this.apiUrl}/area`)
+      .pipe(
+        map(response => response.areas),
+        catchError(this.handleError)
+      );
   }
 
   private handleError(error: HttpErrorResponse) {
     console.error('Error en la petición:', error);
 
-    let errorMessage = 'Ocurrió un error desconocido';
+    let errorMessage = 'Error desconocido';
     if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
-      errorMessage = `Error: ${error.error.message}`;
+      errorMessage = `Error del cliente: ${error.error.message}`;
     } else {
-      // Error del lado del servidor
+      errorMessage = error.error?.message || error.message;
+
       if (error.status === 422) {
-        // Manejo especial para errores de validación
-        const validationErrors = error.error.errors || {};
-        errorMessage = 'Errores de validación:\n';
-        for (const key in validationErrors) {
-          errorMessage += `${key}: ${validationErrors[key].join(', ')}\n`;
-        }
-      } else {
-        errorMessage = `Código de error: ${error.status}\nMensaje: ${error.message}`;
+        const errors = error.error?.errors;
+        errorMessage += ': ' + Object.values(errors).flat().join(', ');
       }
     }
 

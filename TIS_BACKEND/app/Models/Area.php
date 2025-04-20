@@ -14,6 +14,7 @@ class Area extends Model
 
     protected $fillable = [
         'id_olimpiada',
+        'id_inscripcion',
         'nombre_area',
         'descripcion',
     ];
@@ -28,5 +29,15 @@ class Area extends Model
         return $this->hasMany(NivelCategoria::class, 'id_area', 'id_area');
     }
 
-    // Eliminar relación con inscripciones ya que en BD se relaciona con nivel
+    /*
+    public function inscripcion()
+    {
+        return $this->hasMany(Inscripcion::class, 'id_area', 'id_area');
+    }
+
+    */
+    public function inscripcion()
+    {
+        return $this->belongsTo(Inscripcion::class, 'id_inscripcion', 'id_inscripcion'); // Aquí se manejará correctamente si 'id_inscripcion' es NULL
+    }
 }

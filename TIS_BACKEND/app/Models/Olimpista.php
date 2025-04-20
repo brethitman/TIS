@@ -13,6 +13,7 @@ class Olimpista extends Model
     protected $primaryKey = 'id_olimpista';
 
     protected $fillable = [
+        'id_inscripcion',
         'nombres',
         'apellidos',
         'ci',
@@ -25,11 +26,9 @@ class Olimpista extends Model
         'provincia'
     ];
 
-    /**
-     * Obtener las inscripciones del olimpista
-     */
-    public function inscripciones()
+
+    public function inscripcion()
     {
-        return $this->hasMany(Inscripcion::class, 'id_olimpista', 'id_olimpista');
+        return $this->belongsTo(Inscripcion::class, 'id_inscripcion', 'id_inscripcion');
     }
 }
