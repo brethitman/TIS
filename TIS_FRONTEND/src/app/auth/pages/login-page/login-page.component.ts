@@ -33,7 +33,7 @@ passwordVisible: any;
       next: (success) => {
         this.isLoading = false;
         if (success) {
-          this.router.navigate(['/inicio/areas']); // Redirige a la página de áreas después de login
+          this.router.navigate(['/admin/areas']); // Redirige a la página de áreas de administración después de login
         } else {
           this.errorMessage = 'Credenciales incorrectas';
         }

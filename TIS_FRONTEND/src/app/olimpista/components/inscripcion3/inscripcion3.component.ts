@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Output, OnInit, Input } from '@angular/core';
 import { InscripcionService } from '../../service/inscripcion.service';
 import { Area } from '../../interfaces/area.interface';
-import { GetAreaResponse } from '../../interfaces/get-area-response';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AreaService } from '../../service/area.service';
@@ -54,32 +53,34 @@ export class Inscripcion3Component implements OnInit {
     this.submit.emit(formData);
   }
 
-  loadAreas(): void {
-    this.inscripcionService.getAreas().subscribe({
-      next: (response: GetAreaResponse) => {
-        this.areas = response.areas;
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Error loading areas:', err);
-        this.error = true;
-        this.errorMessage = 'Error al cargar las áreas. Por favor intenta nuevamente.';
-        this.isLoading = false;
-      }
-    });
-  }
-  cargarNombreArea(): void{
-    this.areaService.getAreaById(this.areaId).subscribe({
-      next: (response) => {
-        this.areaNombre = response.area.nombre_area;
-        console.log('Área cargada:', this.area);
-      },
-      error: (err) => {
-        console.error('Error al obtener el área:', err);
-        this.errorMessage = 'No se pudo cargar el área. Por favor verifica el ID.';
-      },
-    });
-  }
+    loadAreas(): void {
+      this.inscripcionService.getAreas().subscribe({
+        next: (response: any) => {
+          // Map the response to match your Area interface if needed
+          this.areas = response;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Error loading areas:', err);
+          this.error = true;
+          this.errorMessage = 'Error al cargar las áreas. Por favor intenta nuevamente.';
+          this.isLoading = false;
+        }
+      });
+    }
+
+    cargarNombreArea(): void {
+      this.areaService.getAreaById(this.areaId).subscribe({
+        next: (response) => {
+          this.areaNombre = response.nombre_area;  // Quitamos .area
+          console.log('Área cargada:', response);  // Cambiamos this.area por response
+        },
+        error: (err) => {
+          console.error('Error al obtener el área:', err);
+          this.errorMessage = 'No se pudo cargar el área. Por favor verifica el ID.';
+        },
+      });
+    }
 
   onAreaChange(): void {
     if (this.selectedAreaId) {
@@ -102,7 +103,6 @@ export class Inscripcion3Component implements OnInit {
       areaId: this.selectedAreaId
     };
 
-    // Emitir los datos al componente padre para que maneje el envío
     this.submit.emit(formData);
     this.isSaving = false;
   }

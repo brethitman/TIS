@@ -21,18 +21,15 @@ export class NavMenuComponent {
   private authMenuOptions: MenuOption[] = [
     { name: "Areas", path: "/admin/areas" },
     { name: "REPORTES", path: "/admin/products" },
-    { name: "Registro", path: "/admin/sales" }
+    { name: "Inscripcion", path: "/inicio2" }
   ];
 
   // Opciones cuando no está autenticado
   private noAuthMenuOptions: MenuOption[] = [
     { name: "Areas", path: "/inicio/look" },
     { name: "Home", path: "/inicio/waba" },
-
-    { name: "Inscripcion", path: "/inicio/look" },
-    { name: "Login", path: "/inicio/dodog" },
-    { name: "Registro", path: "/inicio/mmmm" }
-
+    { name: "Inscripcion", path: "/inicio2" },
+    { name: "Login", path: "/inicio/dodog" }
   ];
 
   // Propiedad que devuelve las opciones según autenticación
