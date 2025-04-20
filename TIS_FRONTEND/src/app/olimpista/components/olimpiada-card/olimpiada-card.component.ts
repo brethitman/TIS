@@ -85,39 +85,41 @@ export class OlimpiadaCardComponent implements OnInit {
     this.isEditModalOpen = false;
   }
 
-  // Guardar cambios y validar
-  saveEdit(): void {
-    const inicio = new Date(this.editableOlimpiada.fecha_inicio);
-    const fin = new Date(this.editableOlimpiada.fecha_final);
-  
-    if (fin < inicio) {
-      this.errorMessage = 'La fecha final debe ser posterior o igual a la fecha de inicio.';
-      return;
-    }
-  
-    const updatedOlimpiada: Partial<Olimpiada> = {
-      nombre_olimpiada: this.editableOlimpiada.nombre_olimpiada,
-      descripcion_olimpiada: this.editableOlimpiada.descripcion_olimpiada,
-      fecha_inicio: inicio,
-      fecha_final: fin,
-    };
-  
-    this.olimpiadaService.updateOlimpiada(this.olimpiada.id, updatedOlimpiada).subscribe({
-      next: () => {
-        // Actualizar objeto local para reflejar cambios
-        this.olimpiada = {
-          ...this.olimpiada,
-          ...updatedOlimpiada,
-        };
-  
-        this.mostrarFeedback('Olimpiada actualizada correctamente', 'exito');
-        this.isEditModalOpen = false;
-      },
-      error: () => {
-        this.errorMessage = 'Ocurrió un error al actualizar la olimpiada.';
-      }
-    });
+ // Guardar cambios y validar
+saveEdit(): void {
+  const inicio = new Date(this.editableOlimpiada.fecha_inicio);
+  const fin = new Date(this.editableOlimpiada.fecha_final);
+
+  if (fin <= inicio) {
+    this.errorMessage = 'La fecha final debe ser posterior a la fecha de inicio.';
+    return;
   }
+
+  const updatedOlimpiada: Partial<Olimpiada> = {
+    nombre_olimpiada: this.editableOlimpiada.nombre_olimpiada,
+    descripcion_olimpiada: this.editableOlimpiada.descripcion_olimpiada,
+    fecha_inicio: inicio,
+    fecha_final: fin,
+  };
+
+  this.olimpiadaService.updateOlimpiada(this.olimpiada.id, updatedOlimpiada).subscribe({
+    next: () => {
+      this.olimpiada = {
+        ...this.olimpiada,
+        ...updatedOlimpiada,
+      };
+
+      this.mostrarFeedback('Olimpiada actualizada correctamente', 'exito');
+      this.isEditModalOpen = false;
+    },
+    error: () => {
+      this.errorMessage = 'Ocurrió un error al actualizar la olimpiada.';
+    }
+  });
+
+  console.log('Datos a guardar:', this.editableOlimpiada);
+}
+
   
 
   formatDateToInput(date: Date): string {

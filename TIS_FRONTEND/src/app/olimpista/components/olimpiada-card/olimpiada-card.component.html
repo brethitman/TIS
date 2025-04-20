@@ -96,18 +96,37 @@
   <div class="rounded-2xl shadow-lg w-full max-w-md p-6 relative" style="background-color: #CEDFFF;">
     <h2 class="text-xl font-bold mb-4">Editar Olimpiada</h2>
 
-    <form>
-      <div class="mb-4">
-        <label class="block font-semibold mb-1">Nombre:</label>
-        <input [(ngModel)]="editableOlimpiada.nombre_olimpiada" name="nombre"
-               class="w-full border rounded px-3 py-2 bg-white" />
-      </div>
+    <form #editForm="ngForm">
 
-      <div class="mb-4">
-        <label class="block font-semibold mb-1">Descripción:</label>
-        <textarea [(ngModel)]="editableOlimpiada.descripcion_olimpiada" name="descripcion"
-                  class="w-full border rounded px-3 py-2 bg-white"></textarea>
-      </div>
+      <!-- Nombre -->
+<div class="mb-4">
+  <label class="block font-semibold mb-1">Nombre:</label>
+  <input [(ngModel)]="editableOlimpiada.nombre_olimpiada" name="nombre"
+         class="w-full border rounded px-3 py-2 bg-white"
+         required minlength="3" maxlength="30" pattern="^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$"
+         #nombre="ngModel" />
+  <div *ngIf="nombre.invalid && nombre.touched" class="text-red-600 text-sm">
+    <div *ngIf="nombre.errors?.['required']">El nombre es obligatorio.</div>
+    <div *ngIf="nombre.errors?.['minlength']">Debe tener al menos 3 caracteres.</div>
+    <div *ngIf="nombre.errors?.['maxlength']">Debe tener máximo 30 caracteres.</div>
+    <div *ngIf="nombre.errors?.['pattern']">Solo se permiten letras y espacios.</div>
+  </div>
+</div>
+
+<!-- Descripción -->
+<div class="mb-4">
+  <label class="block font-semibold mb-1">Descripción:</label>
+  <textarea [(ngModel)]="editableOlimpiada.descripcion_olimpiada" name="descripcion"
+            class="w-full border rounded px-3 py-2 bg-white"
+            required minlength="10" maxlength="250"
+            #descripcion="ngModel"></textarea>
+  <div *ngIf="descripcion.invalid && descripcion.touched" class="text-red-600 text-sm">
+    <div *ngIf="descripcion.errors?.['required']">La descripción es obligatoria.</div>
+    <div *ngIf="descripcion.errors?.['minlength']">Debe tener al menos 10 caracteres.</div>
+    <div *ngIf="descripcion.errors?.['maxlength']">Debe tener máximo 250 caracteres.</div>
+  </div>
+</div>
+
 
       <div class="mb-4">
         <label class="block font-semibold mb-1">Fecha Inicio:</label>
