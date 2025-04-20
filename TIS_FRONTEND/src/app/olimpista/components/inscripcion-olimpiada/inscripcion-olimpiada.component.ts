@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,Output, EventEmitter } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OlimpiadaService } from '../../service/olimpiada.service';
@@ -14,6 +14,8 @@ import { of } from 'rxjs';
 })
 
 export class InscripcionOlimpiadaComponent {
+  @Output() olimpiadaCreada = new EventEmitter<Olimpiada>();
+
   // Propiedades para el formulario de olimpiada
   olimpiada: Olimpiada = {
     id: 0,
