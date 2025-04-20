@@ -29,6 +29,7 @@ export class OlimpiadaService {
   // Actualizar una olimpiada
   updateOlimpiada(id: number, olimpiada: Partial<Olimpiada>) {
     return this.http.put(`/api/olimpiadas/${id}`, olimpiada); // Ajusta el endpoint según tu API real
+    
   }
   
 
