@@ -100,3 +100,4 @@ Route::prefix('/{olimpiadaId}/areas')->group(function () {
     Route::get('/{olimpiadaId}/areas', [AreaController::class, 'getByOlimpiada']);
     Route::post('/{olimpiadaId}/areas', [AreaController::class, 'storeInOlimpiada']);
 });
+Route::put('/olimpiadas/{id}', [OlimpiadaController::class, 'update']);
