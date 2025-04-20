@@ -33,7 +33,7 @@ passwordVisible: any;
       next: (success) => {
         this.isLoading = false;
         if (success) {
-          this.router.navigate(['/admin/products']); // Redirige al dashboard después de login
+          this.router.navigate(['/inicio/areas']); // Redirige a la página de áreas después de login
         } else {
           this.errorMessage = 'Credenciales incorrectas';
         }
