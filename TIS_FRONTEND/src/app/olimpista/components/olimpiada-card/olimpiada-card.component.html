@@ -1,0 +1,156 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<!-- Tarjeta principal -->
+<div class="bg-white rounded-lg shadow-md mb-4 border relative">
+    <!-- Botón eliminar (esquina superior derecha) -->
+    <button 
+    (click)="mostrarConfirmacion = true" 
+    class="absolute top-2 right-2 bg-red-600 text-white rounded w-6 h-6 flex items-center justify-center hover:bg-red-700"
+    title="Eliminar"
+  >
+    ✕
+  </button>
+  
+    <!-- Encabezado -->
+  <div class="bg-gradient-to-r from-red-600 to-blue-600 text-white px-4 py-3 rounded-t-lg flex justify-between items-center">
+    <h3 class="text-2xl font-bold">{{ olimpiada.nombre_olimpiada }}</h3>
+  
+     <!-- Botón editar -->
+  <button (click)="onButton2Click()" class="absolute top-2 right-10 text-white hover:text-gray-200" title="Editar">
+    <i class="fas fa-pen-to-square text-lg"></i>
+  </button>
+  </div>
+  
+    <!-- Cuerpo -->
+    <div class="px-6 py-4">
+      <div class="mb-2">
+        <span class="font-semibold">Descripcion :</span>
+        <p class="text-gray-700 ml-2 whitespace-pre-line">{{ olimpiada.descripcion_olimpiada }}</p>
+      </div>
+      <div class="mb-2">
+        <span class="font-semibold">Fecha inicio :</span>
+        <span class="text-gray-700 ml-2">{{ olimpiada.fecha_inicio | date:'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="mb-4">
+        <span class="font-semibold">Fecha fin :</span>
+        <span class="text-gray-700 ml-2">{{ olimpiada.fecha_final | date:'dd/MM/yyyy' }}</span>
+      </div>
+  
+      <!-- Botón Añadir Área -->
+      <button 
+        (click)="navegarAAreas()" 
+        class="bg-blue-900 hover:bg-blue-800 text-white px-5 py-2 rounded font-medium"
+        title="Ver áreas de esta olimpiada"
+      >
+        Añadir/Ver Áreas
+      </button>
+
+  <!-- Modal de confirmación (con fondo transparente) -->
+  <div *ngIf="mostrarConfirmacion" class="fixed inset-0 z-[9999] flex items-center justify-center bg-transparent">
+    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full text-center relative animate-fade-in border border-gray-200">
+      <div class="text-red-600 text-4xl mb-3">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h3 class="text-xl font-bold mb-4">¿Eliminar olimpiada?</h3>
+      <p class="text-gray-700 mb-6">¿Estás seguro de eliminar "{{ olimpiada.nombre_olimpiada }}"?</p>
+      
+      <div class="flex justify-center space-x-4">
+        <button 
+          (click)="mostrarConfirmacion = false" 
+          class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition"
+        >
+          Cancelar
+        </button>
+        <button 
+          (click)="confirmarEliminacion()" 
+          class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition flex items-center"
+          [disabled]="eliminando"
+        >
+          <span *ngIf="eliminando" class="animate-spin mr-2">↻</span>
+          {{ eliminando ? 'Eliminando...' : 'Confirmar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de feedback (como lo tenías) -->
+  <div *ngIf="mostrarModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-transparent">
+    <div class="bg-gray-100 rounded-xl shadow-2xl p-6 max-w-md w-full text-center relative animate-fade-in">
+      <div *ngIf="modalTipo === 'exito'" class="text-green-600 text-4xl mb-3">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div *ngIf="modalTipo === 'error'" class="text-red-600 text-4xl mb-3">
+        <i class="fas fa-exclamation-circle"></i>
+      </div>
+      <p class="text-lg text-gray-700 mb-6">{{ modalMensaje }}</p>
+      <button 
+        (click)="ocultarModal()" 
+        class="px-4 py-2 bg-[#0b0069] text-white rounded-md hover:bg-[#0a005f] transition"
+      >
+        Aceptar
+      </button>
+    </div>
+  </div>
+ <!-- Modal de edición -->
+<div *ngIf="isEditModalOpen" class="fixed inset-0 z-50 flex items-center justify-center px-2 bg-gray-300/60">
+  <div class="rounded-2xl shadow-lg w-full max-w-md p-6 relative" style="background-color: #CEDFFF;">
+    <h2 class="text-xl font-bold mb-4">Editar Olimpiada</h2>
+
+    <form #editForm="ngForm">
+
+      <!-- Nombre -->
+<div class="mb-4">
+  <label class="block font-semibold mb-1">Nombre:</label>
+  <input [(ngModel)]="editableOlimpiada.nombre_olimpiada" name="nombre"
+         class="w-full border rounded px-3 py-2 bg-white"
+         required minlength="3" maxlength="30" pattern="^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$"
+         #nombre="ngModel" />
+  <div *ngIf="nombre.invalid && nombre.touched" class="text-red-600 text-sm">
+    <div *ngIf="nombre.errors?.['required']">El nombre es obligatorio.</div>
+    <div *ngIf="nombre.errors?.['minlength']">Debe tener al menos 3 caracteres.</div>
+    <div *ngIf="nombre.errors?.['maxlength']">Debe tener máximo 30 caracteres.</div>
+    <div *ngIf="nombre.errors?.['pattern']">Solo se permiten letras y espacios.</div>
+  </div>
+</div>
+
+<!-- Descripción -->
+<div class="mb-4">
+  <label class="block font-semibold mb-1">Descripción:</label>
+  <textarea [(ngModel)]="editableOlimpiada.descripcion_olimpiada" name="descripcion"
+            class="w-full border rounded px-3 py-2 bg-white"
+            required minlength="10" maxlength="250"
+            #descripcion="ngModel"></textarea>
+  <div *ngIf="descripcion.invalid && descripcion.touched" class="text-red-600 text-sm">
+    <div *ngIf="descripcion.errors?.['required']">La descripción es obligatoria.</div>
+    <div *ngIf="descripcion.errors?.['minlength']">Debe tener al menos 10 caracteres.</div>
+    <div *ngIf="descripcion.errors?.['maxlength']">Debe tener máximo 250 caracteres.</div>
+  </div>
+</div>
+
+
+      <div class="mb-4">
+        <label class="block font-semibold mb-1">Fecha Inicio:</label>
+        <input type="date" [(ngModel)]="editableOlimpiada.fecha_inicio" name="fechaInicio"
+               class="w-full border rounded px-3 py-2 bg-white" />
+      </div>
+
+      <div class="mb-4">
+        <label class="block font-semibold mb-1">Fecha Fin:</label>
+        <input type="date" [(ngModel)]="editableOlimpiada.fecha_final" name="fechaFinal"
+               class="w-full border rounded px-3 py-2 bg-white" />
+      </div>
+
+      <div *ngIf="errorMessage" class="text-red-600 font-medium mb-4">{{ errorMessage }}</div>
+
+      <div class="flex justify-end space-x-2">
+        <button type="button" (click)="closeEditModal()"
+          class="text-white px-4 py-2 rounded hover:opacity-90"
+          style="background-color: #FF351B;">Cancelar</button>
+
+        <button type="button" (click)="saveEdit()"
+          class="text-white px-4 py-2 rounded hover:opacity-90"
+          style="background-color: #2C2699;">Aceptar</button>
+      </div>
+    </form>
+  </div>
+</div>

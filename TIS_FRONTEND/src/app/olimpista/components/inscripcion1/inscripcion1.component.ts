@@ -44,16 +44,31 @@ export class Inscripcion1Component {
 
 
   validarDatos(): boolean {
-    const nombreRegex = /^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s]{1,255}$/;
+    const nombreRegex = /^[a-zA-ZÁÉÍÓÚáéíóúÑñ\s]{3,255}$/;
     const apellidoRegex = nombreRegex;
-    const ciRegex = /^\d+(-[A-Z]{1,5})?$/;
     const correoRegex = /^[\w\.-]+@(gmail|hotmail|outlook|yahoo)\.com$/;
-    const telefonoRegex = /^\d{8}$/;
+    const telefonoRegex = /^[67]\d{7}$/;
+
+    const ci = this.tutorData.ci;
+  const partes = ci.split('-');
+  const ciPrincipal = partes[0];
+  const ciExtra = partes[1] || '';
+
+  const ciRegexPrincipal = /^\d{7,10}$/;
+  let ciValido = ciRegexPrincipal.test(ciPrincipal);
+
+  if (ciValido && partes.length === 2) {
+    // Validar parte después del guion
+    const primerDigito = ciPrincipal.charAt(0);
+    const extraRegex = new RegExp(`^${primerDigito}[A-Z]$`);
+    ciValido = extraRegex.test(ciExtra);
+  } else if (partes.length > 2) {
+    ciValido = false;
+  }
 
     this.nombreInvalido = !nombreRegex.test(this.tutorData.nombres);
     this.apellidoInvalido = !apellidoRegex.test(this.tutorData.apellidos);
-    this.ciInvalido = !ciRegex.test(this.tutorData.ci);
-    this.correoInvalido = !correoRegex.test(this.tutorData.correo);
+    this.ciInvalido = !ciValido;    this.correoInvalido = !correoRegex.test(this.tutorData.correo);
     this.telefonoInvalido = !telefonoRegex.test(this.tutorData.telefono);
 
     return !(
@@ -95,53 +110,89 @@ export class Inscripcion1Component {
   // Para CI: se permite dígitos; si se ingresa un guion, sólo se permiten letras mayúsculas después.
   validarEntradaCI(event: KeyboardEvent): boolean {
     const tecla = event.key;
-    // Permitir dígitos siempre
-    if (/[0-9]/.test(tecla)) {
-      this.ciInvalido = false;
+    const valorActual = this.tutorData.ci;
+  
+    // Permitir borrar y navegación
+    if (['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(tecla)) {
       return true;
     }
-    // Permitir guion si aún no se ha ingresado y no es el primer carácter
-    if (tecla === '-') {
-      if (this.tutorData.ci.indexOf('-') === -1 && this.tutorData.ci.length > 0) {
-        this.ciInvalido = false;
-        return true;
-      } else {
-        this.ciInvalido = true;
-        event.preventDefault();
-        return false;
-      }
-    }
-    // Permitir letras solo si ya se ingresó el guion y máximo 5 letras
-    if (/[a-zA-Z]/.test(tecla)) {
-      if (this.tutorData.ci.indexOf('-') > -1) {
-        const partes = this.tutorData.ci.split('-');
-        const letras = partes[1] || '';
-        if (letras.length < 5 && tecla === tecla.toUpperCase()) {
-          this.ciInvalido = false;
+  
+    // Solo permitir dígitos antes del guion (máx 10)
+    if (!valorActual.includes('-')) {
+      if (/\d/.test(tecla)) {
+        if (valorActual.length < 10) {
           return true;
+        } else {
+          event.preventDefault();
+          return false;
         }
       }
+  
+      // Permitir guion solo si ya hay al menos 7 dígitos
+      if (tecla === '-' && valorActual.length >= 7 && valorActual.length <= 10) {
+        return true;
+      }
+  
+      event.preventDefault();
+      return false;
     }
-    this.ciInvalido = true;
+  
+    // Si ya se ingresó un guion, controlamos los 2 caracteres permitidos
+    const partes = valorActual.split('-');
+    const ciPrincipal = partes[0];
+    const ciExtra = partes[1] || '';
+  
+    if (ciExtra.length >= 2) {
+      event.preventDefault();
+      return false;
+    }
+  
+    // Primer carácter después del guion debe ser el mismo que el primer dígito
+    if (ciExtra.length === 0 && tecla === ciPrincipal.charAt(0)) {
+      return true;
+    }
+  
+    // Segundo carácter: letra mayúscula
+    if (ciExtra.length === 1 && /[A-Z]/.test(tecla)) {
+      return true;
+    }
+  
     event.preventDefault();
     return false;
   }
-
   // Para teléfono: solo dígitos y máximo 8 caracteres.
   validarEntradaTelefono(event: KeyboardEvent): boolean {
     const tecla = event.key;
-    if (/[0-9]/.test(tecla)) {
-      if (this.tutorData.telefono.length >= 8) {
-        this.telefonoInvalido = true;
-        event.preventDefault();
-        return false;
-      }
-      this.telefonoInvalido = false;
+    const valorActual = this.tutorData.telefono;
+  
+    // Permitir borrar y navegación
+    if (['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(tecla)) {
       return true;
     }
-    this.telefonoInvalido = true;
-    event.preventDefault();
-    return false;
+  
+    // Solo permitir dígitos
+    if (!/^\d$/.test(tecla)) {
+      this.telefonoInvalido = true;
+      event.preventDefault();
+      return false;
+    }
+  
+    // Validar primer dígito sea 6 o 7
+    if (valorActual.length === 0 && !/[67]/.test(tecla)) {
+      this.telefonoInvalido = true;
+      event.preventDefault();
+      return false;
+    }
+  
+    // Limitar a 8 caracteres
+    if (valorActual.length >= 8) {
+      this.telefonoInvalido = true;
+      event.preventDefault();
+      return false;
+    }
+  
+    this.telefonoInvalido = false;
+    return true;
   }
   seleccionarArchivo() {
     const input = document.getElementById('archivoExcel') as HTMLInputElement;

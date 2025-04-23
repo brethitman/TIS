@@ -6,6 +6,8 @@ import { Inscripcion1Component } from '../../components/inscripcion1/inscripcion
 import { Inscripcion2Component } from "../../components/inscripcion2/inscripcion2.component";
 import { Inscripcion3Component } from "../../components/inscripcion3/inscripcion3.component";
 import { InscripcionService } from '../../service/inscripcion.service';
+import { CategoriaService } from '../../service/categoria.service';
+import { NivelesCategoria } from '../../interfaces/categoria.interface';
 
 @Component({
   selector: 'app-inicio2',
@@ -21,7 +23,13 @@ export class Inicio2Component {
     areaId: null
   };
   categoriaId: number | null = null;
-  constructor(private inscripcionService: InscripcionService, private route: ActivatedRoute) {}
+  categoriaSeleccionada: NivelesCategoria | null = null;
+
+  constructor(
+    private inscripcionService: InscripcionService,
+    private categoriaService: CategoriaService, // 👈 Inyectamos el servicio
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
@@ -34,7 +42,7 @@ export class Inicio2Component {
     });
   }
 
-
+  
   siguientePaso() {
     if (this.pasoActual < 3) {
       this.pasoActual++;
