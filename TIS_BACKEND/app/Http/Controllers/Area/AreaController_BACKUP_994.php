@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Area\AreaCollection;
 use App\Http\Resources\Area\AreaResource;
 use App\Models\Area;
+use App\Models\Olimpiada;
 use Illuminate\Http\Request;
 
 class AreaController extends Controller
@@ -91,4 +92,42 @@ class AreaController extends Controller
             'message' => 'Área eliminada exitosamente'
         ]);
     }
+
+
+    //OJITOOOO PRUEBA
+
+    public function getByOlimpiada($olimpiadaId)
+{
+    // Validar que la olimpiada exista
+    Olimpiada::findOrFail($olimpiadaId);
+    
+    $areas = Area::where('id_olimpiada', $olimpiadaId)
+                ->with('nivelCategorias') // Carga las categorías relacionadas
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+    return new AreaCollection($areas);
+}
+
+public function storeInOlimpiada(Request $request, $olimpiadaId)
+{
+    // Validar que la olimpiada exista
+    Olimpiada::findOrFail($olimpiadaId);
+
+    $validated = $request->validate([
+        'nombre_area' => 'required|string|max:100|unique:areas',
+        'descripcion' => 'nullable|string|max:255',
+    ]);
+
+    $area = Area::create([
+        'nombre_area' => $validated['nombre_area'],
+        'descripcion' => $validated['descripcion'],
+        'id_olimpiada' => $olimpiadaId // Asociar automáticamente a la olimpiada
+    ]);
+
+    return response()->json([
+        'message' => 'Área creada exitosamente dentro de la olimpiada',
+        'data' => new AreaResource($area)
+    ], 201);
+}
 }

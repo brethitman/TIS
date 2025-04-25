@@ -12,8 +12,11 @@ import { Inscripcion1Component } from './olimpista/components/inscripcion1/inscr
 import { Inscripcion2Component } from './olimpista/components/inscripcion2/inscripcion2.component';
 import { Inscripcion3Component } from './olimpista/components/inscripcion3/inscripcion3.component';
 import { HomeAreaComponent } from './olimpista/pages/home-area/home-area.component';
+import { OlimpiadaPageComponent } from './olimpista/pages/olimpiada-page/olimpiada-page.component';
+import { VentanaInformacionOlimpiadaComponent } from './olimpista/pages/ventana-informacion-olimpiada/ventana-informacion-olimpiada.component';
 //import { DatosPostulanteComponent } from './olimpista/pages/datosPostulante-page.component.ts/datosPostulante-page.component';
-
+import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lista/visualizacion-lista.component';
+import { ListaComponent } from './olimpista/pages/lista/lista.component';
 
 
 export const routes: Routes = [
@@ -36,9 +39,15 @@ export const routes: Routes = [
         loadChildren: () => import("./olimpista/estudiantes-routing.module").then(m => m.EstudiantesRoutingModule),
       },
       {
+        path: 'Olimpiadas',
+        component: OlimpiadaPageComponent,
+      },
+
+      /*{
         path: 'areas',
         component: AreasComponent,
-      },
+      },*/
+
     ]
   },
   // Rutas públicas
@@ -46,10 +55,17 @@ export const routes: Routes = [
     path: 'inicio/waba',
     component: Inicio1Component
   },
+
   {
     path: 'inicio/look',
+    component: OlimpiadaPageComponent
+  },
+
+  {
+    path: 'inicio/Olimpiada/Areas',
     component: HomeAreaComponent
   },
+
   {
     path: 'inicio/dodog',
     component: Inicio3Component
@@ -69,10 +85,30 @@ export const routes: Routes = [
 
   },
   {
+    path: 'admin/olimpiadas/:olimpiadaId/areas',
+    component: AreasComponent,
+
+  },
+  {
     path: 'inicio/OlimpistaForm',
     component: OlimpistaPageComponent
   },
   { path: 'inicio2', component: Inicio2Component },
+
+  { 
+    path: 'ventana-informacion-olimpiada/:id', 
+    component: VentanaInformacionOlimpiadaComponent 
+  },
+  
+  {
+    path: 'inicio/Olimpiada/Recomendaciones',
+    component: VisualizacionListaComponent,
+  },
+  {
+    path: 'inicio/Olimpiada/Recomendaciones/Visualizacion',
+    component: ListaComponent,
+  },
+  
   
   /*
   {

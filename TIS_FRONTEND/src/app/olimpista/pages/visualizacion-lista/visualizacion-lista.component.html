@@ -1,0 +1,44 @@
+<div>
+  <section class="w-full bg-gradient-to-r from-red-600 to-purple-700 py-3 px-4 animate-gradient">
+    <h1 class="text-white text-3xl font-bold ">INCRIPCION A UN GRUPO DE ESTUDIANTES</h1>
+  </section>
+  <div>
+    <h2> Recomendaciones </h2>
+    <h3>
+      lista de recomendaciones
+      1.-
+      2.-
+      3.-
+      4.-
+      5.-
+    </h3>
+    <h4> Formato de excel para descargar</h4>
+    <button
+      class="bg-green-700 text-white px-4 py-2 rounded flex items-center justify-center h-10 shadow-md hover:bg-green-800 transition">lista
+      con un tutor</button>
+    <button type="button"
+      class="bg-green-700 text-white px-4 py-2 rounded flex items-center justify-center h-10 shadow-md hover:bg-green-800 transition">lista
+      con varios tutores</button>
+    <h3>SUbir archivo excel</h3>
+    <!-- Botón Subir Excel -->
+    <div class="flex items-center mb-5">
+      <input type="file" id="archivoExcel" (change)="archivoElegido($event)" style="display: none;" />
+      <button type="button"
+        class="bg-green-700 text-white px-4 py-2 rounded flex items-center justify-center h-10 shadow-md hover:bg-green-800 transition"
+        (click)="seleccionarArchivo()">
+        <i class="fas fa-file-excel mr-2"></i> Subir Excel
+      </button>
+      <!-- Modal de confirmación -->
+      <div *ngIf="mostrarModal"
+        class="fixed inset-0  flex items-center justify-center" style="background-color: rgba(75, 85, 99, 0.3)">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-96">
+          <p>¿Estás segura de querer subir este archivo?</p>
+          <button class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 transition-colors mr-2"
+            (click)="subirArchivo()">Sí, subir</button>
+          <button class="bg-green-500 text-white px-4 py-2 rounded shadow-md hover:bg-green-600 transition-colors mr-2"
+            (click)="cerrarModal()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
