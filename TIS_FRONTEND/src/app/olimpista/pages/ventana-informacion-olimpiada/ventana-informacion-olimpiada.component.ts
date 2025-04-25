@@ -39,6 +39,7 @@ export class VentanaInformacionOlimpiadaComponent implements OnInit {
         .subscribe({
           next: (data: Olimpiada) => {
             console.log('Payload Olimpiada:', data);
+            console.log('Olimpiadas', this.olimpiada?.descripcion_olimpiada)
             this.olimpiada = data;
             this.loading = false;
           },
