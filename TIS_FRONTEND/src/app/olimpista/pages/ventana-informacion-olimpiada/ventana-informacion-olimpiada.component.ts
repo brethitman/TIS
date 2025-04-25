@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { FormasInscripcionComponent } from '../../components/formas-inscripcion/formas-inscripcion.component';
 
 @Component({
   selector: 'app-ventana-informacion-olimpiada',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormasInscripcionComponent],
   templateUrl: './ventana-informacion-olimpiada.component.html',
   //styleUrls: ['./ventana-informacion-olimpiada.component.css']
 })

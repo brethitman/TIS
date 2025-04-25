@@ -15,7 +15,8 @@ import { HomeAreaComponent } from './olimpista/pages/home-area/home-area.compone
 import { OlimpiadaPageComponent } from './olimpista/pages/olimpiada-page/olimpiada-page.component';
 import { VentanaInformacionOlimpiadaComponent } from './olimpista/pages/ventana-informacion-olimpiada/ventana-informacion-olimpiada.component';
 //import { DatosPostulanteComponent } from './olimpista/pages/datosPostulante-page.component.ts/datosPostulante-page.component';
-
+import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lista/visualizacion-lista.component';
+import { ListaComponent } from './olimpista/pages/lista/lista.component';
 
 
 export const routes: Routes = [
@@ -60,10 +61,10 @@ export const routes: Routes = [
     component: OlimpiadaPageComponent
   },
 
-  /*{
-    path: 'inicio/look',
+  {
+    path: 'inicio/Olimpiada/Areas',
     component: HomeAreaComponent
-  },*/
+  },
 
   {
     path: 'inicio/dodog',
@@ -97,6 +98,15 @@ export const routes: Routes = [
   { 
     path: 'ventana-informacion-olimpiada/:id', 
     component: VentanaInformacionOlimpiadaComponent 
+  },
+  
+  {
+    path: 'inicio/Olimpiada/Recomendaciones',
+    component: VisualizacionListaComponent,
+  },
+  {
+    path: 'inicio/Olimpiada/Recomendaciones/Visualizacion',
+    component: ListaComponent,
   },
   
   
