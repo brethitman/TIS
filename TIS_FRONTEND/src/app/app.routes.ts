@@ -9,90 +9,103 @@ import { Inicio2Component } from './olimpista/pages/inicio2/inicio2.component';
 import { Inicio3Component } from './olimpista/pages/inicio3/inicio3.component';
 import { OlimpistaPageComponent } from './olimpista/pages/olimpista-page/olimpista-page.component';
 import { Inicio4Component } from './olimpista/pages/inicio4/inicio4.component';
-/*
-import { Inscripcion1Component } from './olimpista/components/inscripcion1/inscripcion1.component';
-import { Inscripcion2Component } from './olimpista/components/inscripcion2/inscripcion2.component';
-import { Inscripcion3Component } from './olimpista/components/inscripcion3/inscripcion3.component';
-*/
+
+// Importa tus nuevos componentes de inscripción
+import { Iscripcion1Component } from './olimpista/components/iscripcion1/iscripcion1.component';
+import { Iscripcion2Component } from './olimpista/components/iscripcion2/iscripcion2.component';
+import { Iscripcion3Component } from './olimpista/components/iscripcion3/iscripcion3.component';
 
 export const routes: Routes = [
-  {
-    path: 'auth',
-    component: AuthLayoutComponent,
-    children: [
+  {
+    path: 'auth',
+    component: AuthLayoutComponent,
+    children: [
+      {
+        path: '',
+        loadChildren: () => import("./auth/auth-routing.module").then(m => m.AuthRoutingModule),
+      }
+    ]
+  },
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    children: [
+      {
+        path: 'products', // Revisa si 'products' es el nombre correcto para esta sección en tu app
+        loadChildren: () => import("./olimpista/estudiantes-routing.module").then(m => m.EstudiantesRoutingModule),
+      },
+      {
+        path: 'areas',
+        component: AreasComponent,
+      },
+      // Si tienes más rutas de admin, añádelas aquí
       {
-        path: '',
-        loadChildren: () => import("./auth/auth-routing.module").then(m => m.AuthRoutingModule),
+        path: '', // Ruta por defecto para /admin
+        redirectTo: 'products', // O a donde quieras que redirija por defecto
+        pathMatch: 'full'
       }
-    ]
-  },
-  {
-    path: 'admin',
-    component: AdminLayoutComponent,
-    children: [
-      {
-        path: 'products',
-        loadChildren: () => import("./olimpista/estudiantes-routing.module").then(m => m.EstudiantesRoutingModule),
-      },
-      {
-        path: 'areas',
-        component: AreasComponent,
-      },
-    ]
-  },
-  // Rutas públicas
-  {
-    path: 'inicio/waba',
-    component: Inicio1Component
-  },
-  {
-    path: 'inicio/look',
-    component: Inicio2Component
-  },
-  {
-    path: 'inicio/dodog',
-    component: Inicio3Component
-  },
-  {
-    path: 'inicio/dodog',
-    component: Inicio3Component
-  },
-  {
-    path: 'inicio/mmmm',
-    component: Inicio4Component
-  },
+     ]
+   },
 
-
-  /*
+  // --- Rutas de Inscripción ---
   {
     path: 'inscripcion/paso1',
-    component: Inscripcion1Component
+    component: Iscripcion1Component
   },
   {
     path: 'inscripcion/paso2',
-    component: Inscripcion2Component
-
+    component: Iscripcion2Component
   },
   {
     path: 'inscripcion/paso3',
-    component: Inscripcion3Component
-
+    component: Iscripcion3Component
   },
-*/
-
+   // Opcional: Redirigir '/inscripcion' al paso 1
   {
-    path: 'inicio/OlimpistaForm',
-    component: OlimpistaPageComponent
-  },
-  // Ruta por defecto
-  {
-    path: '',
-    redirectTo: 'inicio/waba',
+    path: 'inscripcion',
+    redirectTo: 'inscripcion/paso1',
     pathMatch: 'full'
   },
-  // Ruta de respaldo para cualquier otra ruta no encontrada
-  {
-    path: '**',
-    redirectTo: 'inicio/waba'
-  }
+  // --- Fin Rutas de Inscripción ---
+
+
+  // Rutas públicas (las que ya tenías)
+  {
+    path: 'inicio/waba',
+    component: Inicio1Component
+  },
+  {
+    path: 'inicio/look',
+    component: Inicio2Component
+  },
+  {
+    path: 'inicio/dodog', // Esta ruta está duplicada en tu configuración original
+    component: Inicio3Component
+  },
+  // {  // Removida la ruta duplicada
+  //     path: 'inicio/dodog',
+  //     component: Inicio3Component
+  // },
+  {
+    path: 'inicio/mmmm',
+    component: Inicio4Component
+  },
+  {
+    path: 'inicio/OlimpistaForm', // Revisa si este es el nombre final para esta ruta
+    component: OlimpistaPageComponent
+  },
+
+
+  // Ruta por defecto
+  {
+    path: '',
+    redirectTo: 'inicio/waba', // O podrías cambiarlo a 'inscripcion/paso1' si quieres que el inicio sea el formulario
+    pathMatch: 'full'
+  },
+
+  // Ruta de respaldo para cualquier otra ruta no encontrada
+  {
+    path: '**',
+    redirectTo: 'inicio/waba' // O podrías redirigir a una página 404 si tienes una
+  }
 ];
