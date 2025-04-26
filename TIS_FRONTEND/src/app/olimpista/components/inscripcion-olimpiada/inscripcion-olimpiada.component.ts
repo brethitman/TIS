@@ -1,4 +1,4 @@
-import { Component,Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OlimpiadaService } from '../../service/olimpiada.service';
@@ -35,39 +35,97 @@ export class InscripcionOlimpiadaComponent {
     duplicado: ''
   };
 
-  constructor(private olimpiadaService: OlimpiadaService) {}
-  mensajeExito: string = '';
-  mensajeError: string = '';
+  // Propiedades para control de fechas
+  minDate: string;
+  maxStartDate: string;
+  minEndDate: string | null = null;
+  maxEndDate: string | null = null;
+
+  // Propiedades para el modal
   mostrarModal: boolean = false;
-modalTipo: 'exito' | 'error' = 'exito';
-modalMensaje: string = '';
+  modalTipo: 'exito' | 'error' = 'exito';
+  modalMensaje: string = '';
+
+  fechaFinalHabilitada: boolean = false;
+
+
+  constructor(private olimpiadaService: OlimpiadaService) {
+    const today = new Date();
+    const nextYear = new Date();
+    nextYear.setFullYear(today.getFullYear() + 1);
+    
+    this.minDate = this.formatDate(today);
+    this.maxStartDate = this.formatDate(nextYear);
+    
+    // Inicializa las fechas con valores válidos
+    this.olimpiada.fecha_inicio = today;
+    this.olimpiada.fecha_final = new Date(today.getTime() + 86400000); // +1 día
+    this.fechaFinalHabilitada = false; // Inicialmente deshabilitado
+
+  }
+
+  // Método auxiliar para formatear fechas
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  // Método para manejar cambios en la fecha de inicio
+  // Modifica el método onStartDateChange para recibir directamente el valor
+  onStartDateChange(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const dateString = inputElement.value;
+    
+    // Solo habilitar fecha final si se seleccionó una fecha válida
+    if (dateString) {
+      this.fechaFinalHabilitada = true;
+      
+      const selectedDate = new Date(dateString);
+      const nextDay = new Date(selectedDate);
+      nextDay.setDate(selectedDate.getDate() + 1);
+      
+      const oneYearLater = new Date(selectedDate);
+      oneYearLater.setFullYear(selectedDate.getFullYear() + 1);
+      
+      this.minEndDate = this.formatDate(nextDay);
+      this.maxEndDate = this.formatDate(oneYearLater);
+      
+      if (new Date(this.olimpiada.fecha_final) < nextDay) {
+        this.olimpiada.fecha_final = nextDay;
+      }
+    } else {
+      this.fechaFinalHabilitada = false;
+    }
+    
+    this.validateFechas();
+  }
 
   // Validar el nombre de la olimpiada
   validateNombreOlimpiada(): boolean {
     this.errors.nombreOlimpiada = '';
+
     
-    // Validar que no esté vacío
     if (!this.olimpiada.nombre_olimpiada || this.olimpiada.nombre_olimpiada.trim() === '') {
       this.errors.nombreOlimpiada = 'El nombre de la olimpiada es obligatorio';
       return false;
     }
+
     
-    // Validar longitud mínima
     if (this.olimpiada.nombre_olimpiada.length < 3) {
       this.errors.nombreOlimpiada = 'El nombre debe tener al menos 3 caracteres';
       return false;
     }
     
-    // Validar longitud máxima
-    if (this.olimpiada.nombre_olimpiada.length > 100) {
-      this.errors.nombreOlimpiada = 'El nombre debe tener máximo 100 caracteres';
+    if (this.olimpiada.nombre_olimpiada.length > 30) {
+      this.errors.nombreOlimpiada = 'El nombre debe tener máximo 30 caracteres';
       return false;
     }
     
-    // Validar que no contenga caracteres especiales
-    const especialesRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
-    if (especialesRegex.test(this.olimpiada.nombre_olimpiada)) {
-      this.errors.nombreOlimpiada = 'El nombre no debe contener caracteres especiales';
+    const caracteresPermitidos = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s!¡"']+$/;
+    if (!caracteresPermitidos.test(this.olimpiada.nombre_olimpiada)) {
+      this.errors.nombreOlimpiada = 'El nombre solo puede contener letras, números, espacios y los signos ! ¡ " \'';
       return false;
     }
     
@@ -77,20 +135,20 @@ modalMensaje: string = '';
   // Validar la descripción
   validateDescripcion(): boolean {
     this.errors.descripcion = '';
+
     
-    // Validar que no esté vacío
     if (!this.olimpiada.descripcion_olimpiada || this.olimpiada.descripcion_olimpiada.trim() === '') {
       this.errors.descripcion = 'La descripción es obligatoria';
       return false;
     }
     
-    // Validar longitud mínima
+
     if (this.olimpiada.descripcion_olimpiada.length < 10) {
       this.errors.descripcion = 'La descripción debe tener al menos 10 caracteres';
       return false;
     }
+
     
-    // Validar longitud máxima
     if (this.olimpiada.descripcion_olimpiada.length > 500) {
       this.errors.descripcion = 'La descripción debe tener máximo 500 caracteres';
       return false;
@@ -116,12 +174,11 @@ modalMensaje: string = '';
       return false;
     }
     
-    // Validar que no sea una fecha pasada (opcional)
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
+    const maxAllowedEndDate = new Date(inicio);
+    maxAllowedEndDate.setFullYear(inicio.getFullYear() + 1);
     
-    if (inicio < hoy) {
-      this.errors.fechas = 'La fecha de inicio no puede ser en el pasado';
+    if (final > maxAllowedEndDate) {
+      this.errors.fechas = 'La fecha final no puede ser más de un año después de la fecha de inicio';
       return false;
     }
     
@@ -200,19 +257,31 @@ modalMensaje: string = '';
     this.modalMensaje = '';
   }
   
-  
-
   // Método para resetear el formulario
   resetForm() {
+    const today = new Date();
+    const tomorrow = new Date(today.getTime() + 86400000);
+    
     this.olimpiada = {
       id: 0,
       nombre_olimpiada: '',
       descripcion_olimpiada: '',
-      fecha_inicio: new Date(),
-      fecha_final: new Date(),
+      fecha_inicio: today,
+      fecha_final: tomorrow,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+    
+    // Resetear las fechas mínimas/máximas
+    const nextYear = new Date();
+    nextYear.setFullYear(today.getFullYear() + 1);
+    
+    this.minDate = this.formatDate(today);
+    this.maxStartDate = this.formatDate(nextYear);
+    this.minEndDate = this.formatDate(tomorrow);
+    this.maxEndDate = this.formatDate(nextYear);
+
+    this.fechaFinalHabilitada = false;
     
     // Limpiar los errores
     this.errors = {
@@ -222,5 +291,5 @@ modalMensaje: string = '';
       duplicado: ''
     };
   }
-  
+
 }

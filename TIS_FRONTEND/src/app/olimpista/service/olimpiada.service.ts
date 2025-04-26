@@ -28,7 +28,7 @@ export class OlimpiadaService {
 
   // Actualizar una olimpiada
   updateOlimpiada(id: number, data: Partial<Olimpiada>) {
-    return this.http.put(`http://localhost:8000/api/olimpiadas/${id}`, data); 
+    return this.http.put(`${this.apiUrl}/${id}`, data); 
   }
 
 
@@ -49,5 +49,9 @@ export class OlimpiadaService {
 
   deleteOlimpiada(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  obtenerOlimpiadaPorId(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 }

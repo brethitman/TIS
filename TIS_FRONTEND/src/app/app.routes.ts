@@ -55,15 +55,15 @@ export const routes: Routes = [
     component: Inicio1Component
   },
 
+  /*{
+    path: '/admin/areas',
+    component: OlimpiadaPageComponent
+  },*/
+
   {
     path: 'inicio/look',
-    component: OlimpiadaPageComponent
-  },
-
-  /*{
-    path: 'inicio/look',
     component: HomeAreaComponent
-  },*/
+  },
 
   {
     path: 'inicio/dodog',
