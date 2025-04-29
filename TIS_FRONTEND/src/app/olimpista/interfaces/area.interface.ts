@@ -1,5 +1,4 @@
 
-
 export interface Area {
   id:           number;
   id_olimpiada: number;
@@ -18,7 +17,9 @@ export interface Nivele {
   descripcion:  string;
   fecha_examen: Date;
   costo:        string;
-  habilitacion: boolean;
+  habilitacion: number;
+  gradoIniCat:  string;
+  gradoFinCat:  string;
   created_at:   Date;
   updated_at:   Date;
 }
@@ -32,7 +33,3 @@ export interface Olimpiada {
   created_at:            Date;
   updated_at:            Date;
 }
-
-
-
-

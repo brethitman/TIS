@@ -10,11 +10,12 @@ use App\Http\Controllers\Tutor\TutorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ComprobantePago\ComprobantePagoController;
+use App\Http\Controllers\Curso\CursoController;
+use App\Http\Controllers\CursoNivel\CursoNivelController;
 use App\Http\Controllers\Olimpiada\OlimpiadaController;
 use App\Http\Resources\ComprobantePago\ComprobantePagoCollection;
 use App\Models\ComprobantePago;
-
-
+use App\Models\CursoNivel;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -30,6 +31,8 @@ Route::post('/area',        [ AreaController::class, 'store'     ]);
 Route::put('/area/{id}',    [ AreaController::class, 'update'    ]); // Actualizar un área existente
 Route::delete('/area/{id}', [ AreaController::class, 'destroy'   ]); // Eliminar un área
 Route::get('/areas/olimpiada/{id}', [AreaController::class, 'getByOlimpiadaId']);
+Route::get('/area/{id}/niveles', [AreaController::class, 'nivelesPorArea']);
+Route::get('/areas', [AreaController::class, 'indexV2']);
 
 
 // tutor ENDPOINTS--da bien ---GET POST da bien
@@ -57,16 +60,18 @@ Route::post('/comprobante',        [ ComprobantePagoController::class, 'store'  
 
 // inscripcion ENDPOINTS   GET POST da bien
 //tiene interface
-Route::get('/inscripcion',         [ InscripcionController::class, 'index'     ]);
-Route::get('/inscripcion/{id}',    [ InscripcionController::class, 'show'      ]);
-Route::post('/inscripcion',        [ InscripcionController::class, 'store'     ]);
+Route::get('/inscripcion', [ InscripcionController::class, 'index' ]);
+Route::get('/inscripcion/{id}', [ InscripcionController::class, 'show' ]);
+Route::post('/inscripcion', [ InscripcionController::class, 'store' ]);
+
+Route::get('/olimpiadas/{id}/areas', [AreaController::class, 'getAreasByOlimpiada']);
 
 
 
 
 // categoria ENDPOINTS  ---- GET POST da bien
 //tiene interface
-Route::apiResource('nivelCategoria', NivelCategoriaController::class);
+Route::apiResource('    ', NivelCategoriaController::class);
 Route::get('/nivelCategoria',         [ NivelCategoriaController::class, 'index'     ]);
 Route::get('/nivelCategoria/{id}',    [ NivelCategoriaController::class, 'show'      ]);
 Route::post('/nivelCategoria',        [ NivelCategoriaController::class, 'store'     ]);
@@ -94,3 +99,17 @@ Route::get('/olimpiada',         [ OlimpiadaController::class, 'index'     ]);
 Route::get('/olimpiada/{id}',    [ OlimpiadaController::class, 'show'      ]);
 Route::post('/olimpiada',        [ OlimpiadaController::class, 'store'     ]);
 
+
+
+/// curso
+
+Route::get('/curso',         [ CursoController::class, 'index'     ]);
+Route::get('/curso/{id}',    [ CursoController::class, 'show'      ]);
+Route::post('/curso',        [ CursoController::class, 'store'     ]);
+
+
+///cursoNivel
+
+Route::get('/   ',         [ CursoNivelController::class, 'index'     ]);
+Route::get('/cursoNivel/{id}',    [ CursoNivelController::class, 'show'      ]);
+Route::post('/cursoNivel',        [ CursoNivelController::class, 'store'     ]);

@@ -1,4 +1,6 @@
 
+
+
 export interface Olimpiada {
   id:                    number;
   nombre_olimpiada:      string;
@@ -15,6 +17,8 @@ export interface Area {
   id_olimpiada: number;
   nombre_area:  string;
   descripcion:  string;
+  gradoIniAr:   string;
+  gradoFinAr:   string;
   created_at:   Date;
   updated_at:   Date;
 }

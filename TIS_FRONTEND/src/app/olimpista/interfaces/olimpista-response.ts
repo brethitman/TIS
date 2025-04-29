@@ -1,5 +1,8 @@
+
+
 export interface Olimpista {
   id:               number;
+  id_inscripcion:   number;
   nombres:          string;
   apellidos:        string;
   ci:               string;
@@ -13,4 +16,3 @@ export interface Olimpista {
   createdAt:        Date;
   updatedAt:        Date;
 }
-

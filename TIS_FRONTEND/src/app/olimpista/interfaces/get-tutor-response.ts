@@ -1,5 +1,6 @@
 import { Tutore } from "./tutor.interface";
-export interface GetTutoresResponse {
+
+export interface GetTutorResponse {
   tutores: Tutore[];
   links:   Links;
   meta:    Meta;
@@ -9,7 +10,7 @@ export interface Links {
   first: string;
   last:  null;
   prev:  null;
-  next:  null;
+  next:  string;
 }
 
 export interface Meta {
@@ -19,4 +20,3 @@ export interface Meta {
   per_page:     number;
   to:           number;
 }
-

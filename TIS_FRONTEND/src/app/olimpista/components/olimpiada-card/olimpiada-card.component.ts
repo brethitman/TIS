@@ -1,68 +1,32 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal, Input } from '@angular/core';
-import { GetAreaService } from '../../service/get.area.service.ts.service';
-import { Area } from '../../interfaces/area.interface';
-import { Olimpiada } from '../../interfaces/olimpiada-interfase';
-import { AreaListComponent } from "../../components/area-list/area-list.component";
+import { CommonModule, DatePipe } from '@angular/common'; // Importa DatePipe
+import { Component, inject, Input } from '@angular/core'; // No se necesita OnInit si no hay loadArea
+import { Olimpiada } from '../../interfaces/olimpiada-interfase'; // Asegúrate de que esta interfaz es correcta
 
+import { Router } from '@angular/router'; // <-- Importar Router
 
 @Component({
   selector: 'app-olimpiada-card',
   standalone: true,
-  imports: [CommonModule, AreaListComponent],
+  imports: [CommonModule, DatePipe], // Añade DatePipe para usar el pipe 'date' en el template
   templateUrl: './olimpiada-card.component.html',
+
 })
-export class OlimpiadaCardComponent  {
-  @Input({ required: true }) Olimpiada!: Olimpiada; // Asegúrate de que Olimpiada tiene el tipo Olimpiada
+export class OlimpiadaCardComponent { // Ya no implementa OnInit
 
+  // Recibe el objeto Olimpiada como entrada (Input)
+  @Input({ required: true }) Olimpiada!: Olimpiada;
 
+  // Inyecta el servicio Router para la navegación
+  private router = inject(Router);
 
-
-  private GetAreaService = inject(GetAreaService);
-  public area = signal<Area[]>([]);  // Corregido el tipo
-
-  ngOnInit(): void {
-
-   this.loadArea();
+  // Este método se llama al hacer clic en el botón "Entrar"
+  // Navega a la ruta que mostrará las áreas de la olimpiada
+  entrar() {
+    // La ruta incluye el ID de la olimpiada para que el componente de destino lo use
+    this.router.navigate([`inicio/look/wach/${this.Olimpiada.id}`]);
   }
 
-  /*
-  loadArea(): void {
-    this.GetAreaService.findAll()
-      .subscribe(area => {
-        this.area.set(area);
-      });
-  }
-*/
-
-// Cambiar el método loadArea
-loadArea(): void {
-  this.GetAreaService.findAll().subscribe(todasAreas => {
-    // Filtrar áreas por coincidencia de id_olimpiada
-    const areasFiltradas = todasAreas.filter(area =>
-      area.id_olimpiada === this.Olimpiada.id
-    );
-    this.area.set(areasFiltradas);
-  });
-}
-
-  handleAreaUpdated(updatedArea: Area) {
-    this.GetAreaService.updateArea(updatedArea).subscribe({
-      next: (areaActualizada) => {
-        console.log('Área actualizada:', areaActualizada);
-        // Forzar recarga de datos desde el servidor
-        this.loadArea();
-      },
-      error: (err) => {
-        console.error('Error en la solicitud:', err);
-        if (err.status === 400) {
-          alert('Error en los datos: ' + JSON.stringify(err.error.errors));
-        }
-      }
-    });
-  }
-
-
-
-
+  // El método handleAreaUpdated (y la carga de áreas) no son necesarios aquí
+  // ya que la vista de áreas se carga en otro componente.
+  // Si handleAreaUpdated realiza otra función, puedes dejarlo.
 }

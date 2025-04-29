@@ -1,10 +1,14 @@
+
+//////////////////
+
+
 export interface NivelesCategoria {
   id:           number;
   nombre_nivel: string;
   descripcion:  string;
   fecha_examen: Date;
   costo:        string;
-  habilitacion: boolean;
+  habilitacion: number;  ///cambiar a futuro a boolean
   area:         Area;
   createdAt:    Date;
   updatedAt:    Date;
@@ -18,5 +22,3 @@ export interface Area {
   createdAt:    Date;
   updatedAt:    Date;
 }
-
-

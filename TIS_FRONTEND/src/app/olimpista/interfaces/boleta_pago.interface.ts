@@ -12,7 +12,11 @@ export interface BoletasPago {
 export interface Inscripcion {
   id:                number;
   fecha_inscripcion: Date;
-  estado:            string;
+  estado:            Estado;
   createdAt:         Date;
   updatedAt:         Date;
+}
+
+export enum Estado {
+  Pendiente = "Pendiente",
 }

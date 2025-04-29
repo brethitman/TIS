@@ -1,9 +1,12 @@
-import { Inscripcione } from "./inscripcion.interface";
+//import { Inscripcione } from "./inscripcion.interface";
+
+/*
 export interface GetInscripcionResponse {
   inscripciones: Inscripcione[];
   links:         Links;
   meta:          Meta;
 }
+
 
 export interface Links {
   first: string;
@@ -20,4 +23,4 @@ export interface Meta {
   to:           number;
 }
 
-
+*/

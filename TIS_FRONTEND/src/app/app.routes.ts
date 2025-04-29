@@ -14,6 +14,8 @@ import { Inicio4Component } from './olimpista/pages/inicio4/inicio4.component';
 import { Iscripcion1Component } from './olimpista/components/iscripcion1/iscripcion1.component';
 import { Iscripcion2Component } from './olimpista/components/iscripcion2/iscripcion2.component';
 import { Iscripcion3Component } from './olimpista/components/iscripcion3/iscripcion3.component';
+import { VistaAreasCategoriasComponent } from './olimpista/components/vista-areas-categorias/vista-areas-categorias.component';
+
 
 export const routes: Routes = [
   {
@@ -95,6 +97,12 @@ export const routes: Routes = [
     component: OlimpistaPageComponent
   },
 
+{
+  path: 'inicio/look/wach/:id',
+  component: VistaAreasCategoriasComponent
+  // Puedes añadir guards o resolvers si son necesarios
+},
+
 
   // Ruta por defecto
   {
@@ -106,6 +114,7 @@ export const routes: Routes = [
   // Ruta de respaldo para cualquier otra ruta no encontrada
   {
     path: '**',
-    redirectTo: 'inicio/waba' // O podrías redirigir a una página 404 si tienes una
-  }
+    redirectTo: 'inicio/waba'
+  },
+
 ];

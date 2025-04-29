@@ -1,0 +1,31 @@
+<div class="p-6 container mx-auto">
+
+
+  <h1 class="text-2xl font-bold mb-6 text-blue-800">Áreas y Categorías de la Olimpiada</h1>
+
+  <div *ngIf="cargando" class="text-center text-blue-600">Cargando áreas y categorías...</div>
+  <div *ngIf="errorCarga" class="text-center text-red-600">{{ errorCarga }}</div>
+
+  <div *ngIf="!cargando && !errorCarga && areas.length > 0" class="space-y-8">
+    <div *ngFor="let area of areas" class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+      <h2 class="text-2xl font-semibold text-gray-800 mb-3">{{ area.nombre_area }}</h2>
+      <p class="text-gray-600 mb-4">{{ area.descripcion }}</p>
+
+      <h3 *ngIf="area.nivel_categorias && area.nivel_categorias.length > 0" class="text-xl font-medium text-blue-700 mt-4 mb-3">Niveles / Categorías:</h3>
+
+      <div *ngIf="area.nivel_categorias && area.nivel_categorias.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div *ngFor="let nivel of area.nivel_categorias" class="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-100">
+          <h4 class="text-lg font-semibold text-gray-700">{{ nivel.nombre_nivel }}</h4>
+          <p *ngIf="nivel.descripcion" class="text-sm text-gray-500 italic">{{ nivel.descripcion }}</p>
+          <p class="text-md text-gray-700 mt-2">Fecha del Examen: <span class="font-medium">{{ nivel.fecha_examen | date:'longDate' }}</span></p>
+          <p class="text-md text-gray-700">Costo: <span class="font-medium">{{ nivel.costo | currency:'USD':'symbol':'1.2-2' }}</span></p>
+          <p class="text-md text-gray-700">Habilitado: <span [ngClass]="{'text-green-600': nivel.habilitacion, 'text-red-600': !nivel.habilitacion}">{{ nivel.habilitacion ? 'Sí' : 'No' }}</span></p>
+        </div>
+      </div>
+       <div *ngIf="!area.nivel_categorias || area.nivel_categorias.length === 0" class="text-gray-500 italic">No hay niveles/categorías definidos para esta área.</div>
+    </div>
+  </div>
+
+  <div *ngIf="!cargando && !errorCarga && areas.length === 0" class="text-center text-gray-600">No se encontraron áreas para esta olimpiada.</div>
+
+</div>
