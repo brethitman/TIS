@@ -99,6 +99,7 @@ Route::get('/olimpiada',         [ OlimpiadaController::class, 'index'     ]);
 Route::get('/olimpiada/{id}',    [ OlimpiadaController::class, 'show'      ]);
 Route::post('/olimpiada',        [ OlimpiadaController::class, 'store'     ]);
 Route::delete('/olimpiada/{id}', [ OlimpiadaController::class, 'destroy'   ]);
+Route::put('/olimpiada/{id}',    [ OlimpiadaController::class, 'update'    ]);
 
 
 

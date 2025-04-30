@@ -31,12 +31,18 @@ export class OlimpiadaCardComponent implements OnInit {
   modalMensaje = '';
   eliminando = false;
 
+  mostrarOpciones = false;
+
   constructor(
     private router: Router,
     private olimpiadaService: OlimpiadaService
   ) {}
 
   ngOnInit(): void {}
+
+  toggleOpciones(): void {
+    this.mostrarOpciones = !this.mostrarOpciones;
+  }
 
   confirmarEliminacion(): void {
     this.eliminando = true;
