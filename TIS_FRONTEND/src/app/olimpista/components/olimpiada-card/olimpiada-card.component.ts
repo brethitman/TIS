@@ -142,4 +142,4 @@ export class OlimpiadaCardComponent implements OnInit {
       });
     }
   }
-}
+} //OJO
