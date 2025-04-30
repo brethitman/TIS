@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { BotonExelComponent } from '../../components/boton-exel/boton-exel.component';
 
 @Component({
   selector: 'app-visualizacion-lista',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,BotonExelComponent],
   templateUrl: './visualizacion-lista.component.html',
 })
 export class VisualizacionListaComponent {
@@ -23,7 +24,7 @@ export class VisualizacionListaComponent {
     this.mostrarModal = false;
     this.archivoSeleccionado = null;
   }
-  seleccionarArchivo() {
+  /*seleccionarArchivo() {
     const input = document.getElementById('archivoExcel') as HTMLInputElement;
     input.click();
   }
@@ -44,7 +45,6 @@ export class VisualizacionListaComponent {
         next: (response) => {
           console.log('Respuesta del servidor:', response);
           alert('Archivo subido exitosamente');
-          this.router.navigate(['inicio/Olimpiada/Recomendaciones/Visualizacion']);
         },
         error: (error) => {
           console.error('Error al subir el archivo', error);
@@ -53,5 +53,5 @@ export class VisualizacionListaComponent {
       });
 
     this.cerrarModal();
-  }
+  }*/
 }
