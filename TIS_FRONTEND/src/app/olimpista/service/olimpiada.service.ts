@@ -28,8 +28,21 @@ export class OlimpiadaService {
   }
 
   // Actualizar una olimpiada
-  updateOlimpiada(id: number, data: Partial<Olimpiada>) {
-    return this.http.put(`${this.apiUrl}/${id}`, data); 
+  updateOlimpiada(id: number, data: Partial<Olimpiada> | any): Observable<any> {
+    // Convertir fechas Date a strings si es necesario
+    const payload = {
+      ...data,
+      fecha_inicio: data.fecha_inicio instanceof Date ? this.formatDateToBackend(data.fecha_inicio) : data.fecha_inicio,
+      fecha_final: data.fecha_final instanceof Date ? this.formatDateToBackend(data.fecha_final) : data.fecha_final
+    };
+    return this.http.put(`${this.apiUrl}/${id}`, payload);
+  }
+  
+  private formatDateToBackend(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
   }
   
 

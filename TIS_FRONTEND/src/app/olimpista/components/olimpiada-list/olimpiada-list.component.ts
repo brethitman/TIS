@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OlimpiadaCardComponent } from '../olimpiada-card/olimpiada-card.component';
 import { Olimpiada } from '../../interfaces/olimpiada-interfase';
@@ -14,9 +14,14 @@ export class OlimpiadaListComponent {
   @Input({ required: true }) olimpiada: Olimpiada[] = [];
   @Input() areas: Area[] = [];
   @Input() olimpiadas: Olimpiada[] = [];
+  @Output() olimpiadaActualizada = new EventEmitter<Olimpiada>();
 
   onOlimpiadaEliminada(id: number): void {
     this.olimpiada = this.olimpiada.filter(o => o.id !== id);
+  }
+
+  onOlimpiadaActualizada(actualizada: Olimpiada): void {
+    this.olimpiadaActualizada.emit(actualizada);
   }
 }
 //OJOOOOOO11

@@ -13,6 +13,7 @@ import { GetOlimpiadaService } from '../../service/get.olimpiada.service';
   export class OlimpiadaPageComponent implements OnInit {
     private getOlimpiadaService = inject(GetOlimpiadaService);
     public olimpiadas = signal<Olimpiada[]>([]);
+    
   
     ngOnInit() {
       this.loadOlimpiadas();
@@ -28,6 +29,13 @@ import { GetOlimpiadaService } from '../../service/get.olimpiada.service';
     // ← Este método es el que llamaremos desde el template
     public agregarOlimpiada(nueva: Olimpiada): void {
       this.olimpiadas.update(current => [...current, nueva]);
+      this.loadOlimpiadas();
+    }
+
+    public actualizarOlimpiada(actualizada: Olimpiada): void {
+      this.olimpiadas.update(current => 
+        current.map(o => o.id === actualizada.id ? actualizada : o)
+      );
       this.loadOlimpiadas();
     }
   }

@@ -15,7 +15,7 @@
       <!-- Menú desplegable -->
       <div *ngIf="mostrarOpciones"
       class="absolute right-0 bg-gray-400 rounded-md shadow-md overflow-hidden w-40 z-10">
-        <div (click)="onButton2Click(); toggleOpciones()" class="p-2 cursor-pointer border-b border-white hover:bg-[#525252] transition-colors">Editar Olimpiada</div>
+        <div (click)="openEditModal(); toggleOpciones()" class="p-2 cursor-pointer border-b border-white hover:bg-[#525252] transition-colors">Editar Olimpiada</div>
         <div (click)="mostrarConfirmacion = true; toggleOpciones()" class="p-2 cursor-pointer hover:bg-[#525252] transition-colors">Eliminar Olimpiada</div>
       </div>
     </div>
@@ -72,15 +72,18 @@
 
 <!-- Modal Edición -->
 <div *ngIf="isEditModalOpen" class="fixed inset-0 flex items-center justify-center z-50">
-  <div class="bg-[#CEDFFF] rounded-2xl shadow-lg w-full max-w-md p-6">
-    <h2 class="text-xl font-bold mb-4">Editar Olimpiada</h2>
+  <div class="bg-white border border-black rounded-2xl shadow-lg w-full max-w-lg p-8">
+    <h2 class="text-2xl font-bold text-black mb-2">Editar Olimpiada</h2>
+      <p class="text-sm text-gray-600 mb-4">Edita los detalles de la olimpiada.</p>
 
       <form #editForm="ngForm">
         <!-- Nombre -->
         <div class="mb-4">
-          <label class="block font-semibold mb-1">Nombre:</label>
+          <label class="block font-semibold mb-1">Nombre de la Olimpiada:</label>
           <input [(ngModel)]="editableOlimpiada.nombre_olimpiada" name="nombre"
-            class="w-full border rounded px-3 py-2 bg-white"
+            class="w-full border rounded px-3 py-2 bg-white placeholder-gray-400"
+            placeholder="Ingresar nombre de la olimpiada"
+            rows="3"
             required minlength="3" maxlength="30" pattern="^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$" />
         </div>
 
@@ -88,20 +91,22 @@
         <div class="mb-4">
           <label class="block font-semibold mb-1">Descripción:</label>
           <textarea [(ngModel)]="editableOlimpiada.descripcion_olimpiada" name="descripcion"
-            class="w-full border rounded px-3 py-2 bg-white" rows="3"
+            class="w-full border rounded px-3 py-2 bg-white placeholder-gray-400"
+            placeholder="Descripcion de la olimpiada"
+            rows="3"
             required minlength="10" maxlength="300"></textarea>
         </div>
 
         <!-- Fechas -->
-        <div class="flex gap-4">
+        <div class="mb-4">
           <div class="mb-4 flex-1">
-            <label class="block font-semibold mb-1">Inicio:</label>
+            <label class="block font-semibold mb-1">Fecha de inicio:</label>
             <input type="date" [(ngModel)]="editableOlimpiada.fecha_inicio" name="fechaInicio"
               class="w-full border rounded px-3 py-2 bg-white" required />
           </div>
 
           <div class="mb-4 flex-1">
-            <label class="block font-semibold mb-1">Fin:</label>
+            <label class="block font-semibold mb-1">Fecha fin:</label>
             <input type="date" [(ngModel)]="editableOlimpiada.fecha_final" name="fechaFinal"
               class="w-full border rounded px-3 py-2 bg-white" required />
           </div>
@@ -109,14 +114,15 @@
 
         <p *ngIf="errorMessage" class="text-red-600 text-sm">{{ errorMessage }}</p>
 
-        <div class="flex justify-end gap-2 mt-4">
-          <button type="button" (click)="closeEditModal()" class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400">
-            Cancelar
-          </button>
-          <button type="button" (click)="saveEdit()" class="px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800">
+        <div class="flex justify-center gap-15 mt-6">
+          <button type="button" (click)="saveEdit()" class="px-12 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800">
             Guardar
+          </button>
+          <button type="button" (click)="closeEditModal()" class="px-12 py-2 bg-gray-300 text-white rounded-md hover:bg-red-600">
+            Cancelar
           </button>
         </div>
       </form>
     </div>
   </div>
+  

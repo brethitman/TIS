@@ -14,6 +14,7 @@ import { OlimpiadaService } from '../../service/olimpiada.service';
 export class OlimpiadaCardComponent implements OnInit {
   @Input({ required: true }) olimpiada!: Olimpiada;
   @Output() olimpiadaEliminada = new EventEmitter<number>();
+  @Output() olimpiadaActualizada = new EventEmitter<Olimpiada>();
 
   isEditModalOpen = false;
   errorMessage = '';
@@ -30,6 +31,7 @@ export class OlimpiadaCardComponent implements OnInit {
   modalTipo: 'exito' | 'error' = 'exito';
   modalMensaje = '';
   eliminando = false;
+  editando = false;
 
   mostrarOpciones = false;
 
@@ -77,6 +79,13 @@ export class OlimpiadaCardComponent implements OnInit {
   }
 
   openEditModal(): void {
+    this.editableOlimpiada = {
+      nombre_olimpiada: this.olimpiada.nombre_olimpiada,
+      descripcion_olimpiada: this.olimpiada.descripcion_olimpiada,
+      fecha_inicio: this.formatDateToInput(this.olimpiada.fecha_inicio),
+      fecha_final: this.formatDateToInput(this.olimpiada.fecha_final)
+    };
+    this.errorMessage = '';
     this.isEditModalOpen = true;
   }
 
@@ -88,31 +97,61 @@ export class OlimpiadaCardComponent implements OnInit {
   saveEdit(): void {
     const inicio = new Date(this.editableOlimpiada.fecha_inicio);
     const fin = new Date(this.editableOlimpiada.fecha_final);
-
+  
     if (fin <= inicio) {
       this.errorMessage = 'La fecha final debe ser posterior a la fecha de inicio.';
       return;
     }
-
-    const updatedOlimpiada: Partial<Olimpiada> = {
+  
+    this.editando = true;
+    
+    const updatedOlimpiada = {
       nombre_olimpiada: this.editableOlimpiada.nombre_olimpiada.trim(),
       descripcion_olimpiada: this.editableOlimpiada.descripcion_olimpiada.trim(),
-      fecha_inicio: inicio,
-      fecha_final: fin,
+      fecha_inicio: this.editableOlimpiada.fecha_inicio,
+      fecha_final: this.editableOlimpiada.fecha_final
     };
-
-    this.olimpiadaService.updateOlimpiada(this.olimpiada.id, updatedOlimpiada).subscribe({
-      next: () => {
-        this.olimpiada = { ...this.olimpiada, ...updatedOlimpiada };
+  
+    this.olimpiadaService.updateOlimpiada(this.olimpiada.id, updatedOlimpiada as any).subscribe({
+      next: (response: any) => {
+        const updated: Olimpiada = {
+          ...this.olimpiada,
+          nombre_olimpiada: updatedOlimpiada.nombre_olimpiada,
+          descripcion_olimpiada: updatedOlimpiada.descripcion_olimpiada,
+          fecha_inicio: inicio,
+          fecha_final: fin,
+          areas: response.areas || this.olimpiada.areas,
+          id: this.olimpiada.id,
+          createdAt: this.olimpiada.createdAt,
+          updatedAt: new Date()
+        };
+        
+        // Mostrar mensaje de éxito
         this.mostrarFeedback('Olimpiada actualizada correctamente', 'exito');
-        this.isEditModalOpen = false;
+        
+        // Emitir el evento de actualización
+        this.olimpiadaActualizada.emit(updated);
+        
+        // Cerrar el modal después de un breve retraso
+        setTimeout(() => {
+          this.isEditModalOpen = false;
+        
+        }, 1000);
       },
-      error: () => {
-        this.errorMessage = 'Ocurrió un error al actualizar la olimpiada.';
+      error: (error) => {
+        console.error('Error al actualizar:', error);
+        this.errorMessage = error.error?.message || 'Ocurrió un error al actualizar la olimpiada.';
+        this.editando = false;
       }
     });
-
-    console.log('Datos a guardar:', this.editableOlimpiada);
+  }
+  
+   // Nuevo método para formatear fechas para el backend
+  private formatDateToBackend(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
   }
 
   formatDateToInput(date: Date | string): string {
@@ -120,21 +159,7 @@ export class OlimpiadaCardComponent implements OnInit {
     return d.toISOString().split('T')[0];
   }
 
-  onButton2Click(): void {
-    this.editableOlimpiada = {
-      nombre_olimpiada: this.olimpiada.nombre_olimpiada,
-      descripcion_olimpiada: this.olimpiada.descripcion_olimpiada,
-      fecha_inicio: this.formatDateToInput(this.olimpiada.fecha_inicio),
-      fecha_final: this.formatDateToInput(this.olimpiada.fecha_final),
-    };
-    this.errorMessage = '';
-    this.openEditModal();
-  }
-
-  onButton3Click(): void {
-    this.router.navigate(['/admin/products']);
-  }
-
+  
   navegarAAreas(): void {
     if (this.olimpiada?.id) {
       this.router.navigate(['/admin/olimpiadas', this.olimpiada.id, 'areas']).catch(err => {
@@ -142,4 +167,4 @@ export class OlimpiadaCardComponent implements OnInit {
       });
     }
   }
-} //OJO
+}// Ojo piojo1

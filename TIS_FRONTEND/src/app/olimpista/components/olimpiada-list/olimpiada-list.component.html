@@ -6,6 +6,7 @@
          <app-olimpiada-card
            [olimpiada]="olimpiada"
            (olimpiadaEliminada)="onOlimpiadaEliminada($event)"
+           (olimpiadaActualizada)="onOlimpiadaActualizada($event)"
          ></app-olimpiada-card>
        } @empty {
          <p class="text-center">No se encontraron resultados</p>

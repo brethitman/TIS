@@ -107,12 +107,12 @@ export class InscripcionOlimpiadaComponent {
 
     
     if (this.olimpiada.nombre_olimpiada.length < 3) {
-      this.errors.nombreOlimpiada = 'El nombre debe tener al menos 3 caracteres';
+      this.errors.nombreOlimpiada = 'El nombre debe tener al menos 3 caracteres y máximo 30 caracteres';
       return false;
     }
     
     if (this.olimpiada.nombre_olimpiada.length > 30) {
-      this.errors.nombreOlimpiada = 'El nombre debe tener máximo 30 caracteres';
+      this.errors.nombreOlimpiada = 'El nombre debe tener al menos 3 caracteres y máximo 30 caracteres';
       return false;
     }
     
@@ -137,13 +137,13 @@ export class InscripcionOlimpiadaComponent {
     
 
     if (this.olimpiada.descripcion_olimpiada.length < 10) {
-      this.errors.descripcion = 'La descripción debe tener al menos 10 caracteres';
+      this.errors.descripcion = 'La descripción debe tener al menos 10 caracteres y máximo 500 caracteres';
       return false;
     }
 
     
     if (this.olimpiada.descripcion_olimpiada.length > 500) {
-      this.errors.descripcion = 'La descripción debe tener máximo 500 caracteres';
+      this.errors.descripcion = 'La descripción debe tener al menos 10 caracteres y máximo 500 caracteres';
       return false;
     }
     
@@ -154,7 +154,7 @@ export class InscripcionOlimpiadaComponent {
   validateFechas(): boolean {
     this.errors.fechas = '';
     
-    if (!this.olimpiada.fecha_inicio || !this.olimpiada.fecha_final) {
+    if (!this.olimpiada.fecha_inicio || !this.olimpiada.fecha_final || isNaN(new Date(this.olimpiada.fecha_inicio).getTime()) || isNaN(new Date(this.olimpiada.fecha_final).getTime())) {
       this.errors.fechas = 'Ambas fechas son obligatorias';
       return false;
     }
@@ -163,7 +163,7 @@ export class InscripcionOlimpiadaComponent {
     const final = new Date(this.olimpiada.fecha_final);
     
     if (inicio >= final) {
-      this.errors.fechas = 'La fecha de inicio debe ser anterior a la fecha final';
+      this.errors.fechas = 'La fecha final debe ser posterior a la fecha incial';
       return false;
     }
     
@@ -187,7 +187,7 @@ export class InscripcionOlimpiadaComponent {
     return isNombreValid && isDescripcionValid && isFechasValid;
   }
 
-  // Modificamos el método onSubmit para incluir el array de áreas vacío
+
   onSubmit(): void {
     this.errors.duplicado = '';
     this.ocultarModal();
@@ -197,41 +197,94 @@ export class InscripcionOlimpiadaComponent {
       return;
     }
   
-    try {
-      const olimpiadaToSend: Olimpiada = {
-        id: 0,
-        nombre_olimpiada: this.olimpiada.nombre_olimpiada,
-        descripcion_olimpiada: this.olimpiada.descripcion_olimpiada,
-        fecha_inicio: this.olimpiada.fecha_inicio,
-        fecha_final: this.olimpiada.fecha_final,
-        areas: [], // Incluimos el array de áreas vacío
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+    // Verificamos duplicados antes de enviar
+    this.olimpiadaService.getOlimpiadas().subscribe({
+      next: (response: any) => {
+        // Extraemos el array de olimpiadas de la respuesta
+        const existingOlimpiadas = this.extraerArrayOlimpiadas(response);
   
-      this.olimpiadaService.createOlimpiada(olimpiadaToSend).pipe(
-        catchError(error => {
-          if (error.status === 409 || (error.error?.message?.includes('existe'))) {
-            this.errors.duplicado = 'La olimpiada ya existe y no puede ser duplicada';
-            this.mostrarModalError(this.errors.duplicado);
-          } else {
-            console.error('Error al guardar la olimpiada:', error);
-            this.mostrarModalError('Hubo un error al guardar la olimpiada. Intenta nuevamente.');
-          }
-          return of(null);
-        })
-      ).subscribe({
-        next: (response) => {
-          if (response) {
-            this.mostrarModalExito('¡Olimpiada guardada con éxito!');
-            this.olimpiadaCreada.emit(response);
-            this.resetForm();
-          }
+        // Verificamos duplicados por nombre y descripción (sin considerar fechas)
+        const isDuplicate = existingOlimpiadas.some((ol: Olimpiada) =>
+          ol.nombre_olimpiada?.trim().toLowerCase() === this.olimpiada.nombre_olimpiada.trim().toLowerCase() &&
+          ol.descripcion_olimpiada?.trim().toLowerCase() === this.olimpiada.descripcion_olimpiada.trim().toLowerCase()
+        );
+  
+        if (isDuplicate) {
+          this.errors.duplicado = 'Ya existe una olimpiada con el mismo nombre y descripción';
+          this.mostrarModalError(this.errors.duplicado);
+          return;
         }
-      });
-    } catch (e) {
-      console.error('Error en la ejecución:', e);
-      this.mostrarModalError('Ocurrió un error inesperado.');
+  
+        this.guardarOlimpiada();
+      },
+      error: (err) => {
+        console.error('Error al obtener olimpiadas:', err);
+        // Si falla la verificación, igual intentamos guardar pero con validación en el backend
+        this.guardarOlimpiadaConValidacionBackend();
+      }
+    });
+  }
+  
+  private extraerArrayOlimpiadas(response: any): Olimpiada[] {
+    // Diferentes formatos comunes de respuesta
+    if (Array.isArray(response)) return response;
+    if (response && Array.isArray(response.data)) return response.data;
+    if (response && Array.isArray(response.body)) return response.body;
+    return [];
+  }
+  
+  private guardarOlimpiada(): void {
+    const olimpiadaToSend: Olimpiada = {
+      id: 0,
+      nombre_olimpiada: this.olimpiada.nombre_olimpiada,
+      descripcion_olimpiada: this.olimpiada.descripcion_olimpiada,
+      fecha_inicio: this.olimpiada.fecha_inicio,
+      fecha_final: this.olimpiada.fecha_final,
+      areas: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  
+    this.olimpiadaService.createOlimpiada(olimpiadaToSend).subscribe({
+      next: (response) => {
+        this.mostrarModalExito('¡Olimpiada guardada con éxito!');
+        this.olimpiadaCreada.emit(response);
+        this.resetForm();
+      },
+      error: (error) => this.manejarErrorGuardado(error)
+    });
+  }
+  
+  private guardarOlimpiadaConValidacionBackend(): void {
+    const olimpiadaToSend: Olimpiada = {
+      id: 0,
+      nombre_olimpiada: this.olimpiada.nombre_olimpiada,
+      descripcion_olimpiada: this.olimpiada.descripcion_olimpiada,
+      fecha_inicio: this.olimpiada.fecha_inicio,
+      fecha_final: this.olimpiada.fecha_final,
+      areas: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  
+    this.olimpiadaService.createOlimpiada(olimpiadaToSend).subscribe({
+      next: (response) => {
+        this.mostrarModalExito('¡Olimpiada guardada con éxito!');
+        this.olimpiadaCreada.emit(response);
+        this.resetForm();
+      },
+      error: (error) => this.manejarErrorGuardado(error)
+    });
+  }
+  
+  private manejarErrorGuardado(error: any): void {
+    console.error('Error al guardar la olimpiada:', error);
+    
+    if (error.status === 409 || (error.error?.message?.includes('existe'))) {
+      this.errors.duplicado = 'La olimpiada ya existe y no puede ser duplicada';
+      this.mostrarModalError(this.errors.duplicado);
+    } else {
+      this.mostrarModalError('Ocurrió un error al guardar la olimpiada. Por favor intenta nuevamente.');
     }
   }
   

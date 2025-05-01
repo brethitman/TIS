@@ -20,7 +20,7 @@ export class NavMenuComponent {
   // Opciones cuando está autenticado
   private authMenuOptions: MenuOption[] = [
     { name: "REPORTES", path: "/admin/products" },
-    { name: "Areas", path: "/admin/olimpiada" },
+    { name: "Olimpiadas", path: "/admin/olimpiada" },
     { name: "Registro", path: "/admin/sales" }
   ];
 
