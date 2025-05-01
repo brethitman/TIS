@@ -1,9 +1,12 @@
-import { Inscripcion } from "./inscripcion.interface";
+//import { Inscripcione } from "./inscripcion.interface";
+
+/*
 export interface GetInscripcionResponse {
   inscripciones: Inscripcion[];
   links:         Links;
   meta:          Meta;
 }
+
 
  export interface Links {
   first: string;
@@ -19,3 +22,5 @@ export interface GetInscripcionResponse {
   per_page:     number;
   to:           number;
 }
+
+*/

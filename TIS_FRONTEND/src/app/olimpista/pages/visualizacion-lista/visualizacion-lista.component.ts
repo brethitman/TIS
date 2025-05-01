@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BotonExelComponent } from '../../components/boton-exel/boton-exel.component';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-visualizacion-lista',
@@ -24,34 +25,46 @@ export class VisualizacionListaComponent {
     this.mostrarModal = false;
     this.archivoSeleccionado = null;
   }
-  /*seleccionarArchivo() {
-    const input = document.getElementById('archivoExcel') as HTMLInputElement;
-    input.click();
+
+  generarPrimerFormato(): void {
+    const datos = [
+      ['Nombres', 'Apellidos', 'CI'], // Encabezados
+      ['Juan', 'Perez', '12345678'],
+      ['Ana', 'Lopez', '87654321'],
+    ];
+
+    const hojaDeTrabajo = XLSX.utils.aoa_to_sheet(datos); 
+    const libroDeTrabajo = XLSX.utils.book_new(); 
+    XLSX.utils.book_append_sheet(libroDeTrabajo, hojaDeTrabajo, 'Formato 1'); 
+
+    XLSX.writeFile(libroDeTrabajo, 'Formato_solo_Estudiantes.xlsx'); 
   }
 
-  archivoElegido(event: any) {
-    this.archivoSeleccionado = event.target.files[0];
-    if (this.archivoSeleccionado) {
-      this.abrirModal();
-    }
+  generarSegundoFormato(): void {
+    const datosEstudiante = [
+      ['NombreEstudiante', 'ApellidoEstudiante', 'CI'], 
+      ['Carlos', 'Gomez', '11223344'],
+      ['Lucia', 'Sanchez', '55667788'],
+    ];
+
+    const datosTutor = [
+      [''], 
+      [''], 
+      [''], 
+      [''], 
+      [''], 
+      [''], 
+      ['NombreTutor', 'ApellidoTutor', 'CI'], 
+      ['Maria', 'Fernandez', '99887766'],
+      ['Pedro', 'Ramirez', '33445566'],
+    ];
+
+    const datosCombinados = [...datosEstudiante, ...datosTutor];
+
+    const hojaDeTrabajo = XLSX.utils.aoa_to_sheet(datosCombinados); 
+    const libroDeTrabajo = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(libroDeTrabajo, hojaDeTrabajo, 'Formato 2');
+
+    XLSX.writeFile(libroDeTrabajo, 'Formato_Varios_Tutores.xlsx');
   }
-
-  subirArchivo() {
-    const formData = new FormData();
-    formData.append('archivo', this.archivoSeleccionado as File);
-    console.log("Reciviendo Archivo..", this.archivoSeleccionado)
-    this.http.post('http://localhost:8000/api/olimpistasExel', formData)
-      .subscribe({
-        next: (response) => {
-          console.log('Respuesta del servidor:', response);
-          alert('Archivo subido exitosamente');
-        },
-        error: (error) => {
-          console.error('Error al subir el archivo', error);
-          alert('Hubo un error al subir el archivo.');
-        }
-      });
-
-    this.cerrarModal();
-  }*/
 }

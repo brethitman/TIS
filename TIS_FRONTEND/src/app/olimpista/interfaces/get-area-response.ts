@@ -1,21 +1,21 @@
 import { Area } from "./area.interface";
-export interface GetAreaResponse {
+export interface GetAreaRespose {
   areas: Area[];
   links: Links;
   meta:  Meta;
 }
 
-interface Links {
+export interface Links {
   first: string;
-  last: null;
-  prev: null;
-  next: null;
+  last:  string;
+  prev:  null;
+  next:  null;
 }
 
-interface Meta {
+export interface Meta {
   current_page: number;
-  from: number;
-  path: string;
-  per_page: number;
-  to: number;
+  from:         number;
+  path:         string;
+  per_page:     number;
+  to:           number;
 }

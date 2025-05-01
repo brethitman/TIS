@@ -6,17 +6,18 @@ export interface GetBoletaResponse {
 }
 
 
- interface Links {
+export interface Links {
   first: string;
   last:  null;
   prev:  null;
-  next:  null;
+  next:  string;
 }
 
- interface Meta {
+export interface Meta {
   current_page: number;
   from:         number;
   path:         string;
   per_page:     number;
   to:           number;
 }
+

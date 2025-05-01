@@ -1,40 +1,20 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component } from '@angular/core';
+// Importa CommonModule si usas directivas como *ngIf, *ngFor en inicio1.component.html
 import { CommonModule } from '@angular/common';
-import { GetOlimpiadaService } from '../../service/get.olimpiada.service';
-import { Olimpiada } from '../../interfaces/olimpiada.interfacel';
-import { DatePipe } from '@angular/common';
-import { Router } from '@angular/router';
+// Asegúrate de que la ruta a tu componente InscripcionTodoComponent sea correcta
+import { InscripcionTodoComponent } from '../../components/inscripcion-todo/inscripcion-todo.component';
+import { BoletaPagoComponent } from "../../components/boleta-pago/boleta-pago.component";
 
 @Component({
   selector: 'app-inicio1',
-  standalone: true,
-  imports: [CommonModule, DatePipe], // Añade DatePipe para formatear fechas
+  standalone: true, // <--- Asegúrate de que Inicio1Component también sea standalone
+  imports: [
+    CommonModule, // <--- Añade CommonModule si lo necesitas en esta plantilla
+    InscripcionTodoComponent // <-- ¡Tienes que importar InscripcionTodoComponent aquí!
+
+],
   templateUrl: './inicio1.component.html',
 })
-export class Inicio1Component implements OnInit {
-  private getOlimpiadaService = inject(GetOlimpiadaService);
-  private router = inject(Router);
-  public olimpiadas = signal<Olimpiada[]>([]);
+export class Inicio1Component {
 
-  ngOnInit(): void {
-    this.loadOlimpiadas();
-  }
-
-  public loadOlimpiadas() {
-    this.getOlimpiadaService.findAll().subscribe({
-      next: (response: any) => {
-        // Ajusta según la estructura real de tu API
-        const data = Array.isArray(response) ? response : 
-                    response?.olimpiadas || response?.data || [];
-        this.olimpiadas.set(data);
-      },
-      error: (err) => {
-        console.error('Error al cargar olimpiadas:', err);
-        this.olimpiadas.set([]);
-      }
-    });
-  }
-  public navigateToOlimpiadaInfo(olimpiadaId: number): void {
-    this.router.navigate(['/ventana-informacion-olimpiada', olimpiadaId]);
-  }
 }

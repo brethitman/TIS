@@ -7,17 +7,24 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class OlimpistaResource extends JsonResource
 {
-    public static $wrap = "olimpista";
+    /**
+     * The "data" wrapper that should be applied to the resource array.
+     *
+     * @var string|null
+     */
+    public static $wrap = 'olimpista';
 
     /**
      * Transform the resource into an array.
      *
-     * @return array<string, mixed>
+     * @param  \Illuminate\Http\Request  $request
+     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
     public function toArray(Request $request): array
     {
         return [
             'id' => $this->id_olimpista,
+            'id_inscripcion' => $this->id_inscripcion,
             'nombres' => $this->nombres,
             'apellidos' => $this->apellidos,
             'ci' => $this->ci,
@@ -30,6 +37,8 @@ class OlimpistaResource extends JsonResource
             'provincia' => $this->provincia,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
+            'inscripcion' => $this->whenLoaded('inscripcion'), // Carga condicional de la relación
+
         ];
     }
 }

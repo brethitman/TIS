@@ -1,24 +1,37 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-boton-exel',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './boton-exel.component.html',
+  imports: [CommonModule, FormsModule],
 })
 export class BotonExelComponent {
-
+  showModal1: boolean = false;
+  showModal2: boolean = false;
+  confirmSubida: boolean = false;
+  nombreArchivo: string = '';
+  tamanoArchivo: string = '';
   datosExcel: any[][] = [];
+  tutor = {
+    nombre: '',
+    apellido: '',
+    ci: ''
+  };
 
   onFileChange(event: any): void {
-    const target: DataTransfer = <DataTransfer>(event.target);
+    const target: DataTransfer = <DataTransfer>event.target;
 
     if (target.files.length !== 1) {
       console.error('Selecciona un solo archivo Excel.');
       return;
     }
+
+    const file = target.files[0];
+    const fileName = file.name;
+    const fileSize = (file.size / 1024).toFixed(2); // Tamaño en KB
 
     const reader: FileReader = new FileReader();
     reader.onload = (e: any) => {
@@ -30,8 +43,52 @@ export class BotonExelComponent {
 
       const datos: any[][] = XLSX.utils.sheet_to_json(hoja, { header: 1 });
       this.datosExcel = datos;
+
+      if (this.confirmSubida && fileName === 'Formato_solo_Estudiantes.xlsx') {
+        console.log('Datos subidos:', this.datosExcel);
+      } else if (this.confirmSubida && fileName === 'Formato_Varios_Tutores.xlsx') {
+        console.log('Formato 2 subido correctamente:', fileName, fileSize);
+      }else{
+      }
     };
 
-    reader.readAsBinaryString(target.files[0]);
+    reader.readAsBinaryString(file);
+
+    if (fileName === 'Formato_solo_Estudiantes.xlsx') {
+      this.showModal1 = true; 
+    } else if (fileName === 'Formato_Varios_Tutores.xlsx') {
+      this.showModal2 = true; 
+    } else {
+      alert('Archivo no válido, debe tener el mismo nombre que el formato descargado');
+      return;
+    }
+    this.nombreArchivo = fileName;
+    this.tamanoArchivo = fileSize;
   }
+
+
+  submitTutorInfo(): void {
+    this.confirmSubida = true;
+    console.log('Datos del tutor:', this.tutor);
+    this.showModal1 = false;
+  }
+
+  cancelar1(): void {
+    this.confirmSubida = false;
+    this.showModal1 = false; 
+    console.log('Subida cancelada');
+  }
+
+  openModal2(): void {
+    this.confirmSubida = true; 
+    console.log('Formato 2 subido:', this.nombreArchivo, this.tamanoArchivo);
+    this.showModal2 = false; 
+  }
+  
+  cancelar2(): void {
+    this.confirmSubida = false; 
+    this.showModal2 = false; 
+    console.log('Subida cancelada');
+  }
+
 }

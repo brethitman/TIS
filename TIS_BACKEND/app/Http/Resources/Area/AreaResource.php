@@ -24,7 +24,9 @@ class AreaResource extends JsonResource
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
             'olimpiada' => $this->whenLoaded('olimpiada'),
-            'niveles' => $this->whenLoaded('nivelCategorias')
+            'niveles' => $this->whenLoaded('nivelCategorias'),
+            // No se incluye id_inscripcion directamente
+            // Para inscripciones relacionadas, puedes crear un recurso aparte si es necesario
         ];
     }
 }

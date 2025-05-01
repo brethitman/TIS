@@ -18,6 +18,7 @@ class TutorResource extends JsonResource
     {
         return [
             'id' => $this->id_tutor,
+            'id_inscripcion' => $this->id_inscripcion,
             'nombres' => $this->nombres,
             'apellidos' => $this->apellidos,
             'ci' => $this->ci,

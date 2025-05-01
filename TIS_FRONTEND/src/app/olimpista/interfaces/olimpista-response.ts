@@ -1,6 +1,8 @@
 
+
 export interface Olimpista {
   id:               number;
+  id_inscripcion:   number;
   nombres:          string;
   apellidos:        string;
   ci:               string;
@@ -11,7 +13,6 @@ export interface Olimpista {
   curso:            string;
   departamento:     string;
   provincia:        string;
-  tutorId?: number;
   createdAt:        Date;
   updatedAt:        Date;
 }
