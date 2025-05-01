@@ -20,6 +20,11 @@ export class BotonExelComponent {
     apellido: '',
     ci: ''
   };
+  errors = {
+    nombre: '',
+    apellido: '',
+    ci: ''
+  };
 
   onFileChange(event: any): void {
     const target: DataTransfer = <DataTransfer>event.target;
@@ -48,16 +53,16 @@ export class BotonExelComponent {
         console.log('Datos subidos:', this.datosExcel);
       } else if (this.confirmSubida && fileName === 'Formato_Varios_Tutores.xlsx') {
         console.log('Formato 2 subido correctamente:', fileName, fileSize);
-      }else{
+      } else {
       }
     };
 
     reader.readAsBinaryString(file);
 
     if (fileName === 'Formato_solo_Estudiantes.xlsx') {
-      this.showModal1 = true; 
+      this.showModal1 = true;
     } else if (fileName === 'Formato_Varios_Tutores.xlsx') {
-      this.showModal2 = true; 
+      this.showModal2 = true;
     } else {
       alert('Archivo no válido, debe tener el mismo nombre que el formato descargado');
       return;
@@ -65,29 +70,76 @@ export class BotonExelComponent {
     this.nombreArchivo = fileName;
     this.tamanoArchivo = fileSize;
   }
+  // Función para validar los campos del tutor
+  validateTutor(): boolean {
+    let isValid = true;
+    this.errors = { nombre: '', apellido: '', ci: '' };
 
+    // Validación para nombre
+    if (!this.tutor.nombre || this.tutor.nombre.trim() === '') {
+      this.errors.nombre = 'El nombre es requerido';
+      isValid = false;
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(this.tutor.nombre)) {
+      this.errors.nombre = 'El nombre solo debe contener letras';
+      isValid = false;
+    }
+
+    // Validación para apellido
+    if (!this.tutor.apellido || this.tutor.apellido.trim() === '') {
+      this.errors.apellido = 'El apellido es requerido';
+      isValid = false;
+    } else if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(this.tutor.apellido)) {
+      this.errors.apellido = 'El apellido solo debe contener letras';
+      isValid = false;
+    }
+    // Validación para CI
+    if (!this.tutor.ci || this.tutor.ci.trim() === '') {
+      this.errors.ci = 'El CI es requerido';
+      isValid = false;
+    } else if (!/^\d+$/.test(this.tutor.ci)) {
+      this.errors.ci = 'El CI solo debe contener números';
+      isValid = false;
+    } else if (this.tutor.ci.length < 6 || this.tutor.ci.length > 10) {
+      this.errors.ci = 'El CI debe tener entre 6 y 10 dígitos';
+      isValid = false;
+    }
+
+    return isValid;
+  }
 
   submitTutorInfo(): void {
+    // Validar antes de enviar
+    if (!this.validateTutor()) {
+      return;
+    }
     this.confirmSubida = true;
     console.log('Datos del tutor:', this.tutor);
     this.showModal1 = false;
+    // Resetear el formulario después de enviar
+    this.tutor = { nombre: '', apellido: '', ci: '' };
+    this.errors = { nombre: '', apellido: '', ci: '' };
+
   }
 
   cancelar1(): void {
     this.confirmSubida = false;
-    this.showModal1 = false; 
+    this.showModal1 = false;
     console.log('Subida cancelada');
+
+    // Resetear el formulario al cancelar
+    this.tutor = { nombre: '', apellido: '', ci: '' };
+    this.errors = { nombre: '', apellido: '', ci: '' };
   }
 
   openModal2(): void {
-    this.confirmSubida = true; 
+    this.confirmSubida = true;
     console.log('Formato 2 subido:', this.nombreArchivo, this.tamanoArchivo);
-    this.showModal2 = false; 
+    this.showModal2 = false;
   }
-  
+
   cancelar2(): void {
-    this.confirmSubida = false; 
-    this.showModal2 = false; 
+    this.confirmSubida = false;
+    this.showModal2 = false;
     console.log('Subida cancelada');
   }
 
