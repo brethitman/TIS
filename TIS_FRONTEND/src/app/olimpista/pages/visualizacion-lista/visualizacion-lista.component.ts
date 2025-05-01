@@ -8,7 +8,7 @@ import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-visualizacion-lista',
   standalone: true,
-  imports: [CommonModule,BotonExelComponent],
+  imports: [CommonModule, BotonExelComponent],
   templateUrl: './visualizacion-lista.component.html',
 })
 export class VisualizacionListaComponent {
@@ -33,38 +33,35 @@ export class VisualizacionListaComponent {
       ['Ana', 'Lopez', '87654321'],
     ];
 
-    const hojaDeTrabajo = XLSX.utils.aoa_to_sheet(datos); 
-    const libroDeTrabajo = XLSX.utils.book_new(); 
-    XLSX.utils.book_append_sheet(libroDeTrabajo, hojaDeTrabajo, 'Formato 1'); 
+    const hojaDeTrabajo = XLSX.utils.aoa_to_sheet(datos);
+    const libroDeTrabajo = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(libroDeTrabajo, hojaDeTrabajo, 'Formato 1');
 
-    XLSX.writeFile(libroDeTrabajo, 'Formato_solo_Estudiantes.xlsx'); 
+    XLSX.writeFile(libroDeTrabajo, 'Formato_solo_Estudiantes.xlsx');
   }
 
   generarSegundoFormato(): void {
     const datosEstudiante = [
-      ['NombreEstudiante', 'ApellidoEstudiante', 'CI'], 
-      ['Carlos', 'Gomez', '11223344'],
-      ['Lucia', 'Sanchez', '55667788'],
+      ['Nombre Estudiante', 'Apellido Estudiante', 'CI', 'Fecha de Nacimiento', 'Correo Electronico', 'Colegio', 'Curso', 'Departamento', 'Provincia'],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', '', ''],
     ];
 
     const datosTutor = [
-      [''], 
-      [''], 
-      [''], 
-      [''], 
-      [''], 
-      [''], 
-      ['NombreTutor', 'ApellidoTutor', 'CI'], 
-      ['Maria', 'Fernandez', '99887766'],
-      ['Pedro', 'Ramirez', '33445566'],
+      ['Nombre Tutor', 'Apellido Tutor', 'CI', 'Correo Electronico', 'Telefono/Celular'],
+
     ];
 
     const datosCombinados = [...datosEstudiante, ...datosTutor];
 
-    const hojaDeTrabajo = XLSX.utils.aoa_to_sheet(datosCombinados); 
+    const hojaDeTrabajo = XLSX.utils.aoa_to_sheet(datosCombinados);
     const libroDeTrabajo = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(libroDeTrabajo, hojaDeTrabajo, 'Formato 2');
-
     XLSX.writeFile(libroDeTrabajo, 'Formato_Varios_Tutores.xlsx');
   }
 }
+
