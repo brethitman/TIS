@@ -1,0 +1,867 @@
+  <div class="container mx-auto p-6 bg-gray-100 min-h-screen">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Formulario de Inscripción</h2>
+
+    <div *ngIf="successMessage" class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
+      {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">
+      {{ errorMessage }}
+    </div>
+
+    <form [formGroup]="inscripcionForm" (ngSubmit)="onSubmit()" class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+
+      <div class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">
+        <h3 class="text-xl font-semibold text-gray-700 mb-4">Datos Generales de la Inscripción</h3>
+        <div class="mb-4">
+          <label for="fecha_inscripcion" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Inscripción:</label>
+          <input type="date" id="fecha_inscripcion" formControlName="fecha_inscripcion"
+                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+          <div *ngIf="inscripcionForm.get('fecha_inscripcion')?.touched && inscripcionForm.get('fecha_inscripcion')?.invalid" class="text-red-500 text-sm mt-1">
+            La fecha de inscripción es obligatoria.
+          </div>
+        </div>
+      </div>
+
+      <hr class="my-8 border-gray-300">
+
+      <div formArrayName="olimpistas" class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">
+        <h3 class="text-xl font-semibold text-gray-700 mb-4">Olimpistas</h3>
+        <button type="button" (click)="addOlimpista()"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mb-4">
+          Añadir Olimpista
+        </button>
+        <div *ngIf="olimpistasFormArray.touched && olimpistasFormArray.invalid" class="text-red-500 text-sm mb-4">
+          Debe haber al menos un Olimpista.
+        </div>
+        <div *ngFor="let olimpistaGroup of olimpistasFormArray.controls; let i = index" [formGroupName]="i"
+            class="mb-6 p-6 border border-gray-300 rounded-md bg-white shadow-sm">
+          <h4 class="text-lg font-medium text-gray-700 mb-4">Olimpista #{{ i + 1 }}</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="olimpista_nombres_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Nombres:</label>
+              <input type="text" id="olimpista_nombres_{{i}}" formControlName="nombres" placeholder="Nombres"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <div *ngIf="olimpistaGroup.get('nombres')?.touched && olimpistaGroup.get('nombres')?.invalid" class="text-red-500 text-sm mt-1">
+                Nombres es obligatorio.
+              </div>
+            </div>
+            <div>
+              <label for="olimpista_apellidos_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Apellidos:</label>
+              <input type="text" id="olimpista_apellidos_{{i}}" formControlName="apellidos" placeholder="Apellidos"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <div *ngIf="olimpistaGroup.get('apellidos')?.touched && olimpistaGroup.get('apellidos')?.invalid" class="text-red-500 text-sm mt-1">
+                Apellidos es obligatorio.
+              </div>
+            </div>
+            <div>
+              <label for="olimpista_ci_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">CI:</label>
+              <input type="text" id="olimpista_ci_{{i}}" formControlName="ci" placeholder="Cédula de Identidad"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <div *ngIf="olimpistaGroup.get('ci')?.touched && olimpistaGroup.get('ci')?.invalid" class="text-red-500 text-sm mt-1">
+                CI es obligatorio.
+              </div>
+            </div>
+            <div>
+              <label for="olimpista_fecha_nacimiento_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Fecha Nacimiento:</label>
+              <input type="date" id="olimpista_fecha_nacimiento_{{i}}" formControlName="fecha_nacimiento"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <div *ngIf="olimpistaGroup.get('fecha_nacimiento')?.touched && olimpistaGroup.get('fecha_nacimiento')?.invalid" class="text-red-500 text-sm mt-1">
+                Fecha de nacimiento es obligatoria.
+              </div>
+            </div>
+            <div>
+              <label for="olimpista_correo_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Correo:</label>
+              <input type="email" id="olimpista_correo_{{i}}" formControlName="correo" placeholder="Correo electrónico"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <div *ngIf="olimpistaGroup.get('correo')?.touched && (olimpistaGroup.get('correo')?.invalid && !olimpistaGroup.get('correo')?.hasError('email'))" class="text-red-500 text-sm mt-1">
+                Correo es obligatorio.
+              </div>
+              <div *ngIf="olimpistaGroup.get('correo')?.hasError('email')" class="text-red-500 text-sm mt-1">
+                Formato de correo inválido.
+              </div>
+            </div>
+            <div>
+              <label for="olimpista_telefono_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Teléfono:</label>
+              <input type="text" id="olimpista_telefono_{{i}}" formControlName="telefono" placeholder="Teléfono"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <div *ngIf="olimpistaGroup.get('telefono')?.touched && olimpistaGroup.get('telefono')?.invalid" class="text-red-500 text-sm mt-1">
+                Teléfono es obligatorio.
+              </div>
+            </div>
+            <div>
+              <label for="olimpista_colegio_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Colegio:</label>
+              <input type="text" id="olimpista_colegio_{{i}}" formControlName="colegio" placeholder="Nombre del Colegio"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <div *ngIf="olimpistaGroup.get('colegio')?.touched && olimpistaGroup.get('colegio')?.invalid" class="text-red-500 text-sm mt-1">
+                Colegio es obligatorio.
+              </div>
+            </div>
+            <div>
+              <label for="olimpista_curso_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Curso:</label>
+              <input type="text" id="olimpista_curso_{{i}}" formControlName="curso" placeholder="Ej: 6to Primaria, 2do Secundaria"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <div *ngIf="olimpistaGroup.get('curso')?.touched && olimpistaGroup.get('curso')?.invalid" class="text-red-500 text-sm mt-1">
+                Curso es obligatorio.
+              </div>
+            </div>
+            <div>
+              <label for="olimpista_departamento_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Departamento:</label>
+              <input type="text" id="olimpista_departamento_{{i}}" formControlName="departamento" placeholder="Departamento"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <div *ngIf="olimpistaGroup.get('departamento')?.touched && olimpistaGroup.get('departamento')?.invalid" class="text-red-500 text-sm mt-1">
+                Departamento es obligatorio.
+              </div>
+            </div>
+            <div>
+              <label for="olimpista_provincia_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Provincia:</label>
+              <input type="text" id="olimpista_provincia_{{i}}" formControlName="provincia" placeholder="Provincia"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+              <div *ngIf="olimpistaGroup.get('provincia')?.touched && olimpistaGroup.get('provincia')?.invalid" class="text-red-500 text-sm mt-1">
+                Provincia es obligatoria.
+              </div>
+            </div>
+          </div>
+          <button type="button" (click)="removeOlimpista(i)"
+                  class="mt-4 inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+            Eliminar Olimpista
+          </button>
+        </div>
+      </div>
+
+      <hr class="my-8 border-gray-300">
+
+      <div formArrayName="tutors" class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">
+        <h3 class="text-xl font-semibold text-gray-700 mb-4">Tutores</h3>
+        <button type="button" (click)="addTutor()"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mb-4">
+          Añadir Tutor
+        </button>
+        <div *ngIf="tutorsFormArray.touched && tutorsFormArray.invalid" class="text-red-500 text-sm mb-4">
+          Debe haber al menos un Tutor.
+        </div>
+        <div *ngFor="let tutorGroup of tutorsFormArray.controls; let i = index" [formGroupName]="i"
+            class="mb-6 p-6 border border-gray-300 rounded-md bg-white shadow-sm">
+          <h4 class="text-lg font-medium text-gray-700 mb-4">Tutor #{{ i + 1 }}</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label for="tutor_nombres_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Nombres:</label>
+                <input type="text" id="tutor_nombres_{{i}}" formControlName="nombres" placeholder="Nombres"
+                      class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <div *ngIf="tutorGroup.get('nombres')?.touched && tutorGroup.get('nombres')?.invalid" class="text-red-500 text-sm mt-1">
+                  Nombres es obligatorio.
+                </div>
+              </div>
+              <div>
+                <label for="tutor_apellidos_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Apellidos:</label>
+                <input type="text" id="tutor_apellidos_{{i}}" formControlName="apellidos" placeholder="Apellidos"
+                      class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <div *ngIf="tutorGroup.get('apellidos')?.touched && tutorGroup.get('apellidos')?.invalid" class="text-red-500 text-sm mt-1">
+                  Apellidos es obligatorio.
+                </div>
+              </div>
+              <div>
+                <label for="tutor_ci_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">CI:</label>
+                <input type="text" id="tutor_ci_{{i}}" formControlName="ci" placeholder="Cédula de Identidad"
+                      class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <div *ngIf="tutorGroup.get('ci')?.touched && tutorGroup.get('ci')?.invalid" class="text-red-500 text-sm mt-1">
+                  CI es obligatorio.
+                </div>
+              </div>
+              <div>
+                <label for="tutor_correo_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Correo:</label>
+                <input type="email" id="tutor_correo_{{i}}" formControlName="correo" placeholder="Correo electrónico"
+                      class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <div *ngIf="tutorGroup.get('correo')?.touched && (tutorGroup.get('correo')?.invalid && !tutorGroup.get('correo')?.hasError('email'))" class="text-red-500 text-sm mt-1">
+                  Correo es obligatorio.
+                </div>
+                <div *ngIf="tutorGroup.get('correo')?.hasError('email')" class="text-red-500 text-sm mt-1">
+                  Formato de correo inválido.
+                </div>
+              </div>
+              <div>
+                <label for="tutor_telefono_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Teléfono:</label>
+                <input type="text" id="tutor_telefono_{{i}}" formControlName="telefono" placeholder="Teléfono"
+                      class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <div *ngIf="tutorGroup.get('telefono')?.touched && tutorGroup.get('telefono')?.invalid" class="text-red-500 text-sm mt-1">
+                  Teléfono es obligatorio.
+                </div>
+              </div>
+          </div>
+          <button type="button" (click)="removeTutor(i)"
+                  class="mt-4 inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+            Eliminar Tutor
+          </button>
+        </div>
+      </div>
+
+      <hr class="my-8 border-gray-300">
+
+      <div formArrayName="areas" class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">
+        <h3 class="text-xl font-semibold text-gray-700 mb-4">Áreas de Participación</h3>
+        <button type="button" (click)="addArea()"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mb-4">
+          Añadir Área
+        </button>
+        <div *ngIf="areasFormArray.touched && areasFormArray.invalid" class="text-red-500 text-sm mb-4">
+          Debe haber al menos un Área.
+        </div>
+        <div *ngFor="let areaGroup of areasFormArray.controls; let areaIndex = index" [formGroupName]="areaIndex"
+            class="mb-6 p-6 border border-gray-300 rounded-md bg-white shadow-sm">
+          <h4 class="text-lg font-medium text-gray-700 mb-4">Área #{{ areaIndex + 1 }}</h4>
+          <div class="mb-4">
+            <label for="area_id_{{areaIndex}}" class="block text-sm font-medium text-gray-700 mb-1">ID del Área:</label>
+            <input type="number" id="area_id_{{areaIndex}}" formControlName="area_id" placeholder="Ej: 1 (Matemáticas)"
+                  class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            <div *ngIf="areaGroup.get('area_id')?.touched && areaGroup.get('area_id')?.invalid" class="text-red-500 text-sm mt-1">
+              El ID del Área es obligatorio.
+            </div>
+          </div>
+          <div formArrayName="nivelesCategoria" class="mb-4 p-4 border border-gray-200 rounded-md bg-gray-100">
+            <h5 class="text-md font-medium text-gray-700 mb-3">Niveles de Categoría</h5>
+            <button type="button" (click)="addNivelCategoria(areaIndex)"
+                    class="inline-flex items-center px-3 py-1.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mb-3">
+              Añadir Nivel
+            </button>
+            <div *ngIf="getNivelesCategoriaFormArray(areaIndex).touched && getNivelesCategoriaFormArray(areaIndex).invalid" class="text-red-500 text-sm mb-3">
+              Debe haber al menos un Nivel para esta Área.
+            </div>
+            <div *ngFor="let nivelControl of getNivelesCategoriaFormArray(areaIndex).controls; let nivelIndex = index" class="flex items-center space-x-2 mb-2">
+              <label for="nivel_id_{{areaIndex}}_{{nivelIndex}}" class="block text-sm font-medium text-gray-700 mb-1">ID Nivel {{ nivelIndex + 1 }}:</label>
+              <input type="number" id="nivel_id_{{areaIndex}}_{{nivelIndex}}" [formControlName]="nivelIndex" placeholder="Ej: 1 (Nivel 1)"
+                      class="block w-full px-3 py-1.5 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <div *ngIf="nivelControl.touched && nivelControl.invalid" class="text-red-500 text-sm mt-1">
+                  ID Nivel es obligatorio.
+                </div>
+                <button type="button" (click)="removeNivelCategoria(areaIndex, nivelIndex)"
+                        class="inline-flex items-center px-2.5 py-1.5 border border-transparent rounded-md shadow-sm text-xs font-medium text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400">
+                  Eliminar
+                </button>
+            </div>
+          </div>
+          <button type="button" (click)="removeArea(areaIndex)"
+                  class="mt-4 inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+            Eliminar Área
+          </button>
+        </div>
+      </div>
+
+      <hr class="my-8 border-gray-300">
+
+      <div class="text-center">
+        <button type="submit"
+                class="inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                [disabled]="inscripcionForm.invalid">
+          Enviar Inscripción
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+
+
+  ============================================================================================
+
+  import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common'; // Necesario para directivas comunes como *ngFor, *ngIf
+import {
+  FormBuilder,
+  FormGroup,
+  FormArray,
+  Validators,
+  ReactiveFormsModule, // Importar para usar formularios reactivos
+} from '@angular/forms';
+
+// Asegúrate de que la ruta a tu servicio sea correcta
+import { InscripcionServicee } from '../../service/iscripcionn.service';
+// Asegúrate de que la ruta a tus interfaces sea correcta
+import { AreaInscripcion, InscripcionPayload ,Olimpista,Tutor} from '../../interfaces/inscripcion.types';
+
+
+@Component({
+  selector: 'app-inscripcion-todo',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule
+  ],
+  templateUrl: './inscripcion-todo.component.html',
+  // Si tienes un archivo CSS:
+  // styleUrls: ['./inscripcion-todo.component.css'],
+})
+export class InscripcionTodoComponent implements OnInit {
+
+  inscripcionForm!: FormGroup;
+  successMessage: string | null = null; // Variable para mostrar el mensaje de éxito
+  errorMessage: string | null = null; // Variable para mostrar mensajes de error (opcional)
+
+
+  constructor(
+    private fb: FormBuilder,
+    private InscripcionServicee: InscripcionServicee
+  ) { }
+
+  ngOnInit(): void {
+    this.initForm(); // Llama a un nuevo método para inicializar el formulario
+  }
+
+  // Método para inicializar el formulario (útil para resetear también)
+  private initForm(): void {
+     this.inscripcionForm = this.fb.group({
+      fecha_inscripcion: ['', Validators.required],
+      estado: ['Pendiente', Validators.required],
+      olimpistas: this.fb.array([], Validators.required),
+      tutors: this.fb.array([], Validators.required), // Usando "tutors"
+      areas: this.fb.array([], Validators.required)
+    });
+
+    // Añadir campos iniciales por defecto después de resetear/inicializar
+    this.addOlimpista();
+    this.addTutor();
+    this.addArea();
+
+    // Limpiar mensajes al inicializar o resetear
+    this.successMessage = null;
+    this.errorMessage = null;
+  }
+
+
+  // --- Getters para FormArrays (sin cambios) ---
+  get olimpistasFormArray(): FormArray {
+    return this.inscripcionForm.get('olimpistas') as FormArray;
+  }
+
+  get tutorsFormArray(): FormArray {
+    return this.inscripcionForm.get('tutors') as FormArray;
+  }
+
+  get areasFormArray(): FormArray {
+    return this.inscripcionForm.get('areas') as FormArray;
+  }
+
+  getNivelesCategoriaFormArray(areaIndex: number): FormArray {
+    return this.areasFormArray.at(areaIndex).get('nivelesCategoria') as FormArray;
+  }
+
+  // --- Métodos para crear/añadir/eliminar FormGroups/Controls (sin cambios mayores, solo refactorizados si se creó initForm) ---
+  private createOlimpista(): FormGroup { /* ... código ... */
+     return this.fb.group({
+      nombres: ['', Validators.required],
+      apellidos: ['', Validators.required],
+      ci: ['', Validators.required],
+      fecha_nacimiento: ['', Validators.required],
+      correo: ['', [Validators.required, Validators.email]],
+      telefono: ['', Validators.required],
+      colegio: ['', Validators.required],
+      curso: ['', Validators.required],
+      departamento: ['', Validators.required],
+      provincia: ['', Validators.required]
+    });
+  }
+
+  addOlimpista(): void { /* ... código ... */
+    this.olimpistasFormArray.push(this.createOlimpista());
+  }
+
+  removeOlimpista(index: number): void { /* ... código ... */
+     this.olimpistasFormArray.removeAt(index);
+  }
+
+  private createTutor(): FormGroup { /* ... código ... */
+    return this.fb.group({
+      nombres: ['', Validators.required],
+      apellidos: ['', Validators.required],
+      ci: ['', Validators.required],
+      correo: ['', [Validators.required, Validators.email]],
+      telefono: ['', Validators.required]
+    });
+  }
+
+  addTutor(): void { /* ... código ... */
+    this.tutorsFormArray.push(this.createTutor());
+  }
+
+  removeTutor(index: number): void { /* ... código ... */
+     this.tutorsFormArray.removeAt(index);
+  }
+
+  private createArea(): FormGroup { /* ... código ... */
+     return this.fb.group({
+      area_id: ['', Validators.required],
+      nivelesCategoria: this.fb.array([], Validators.required)
+    });
+  }
+
+  addArea(): void { /* ... código ... */
+    this.areasFormArray.push(this.createArea());
+  }
+
+  removeArea(index: number): void { /* ... código ... */
+     this.areasFormArray.removeAt(index);
+  }
+
+  addNivelCategoria(areaIndex: number): void { /* ... código ... */
+    this.getNivelesCategoriaFormArray(areaIndex).push(this.fb.control('', Validators.required));
+  }
+
+  removeNivelCategoria(areaIndex: number, nivelIndex: number): void { /* ... código ... */
+     this.getNivelesCategoriaFormArray(areaIndex).removeAt(nivelIndex);
+  }
+
+
+  // --- Método onSubmit modificado ---
+  onSubmit(): void {
+    // Marca todos los campos como "touched" para mostrar errores de validación
+    this.inscripcionForm.markAllAsTouched();
+
+    // Limpia mensajes anteriores al intentar enviar
+    this.successMessage = null;
+    this.errorMessage = null;
+
+    // Verifica si el formulario es válido
+    if (this.inscripcionForm.valid) {
+      const inscripcionData: InscripcionPayload = this.inscripcionForm.value;
+
+      this.InscripcionServicee.crearInscripcion(inscripcionData).subscribe(
+        response => {
+          console.log('Respuesta API exitosa:', response);
+
+          // *** Lógica añadida aquí para éxito ***
+
+          // 1. Mostrar mensaje de éxito
+          this.successMessage = '¡Inscripción realizada correctamente!';
+          this.errorMessage = null; // Asegúrate de que no se muestre un error
+
+          // 2. Resetear el formulario
+          // El método reset() limpia los valores de los controles
+          this.inscripcionForm.reset();
+
+          // Opcional: Si quieres que los FormArrays se vacíen completamente
+          // y empiecen de nuevo con los campos iniciales por defecto,
+          // puedes llamar a los métodos clear() y add...() después del reset.
+          // Si initForm() maneja la adición inicial, puedes llamarlo directamente.
+           this.initForm(); // Esto resetea y añade los campos iniciales
+          // Si prefieres solo limpiar sin añadir iniciales, usa:
+          // this.olimpistasFormArray.clear();
+          // this.tutorsFormArray.clear();
+          // this.areasFormArray.clear();
+
+
+          // *** Fin de lógica añadida para éxito ***
+
+          // Aquí podrías redirigir al usuario si es necesario
+          // this.router.navigate(['/alguna-otra-pagina']);
+        },
+        error => {
+          console.error('Error al crear inscripción:', error);
+
+          // *** Lógica añadida aquí para error ***
+
+          // Mostrar mensaje de error
+          this.successMessage = null; // Asegúrate de que no se muestre el mensaje de éxito
+          this.errorMessage = 'Ocurrió un error al procesar la inscripción. Inténtalo de nuevo.';
+          // console.error() ya registra el error técnico
+
+          // *** Fin de lógica añadida para error ***
+        }
+      );
+    } else {
+      console.log('Formulario inválido. Revisa los campos antes de enviar.');
+       this.errorMessage = 'Por favor, completa todos los campos requeridos y corrige los errores.';
+    }
+  }
+}
+
+
+
+====================================================================
+<h1>Inscripción</h1>
+
+<form [formGroup]="inscripcionForm">
+
+  <div>
+    <label for="areaSelect">Selecciona un Área:</label>
+    <select id="areaSelect"
+            formControlName="areaSeleccionada"
+            *ngIf="areas.length > 0">
+      <option [ngValue]="null" disabled>-- Seleccione un Área --</option>
+      <option *ngFor="let area of areas" [ngValue]="area">
+        {{ area.nombre_area }}
+      </option>
+    </select>
+
+    <div *ngIf="areas.length === 0">
+      Cargando áreas o no hay áreas disponibles.
+    </div>
+
+    <div *ngIf="inscripcionForm.get('areaSeleccionada')?.invalid && inscripcionForm.get('areaSeleccionada')?.touched">
+         <span style="color: red;">* Debes seleccionar un área.</span>
+     </div>
+  </div>
+
+  <div *ngIf="inscripcionForm.get('areaSeleccionada')?.value">
+     <label for="nivelSelect">Selecciona un Nivel:</label>
+     <select id="nivelSelect"
+             formControlName="nivelSeleccionado"
+             *ngIf="availableNiveles.length > 0"> <option [ngValue]="null" disabled>-- Seleccione un Nivel --</option>
+       <option *ngFor="let nivel of availableNiveles" [value]="nivel.id_nivel">
+         {{ nivel.nombre_nivel }}
+       </option>
+     </select>
+
+     <div *ngIf="!availableNiveles.length && inscripcionForm.get('areaSeleccionada')?.value && inscripcionForm.get('areaSeleccionada')?.touched">
+        No hay niveles disponibles para esta área.
+    </div>
+
+    <div *ngIf="inscripcionForm.get('nivelSeleccionado')?.invalid && inscripcionForm.get('nivelSeleccionado')?.touched">
+         <span style="color: red;">* Debes seleccionar un nivel.</span>
+     </div>
+
+  </div>
+
+  <button type="submit" (click)="onSubmit()" [disabled]="inscripcionForm.invalid">
+      Enviar Inscripción
+  </button>
+
+</form>
+
+===============================================================
+
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule // Asegúrate de importar ReactiveFormsModule
+} from '@angular/forms';
+
+import { AreaService } from '../../service/area.service'; // <--- Verifica esta ruta
+import { Area, Nivele } from '../../interfaces/area.interface'; // <--- Verifica esta ruta e importa Nivele
+
+import { Subject, takeUntil } from 'rxjs'; // Necesario para gestionar suscripciones
+
+@Component({
+  selector: 'app-inscripcion-todo',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule // <--- Asegúrate de que esté aquí
+  ],
+  templateUrl: './inscripcion-todo.component.html',
+  // styleUrls: ['./inscripcion-todo.component.css'],
+})
+export class InscripcionTodoComponent implements OnInit, OnDestroy {
+
+  public areas: Area[] = []; // Almacena TODAS las áreas
+  public availableNiveles: Nivele[] = []; // Almacena los niveles del área SELECCIONADA
+
+  public inscripcionForm: FormGroup; // El formulario reactivo
+
+  private destroy$ = new Subject<void>(); // Para cancelar suscripciones al destruir el componente
+
+  constructor(
+    private areaService: AreaService,
+    private fb: FormBuilder // Inyecta FormBuilder
+  ) {
+    // Inicializa el formulario con los controles
+    this.inscripcionForm = this.fb.group({
+      areaSeleccionada: [null, Validators.required], // Control para el select de área
+      nivelSeleccionado: [{value: null, disabled: true}, Validators.required] // Control para el select de nivel (inicialmente deshabilitado)
+    });
+  }
+
+  ngOnInit(): void {
+    // 1. Cargar las Áreas
+    this.areaService.getAreas()
+      .pipe(takeUntil(this.destroy$)) // Limpiar suscripción automáticamente
+      .subscribe({
+        next: (response) => {
+          this.areas = response.areas; // Asigna las áreas obtenidas
+          console.log('Áreas cargadas:', this.areas);
+          // Cuando las áreas cargan, habilita el selector de área si hay datos (opcional)
+          // this.inscripcionForm.get('areaSeleccionada')?.enable(); // Ya está habilitado por defecto a menos que lo deshabilites en el HTML
+        },
+        error: (error) => {
+          console.error('Error al cargar las áreas:', error);
+          // Aquí podrías mostrar un mensaje de error al usuario
+        }
+      });
+
+    // 2. Suscribirse a los cambios en la selección del Área
+    // Obtén el control 'areaSeleccionada' y suscríbete a 'valueChanges'
+    this.inscripcionForm.get('areaSeleccionada')?.valueChanges
+      .pipe(takeUntil(this.destroy$)) // Limpiar suscripción
+      .subscribe((selectedArea: Area | null) => {
+        // Este código se ejecuta cada vez que se selecciona un área diferente
+
+        console.log('Área seleccionada cambió:', selectedArea);
+
+        // Limpiar los niveles disponibles y deshabilitar el select de niveles
+        this.availableNiveles = [];
+        this.inscripcionForm.get('nivelSeleccionado')?.patchValue(null); // Limpia el valor del nivel seleccionado
+        this.inscripcionForm.get('nivelSeleccionado')?.disable(); // Deshabilita el select de niveles
+
+        // Si se seleccionó un área y esa área tiene niveles
+        if (selectedArea && selectedArea.niveles && selectedArea.niveles.length > 0) {
+          this.availableNiveles = selectedArea.niveles; // Carga los niveles de esa área
+          console.log('Niveles disponibles actualizados:', this.availableNiveles);
+          this.inscripcionForm.get('nivelSeleccionado')?.enable(); // Habilita el select de niveles
+        } else if (selectedArea) {
+             // Si se seleccionó un área pero no tiene niveles
+             console.log('El área seleccionada no tiene niveles asociados.');
+             // El array availableNiveles ya está vacío
+        }
+        // Si selectedArea es null (opción "-- Seleccione..."), availableNiveles ya está vacío y el select está deshabilitado.
+
+      });
+
+    // 3. Suscribirse a los cambios en la selección del Nivel (Opcional, si necesitas reaccionar a la selección del nivel)
+     this.inscripcionForm.get('nivelSeleccionado')?.valueChanges
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((selectedNivelId: number | null) => {
+          console.log('ID del Nivel seleccionado:', selectedNivelId);
+          // Aquí podrías, por ejemplo, almacenar el nivel completo si usaste [ngValue] en el html del select de nivel
+          // o buscar el nivel completo en this.availableNiveles si usaste [value] con el ID
+        });
+  }
+
+  // Método que se llama cuando el componente se destruye
+  ngOnDestroy(): void {
+    this.destroy$.next(); // Emite un valor para indicar que las suscripciones deben detenerse
+    this.destroy$.complete(); // Completa el subject
+  }
+
+  // Método para manejar el envío del formulario (si tienes un botón de submit)
+  onSubmit(): void {
+    // Marca todos los controles como tocados para mostrar validación si es necesario
+    this.inscripcionForm.markAllAsTouched();
+
+    if (this.inscripcionForm.valid) {
+      console.log('Formulario válido. Valores:', this.inscripcionForm.value);
+      // Aquí procesarías los datos, por ejemplo, enviándolos a un servicio de inscripción
+      const areaId = this.inscripcionForm.get('areaSeleccionada')?.value.id; // Accedes al ID del objeto Area
+      const nivelId = this.inscripcionForm.get('nivelSeleccionado')?.value; // Es el ID si usaste [value] en el option de nivel
+
+      // Ejemplo: encontrar el objeto Area y Nivel completo
+      const selectedAreaObject = this.inscripcionForm.get('areaSeleccionada')?.value as Area;
+      const selectedNivelObject = this.availableNiveles.find(n => n.id_nivel === this.inscripcionForm.get('nivelSeleccionado')?.value);
+
+      console.log('Área Objeto:', selectedAreaObject);
+      console.log('Nivel Objeto:', selectedNivelObject);
+
+
+    } else {
+      console.warn('Formulario inválido.');
+      // No hagas nada o muestra un mensaje de error general
+    }
+  }
+
+}
+
+
+
+
+
+============================================================
+============================================================
+============================================================
+============================================================
+
+import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IDOlimpiadabyArea } from '../../interfaces/olimpiadaAreaCategoria.interface';
+import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
+import { CrearAreaComponent } from '../crear-area/crear-area.component';
+
+
+
+@Component({
+  selector: 'app-vista-areas-categorias',
+  standalone: true,
+  imports: [
+    CommonModule,
+    DatePipe,
+    CurrencyPipe,
+    CrearAreaComponent,
+    FormsModule
+  ],
+  templateUrl: './vista-areas-categorias.component.html',
+})
+export class VistaAreasCategoriasComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private olimpiadaByAreaService = inject(OlimpiadaByAreaService);
+
+
+  public areas: IDOlimpiadabyArea[] = [];
+  public cargando: boolean = true;
+  public errorCarga: string | null = null;
+  public idOlimpiada: number | null = null;
+
+  public areaActiva: number | null = null;
+  public enviando: boolean = false;
+  public errores: string[] = [];
+
+  ngOnInit(): void {
+    this.obtenerIdOlimpiada();
+  }
+
+  // Obtiene el ID de la olimpiada desde la URL
+  private obtenerIdOlimpiada(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    this.idOlimpiada = idParam ? Number(idParam) : null;
+
+    if (!this.idOlimpiada || isNaN(this.idOlimpiada)) {
+      this.errorCarga = 'ID de olimpiada inválido';
+      this.cargando = false;
+      return;
+    }
+    this.cargarAreas();
+  }
+
+  // Carga las áreas con cache-busting
+  private cargarAreas(): void {
+    this.cargando = true;
+    this.olimpiadaByAreaService.getAreasByOlimpiadaId(this.idOlimpiada!)
+      .subscribe({
+        next: (data) => {
+          this.areas = data;
+          this.cargando = false;
+        },
+        error: (err) => {
+          console.error('Error:', err);
+          this.errorCarga = 'Error al cargar áreas';
+          this.cargando = false;
+        }
+      });
+  }
+
+
+
+  // Muestra/oculta el formulario de nuevo nivel
+  toggleFormulario(areaId: number): void {
+    this.areaActiva = this.areaActiva === areaId ? null : areaId;
+
+    this.errores = [];
+  }
+
+  // Valida los campos del formulario
+  validarFormulario(): boolean {
+    this.errores = [];
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // Normaliza la fecha actual
+
+
+
+    return this.errores.length === 0;
+  }
+
+
+
+  // Texto para estado de habilitación
+  getEstadoTexto(habilitacion: number): string {
+    return habilitacion === 1 ? 'Habilitado' : 'Deshabilitado';
+  }
+}
+
+============================================================
+============================================================
+============================================================
+============================================================
+
+<div class="space-y-8">
+  <!-- Sección creación de áreas -->
+  <div class="p-4 bg-blue-50 rounded-lg">
+    <h2 class="text-xl font-semibold text-blue-800 mb-3">Gestión de Áreas</h2>
+    <app-crear-area
+      *ngIf="idOlimpiada"
+      [idOlimpiada]="idOlimpiada"
+      class="block mb-4"
+    ></app-crear-area>
+    <p class="text-gray-600">Desde aquí podrás crear nuevas áreas para la olimpiada.</p>
+  </div>
+
+  <!-- Listado de áreas existentes -->
+  <div class="p-6 container mx-auto">
+    <h1 class="text-2xl font-bold mb-6 text-blue-800">Áreas y Categorías Existentes</h1>
+
+    <!-- Estados de carga -->
+    <div *ngIf="cargando" class="text-center text-blue-600 animate-pulse">
+      <i class="fas fa-spinner fa-spin mr-2"></i>Cargando áreas...
+    </div>
+
+    <!-- Manejo de errores generales -->
+    <div *ngIf="errorCarga" class="p-4 bg-red-50 text-red-700 rounded-lg text-center mb-4">
+      ⚠️ {{ errorCarga }}
+    </div>
+
+    <!-- Listado de áreas -->
+    <div *ngIf="!cargando && !errorCarga">
+      <!-- Caso sin áreas -->
+      <div *ngIf="areas.length === 0" class="text-center text-gray-500 p-8 border-2 border-dashed rounded-xl">
+        No se han encontrado áreas registradas
+      </div>
+
+      <!-- Áreas existentes -->
+      <div *ngIf="areas.length > 0" class="space-y-8">
+        <div *ngFor="let area of areas" class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-shadow">
+          <div class="mb-4">
+            <h2 class="text-2xl font-semibold text-gray-800">{{ area.nombre_area }}</h2>
+            <p class="text-gray-600 mt-1">{{ area.descripcion || 'Sin descripción' }}</p>
+          </div>
+
+          <!-- Sección de niveles -->
+          <div class="border-t pt-4">
+            <!-- Encabezado y botón -->
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold text-gray-800">Niveles asociados</h3>
+
+            </div>
+
+            <!-- Mensajes de error del formulario -->
+            <div *ngIf="errores.length > 0 && areaActiva === area.id_area" class="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">
+              <ul class="list-disc pl-4">
+                <li *ngFor="let error of errores" class="mb-1 last:mb-0">{{ error }}</li>
+              </ul>
+            </div>
+
+
+
+
+            <!-- Listado de niveles existentes -->
+            <div *ngIf="!area.nivel_categorias?.length" class="text-gray-400 italic py-2">
+              No se han definido niveles para esta área
+            </div>
+
+            <div *ngIf="area.nivel_categorias?.length" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div *ngFor="let nivel of area.nivel_categorias" class="bg-gray-50 p-4 rounded-lg border border-gray-100 hover:bg-white transition-colors">
+                <h4 class="text-lg font-semibold text-gray-700 mb-2">{{ nivel.nombre_nivel }}</h4>
+
+                <div class="space-y-1.5 text-sm">
+                  <p *ngIf="nivel.descripcion" class="text-gray-500 italic">
+                    {{ nivel.descripcion }}
+                  </p>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Fecha examen:</span>
+                    <span class="font-medium text-gray-700">
+                      {{ nivel.fecha_examen | date:'dd/MM/yyyy' }}
+                    </span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Costo:</span>
+                    <span class="font-medium text-gray-700">
+                      {{ nivel.costo | currency:'USD':'symbol':'1.2-2' }}
+                    </span>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+<section class="pt-8 pb-8">
+  <div class="container">
+      <ul class="olimpistas__list">
+
+      @for (Olimpista of Olimpista  ; track Olimpista.id) {
+         <app-olimpista-card
+           [Olimpista]="Olimpista"
+         ></app-olimpista-card>
+      }@empty {
+        <p class="text-center">No se encontraron resultados</p>
+      }
+
+     </ul>
+  </div>
+</section>
