@@ -15,6 +15,8 @@ export class BotonExelComponent {
   nombreArchivo: string = '';
   tamanoArchivo: string = '';
   datosExcel: any[][] = [];
+  datosEstudiantes: any[][] = [];
+  datosTutores: any[][] = [];
   tutor = {
     nombre: '',
     apellido: '',
@@ -47,17 +49,18 @@ export class BotonExelComponent {
       if (this.confirmSubida && fileName === 'Formato_solo_Estudiantes.xlsx') {
         console.log('Datos subidos:', this.datosExcel);
       } else if (this.confirmSubida && fileName === 'Formato_Varios_Tutores.xlsx') {
-        console.log('Formato 2 subido correctamente:', fileName, fileSize);
-      }else{
+        console.log('Formato 2 subido correctamente1:', fileName, fileSize);
+      } else {
       }
+      this.procesarDatosExcel(this.datosExcel, file.name);
     };
 
     reader.readAsBinaryString(file);
 
     if (fileName === 'Formato_solo_Estudiantes.xlsx') {
-      this.showModal1 = true; 
+      this.showModal1 = true;
     } else if (fileName === 'Formato_Varios_Tutores.xlsx') {
-      this.showModal2 = true; 
+      this.showModal2 = true;
     } else {
       alert('Archivo no válido, debe tener el mismo nombre que el formato descargado');
       return;
@@ -75,20 +78,63 @@ export class BotonExelComponent {
 
   cancelar1(): void {
     this.confirmSubida = false;
-    this.showModal1 = false; 
+    this.showModal1 = false;
     console.log('Subida cancelada');
   }
 
   openModal2(): void {
-    this.confirmSubida = true; 
-    console.log('Formato 2 subido:', this.nombreArchivo, this.tamanoArchivo);
-    this.showModal2 = false; 
+    this.confirmSubida = true;
+    this.showModal2 = false;
   }
-  
+
   cancelar2(): void {
-    this.confirmSubida = false; 
-    this.showModal2 = false; 
+    this.confirmSubida = false;
+    this.showModal2 = false;
+    this.datosExcel=[];
+    this.datosEstudiantes = [];
+    this.datosTutores = [];
     console.log('Subida cancelada');
+  }
+
+  procesarDatosExcel(datos: any[][], fileName: string): void {
+    const filasConDatos = datos.filter(fila => fila.some(cell => cell !== undefined && cell !== ''));
+
+    if (fileName === 'Formato_solo_Estudiantes.xlsx') {
+      this.datosEstudiantes = filasConDatos;
+      console.log('Lista de Estudiantes:', this.datosEstudiantes);
+    } else if (fileName === 'Formato_Varios_Tutores.xlsx') {
+      this.separarEstudiantesTutores(filasConDatos);
+    }
+  }
+
+  separarEstudiantesTutores(filasConDatos: any[][]): void {
+    const estudiantes: any[] = [];
+    const tutores: any[] = [];
+    let leyendoEstudiantes = true;
+
+    filasConDatos.forEach((fila) => {
+      const contieneNombreTutor = fila.some(cell => 
+        typeof cell === 'string' && cell.trim().toLowerCase() === "nombre tutor"
+    );
+
+    if (contieneNombreTutor) {
+        leyendoEstudiantes = false; 
+    }
+      if (leyendoEstudiantes) {
+        estudiantes.push(fila);
+      } else {
+        tutores.push(fila);
+      }
+    });
+    this.datosEstudiantes = estudiantes;
+    this.datosTutores = tutores;
+    this.validaciones(this.datosEstudiantes,this.datosTutores)
+  }
+
+  validaciones(datosEst: any[][], datosTutor: any[][]) {
+    const listaEstudiante = datosEst.slice(1);
+    const listaTutor = datosTutor.slice(1);
+    console.log ('Listas para validar y enviar a guardar',listaEstudiante,listaTutor)
   }
 
 }

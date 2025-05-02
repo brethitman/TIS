@@ -42,13 +42,13 @@ export class VisualizacionListaComponent {
 
   generarSegundoFormato(): void {
     const datosEstudiante = [
-      ['Nombre Estudiante', 'Apellido Estudiante', 'CI', 'Fecha de Nacimiento', 'Correo Electronico', 'Colegio', 'Curso', 'Departamento', 'Provincia'],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
-      ['', '', '', '', '', '', '', '', ''],
+      ['Nombre Estudiante', 'Apellido Estudiante', 'CI', 'Fecha de Nacimiento', 'Correo Electronico', 'Colegio', 'Departamento', 'Provincia'],
+      ['', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
+      ['', '', '', '', '', '', '', ''],
     ];
 
     const datosTutor = [
