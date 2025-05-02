@@ -25,6 +25,8 @@ export class BotonExelComponent {
     apellido: '',
     ci: ''
   };
+  isStudentDropdownOpen: boolean = false;
+  estudiantes: any[] = [];
 
   onFileChange(event: any): void {
     const target: DataTransfer = <DataTransfer>event.target;
@@ -48,6 +50,7 @@ export class BotonExelComponent {
 
       const datos: any[][] = XLSX.utils.sheet_to_json(hoja, { header: 1 });
       this.datosExcel = datos;
+      this.procesarEstudiantes(datos);
 
       if (this.confirmSubida && fileName === 'Formato_solo_Estudiantes.xlsx') {
         console.log('Datos subidos:', this.datosExcel);
@@ -69,6 +72,40 @@ export class BotonExelComponent {
     }
     this.nombreArchivo = fileName;
     this.tamanoArchivo = fileSize;
+  }
+  procesarEstudiantes(datos: any[][]): void {
+    if (datos.length < 2) {
+      this.estudiantes = [];
+      return;
+    }
+  
+    // Asumimos que la primera fila son los encabezados
+    const encabezados = datos[0].map(h => h.toString().trim());
+    const filasDatos = datos.slice(1);
+  
+    console.log('Encabezados encontrados:', encabezados); // Para depuración
+  
+    // Buscar índices de columnas con nombres flexibles
+    const nombreIndex = encabezados.findIndex(h => 
+      h.toLowerCase().includes('nombre') || h.toLowerCase().includes('nombres')
+    );
+    const apellidoIndex = encabezados.findIndex(h => 
+      h.toLowerCase().includes('apellido') || h.toLowerCase().includes('apellidos')
+    );
+    const ciIndex = encabezados.findIndex(h => 
+      h.toLowerCase().includes('ci') || h.toLowerCase().includes('cédula') || h.toLowerCase().includes('cedula')
+    );
+  
+    this.estudiantes = filasDatos.map(fila => ({
+      nombre: nombreIndex >= 0 ? fila[nombreIndex] : 'Nombre no disponible',
+      apellido: apellidoIndex >= 0 ? fila[apellidoIndex] : '',
+      ci: ciIndex >= 0 ? fila[ciIndex] : '',
+    })).filter(est => est.nombre && est.nombre !== 'Nombre no disponible');
+  
+    console.log('Estudiantes procesados:', this.estudiantes); // Para depuración
+  }
+  toggleStudentDropdown(): void {
+    this.isStudentDropdownOpen = !this.isStudentDropdownOpen;
   }
   // Función para validar los campos del tutor
   validateTutor(): boolean {
@@ -141,6 +178,17 @@ export class BotonExelComponent {
     this.confirmSubida = false;
     this.showModal2 = false;
     console.log('Subida cancelada');
+  }
+  isAreaDropdownOpen: boolean = false;
+  areas = [
+    { nombre: 'Física' },
+    { nombre: 'Matemáticas' },
+    { nombre: 'Química' },
+    { nombre: 'Biología' }
+  ];
+
+  toggleAreaDropdown(): void {
+    this.isAreaDropdownOpen = !this.isAreaDropdownOpen;
   }
 
 }
