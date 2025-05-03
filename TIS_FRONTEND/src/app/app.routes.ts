@@ -42,15 +42,18 @@ export const routes: Routes = [
         path: 'areas',
         component: AreasComponent,
       },
+      {
+        path: 'olimpiada',
+        component: OlimpiadaPageComponent
+      },
       // Si tienes más rutas de admin, añádelas aquí
       {
         path: '', // Ruta por defecto para /admin
-        redirectTo: 'products', // O a donde quieras que redirija por defecto
+        redirectTo: 'olimpiada', // O a donde quieras que redirija por defecto
         pathMatch: 'full'
       }
     ]
   },
-
   // --- Rutas de Inscripción ---
   {
     path: 'inscripcion/paso1',
@@ -64,7 +67,7 @@ export const routes: Routes = [
     path: 'inscripcion/paso3',
     component: Iscripcion3Component
   },
-   // Opcional: Redirigir '/inscripcion' al paso 1
+  // Opcional: Redirigir '/inscripcion' al paso 1
   {
     path: 'inscripcion',
     redirectTo: 'inscripcion/paso1',
@@ -124,23 +127,23 @@ export const routes: Routes = [
   },
 
 
-  {
-    path: 'inicio/OlimpistaForm', // Revisa si este es el nombre final para esta ruta
-    component: OlimpistaPageComponent
-  },
+  {
+    path: 'inicio/OlimpistaForm', // Revisa si este es el nombre final para esta ruta
+    component: OlimpistaPageComponent
+  },
 
 
 
-{ path: 'admin/olimpiada', component: OlimpiadaPageComponent },
+  { path: 'admin/olimpiada', component: OlimpiadaPageComponent },
 
-{
-  path: '',
-  redirectTo: 'admin/olimpiada', // Ahora redirigimos directamente al panel de admin
-  pathMatch: 'full'
-},
-{
-  path: '**',
-  redirectTo: 'admin/olimpiada'
-}
+  {
+    path: '',
+    redirectTo: 'admin/olimpiada', // Ahora redirigimos directamente al panel de admin
+    pathMatch: 'full'
+  },
+  {
+    path: '**',
+    redirectTo: 'admin/olimpiada'
+  }
 
 ];

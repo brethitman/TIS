@@ -128,7 +128,7 @@ export class OlimpiadaCardComponent implements OnInit {
           areas: response.areas || this.olimpiada.areas,
           id: this.olimpiada.id,
           createdAt: this.olimpiada.createdAt,
-          updatedAt: new Date()
+          updatedAt: new Date(),
         };
         
         // Mostrar mensaje de éxito
