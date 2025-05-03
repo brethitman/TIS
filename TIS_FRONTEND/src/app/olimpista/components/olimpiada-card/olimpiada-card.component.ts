@@ -95,6 +95,11 @@ export class OlimpiadaCardComponent implements OnInit {
   }
 
   saveEdit(): void {
+
+    if (!this.validateForm()) {
+      return;
+    }
+
     const inicio = new Date(this.editableOlimpiada.fecha_inicio);
     const fin = new Date(this.editableOlimpiada.fecha_final);
   
@@ -139,9 +144,14 @@ export class OlimpiadaCardComponent implements OnInit {
         }, 1000);
       },
       error: (error) => {
-        console.error('Error al actualizar:', error);
-        this.errorMessage = error.error?.message || 'Ocurrió un error al actualizar la olimpiada.';
         this.editando = false;
+        if (error.status === 409 || (error.error?.message?.includes('existe'))) {
+          this.errorMessage = 'Ya existe una olimpiada con el mismo nombre y descripción, inténtelo de nuevo.';
+          this.mostrarFeedback('Ya existe una olimpiada con el mismo nombre y descripción', 'error');
+        } else {
+          console.error('Error al actualizar:', error);
+          this.errorMessage = error.error?.message || 'Ocurrió un error al actualizar la olimpiada.';
+        }
       }
     });
   }
@@ -166,5 +176,46 @@ export class OlimpiadaCardComponent implements OnInit {
         console.error('Error de navegación:', err);
       });
     }
+  }
+
+  validateNombreOlimpiada(): boolean {
+    if (!this.editableOlimpiada.nombre_olimpiada || this.editableOlimpiada.nombre_olimpiada.trim() === '') {
+      this.errorMessage = 'El nombre de la olimpiada es obligatorio';
+      return false;
+    }
+
+    if (this.editableOlimpiada.nombre_olimpiada.length < 3 || this.editableOlimpiada.nombre_olimpiada.length > 30) {
+      this.errorMessage = 'El nombre debe tener entre 3 y 30 caracteres';
+      return false;
+    }
+    
+    const caracteresPermitidos = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s!¡"']+$/;
+    if (!caracteresPermitidos.test(this.editableOlimpiada.nombre_olimpiada)) {
+      this.errorMessage = 'El nombre solo puede contener letras, números, espacios y los signos ! ¡ " \'';
+      return false;
+    }
+    
+    return true;
+  }
+
+  validateDescripcion(): boolean {
+    if (!this.editableOlimpiada.descripcion_olimpiada || this.editableOlimpiada.descripcion_olimpiada.trim() === '') {
+      this.errorMessage = 'La descripción es obligatoria';
+      return false;
+    }
+
+    if (this.editableOlimpiada.descripcion_olimpiada.length < 10 || this.editableOlimpiada.descripcion_olimpiada.length > 500) {
+      this.errorMessage = 'La descripción debe tener entre 10 y 500 caracteres';
+      return false;
+    }
+    
+    return true;
+  }
+
+  validateForm(): boolean {
+    const isNombreValid = this.validateNombreOlimpiada();
+    const isDescripcionValid = this.validateDescripcion();
+    
+    return isNombreValid && isDescripcionValid;
   }
 }// Ojo piojo1

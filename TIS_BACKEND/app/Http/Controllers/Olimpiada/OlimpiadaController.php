@@ -25,20 +25,30 @@ class OlimpiadaController extends Controller
 
     public function store(Request $request)
     {
+        // 1. Validación básica
         $validated = $request->validate([
-            'nombre_olimpiada' => 'required|string|max:100',
+            'nombre_olimpiada'      => 'required|string|max:100',
             'descripcion_olimpiada' => 'nullable|string|max:150',
-            'fecha_inicio' => 'required|date',
-            'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
-            'areas' => 'nullable|array', // Validamos si hay áreas
-            'areas.*.nombre_area' => 'required_with:areas|string|max:100',
-            'areas.*.descripcion' => 'nullable|string|max:150',
+            'fecha_inicio'          => 'required|date',
+            'fecha_final'           => 'required|date|after_or_equal:fecha_inicio',
+            'areas'                 => 'nullable|array',
+            'areas.*.nombre_area'   => 'required_with:areas|string|max:100',
+            'areas.*.descripcion'   => 'nullable|string|max:150',
         ]);
 
-        // Creamos la olimpiada
-        $olimpiada = Olimpiada::create($validated);
+        // 2. Chequeo manual de duplicado
+        $existe = Olimpiada::where('nombre_olimpiada', $validated['nombre_olimpiada'])
+            ->where('descripcion_olimpiada', $validated['descripcion_olimpiada'])
+            ->exists();
 
-        // Guardamos las áreas si existen
+        if ($existe) {
+            return response()->json([
+                'message' => 'Ya existe una Olimpiada con ese nombre y descripción'
+            ], 409);
+        }
+
+        // 3. Si no existe, crearla
+        $olimpiada = Olimpiada::create($validated);
         if (isset($validated['areas'])) {
             foreach ($validated['areas'] as $areaData) {
                 $olimpiada->areas()->create($areaData);
@@ -47,7 +57,7 @@ class OlimpiadaController extends Controller
 
         return response()->json([
             'message' => 'Olimpiada creada exitosamente',
-            'data' => new $this->resource($olimpiada->load('areas')) // Cargamos áreas para mostrarlas también
+            'data'    => new $this->resource($olimpiada->load('areas'))
         ], 201);
     }
 
@@ -59,23 +69,44 @@ class OlimpiadaController extends Controller
     }
 
     public function update(Request $request, string $id)
-    {
-        $olimpiada = Olimpiada::findOrFail($id);
+{
+    $olimpiada = Olimpiada::findOrFail($id);
 
-        $validated = $request->validate([
-            'nombre_olimpiada' => 'sometimes|string|max:100',
-            'descripcion_olimpiada' => 'nullable|string|max:150',
-            'fecha_inicio' => 'sometimes|date',
-            'fecha_final' => 'sometimes|date|after_or_equal:fecha_inicio'
-        ]);
+    $validated = $request->validate([
+        'nombre_olimpiada' => 'sometimes|string|max:100',
+        'descripcion_olimpiada' => 'nullable|string|max:150',
+        'fecha_inicio' => 'sometimes|date',
+        'fecha_final' => 'sometimes|date|after_or_equal:fecha_inicio'
+    ]);
 
-        $olimpiada->update($validated);
+    // Verificar si hay cambios en nombre/descripción antes de validar duplicados
+    if (
+        isset($validated['nombre_olimpiada']) && 
+        isset($validated['descripcion_olimpiada'])
+    ) {
+        $nombre = $validated['nombre_olimpiada'];
+        $descripcion = $validated['descripcion_olimpiada'];
 
-        return response()->json([
-            'message' => 'Olimpiada actualizada exitosamente',
-            'data' => new $this->resource($olimpiada)
-        ]);
+        // Verificar si ya existe otra olimpiada con los mismos datos (excluyendo la actual)
+        $existe = Olimpiada::where('nombre_olimpiada', $nombre)
+            ->where('descripcion_olimpiada', $descripcion)
+            ->where('id_olimpiada', '!=', $id) // Excluir la olimpiada actual
+            ->exists();
+
+        if ($existe) {
+            return response()->json([
+                'message' => 'Ya existe una Olimpiada con ese nombre y descripción'
+            ], 409);
+        }
     }
+
+    $olimpiada->update($validated);
+
+    return response()->json([
+        'message' => 'Olimpiada actualizada exitosamente',
+        'data' => new $this->resource($olimpiada)
+    ]);
+}
 
     public function destroy(string $id)
     {
