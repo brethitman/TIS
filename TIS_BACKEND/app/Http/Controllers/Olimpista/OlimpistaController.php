@@ -138,4 +138,17 @@ class OlimpistaController extends Controller
             'message' => 'Olimpista eliminado exitosamente'
         ]);
     }
+    /**
+     * Guarda una lista de olimpistas
+     *
+     * @param  string  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function upLista(Request $request){
+        foreach ($request->olimpitas as $olimpita) {
+           
+        }
+        return response()->json(['message' => 'Olimpitas guardados']);
+
+    }
 }

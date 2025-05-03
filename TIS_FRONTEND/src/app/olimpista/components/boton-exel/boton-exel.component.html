@@ -24,9 +24,9 @@
   <!-- Modal para Formato 2 -->
   <div *ngIf="showModal2" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
     style="background-color: rgba(75, 85, 99, 0.3); ">
-    <div class="bg-[#ececf4] p-6 rounded shadow-md w-96 rounded-lg">
+    <div class="bg-[#faf5f5] p-6 rounded shadow-md w-96 rounded-lg">
       <h2 class="text-xl font-bold mb-4 italic items-center">¿Desea subir este archivo?</h2>
-      <div class="bg-[#ececf4] shadow-md p-3 mx-auto rounded-b-lg">
+      <div class="bg-[#faf5f5] shadow-md p-3 mx-auto rounded-b-lg">
         <p>Nombre: {{ nombreArchivo }}</p>
         <p>Tamaño: {{ tamanoArchivo }} KB</p>
       </div>
@@ -46,7 +46,7 @@
       <h1 class="text-white text-2xl font-bold ">Visualizacion del documento de excel</h1>
     </section>
     <div class="grid grid-cols-2 gap-4">
-      <div class="flex flex-col p-4 border border-gray-300 rounded-lg shadow-md bg-[#faf5f5]">
+      <div class="flex flex-col p-4 border border-gray-300 rounded-lg shadow-md bg-[#ececf4]">
         <h3 class="text-lg font-bold text-gray-800 mb-3">Datos cargados</h3>
         <div class="flex overflow-auto  w-full">
           <table class="table-auto max-w-full text-sm text-left text-gray-700 border border-gray-900">
@@ -71,4 +71,10 @@
       </div>
     </div>
   </div>
+</div>
+<div *ngIf="confirmSubida == true" class="flex p-2">
+  <p *ngIf="mensajeError!==''" class="text-2xl text-red-700 font-medium">{{mensajeError}}</p>
+  <p *ngIf="mensajeError=='' " class="text-2xl text-slate-700 font-medium">
+    Su documento no tiene ningun error puede generar una boleta de pago
+  </p>
 </div>

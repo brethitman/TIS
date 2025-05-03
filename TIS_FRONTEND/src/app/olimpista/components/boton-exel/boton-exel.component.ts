@@ -14,6 +14,7 @@ export class BotonExelComponent {
   confirmSubida: boolean = false;
   nombreArchivo: string = '';
   tamanoArchivo: string = '';
+  mensajeError: string = '';
   datosExcel: any[][] = [];
   datosEstudiantes: any[][] = [];
   datosTutores: any[][] = [];
@@ -90,9 +91,11 @@ export class BotonExelComponent {
   cancelar2(): void {
     this.confirmSubida = false;
     this.showModal2 = false;
-    this.datosExcel=[];
+    this.datosExcel = [];
     this.datosEstudiantes = [];
     this.datosTutores = [];
+    this.tamanoArchivo = '';
+    this.nombreArchivo= '';
     console.log('Subida cancelada');
   }
 
@@ -113,13 +116,13 @@ export class BotonExelComponent {
     let leyendoEstudiantes = true;
 
     filasConDatos.forEach((fila) => {
-      const contieneNombreTutor = fila.some(cell => 
+      const contieneNombreTutor = fila.some(cell =>
         typeof cell === 'string' && cell.trim().toLowerCase() === "nombre tutor"
-    );
+      );
 
-    if (contieneNombreTutor) {
-        leyendoEstudiantes = false; 
-    }
+      if (contieneNombreTutor) {
+        leyendoEstudiantes = false;
+      }
       if (leyendoEstudiantes) {
         estudiantes.push(fila);
       } else {
@@ -128,13 +131,54 @@ export class BotonExelComponent {
     });
     this.datosEstudiantes = estudiantes;
     this.datosTutores = tutores;
-    this.validaciones(this.datosEstudiantes,this.datosTutores)
+    console.log("Lista de los tutores:", tutores)
+    this.validacionesEst(this.datosEstudiantes)
+    this.validacionesTutor(this.datosTutores)
   }
 
-  validaciones(datosEst: any[][], datosTutor: any[][]) {
+  validacionesEst(datosEst: any[][]) {
     const listaEstudiante = datosEst.slice(1);
+    let mensaje = "";
+
+    listaEstudiante.forEach((fila, index) => {
+      fila.forEach((celda, celdaIndex) => {
+        if (!celda || celda.toString().trim() === "") {
+          mensaje += `Error: La celda en fila ${index + 1}, columna ${celdaIndex + 1} está vacía.\n`;
+        }
+      });
+    });
+
+  }
+  validacionesTutor(datosTutor: any[][]) {
     const listaTutor = datosTutor.slice(1);
-    console.log ('Listas para validar y enviar a guardar',listaEstudiante,listaTutor)
+    let mensaje = "";
+
+    for (let index = 0; index < listaTutor.length; index++) {
+      const fila = listaTutor[index];
+
+      for (let celdaIndex = 0; celdaIndex < fila.length; celdaIndex++) {
+          const celda = fila[celdaIndex];
+
+          if (!celda || celda.toString().trim() === "") {
+              mensaje += `Error: Ninguna información del tutor no debe estar vacia\n`;
+              break; 
+          }
+          const correo = fila[3]?.toString().trim();
+        if (!correo.includes("@") || correo.includes(" ") || 
+            (!correo.endsWith("@gmail.com") && !correo.endsWith("@Outlook.com"))) {
+            mensaje += `Error: Correo electrónico inválido:'${correo}'.\n`;
+            break;
+        }
+        const celular = fila[4]?.toString().trim();
+        if (!/^[67]\d{7}$/.test(celular)) {
+            mensaje += `Error: Número de celular inválido (El numero debe ser de bolivia): '${celular}'.\n `;
+            break;
+        }
+      }
+  }
+    this.mensajeError = mensaje;
+    console.log("Este es el mensaje de validacion:", mensaje, "y este mensaje que se copio",this.mensajeError);
+
   }
 
 }
