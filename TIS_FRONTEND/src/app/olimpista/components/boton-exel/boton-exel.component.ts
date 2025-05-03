@@ -81,8 +81,8 @@ export class BotonExelComponent {
     }
 
     // Asumimos que la primera fila son los encabezados
-    const encabezados = datos[0].map(h => h.toString().trim());
-    const filasDatos = datos.slice(1);
+    const encabezados = datos[1].map(h => h.toString().trim());
+    const filasDatos = datos.slice(2);
 
     console.log('Encabezados encontrados:', encabezados); // Para depuración
 
