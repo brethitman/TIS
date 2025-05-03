@@ -22,6 +22,8 @@ export class OlimpiadaByAreaService { // Renaming this might be better, like Are
     return this.http.get<IDOlimpiadabyArea[]>(url);
   }
 
+  
+
   // **NOTA:** Los siguientes métodos (getById, create, update, delete)
   // han sido comentados/eliminados porque el endpoint proporcionado
   // solo parece ser para obtener una lista de áreas por ID de olimpiada.

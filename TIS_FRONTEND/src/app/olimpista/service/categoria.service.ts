@@ -3,7 +3,7 @@ import { map, catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { NivelesCategoria } from '../interfaces/categoria.interface';
-import { GetNivelesCategoriaResponse } from '../interfaces/get-categoria-response';
+//import { GetNivelesCategoriaResponse } from '../interfaces/get-categoria-response';
 
 @Injectable({
   providedIn: 'root'
@@ -26,10 +26,10 @@ export class CategoriaService {
   /**
    * Obtiene todos los niveles de categoría
    * @returns Observable con la lista paginada de niveles
-   */
+   
   obtenerNivelesCategoria(): Observable<GetNivelesCategoriaResponse> {
     return this.http.get<GetNivelesCategoriaResponse>(this.apiUrl);
-  }
+  }*/
 
   /**
    * Obtiene un nivel de categoría por ID

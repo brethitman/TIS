@@ -9,6 +9,7 @@ import { Inicio2Component } from './olimpista/pages/inicio2/inicio2.component';
 import { Inicio3Component } from './olimpista/pages/inicio3/inicio3.component';
 import { OlimpistaPageComponent } from './olimpista/pages/olimpista-page/olimpista-page.component';
 import { Inicio4Component } from './olimpista/pages/inicio4/inicio4.component';
+import { OlimpiadaPageComponent } from './olimpista/pages/olimpiada-page/olimpiada-page.component';
 
 // Importa tus nuevos componentes de inscripción
 import { Iscripcion1Component } from './olimpista/components/iscripcion1/iscripcion1.component';
@@ -16,7 +17,7 @@ import { Iscripcion2Component } from './olimpista/components/iscripcion2/iscripc
 import { Iscripcion3Component } from './olimpista/components/iscripcion3/iscripcion3.component';
 import { VistaAreasCategoriasComponent } from './olimpista/components/vista-areas-categorias/vista-areas-categorias.component';
 import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lista/visualizacion-lista.component';
-
+import { OlimpiadaService } from './olimpista/service/olimpiada.service';
 
 export const routes: Routes = [
   {
@@ -63,14 +64,13 @@ export const routes: Routes = [
     path: 'inscripcion/paso3',
     component: Iscripcion3Component
   },
-  // Opcional: Redirigir '/inscripcion' al paso 1
+   // Opcional: Redirigir '/inscripcion' al paso 1
   {
     path: 'inscripcion',
     redirectTo: 'inscripcion/paso1',
     pathMatch: 'full'
   },
   // --- Fin Rutas de Inscripción ---
-
 
   // Rutas públicas (las que ya tenías)
   {
@@ -122,5 +122,25 @@ export const routes: Routes = [
     path: '**',
     redirectTo: 'inicio/waba'
   },
+
+
+  {
+    path: 'inicio/OlimpistaForm', // Revisa si este es el nombre final para esta ruta
+    component: OlimpistaPageComponent
+  },
+
+
+
+{ path: 'admin/olimpiada', component: OlimpiadaPageComponent },
+
+{
+  path: '',
+  redirectTo: 'admin/olimpiada', // Ahora redirigimos directamente al panel de admin
+  pathMatch: 'full'
+},
+{
+  path: '**',
+  redirectTo: 'admin/olimpiada'
+}
 
 ];

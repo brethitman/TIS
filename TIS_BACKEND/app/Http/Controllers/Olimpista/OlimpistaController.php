@@ -138,6 +138,7 @@ class OlimpistaController extends Controller
             'message' => 'Olimpista eliminado exitosamente'
         ]);
     }
+
     /**
      * Guarda una lista de olimpistas
      *
@@ -151,4 +152,5 @@ class OlimpistaController extends Controller
         return response()->json(['message' => 'Olimpitas guardados']);
 
     }
+
 }
