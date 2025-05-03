@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
+import { NgModule, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as XLSX from 'xlsx';
+import { AreaAlumnoComponent } from '../area-alumno/area-alumno.component';
 
 @Component({
   selector: 'app-boton-exel',
   templateUrl: './boton-exel.component.html',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AreaAlumnoComponent],
 })
 export class BotonExelComponent {
   showModal1: boolean = false;
@@ -78,35 +79,33 @@ export class BotonExelComponent {
       this.estudiantes = [];
       return;
     }
-  
+
     // Asumimos que la primera fila son los encabezados
     const encabezados = datos[0].map(h => h.toString().trim());
     const filasDatos = datos.slice(1);
-  
+
     console.log('Encabezados encontrados:', encabezados); // Para depuración
-  
+
     // Buscar índices de columnas con nombres flexibles
-    const nombreIndex = encabezados.findIndex(h => 
+    const nombreIndex = encabezados.findIndex(h =>
       h.toLowerCase().includes('nombre') || h.toLowerCase().includes('nombres')
     );
-    const apellidoIndex = encabezados.findIndex(h => 
+    const apellidoIndex = encabezados.findIndex(h =>
       h.toLowerCase().includes('apellido') || h.toLowerCase().includes('apellidos')
     );
-    const ciIndex = encabezados.findIndex(h => 
+    const ciIndex = encabezados.findIndex(h =>
       h.toLowerCase().includes('ci') || h.toLowerCase().includes('cédula') || h.toLowerCase().includes('cedula')
     );
-  
+
     this.estudiantes = filasDatos.map(fila => ({
       nombre: nombreIndex >= 0 ? fila[nombreIndex] : 'Nombre no disponible',
       apellido: apellidoIndex >= 0 ? fila[apellidoIndex] : '',
       ci: ciIndex >= 0 ? fila[ciIndex] : '',
     })).filter(est => est.nombre && est.nombre !== 'Nombre no disponible');
-  
+
     console.log('Estudiantes procesados:', this.estudiantes); // Para depuración
   }
-  toggleStudentDropdown(): void {
-    this.isStudentDropdownOpen = !this.isStudentDropdownOpen;
-  }
+
   // Función para validar los campos del tutor
   validateTutor(): boolean {
     let isValid = true;
@@ -186,9 +185,18 @@ export class BotonExelComponent {
     { nombre: 'Química' },
     { nombre: 'Biología' }
   ];
-
-  toggleAreaDropdown(): void {
-    this.isAreaDropdownOpen = !this.isAreaDropdownOpen;
+  onEstudianteSeleccionado(estudiante: any): void {
+    console.log('Estudiante seleccionado:', estudiante);
+    // Aquí puedes manejar el estudiante seleccionado
   }
 
+  onAreaSeleccionada(area: any): void {
+    console.log('Área seleccionada:', area);
+    // Aquí puedes manejar el área seleccionada
+  }
+
+  onInscribir(): void {
+    console.log('Inscribir estudiante');
+    // Aquí puedes manejar la inscripción
+  }
 }
