@@ -1,0 +1,10 @@
+<!-- 1. Cuando el hijo emita, llamamos a agregarOlimpiada(...) -->
+<app-inscripcion-olimpiada
+  (olimpiadaCreada)="agregarOlimpiada($event)">
+</app-inscripcion-olimpiada>
+
+<!-- 2. Bindea correctamente el input 'olimpiada' del list al valor de la señal -->
+<app-olimpiada-list
+  [olimpiada]="olimpiadas()"
+  (olimpiadaActualizada)="actualizarOlimpiada($event)">
+</app-olimpiada-list>

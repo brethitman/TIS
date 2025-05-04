@@ -1,0 +1,117 @@
+<div class="max-w-4xl mx-auto p-4 space-y-6">
+  <!-- Card Principal -->
+  <div class="bg-white rounded-xl shadow-lg border border-blue-100">
+    <div class="p-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-6 border-l-4 border-blue-500 pl-4">
+        Datos del Área
+      </h3>
+
+      <!-- Sección de Información General -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-500 mb-1">Nombre del área</label>
+            <p class="text-lg font-semibold text-gray-800">{{ Area.nombre_area }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500 mb-1">Descripción</label>
+            <p class="text-base font-medium text-gray-700">
+              {{ Area.descripcion }}
+            </p>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-500 mb-1">Creado</label>
+            <p class="text-base text-gray-600 italic">{{ Area.createdAt  }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-500 mb-1">Olimpiada</label>
+            <p class="text-base text-gray-600">{{ Area.olimpiada.nombre_olimpiada }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de Niveles -->
+      <div class="border-t pt-6">
+        <h4 class="text-lg font-bold text-gray-800 mb-4">Niveles de Competencia</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          @for (nivel of Area.niveles; track nivel.id_nivel) {
+            <div class="bg-white p-4 rounded-lg border-2 border-blue-200 shadow-sm hover:border-blue-400 transition-colors duration-200">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <h5 class="font-semibold text-gray-800">{{ nivel.nombre_nivel }}</h5>
+                  <p class="text-sm text-gray-600 mt-1">{{ nivel.descripcion }}</p>
+                  <p class="text-xs text-gray-500 mt-1">
+                    Fecha Examen: {{ nivel.fecha_examen  }}<br>
+                    Costo: {{ nivel.costo }}<br>
+                    Estado: {{ nivel.habilitacion ? 'Habilitado' : 'Deshabilitado' }}
+                  </p>
+                </div>
+                <span class="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
+                  #{{ nivel.id_nivel }}
+                </span>
+              </div>
+            </div>
+          }
+
+          @empty {
+            <div class="col-span-full text-center p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+              <p class="text-blue-600">No hay niveles registrados</p>
+            </div>
+          }
+        </div>
+        <!-- Añadir esto al final de la sección de niveles -->
+<div class="mt-4">
+  <button
+    (click)="toggleForm()"
+    class="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors duration-200"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+    {{ showForm ? 'Cancelar' : 'Agregar Nivel' }}
+  </button>
+
+  <form *ngIf="showForm" [formGroup]="nivelForm" (ngSubmit)="onSubmit()" class="mt-4 space-y-4 bg-gray-50 p-4 rounded-lg">
+    <div>
+     <!--
+      <label class="block text-sm font-medium text-gray-700">Nombre del nivel</label>
+      <input formControlName="nombre_nivel" type="text" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+    </div>
+  -->
+  <!--
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Descripción</label>
+      <textarea formControlName="descripcion" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Fecha de examen</label>
+      <input formControlName="fecha_examen" type="date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Costo</label>
+      <input formControlName="costo" type="number" step="0.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+    </div>
+-->
+    <div class="flex items-center gap-2">
+      <input formControlName="habilitacion" type="checkbox" id="habilitacion" class="rounded text-blue-600">
+      <label for="habilitacion" class="text-sm text-gray-700">Habilitado</label>
+    </div>
+
+    <button
+      type="submit"
+      class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
+      [disabled]="!nivelForm.valid"
+    >
+      Guardar Nivel
+    </button>
+<!-- </form>-->
+</div>
+  <!-- </div>-->
+ <!--   </div>-->
+<!--   </div>-->
+<!--  </div> -->

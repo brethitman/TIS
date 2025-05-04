@@ -1,0 +1,81 @@
+<div class="flex flex-col p-4 border border-gray-300 rounded-lg shadow-md bg-white w-full max-w-2xl mx-auto">
+    <!-- Dropdown de Estudiantes -->
+    <div class="relative mb-4">
+      <button (click)="toggleStudentDropdown()"
+        class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+        <span>Seleccionar estudiante</span>
+        <svg class="ml-2 h-5 w-5 text-gray-500" [class.transform]="isStudentDropdownOpen"
+          [class.rotate-180]="isStudentDropdownOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+          fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+            clip-rule="evenodd" />
+        </svg>
+      </button>
+  
+      <!-- Lista de estudiantes -->
+      <div *ngIf="isStudentDropdownOpen"
+        class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+        <div class="divide-y divide-gray-100">
+          <div *ngFor="let estudiante of estudiantes" 
+               class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+               (click)="seleccionarEstudiante(estudiante)">
+            <p class="text-sm text-gray-800 font-medium">
+              {{ estudiante.nombre }} {{ estudiante.apellido }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">ÁREAS A INSCRIBIRSE</h3>
+    
+    <!-- Sección de Categorías -->
+    <div class="mb-6">
+      <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">CATEGORÍAS</h4>
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span *ngFor="let area of areas" 
+              class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+          {{ area.nombre }}
+        </span>
+      </div>
+    </div>
+  
+    <!-- Área para inscribirse -->
+    <div>
+      <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">ÁREA PARA INSCRIBIRSE</h4>
+      
+      <!-- Dropdown de Áreas -->
+      <div class="relative mb-4">
+        <button (click)="toggleAreaDropdown()"
+          class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+          <span>Seleccionar área</span>
+          <svg class="ml-2 h-5 w-5 text-gray-500" [class.transform]="isAreaDropdownOpen"
+            [class.rotate-180]="isAreaDropdownOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+            fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+              clip-rule="evenodd" />
+          </svg>
+        </button>
+  
+        <!-- Lista de áreas -->
+        <div *ngIf="isAreaDropdownOpen"
+          class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+          <div class="divide-y divide-gray-100">
+            <div *ngFor="let area of areas" 
+                 class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+                 (click)="seleccionarArea(area)">
+              <p class="font-medium text-gray-800">{{ area.nombre }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Botón de inscripción -->
+      <button (click)="inscribirEstudiante()"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+        Inscribir Estudiante
+      </button>
+    </div>
+  </div>
