@@ -9,7 +9,7 @@ use App\Models\Area;
 use App\Models\Olimpiada;
 use Illuminate\Http\Request;
 
-class AreaController extends Controller
+class AreaController_BACKUP_994 extends Controller
 {
     protected $resource = AreaResource::class;
     protected $collectionResource = AreaCollection::class;
