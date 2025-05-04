@@ -49,12 +49,11 @@ class OlimpistaController extends Controller
             'id_inscripcion' => 'nullable|exists:inscripcions,id_inscripcion',
             'nombres' => 'required|string|max:100',
             'apellidos' => 'required|string|max:100',
-            'ci' => 'required|string|max:20|unique:olimpistas,ci',
+            'ci' => 'required|string|max:20',
             'fecha_nacimiento' => 'required|date',
             'correo' => 'required|email|max:100',
             'telefono' => 'required|string|max:20',
             'colegio' => 'required|string|max:100',
-            'curso' => 'required|string|max:50',
             'departamento' => 'required|string|max:50',
             'provincia' => 'required|string|max:50',
         ]);
@@ -105,7 +104,6 @@ class OlimpistaController extends Controller
             'correo' => 'required|email|max:100',
             'telefono' => 'required|string|max:20',
             'colegio' => 'required|string|max:100',
-            'curso' => 'required|string|max:50',
             'departamento' => 'required|string|max:50',
             'provincia' => 'required|string|max:50',
         ]);

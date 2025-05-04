@@ -30,6 +30,7 @@ class Tutor extends Model
         'ci',
         'correo',
         'telefono',
+        'contacto',
     ];
 
     /**

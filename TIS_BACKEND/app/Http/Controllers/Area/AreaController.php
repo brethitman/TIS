@@ -27,7 +27,7 @@ class AreaController extends Controller
     {
         $request->validate([
             'id_olimpiada' => 'required|exists:olimpiadas,id_olimpiada',
-            'nombre_area' => 'required|string|max:100|unique:areas,nombre_area',
+            'nombre_area' => 'required|string|max:20',
             'descripcion' => 'nullable|string|max:255',
             'niveles' => 'nullable|array',
             'niveles.*.nombre_nivel' => 'required|string|max:100',
