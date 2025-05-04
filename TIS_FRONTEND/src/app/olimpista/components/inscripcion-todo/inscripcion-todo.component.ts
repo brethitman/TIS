@@ -2,10 +2,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-
+import { ActivatedRoute } from '@angular/router'; // ✅ Añade este import
+import { Router } from '@angular/router'; // ✅ Añade si necesitas navegar
 // Servicios
 import { InscripcionServicee } from '../../service/iscripcionn.service';
 import { AreaService } from '../../service/area.service';
+
+// Cambia estos imports
+import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
+import { IDOlimpiadabyArea, NivelCategoria } from '../../interfaces/olimpiadaAreaCategoria.interface';
+
 
 // Interfaces
 import { AreaInscripcion, InscripcionPayload, Olimpista, Tutor, InscripcionPostSuccessResponse, BoletaPagoResponse } from '../../interfaces/inscripcion.types';
@@ -19,24 +25,45 @@ import { BoletaPagoComponent } from "../boleta-pago/boleta-pago.component";
   templateUrl: './inscripcion-todo.component.html',
 })
 export class InscripcionTodoComponent implements OnInit, OnDestroy {
+
   inscripcionForm!: FormGroup;
   successMessage: string | null = null;
   errorMessage: string | null = null;
-  areasDisponibles: Area[] = [];
+  //areasDisponibles: Area[] = [];
   boletaGenerada: BoletaPagoResponse | null = null;
   private destroy$ = new Subject<void>();
+  areasDisponibles: IDOlimpiadabyArea[] = []; // Usa la interfaz correcta
+
 
   constructor(
     private fb: FormBuilder,
     private inscripcionService: InscripcionServicee,
-    private areaService: AreaService
-  ) { }
+    private areaService: AreaService,
+    private route: ActivatedRoute, // ✅ Añade esto
+    private router: Router, // ✅ Para navegación después de éxito/error
+    private olimpiadaByAreaService: OlimpiadaByAreaService,
+
+) { }
 
   ngOnInit(): void {
+
     this.initForm();
-    this.cargarAreas();
+    this.cargarOlimpiadaId();
+   // this.cargarAreas();
+
   }
 
+  private cargarOlimpiadaId(): void {
+    this.route.params.subscribe(params => {
+      const olimpiadaId = params['id'];
+      if (olimpiadaId) {
+        this.cargarAreas(olimpiadaId);
+      } else {
+        console.error('No se encontró ID de olimpiada en la URL');
+        // Puedes redirigir a una página de error
+      }
+    });
+  }
   private initForm(): void {
     this.inscripcionForm = this.fb.group({
       fecha_inscripcion: ['', Validators.required],
@@ -51,12 +78,15 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
     this.addArea();
   }
 
-  private cargarAreas(): void {
-    this.areaService.getAreas()
+  private cargarAreas(olimpiadaId: string): void {
+    this.olimpiadaByAreaService.getAreasByOlimpiadaId(Number(olimpiadaId))
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => this.areasDisponibles = response.areas,
-        error: (error) => console.error('Error cargando áreas:', error)
+        next: (areas) => this.areasDisponibles = areas,
+        error: (error) => {
+          console.error('Error cargando áreas:', error);
+          this.errorMessage = 'Error al cargar las áreas disponibles';
+        }
       });
   }
 
@@ -112,12 +142,14 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
     this.areasFormArray.push(areaGroup);
   }
 
+
+
   private setupAreaListeners(areaGroup: FormGroup): void {
     areaGroup.get('area')?.valueChanges
       .pipe(takeUntil(this.destroy$))
-      .subscribe((selectedArea: Area) => {
+      .subscribe((selectedArea: IDOlimpiadabyArea) => {
         const nivelControl = areaGroup.get('nivel');
-        if (selectedArea?.niveles?.length) {
+        if (selectedArea?.nivel_categorias?.length) { // ✅ Usa nivel_categorias
           nivelControl?.enable();
           nivelControl?.setValue(null);
         } else {
@@ -128,9 +160,14 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   }
 
   removeArea(index: number): void { this.areasFormArray.removeAt(index); }
-
+/*
   getNiveles(areaIndex: number): Nivele[] {
     return this.areasFormArray.at(areaIndex).get('area')?.value?.niveles || [];
+  }
+    */
+  getNiveles(areaIndex: number): NivelCategoria[] {
+    const areaControl = this.areasFormArray.at(areaIndex).get('area');
+    return areaControl?.value?.nivel_categorias || [];
   }
 
   // Submit
@@ -155,18 +192,19 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
     const formValue = this.inscripcionForm.value;
     return {
       ...formValue,
+      olimpiada_id: Number(this.route.snapshot.params['id']),
       areas: formValue.areas.map((areaGroup: any) => ({
-        area_id: areaGroup.area.id,
-        nivelesCategoria: [areaGroup.nivel]
+        area_id: areaGroup.area.id_area,
+        nivelesCategoria: [areaGroup.nivel] // ⚠️ Solo envía el valor directamente
       }))
     };
   }
-
   private handleSuccess(response: InscripcionPostSuccessResponse): void {
     this.successMessage = '¡Inscripción exitosa!';
     this.boletaGenerada = response.inscripcion.boleta_pago;
     this.inscripcionForm.reset();
     this.initForm();
+
   }
 
   private handleError(error: any): void {
@@ -178,4 +216,6 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+
 }

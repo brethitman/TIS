@@ -10,7 +10,7 @@ import { BoletaPagoComponent } from "../../components/boleta-pago/boleta-pago.co
   standalone: true, // <--- Asegúrate de que Inicio1Component también sea standalone
   imports: [
     CommonModule, // <--- Añade CommonModule si lo necesitas en esta plantilla
-    InscripcionTodoComponent // <-- ¡Tienes que importar InscripcionTodoComponent aquí!
+  /*  InscripcionTodoComponent*/ // <-- ¡Tienes que importar InscripcionTodoComponent aquí!
 
 ],
   templateUrl: './inicio1.component.html',

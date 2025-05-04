@@ -17,13 +17,14 @@ import { Iscripcion2Component } from './olimpista/components/iscripcion2/iscripc
 import { Iscripcion3Component } from './olimpista/components/iscripcion3/iscripcion3.component';
 import { VistaAreasCategoriasComponent } from './olimpista/components/vista-areas-categorias/vista-areas-categorias.component';
 import { OlimpiadaService } from './olimpista/service/olimpiada.service';
-
+import { CardOlimpiadaUsuarioComponent } from './olimpista/components/card-olimpiada-usuario/card-olimpiada-usuario.component';
+import { InscripcionTodoComponent } from './olimpista/components/inscripcion-todo/inscripcion-todo.component';
 
 export const routes: Routes = [
-  {
-    path: 'auth',
-    component: AuthLayoutComponent,
-    children: [
+ {
+  path: 'auth',
+  component: AuthLayoutComponent,
+  children: [
       {
         path: '',
         loadChildren: () => import("./auth/auth-routing.module").then(m => m.AuthRoutingModule),
@@ -103,6 +104,7 @@ export const routes: Routes = [
     component: OlimpistaPageComponent
   },
 
+//esto es para admin para entrar a la area
 {
   path: 'inicio/look/wach/:id',
   component: VistaAreasCategoriasComponent
@@ -120,21 +122,23 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
 
-  // Ruta de respaldo para cualquier otra ruta no encontrada
-  {
-    path: '**',
-    redirectTo: 'inicio/waba'
-  },
-
+ 
 
 {
   path: '',
   redirectTo: 'admin/olimpiada', // Ahora redirigimos directamente al panel de admin
   pathMatch: 'full'
 },
+
+
+{
+  path: 'inicio/look/inscripcion-todo/:id',
+  component: InscripcionTodoComponent,
+  data: { title: 'Formulario de Inscripción' }
+},
+
 {
   path: '**',
   redirectTo: 'admin/olimpiada'
-}
-
+},
 ];

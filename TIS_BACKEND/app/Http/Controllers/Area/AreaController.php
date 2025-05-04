@@ -122,8 +122,25 @@ class AreaController extends Controller
         return response()->json($areas);
     }
 
-    public function nivelesPorArea($id)
-{
+
+
+    public function getAreasByOlimpiadaParaInscripcion($id)
+    {
+        $olimpiada = Olimpiada::find($id);
+
+        if (!$olimpiada) {
+            return response()->json(['error' => 'Olimpiada no encontrada'], 404);
+        }
+
+        $areas = $olimpiada->areas()->with('nivelCategorias')->get();
+
+        return response()->json($areas);
+    }
+
+
+
+
+    public function nivelesPorArea($id){
     // Buscamos el área junto con sus niveles
     $area = Area::with('niveles')->find ($id);
 

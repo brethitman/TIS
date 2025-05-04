@@ -280,13 +280,13 @@
                   <div>
                       <label [attr.for]="'nivelSelect_' + areaIndex" class="block text-sm font-medium text-gray-700 mb-1">Nivel:</label>
                       <select [id]="'nivelSelect_' + areaIndex" formControlName="nivel"
-                          [disabled]="!areaGroup.value.area"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                          <option [ngValue]="null" disabled>-- Seleccione un Nivel --</option>
-                          <option *ngFor="let nivel of getNiveles(areaIndex)" [value]="nivel.id_nivel">
-                              {{ nivel.nombre_nivel }}
-                          </option>
-                      </select>
+  [disabled]="!areaGroup.value.area">
+  <option [ngValue]="null" disabled>-- Seleccione un Nivel --</option>
+  <!-- Cambia [value] por [ngValue] -->
+  <option *ngFor="let nivel of getNiveles(areaIndex)" [ngValue]="nivel.id_nivel">
+    {{ nivel.nombre_nivel }}
+  </option>
+</select>
                       <div *ngIf="areaGroup.get('nivel')?.touched && areaGroup.get('nivel')?.invalid"
                           class="text-red-500 text-sm mt-1">
                           Debe seleccionar un nivel.

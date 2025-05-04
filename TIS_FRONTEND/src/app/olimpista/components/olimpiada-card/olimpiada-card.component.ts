@@ -146,9 +146,10 @@ export class OlimpiadaCardComponent implements OnInit {
 
   // Nuevo método para el botón "Entrar"
   entrar(): void {
-    if (this.olimpiada?.id) { 
+    if (this.olimpiada?.id) {
       this.router.navigate([`inicio/look/wach/${this.olimpiada.id}`]);
     }
   }
+
 
 }

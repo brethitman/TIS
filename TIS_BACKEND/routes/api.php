@@ -65,7 +65,7 @@ Route::get('/inscripcion/{id}', [ InscripcionController::class, 'show' ]);
 Route::post('/inscripcion', [ InscripcionController::class, 'store' ]);
 
 Route::get('/olimpiadas/{id}/areas', [AreaController::class, 'getAreasByOlimpiada']);
-
+Route::get('/olimpiadasInscripcion/{id}/areas', [AreaController::class, 'getAreasByOlimpiadaParaInscripcion']);
 
 
 
