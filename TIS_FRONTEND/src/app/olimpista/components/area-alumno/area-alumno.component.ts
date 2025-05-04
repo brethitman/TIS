@@ -17,6 +17,7 @@ export class AreaAlumnoComponent {
 
   isStudentDropdownOpen = false;
   isAreaDropdownOpen = false;
+  estudianteActual: any = null;
 
   toggleStudentDropdown(): void {
     this.isStudentDropdownOpen = !this.isStudentDropdownOpen;
@@ -30,19 +31,5 @@ export class AreaAlumnoComponent {
     if (this.isAreaDropdownOpen) {
       this.isStudentDropdownOpen = false;
     }
-  }
-
-  seleccionarEstudiante(estudiante: any): void {
-    this.estudianteSeleccionado.emit(estudiante);
-    this.isStudentDropdownOpen = false;
-  }
-
-  seleccionarArea(area: any): void {
-    this.areaSeleccionada.emit(area);
-    this.isAreaDropdownOpen = false;
-  }
-
-  inscribirEstudiante(): void {
-    this.inscribir.emit();
   }
 }

@@ -3,13 +3,20 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as XLSX from 'xlsx';
 import { AreaAlumnoComponent } from '../area-alumno/area-alumno.component';
-
+import { Output, EventEmitter } from '@angular/core';
 @Component({
   selector: 'app-boton-exel',
   templateUrl: './boton-exel.component.html',
   imports: [CommonModule, FormsModule, AreaAlumnoComponent],
+
 })
+
 export class BotonExelComponent {
+
+  @Output() estudianteSeleccionado = new EventEmitter<any>();
+  @Output() areaSeleccionada = new EventEmitter<any>();
+  @Output() inscribir = new EventEmitter<void>();
+
   showModal1: boolean = false;
   showModal2: boolean = false;
   confirmSubida: boolean = false;
@@ -81,8 +88,8 @@ export class BotonExelComponent {
     }
 
     // Asumimos que la primera fila son los encabezados
-    const encabezados = datos[1].map(h => h.toString().trim());
-    const filasDatos = datos.slice(2);
+    const encabezados = datos[0].map(h => h.toString().trim());
+    const filasDatos = datos.slice(1);
 
     console.log('Encabezados encontrados:', encabezados); // Para depuración
 
@@ -185,18 +192,4 @@ export class BotonExelComponent {
     { nombre: 'Química' },
     { nombre: 'Biología' }
   ];
-  onEstudianteSeleccionado(estudiante: any): void {
-    console.log('Estudiante seleccionado:', estudiante);
-    // Aquí puedes manejar el estudiante seleccionado
-  }
-
-  onAreaSeleccionada(area: any): void {
-    console.log('Área seleccionada:', area);
-    // Aquí puedes manejar el área seleccionada
-  }
-
-  onInscribir(): void {
-    console.log('Inscribir estudiante');
-    // Aquí puedes manejar la inscripción
-  }
 }
