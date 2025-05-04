@@ -21,7 +21,7 @@ import {
   imports: [
     CommonModule,
     DatePipe,
-    CurrencyPipe,
+    //CurrencyPipe,
     CrearAreaComponent,
     FormsModule
   ],
@@ -270,9 +270,9 @@ export class VistaAreasCategoriasComponent implements OnInit {
           this.successMessage = null;
 
           if (err.error && err.error.message) {
-             this.errores = [`Error al crear niveles: ${err.error.message}`];
+             this.errores = ['Error al crear niveles: ${err.error.message}'];
           } else if (err.message) {
-             this.errores = [`Error al crear niveles: ${err.message}`];
+             this.errores = ['Error al crear niveles: ${err.message}'];
           }
           else {
             this.errores = ['Error desconocido al crear niveles.'];

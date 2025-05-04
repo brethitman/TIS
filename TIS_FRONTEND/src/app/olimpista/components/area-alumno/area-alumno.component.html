@@ -17,9 +17,8 @@
       <div *ngIf="isStudentDropdownOpen"
         class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
         <div class="divide-y divide-gray-100">
-          <div *ngFor="let estudiante of estudiantes" 
-               class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
-               (click)="seleccionarEstudiante(estudiante)">
+          <div *ngFor="let estudiante of estudiantes"
+               class="px-4 py-2 hover:bg-blue-50 cursor-pointer">
             <p class="text-sm text-gray-800 font-medium">
               {{ estudiante.nombre }} {{ estudiante.apellido }}
             </p>
@@ -64,8 +63,7 @@
           class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
           <div class="divide-y divide-gray-100">
             <div *ngFor="let area of areas" 
-                 class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
-                 (click)="seleccionarArea(area)">
+                 class="px-4 py-2 hover:bg-blue-50 cursor-pointer">
               <p class="font-medium text-gray-800">{{ area.nombre }}</p>
             </div>
           </div>
@@ -73,8 +71,7 @@
       </div>
   
       <!-- Botón de inscripción -->
-      <button (click)="inscribirEstudiante()"
-        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+      <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
         Inscribir Estudiante
       </button>
     </div>
