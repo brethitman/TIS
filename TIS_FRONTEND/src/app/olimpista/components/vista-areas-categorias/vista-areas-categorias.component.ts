@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms'; // Necesario para ngModel
 import { IDOlimpiadabyArea } from '../../interfaces/olimpiadaAreaCategoria.interface';
 import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
 import { CrearAreaComponent } from '../crear-area/crear-area.component';
+
+// Importar el NivelService y las interfaces necesarias
 import { NivelService } from '../../service/post_Categoria.service';
 import { CreateNivelRequest, CreateNivelesBulkRequest,
   CreateNivelesBulkResponse, NivelResponse, AreaResponse  } from '../../interfaces/post_categoria.interface';
@@ -16,8 +18,8 @@ import { CreateNivelRequest, CreateNivelesBulkRequest,
     CommonModule,
     DatePipe,
     CurrencyPipe,
-    CrearAreaComponent,
-    FormsModule
+    CrearAreaComponent, // Mantengo el componente si lo usas, aunque no afecta la lógica de niveles aquí
+    FormsModule // Confirmado FormsModule está aquí
   ],
   templateUrl: './vista-areas-categorias.component.html',
 })
@@ -86,8 +88,7 @@ export class VistaAreasCategoriasComponent implements OnInit {
         next: (data) => {
           this.areas = data;
           this.cargando = false;
-          this.errorCarga = null; 
-          
+          this.errorCarga = null; // Limpiar error si la carga es exitosa
         },
         error: (err) => {
           console.error('Error al cargar áreas:', err);
@@ -98,6 +99,8 @@ export class VistaAreasCategoriasComponent implements OnInit {
       });
   }
 
+  // Muestra/oculta el formulario de nuevo nivel para un área específica
+  // También reinicia el estado del formulario de niveles
   toggleFormulario(areaId: number): void {
     // Si haces clic en el área activa, cierra el formulario. De lo contrario, ábrelo para el área clicada.
     this.areaActivaId = this.areaActivaId === areaId ? null : areaId; // Usar areaId pasado
