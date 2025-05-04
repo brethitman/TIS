@@ -13,7 +13,6 @@ import { GetOlimpiadaService } from '../../service/get.olimpiada.service';
   export class OlimpiadaPageComponent implements OnInit {
     private getOlimpiadaService = inject(GetOlimpiadaService);
     public olimpiadas = signal<Olimpiada[]>([]);
-    
   
     ngOnInit() {
       this.loadOlimpiadas();

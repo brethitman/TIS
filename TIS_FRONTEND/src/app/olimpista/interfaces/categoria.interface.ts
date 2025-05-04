@@ -22,8 +22,3 @@ export interface Area {
   createdAt:    Date;
   updatedAt:    Date;
 }
-
-export interface BackendResponse {
-  message: string;
-  nivelCategoria: NivelesCategoria;
-}

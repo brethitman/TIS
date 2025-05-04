@@ -17,12 +17,12 @@
         </div>
       </div>
 
-      <!-- Descripción -->
       <div class="md:col-span-2">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción *</label>
-        <textarea formControlName="descripcion_olimpiada" rows="3"
-                 class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                 [class.border-red-500]="olimpiadaForm.get('descripcion_olimpiada')?.invalid && olimpiadaForm.get('descripcion_olimpiada')?.touched"></textarea>
+        <label for="descripcion_olimpiada" class="block text-sm font-medium text-gray-700 mb-1">Descripción *</label>
+        <textarea id="descripcion_olimpiada" formControlName="descripcion_olimpiada" rows="3"
+                  class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  [class.border-red-500]="olimpiadaForm.get('descripcion_olimpiada')?.invalid && olimpiadaForm.get('descripcion_olimpiada')?.touched"
+                  placeholder="Ingrese una descripción de la olimpiada"></textarea>
         <div *ngIf="olimpiadaForm.get('descripcion_olimpiada')?.invalid && olimpiadaForm.get('descripcion_olimpiada')?.touched"
              class="mt-1 text-sm text-red-600">
           <span *ngIf="olimpiadaForm.get('descripcion_olimpiada')?.errors?.['required']">Campo requerido</span>
@@ -30,12 +30,12 @@
         </div>
       </div>
 
-      <!-- Fechas -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha Inicio *</label>
-        <input type="date" formControlName="fecha_inicio"
+        <label for="fecha_inicio" class="block text-sm font-medium text-gray-700 mb-1">Fecha Inicio *</label>
+        <input type="date" id="fecha_inicio" formControlName="fecha_inicio"
                class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-               [class.border-red-500]="olimpiadaForm.get('fecha_inicio')?.invalid && olimpiadaForm.get('fecha_inicio')?.touched">
+               [class.border-red-500]="olimpiadaForm.get('fecha_inicio')?.invalid && olimpiadaForm.get('fecha_inicio')?.touched"
+               placeholder="Seleccione la fecha de inicio">
         <div *ngIf="olimpiadaForm.get('fecha_inicio')?.invalid && olimpiadaForm.get('fecha_inicio')?.touched"
              class="mt-1 text-sm text-red-600">
           <span *ngIf="olimpiadaForm.get('fecha_inicio')?.errors?.['required']">Campo requerido</span>
@@ -43,10 +43,11 @@
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha Final *</label>
-        <input type="date" formControlName="fecha_final"
+        <label for="fecha_final" class="block text-sm font-medium text-gray-700 mb-1">Fecha Final *</label>
+        <input type="date" id="fecha_final" formControlName="fecha_final"
                class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-               [class.border-red-500]="olimpiadaForm.get('fecha_final')?.invalid && olimpiadaForm.get('fecha_final')?.touched">
+               [class.border-red-500]="olimpiadaForm.get('fecha_final')?.invalid && olimpiadaForm.get('fecha_final')?.touched"
+               placeholder="Seleccione la fecha final">
         <div *ngIf="olimpiadaForm.get('fecha_final')?.invalid && olimpiadaForm.get('fecha_final')?.touched"
              class="mt-1 text-sm text-red-600">
           <span *ngIf="olimpiadaForm.get('fecha_final')?.errors?.['required']">Campo requerido</span>
@@ -55,7 +56,6 @@
     </div>
 
 
-    <!--   -->
     <div class="border-t pt-6">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-semibold text-gray-800">Áreas de Competencia</h3>
@@ -76,15 +76,16 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
+            <span class="sr-only">Eliminar área</span>
           </button>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Nombre Área -->
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Área *</label>
-              <input formControlName="nombre_area"
+              <label for="nombre_area_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Nombre Área *</label>
+              <input type="text" id="nombre_area_{{i}}" formControlName="nombre_area"
                      class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                     [class.border-red-500]="area.get('nombre_area')?.invalid && area.get('nombre_area')?.touched">
+                     [class.border-red-500]="area.get('nombre_area')?.invalid && area.get('nombre_area')?.touched"
+                     placeholder="Ingrese el nombre del área">
               <div *ngIf="area.get('nombre_area')?.invalid && area.get('nombre_area')?.touched"
                    class="mt-1 text-sm text-red-600">
                 <span *ngIf="area.get('nombre_area')?.errors?.['required']">Campo requerido</span>
@@ -94,10 +95,11 @@
 
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Descripción *</label>
-              <input formControlName="descripcion"
+              <label for="descripcion_area_{{i}}" class="block text-sm font-medium text-gray-700 mb-1">Descripción *</label>
+              <input type="text" id="descripcion_area_{{i}}" formControlName="descripcion"
                      class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                     [class.border-red-500]="area.get('descripcion')?.invalid && area.get('descripcion')?.touched">
+                     [class.border-red-500]="area.get('descripcion')?.invalid && area.get('descripcion')?.touched"
+                     placeholder="Ingrese la descripción del área">
               <div *ngIf="area.get('descripcion')?.invalid && area.get('descripcion')?.touched"
                    class="mt-1 text-sm text-red-600">
                 <span *ngIf="area.get('descripcion')?.errors?.['required']">Campo requerido</span>
@@ -109,7 +111,6 @@
       </div>
     </div>
 
-    <!-- Botones -->
     <div class="flex justify-end gap-3 pt-4 border-t">
       <button type="button" (click)="resetForm()"
               class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">

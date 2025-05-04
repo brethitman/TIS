@@ -93,9 +93,6 @@ class AreaController extends Controller
         ]);
     }
 
-
-    //OJITOOOO PRUEBA
-
     public function getByOlimpiada($olimpiadaId)
 {
     // Validar que la olimpiada exista

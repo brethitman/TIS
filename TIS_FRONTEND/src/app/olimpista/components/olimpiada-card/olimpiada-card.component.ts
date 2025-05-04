@@ -1,14 +1,17 @@
-import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
+import { Component, Input, OnInit, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Olimpiada } from '../../interfaces/olimpiada-interfase';
 import { Router } from '@angular/router';
 import { OlimpiadaService } from '../../service/olimpiada.service';
+import { DatePipe } from '@angular/common';
+import { Inject } from '@angular/core';
+import { FormControlDirective, NgModel, FormControlName, ControlValueAccessor } from '@angular/forms';
 
 @Component({
   selector: 'app-olimpiada-card',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DatePipe],
   templateUrl: './olimpiada-card.component.html',
 })
 export class OlimpiadaCardComponent implements OnInit {
@@ -32,15 +35,17 @@ export class OlimpiadaCardComponent implements OnInit {
   modalMensaje = '';
   eliminando = false;
   editando = false;
-
   mostrarOpciones = false;
 
-  constructor(
-    private router: Router,
-    private olimpiadaService: OlimpiadaService
-  ) {}
+  // Inyecta el servicio Router para la navegación
+  private router = inject(Router);
 
-  ngOnInit(): void {}
+  constructor(
+
+    private olimpiadaService: OlimpiadaService
+  ) { }
+
+  ngOnInit(): void { }
 
   toggleOpciones(): void {
     this.mostrarOpciones = !this.mostrarOpciones;
@@ -102,21 +107,21 @@ export class OlimpiadaCardComponent implements OnInit {
 
     const inicio = new Date(this.editableOlimpiada.fecha_inicio);
     const fin = new Date(this.editableOlimpiada.fecha_final);
-  
+
     if (fin <= inicio) {
       this.errorMessage = 'La fecha final debe ser posterior a la fecha de inicio.';
       return;
     }
-  
+
     this.editando = true;
-    
+
     const updatedOlimpiada = {
       nombre_olimpiada: this.editableOlimpiada.nombre_olimpiada.trim(),
       descripcion_olimpiada: this.editableOlimpiada.descripcion_olimpiada.trim(),
       fecha_inicio: this.editableOlimpiada.fecha_inicio,
       fecha_final: this.editableOlimpiada.fecha_final
     };
-  
+
     this.olimpiadaService.updateOlimpiada(this.olimpiada.id, updatedOlimpiada as any).subscribe({
       next: (response: any) => {
         const updated: Olimpiada = {
@@ -130,17 +135,17 @@ export class OlimpiadaCardComponent implements OnInit {
           createdAt: this.olimpiada.createdAt,
           updatedAt: new Date(),
         };
-        
+
         // Mostrar mensaje de éxito
         this.mostrarFeedback('Olimpiada actualizada correctamente', 'exito');
-        
+
         // Emitir el evento de actualización
         this.olimpiadaActualizada.emit(updated);
-        
+
         // Cerrar el modal después de un breve retraso
         setTimeout(() => {
           this.isEditModalOpen = false;
-        
+
         }, 1000);
       },
       error: (error) => {
@@ -155,8 +160,8 @@ export class OlimpiadaCardComponent implements OnInit {
       }
     });
   }
-  
-   // Nuevo método para formatear fechas para el backend
+
+  // Nuevo método para formatear fechas para el backend
   private formatDateToBackend(date: Date): string {
     const year = date.getFullYear();
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
@@ -169,7 +174,21 @@ export class OlimpiadaCardComponent implements OnInit {
     return d.toISOString().split('T')[0];
   }
 
-  
+  onButton2Click(): void {
+    this.editableOlimpiada = {
+      nombre_olimpiada: this.olimpiada.nombre_olimpiada,
+      descripcion_olimpiada: this.olimpiada.descripcion_olimpiada,
+      fecha_inicio: this.formatDateToInput(this.olimpiada.fecha_inicio),
+      fecha_final: this.formatDateToInput(this.olimpiada.fecha_final),
+    };
+    this.errorMessage = '';
+    this.openEditModal();
+  }
+
+  onButton3Click(): void {
+    this.router.navigate(['/admin/products']);
+  }
+
   navegarAAreas(): void {
     if (this.olimpiada?.id) {
       this.router.navigate(['/admin/olimpiadas', this.olimpiada.id, 'areas']).catch(err => {
@@ -188,13 +207,13 @@ export class OlimpiadaCardComponent implements OnInit {
       this.errorMessage = 'El nombre debe tener entre 3 y 30 caracteres';
       return false;
     }
-    
+
     const caracteresPermitidos = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s!¡"']+$/;
     if (!caracteresPermitidos.test(this.editableOlimpiada.nombre_olimpiada)) {
       this.errorMessage = 'El nombre solo puede contener letras, números, espacios y los signos ! ¡ " \'';
       return false;
     }
-    
+
     return true;
   }
 
@@ -208,14 +227,25 @@ export class OlimpiadaCardComponent implements OnInit {
       this.errorMessage = 'La descripción debe tener entre 10 y 500 caracteres';
       return false;
     }
-    
+
     return true;
   }
 
   validateForm(): boolean {
     const isNombreValid = this.validateNombreOlimpiada();
     const isDescripcionValid = this.validateDescripcion();
-    
+
     return isNombreValid && isDescripcionValid;
   }
-}// Ojo piojo1
+
+  // Nuevo método para el botón "Entrar"
+  entrar(): void {
+    if (this.olimpiada?.id) {
+      localStorage.setItem('olimpiadaSeleccionada', JSON.stringify(this.olimpiada));
+      this.router.navigate([`inicio/look/wach/${this.olimpiada.id}`]);
+    }
+  }
+
+}
+
+

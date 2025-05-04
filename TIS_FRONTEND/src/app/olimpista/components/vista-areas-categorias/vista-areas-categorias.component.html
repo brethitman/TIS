@@ -1,31 +1,235 @@
-<div class="p-6 container mx-auto">
-
-
-  <h1 class="text-2xl font-bold mb-6 text-blue-800">Áreas y Categorías de la Olimpiada</h1>
-
-  <div *ngIf="cargando" class="text-center text-blue-600">Cargando áreas y categorías...</div>
-  <div *ngIf="errorCarga" class="text-center text-red-600">{{ errorCarga }}</div>
-
-  <div *ngIf="!cargando && !errorCarga && areas.length > 0" class="space-y-8">
-    <div *ngFor="let area of areas" class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-3">{{ area.nombre_area }}</h2>
-      <p class="text-gray-600 mb-4">{{ area.descripcion }}</p>
-
-      <h3 *ngIf="area.nivel_categorias && area.nivel_categorias.length > 0" class="text-xl font-medium text-blue-700 mt-4 mb-3">Niveles / Categorías:</h3>
-
-      <div *ngIf="area.nivel_categorias && area.nivel_categorias.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div *ngFor="let nivel of area.nivel_categorias" class="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-100">
-          <h4 class="text-lg font-semibold text-gray-700">{{ nivel.nombre_nivel }}</h4>
-          <p *ngIf="nivel.descripcion" class="text-sm text-gray-500 italic">{{ nivel.descripcion }}</p>
-          <p class="text-md text-gray-700 mt-2">Fecha del Examen: <span class="font-medium">{{ nivel.fecha_examen | date:'longDate' }}</span></p>
-          <p class="text-md text-gray-700">Costo: <span class="font-medium">{{ nivel.costo | currency:'USD':'symbol':'1.2-2' }}</span></p>
-          <p class="text-md text-gray-700">Habilitado: <span [ngClass]="{'text-green-600': nivel.habilitacion, 'text-red-600': !nivel.habilitacion}">{{ nivel.habilitacion ? 'Sí' : 'No' }}</span></p>
-        </div>
-      </div>
-       <div *ngIf="!area.nivel_categorias || area.nivel_categorias.length === 0" class="text-gray-500 italic">No hay niveles/categorías definidos para esta área.</div>
-    </div>
+<div class="space-y-8">
+  <!-- Sección creación de áreas -->
+  <div class="p-4 bg-gradient-to-r from-red-500 via-pink-500 to-purple-600 rounded-lg">
+    <h2 class="text-4xl font-bold text-white text-center mb-3">{{ olimpiadaSeleccionada?.nombre || 'Olimpiada' }}</h2>
   </div>
 
-  <div *ngIf="!cargando && !errorCarga && areas.length === 0" class="text-center text-gray-600">No se encontraron áreas para esta olimpiada.</div>
+  <app-crear-area 
+    *ngIf="idOlimpiada"
+    [idOlimpiada]="idOlimpiada"
+    class="block mb-4"
+  ></app-crear-area>
 
+  <!-- Listado de áreas existentes -->
+  <div class="bg-gradient-to-r from-red-500 via-purple-600 to-blue-800 py-2">
+    <div class="container mx-auto px-4">
+      <h1 class="text-2xl font-bold text-white">ÁREAS DE LA OLIMPIADA</h1>
+    </div>
+  </div>
+    
+    <div class="p-6 container mx-auto">
+    <!-- Estados de carga -->
+    <div *ngIf="cargando" class="text-center text-blue-600 animate-pulse">
+      <i class="fas fa-spinner fa-spin mr-2"></i>Cargando áreas...
+    </div>
+
+    <!-- Manejo de errores generales -->
+    <div *ngIf="errorCarga" class="p-4 bg-red-50 text-red-700 rounded-lg text-center mb-4">
+      ⚠️ {{ errorCarga }}
+    </div>
+
+    <!-- Layout dividido -->
+    <div *ngIf="!cargando && !errorCarga && areas.length > 0" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      
+      <!-- Lista de áreas -->
+      <div class="col-span-4 flex flex-wrap gap-4 justify-start">
+        <button
+          *ngFor="let area of areas"
+          (click)="areaSeleccionada = area"
+          class="relative px-6 py-3 rounded-xl font-semibold text-gray-800 transition-all duration-300 shadow-md"
+          [ngClass]="{
+            'bg-white': true,
+            'border-4 border-transparent bg-gradient-to-r from-blue-500 to-red-500 bg-origin-border':
+              areaSeleccionada?.id_area === area.id_area
+          }"
+          [ngStyle]="
+            areaSeleccionada?.id_area === area.id_area
+              ? {
+                  'background-image':
+                    'linear-gradient(white, white), linear-gradient(to right, #3b82f6, #ef4444)',
+                  'background-clip': 'padding-box, border-box'
+                }
+              : {}
+          "
+        >
+          {{ area.nombre_area }}
+        </button>
+      </div>
+      
+
+
+
+      <!-- Detalles del área -->
+      <div class="col-span-4" *ngIf="areaSeleccionada">
+        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+          <h2 class="text-2xl font-semibold text-gray-800">{{ areaSeleccionada.nombre_area }}</h2>
+          <p class="text-gray-600 mt-1">{{ areaSeleccionada.descripcion || 'Sin descripción' }}</p>
+
+          <!-- Botón para añadir nivel -->
+          <div class="flex justify-between items-center mt-6 mb-4 border-t pt-4">
+            <h3 class="text-lg font-semibold text-gray-800">Niveles asociados</h3>
+            <button 
+              (click)="toggleFormulario(areaSeleccionada.id_area)"
+              class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm transition-colors"
+            >
+              {{ areaActiva === areaSeleccionada.id_area ? 'Cancelar' : '+ Nuevo Nivel' }}
+            </button>
+          </div>
+
+          <!-- Formulario de nuevo nivel -->
+          <div *ngIf="areaActiva === areaSeleccionada.id_area" class="bg-gray-50 p-4 rounded-lg mb-6">
+            <div *ngIf="errores.length > 0" class="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">
+              <ul class="list-disc pl-4">
+                <li *ngFor="let error of errores" class="mb-1 last:mb-0">{{ error }}</li>
+              </ul>
+            </div>
+
+            <form (ngSubmit)="crearNivel(areaSeleccionada.id_area)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700 required">Nombre del nivel</label>
+                <input
+                  type="text"
+                  [(ngModel)]="nuevoNivel.nombre_nivel"
+                  name="nombre_nivel"
+                  required
+                  class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                >
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700 required">Grado inicial</label>
+                <input
+                  type="text"
+                  [(ngModel)]="nuevoNivel.gradoIniCat"
+                  name="gradoIniCat"
+                  required
+                  class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                >
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700 required">Grado final</label>
+                <input
+                  type="text"
+                  [(ngModel)]="nuevoNivel.gradoFinCat"
+                  name="gradoFinCat"
+                  required
+                  class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                >
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700 required">Fecha examen</label>
+                <input
+                  type="date"
+                  [(ngModel)]="nuevoNivel.fecha_examen"
+                  name="fecha_examen"
+                  required
+                  class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                >
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700 required">Costo (USD)</label>
+                <input
+                  type="number"
+                  [(ngModel)]="nuevoNivel.costo"
+                  name="costo"
+                  step="0.01"
+                  required
+                  class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                >
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Habilitado</label>
+                <select
+                  [(ngModel)]="nuevoNivel.habilitacion"
+                  name="habilitacion"
+                  class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                >
+                  <option [value]="1">Sí</option>
+                  <option [value]="0">No</option>
+                </select>
+              </div>
+
+              <div class="md:col-span-2 space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Descripción</label>
+                <textarea
+                  [(ngModel)]="nuevoNivel.descripcion"
+                  name="descripcion"
+                  class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 h-24"
+                ></textarea>
+              </div>
+
+              <!-- Botones -->
+              <div class="md:col-span-2 flex justify-end gap-2">
+                <button
+                  type="button"
+                  (click)="toggleFormulario(areaSeleccionada.id_area)"
+                  class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  [disabled]="enviando || errores.length > 0"
+                  class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                >
+                  {{ enviando ? 'Creando...' : 'Crear Nivel' }}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Lista de niveles existentes -->
+          <div *ngIf="!areaSeleccionada.nivel_categorias?.length" class="text-gray-400 italic py-2">
+            No se han definido niveles para esta área
+          </div>
+
+          <div *ngIf="areaSeleccionada.nivel_categorias?.length" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div
+              *ngFor="let nivel of areaSeleccionada.nivel_categorias"
+              class="rounded-2xl overflow-hidden shadow border border-gray-300 bg-[#f6f6fc]"
+            >
+              <div class="bg-[#4b4eaa] h-10 flex items-center justify-center relative">
+                <div
+                  class="absolute top-1/2 -translate-y-1/2 bg-[#e6e6f6] text-[#2b2e83] font-bold text-center rounded-full px-6 py-1 border border-[#4b4eaa]"
+                >
+                  {{ nivel.nombre_nivel }}
+                </div>
+              </div>
+
+              <div class="p-4 pt-8 text-sm text-black space-y-2">
+                <p><span class="font-semibold">Abierto para:</span> {{ nivel.descripcion }}</p>
+                <p><span class="font-semibold">Costo:</span> {{ nivel.costo }} bs</p>
+                <p><span class="font-semibold">Fecha:</span> {{ nivel.fecha_examen | date:'d/MM/yyyy' }}</p>
+                <p>
+                  <span class="font-semibold">Estado:</span>
+                  <span
+                    [ngClass]="{
+                      'text-green-600': nivel.habilitacion === 1,
+                      'text-red-600': nivel.habilitacion === 0
+                    }"
+                    class="font-medium"
+                  >
+                    {{ getEstadoTexto(nivel.habilitacion) }}
+                  </span>
+                </p>
+              </div>
+
+              <div class="border-t border-gray-300"></div>
+
+              <div class="p-4 flex justify-center bg-[#f6f6fc]">
+                <button class="bg-[#6d6fc4] hover:bg-[#5a5db3] text-white font-bold py-1.5 px-6 rounded">
+                  INSCRIBIRSE
+                </button>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

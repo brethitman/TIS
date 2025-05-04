@@ -1,65 +1,182 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common'; // Importa Pipes necesarios
-import { IDOlimpiadabyArea } from '../../interfaces/olimpiadaAreaCategoria.interface'; // Importa la interfaz correcta
+import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IDOlimpiadabyArea } from '../../interfaces/olimpiadaAreaCategoria.interface';
 import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
+import { CrearAreaComponent } from '../crear-area/crear-area.component';
+import { PostNivelCategoriaService } from '../../service/post_Categoria.service';
+import { NivelCategoriaCreate, NivelCategoriaResponse } from '../../interfaces/post_categoria.interface';
 
 @Component({
   selector: 'app-vista-areas-categorias',
   standalone: true,
-  // Añade los Pipes necesarios al imports
-  imports: [CommonModule, DatePipe, CurrencyPipe],
+  imports: [
+    CommonModule,
+    DatePipe,
+    CurrencyPipe,
+    CrearAreaComponent,
+    FormsModule
+  ],
   templateUrl: './vista-areas-categorias.component.html',
-
 })
 export class VistaAreasCategoriasComponent implements OnInit {
-
-  // Inyecta ActivatedRoute para obtener parámetros de la URL
   private route = inject(ActivatedRoute);
-  // Inyecta el servicio para obtener las áreas por olimpiada
   private olimpiadaByAreaService = inject(OlimpiadaByAreaService);
+  private nivelService = inject(PostNivelCategoriaService);
 
-  // Array para almacenar las áreas con sus categorías
   public areas: IDOlimpiadabyArea[] = [];
-
-  // Estado de carga (opcional, para mostrar un indicador mientras se carga)
   public cargando: boolean = true;
-
-  // Estado de error (opcional, para mostrar un mensaje si falla la carga)
   public errorCarga: string | null = null;
+  public idOlimpiada: number | null = null;
+  public nuevoNivel: NivelCategoriaCreate = this.initNuevoNivel();
+  public areaActiva: number | null = null;
+  public enviando: boolean = false;
+  public errores: string[] = [];
+  public olimpiadaSeleccionada: any = null;
+
+  // NUEVO: área seleccionada para mostrar contenido
+  public areaSeleccionada: IDOlimpiadabyArea | null = null;
 
   ngOnInit(): void {
-    // Obtiene el 'id' del parámetro de la ruta.
-    // 'snapshot' obtiene el estado actual de la ruta, 'paramMap' un mapa de parámetros.
-    // 'get('id')' obtiene el valor del parámetro 'id'. Se convierte a número.
-    const idOlimpiada = Number(this.route.snapshot.paramMap.get('id'));
+    this.obtenerIdOlimpiada();
+  
+    const data = localStorage.getItem('olimpiadaSeleccionada');
+    this.olimpiadaSeleccionada = data ? JSON.parse(data) : null;
+  }
 
-    // Verifica si el ID obtenido es un número válido
-    if (isNaN(idOlimpiada)) {
-      this.errorCarga = 'ID de Olimpiada inválido proporcionado en la URL.';
+  private obtenerIdOlimpiada(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    this.idOlimpiada = idParam ? Number(idParam) : null;
+
+    if (!this.idOlimpiada || isNaN(this.idOlimpiada)) {
+      this.errorCarga = 'ID de olimpiada inválido';
       this.cargando = false;
-      console.error(this.errorCarga);
-      return; // Detiene la ejecución si el ID es inválido
+      return;
+    }
+    this.cargarAreas();
+  }
+
+  private cargarAreas(): void {
+    this.cargando = true;
+    this.olimpiadaByAreaService.getAreasByOlimpiadaId(this.idOlimpiada!)
+      .subscribe({
+        next: (data) => {
+          this.areas = data;
+          this.cargando = false;
+
+          // Si hay al menos un área, selecciona la primera automáticamente
+          if (data.length > 0) {
+            this.seleccionarArea(data[0]);
+          }
+        },
+        error: (err) => {
+          console.error('Error:', err);
+          this.errorCarga = 'Error al cargar áreas';
+          this.cargando = false;
+        }
+      });
+  }
+
+  private initNuevoNivel(): NivelCategoriaCreate {
+    return {
+      nombre_nivel: '',
+      gradoIniCat: '',
+      gradoFinCat: '',
+      descripcion: '',
+      fecha_examen: new Date().toISOString().split('T')[0],
+      costo: 0,
+      habilitacion: 1
+    };
+  }
+
+  // NUEVO: Método para seleccionar un área desde el menú
+  seleccionarArea(area: IDOlimpiadabyArea): void {
+    this.areaSeleccionada = area;
+    this.areaActiva = null; // Opcional: cierra el formulario si estaba abierto
+    this.nuevoNivel = this.initNuevoNivel();
+    this.errores = [];
+  }
+
+  toggleFormulario(areaId: number): void {
+    this.areaActiva = this.areaActiva === areaId ? null : areaId;
+    this.nuevoNivel = this.initNuevoNivel();
+    this.errores = [];
+  }
+
+  validarFormulario(): boolean {
+    this.errores = [];
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    if (!this.nuevoNivel.nombre_nivel.trim()) {
+      this.errores.push('Nombre del nivel es requerido');
     }
 
-    // Inicia el estado de carga
-    this.cargando = true;
-    this.errorCarga = null;
+    if (!this.nuevoNivel.gradoIniCat.trim()) {
+      this.errores.push('Grado inicial es requerido');
+    }
 
-    // Llama al servicio para obtener las áreas y categorías de la olimpiada específica
-    this.olimpiadaByAreaService.getAreasByOlimpiadaId(idOlimpiada).subscribe({
-      next: (data: IDOlimpiadabyArea[]) => {
-        // Asigna los datos recibidos (array de áreas con categorías)
-        this.areas = data;
-        this.cargando = false; // Finaliza el estado de carga
-      },
-      error: (err) => {
-        // Maneja cualquier error que ocurra durante la solicitud
-        console.error('Error al obtener áreas y categorías:', err);
-        this.errorCarga = 'Error al cargar áreas y categorías. Por favor, intente de nuevo más tarde.';
-        this.cargando = false; // Finaliza el estado de carga incluso si hay error
-        // Aquí podrías añadir lógica para errores específicos (ej: err.status === 404)
-      }
-    });
+    if (!this.nuevoNivel.gradoFinCat.trim()) {
+      this.errores.push('Grado final es requerido');
+    }
+
+    const fechaExamen = new Date(this.nuevoNivel.fecha_examen);
+    if (fechaExamen < hoy) {
+      this.errores.push('La fecha debe ser futura');
+    }
+
+    if (this.nuevoNivel.costo <= 0) {
+      this.errores.push('Costo debe ser mayor a 0');
+    }
+
+    return this.errores.length === 0;
+  }
+
+  crearNivel(areaId: number): void {
+    if (!this.validarFormulario()) return;
+
+    this.enviando = true;
+
+    const niveles = [{
+      ...this.nuevoNivel,
+      fecha_examen: this.nuevoNivel.fecha_examen
+    }];
+
+    this.nivelService.crearNivelesEnArea(areaId, niveles)
+      .subscribe({
+        next: (response) => {
+          const area = this.areas.find(a => a.id_area === areaId);
+          if (area) {
+            area.nivel_categorias = [
+              ...(area.nivel_categorias || []),
+              ...response.niveles
+            ];
+          }
+
+          this.areaActiva = null;
+          this.enviando = false;
+          alert(response.message);
+
+          this.cargarAreas(); // Opcional
+        },
+        error: (err) => {
+          console.error('Error completo:', err);
+          this.enviando = false;
+          let mensaje = 'Error desconocido';
+
+          if (err.error?.errors) {
+            mensaje = Object.values(err.error.errors).join(', ');
+          } else if (err.error?.message) {
+            mensaje = err.error.message;
+          }
+
+          alert(`Error: ${mensaje}`);
+        }
+      });
+  }
+
+  getEstadoTexto(habilitacion: number): string {
+    return habilitacion === 1 ? 'Habilitado' : 'Deshabilitado';
   }
 }

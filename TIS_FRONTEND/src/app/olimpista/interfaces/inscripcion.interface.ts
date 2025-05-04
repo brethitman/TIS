@@ -97,8 +97,6 @@ export interface Olimpista {
   curso:            string;
   departamento:     string;
   provincia:        string;
-  tutorId: number;
-  tutor?: Tutor;
   createdAt:        Date;
   updatedAt:        Date;
 }

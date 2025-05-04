@@ -16,32 +16,32 @@ import { Iscripcion1Component } from './olimpista/components/iscripcion1/iscripc
 import { Iscripcion2Component } from './olimpista/components/iscripcion2/iscripcion2.component';
 import { Iscripcion3Component } from './olimpista/components/iscripcion3/iscripcion3.component';
 import { VistaAreasCategoriasComponent } from './olimpista/components/vista-areas-categorias/vista-areas-categorias.component';
-import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lista/visualizacion-lista.component';
 import { OlimpiadaService } from './olimpista/service/olimpiada.service';
 
+
 export const routes: Routes = [
-  {
-    path: 'auth',
-    component: AuthLayoutComponent,
-    children: [
-      {
-        path: '',
-        loadChildren: () => import("./auth/auth-routing.module").then(m => m.AuthRoutingModule),
-      }
-    ]
-  },
-  {
-    path: 'admin',
-    component: AdminLayoutComponent,
-    children: [
-      {
-        path: 'products', // Revisa si 'products' es el nombre correcto para esta sección en tu app
-        loadChildren: () => import("./olimpista/estudiantes-routing.module").then(m => m.EstudiantesRoutingModule),
-      },
-      {
-        path: 'areas',
-        component: AreasComponent,
-      },
+  {
+    path: 'auth',
+    component: AuthLayoutComponent,
+    children: [
+      {
+        path: '',
+        loadChildren: () => import("./auth/auth-routing.module").then(m => m.AuthRoutingModule),
+      }
+    ]
+  },
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    children: [
+      {
+        path: 'products', // Revisa si 'products' es el nombre correcto para esta sección en tu app
+        loadChildren: () => import("./olimpista/estudiantes-routing.module").then(m => m.EstudiantesRoutingModule),
+      },
+      {
+        path: 'areas',
+        component: AreasComponent,
+      },
       {
         path: 'olimpiada',
         component: OlimpiadaPageComponent
@@ -52,8 +52,9 @@ export const routes: Routes = [
         redirectTo: 'olimpiada', // O a donde quieras que redirija por defecto
         pathMatch: 'full'
       }
-    ]
-  },
+     ]
+   },
+
   // --- Rutas de Inscripción ---
   {
     path: 'inscripcion/paso1',
@@ -67,7 +68,7 @@ export const routes: Routes = [
     path: 'inscripcion/paso3',
     component: Iscripcion3Component
   },
-  // Opcional: Redirigir '/inscripcion' al paso 1
+   // Opcional: Redirigir '/inscripcion' al paso 1
   {
     path: 'inscripcion',
     redirectTo: 'inscripcion/paso1',

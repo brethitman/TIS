@@ -34,7 +34,7 @@ Route::delete('/area/{id}', [ AreaController::class, 'destroy'   ]); // Eliminar
 Route::get('/areas/olimpiada/{id}', [AreaController::class, 'getByOlimpiadaId']);
 Route::get('/area/{id}/niveles', [AreaController::class, 'nivelesPorArea']);
 Route::get('/areas', [AreaController::class, 'indexV2']);
-
+Route::post('/areas/basic', [AreaController::class, 'storeBasic']);
 
 // tutor ENDPOINTS--da bien ---GET POST da bien
 //tiene interface
@@ -83,7 +83,8 @@ Route::patch('/nivelCategoria/{id}/habilitacion', [NivelCategoriaController::cla
 
 //PRUEBA
 Route::get('/nivelCategoria/por-area/{areaId}', [NivelCategoriaController::class, 'porArea']);
-
+//con esto agregamos la categoria al area
+Route::post('/areas/{id_area}/niveles', [NivelCategoriaController::class, 'agregarCategoria_Al_Area']);
 
 // olimpista ENDPOINTS ----------  GET POST da bien
 //tiene interface
@@ -108,7 +109,8 @@ Route::put('/olimpiada/{id}',    [ OlimpiadaController::class, 'update'    ]);
 Route::get('/curso',         [ CursoController::class, 'index'     ]);
 Route::get('/curso/{id}',    [ CursoController::class, 'show'      ]);
 Route::post('/curso',        [ CursoController::class, 'store'     ]);
-
+// routes/api.php
+Route::get('/cursos/todos', [CursoController::class, 'getAllCursosSimple']);
 
 ///cursoNivel
 

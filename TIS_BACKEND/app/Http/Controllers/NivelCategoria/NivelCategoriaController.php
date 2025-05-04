@@ -5,6 +5,7 @@ namespace App\Http\Controllers\NivelCategoria;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\NivelCategoria\NivelCategoriaCollection;
 use App\Http\Resources\NivelCategoria\NivelCategoriaResource;
+use App\Models\Area;
 use App\Models\NivelCategoria;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -87,15 +88,27 @@ class NivelCategoriaController extends Controller
         ]);
     }
 
-    //prueba 
-    public function porArea($areaId)
+    //metodo para agregar categorias a las Areas
+    public function agregarCategoria_Al_Area(Request $request, $id_area)
     {
-        $niveles = NivelCategoria::where('id_area', $areaId)->get();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Niveles de categoría por área',
-            'nivelesCategoria' => $niveles
+        $area = Area::findOrFail($id_area);
+    
+        $validated = $request->validate([
+            'niveles' => 'required|array|min:1',
+            'niveles.*.nombre_nivel' => 'required|string|max:100',
+            'niveles.*.gradoIniCat' => 'required|string', // Campo faltante
+            'niveles.*.gradoFinCat' => 'required|string', // Campo faltante
+            'niveles.*.descripcion' => 'nullable|string',
+            'niveles.*.fecha_examen' => 'required|date',
+            'niveles.*.costo' => 'required|numeric|min:0',
+            'niveles.*.habilitacion' => 'required|boolean',
         ]);
+    
+        $niveles = $area->niveles()->createMany($validated['niveles']);
+    
+        return response()->json([
+            'message' => count($validated['niveles']).' niveles agregados al área',
+            'niveles' => new NivelCategoriaCollection($niveles->load('area'))
+        ], 201);
     }
 }
