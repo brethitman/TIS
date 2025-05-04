@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormasInscripcionComponent } from '../../components/formas-inscripcion/formas-inscripcion.component';
 
 import { OlimpiadaService } from '../../service/olimpiada.service';
-import { Olimpiada } from '../../interfaces/olimpiada.interfacel';
+import { Olimpiada } from '../../interfaces/olimpiada-interfase';
+
 
 @Component({
   selector: 'app-ventana-informacion-olimpiada',
@@ -13,18 +14,17 @@ import { Olimpiada } from '../../interfaces/olimpiada.interfacel';
   templateUrl: './ventana-informacion-olimpiada.component.html',
 })
 export class VentanaInformacionOlimpiadaComponent implements OnInit {
+  @Input({ required: true }) olimpiada!: Olimpiada;
   olimpiadaId!: number;
-  olimpiada: Olimpiada | null = null;
   loading = true;
   error = '';
 
   constructor(
     private route: ActivatedRoute,
     private olimpiadaService: OlimpiadaService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    // 1. Leer el param 'id' como número
     this.route.params.subscribe(params => {
       this.olimpiadaId = +params['id'];
       console.log('ID Olimpiada:', this.olimpiadaId);
@@ -32,19 +32,15 @@ export class VentanaInformacionOlimpiadaComponent implements OnInit {
       // 2. Resetear estados
       this.loading = true;
       this.error = '';
-      this.olimpiada = null;
-
-      // 3. Llamar al servicio getOlimpiadaById
       this.olimpiadaService.getOlimpiadaById(this.olimpiadaId)
         .subscribe({
           next: (data: Olimpiada) => {
             console.log('Payload Olimpiada:', data);
-            console.log('Olimpiadas', this.olimpiada?.descripcion_olimpiada)
+            console.log('Olimpiadas', this.olimpiada.descripcion_olimpiada)
             this.olimpiada = data;
             this.loading = false;
           },
-          
-          
+
           error: (err) => {
             console.error('Error cargando olimpiada:', err);
             this.error = 'No se pudo cargar la información de la olimpiada.';

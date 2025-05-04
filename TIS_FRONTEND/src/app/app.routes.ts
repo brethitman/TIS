@@ -20,6 +20,7 @@ import { OlimpiadaService } from './olimpista/service/olimpiada.service';
 import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lista/visualizacion-lista.component';
 import { CardOlimpiadaUsuarioComponent } from './olimpista/components/card-olimpiada-usuario/card-olimpiada-usuario.component';
 import { InscripcionTodoComponent } from './olimpista/components/inscripcion-todo/inscripcion-todo.component';
+import { VentanaInformacionOlimpiadaComponent } from './olimpista/pages/ventana-informacion-olimpiada/ventana-informacion-olimpiada.component';
 
 
 export const routes: Routes = [
@@ -137,6 +138,11 @@ export const routes: Routes = [
   path: 'inicio/look/inscripcion-todo/:id',
   component: InscripcionTodoComponent,
   data: { title: 'Formulario de Inscripción' }
+},
+{
+  path: 'inicio/look/Olimpiada/:id',
+  component: VentanaInformacionOlimpiadaComponent ,
+  
 },
 
 {
