@@ -18,6 +18,8 @@ import { Iscripcion3Component } from './olimpista/components/iscripcion3/iscripc
 import { VistaAreasCategoriasComponent } from './olimpista/components/vista-areas-categorias/vista-areas-categorias.component';
 import { OlimpiadaService } from './olimpista/service/olimpiada.service';
 import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lista/visualizacion-lista.component';
+import { CardOlimpiadaUsuarioComponent } from './olimpista/components/card-olimpiada-usuario/card-olimpiada-usuario.component';
+import { InscripcionTodoComponent } from './olimpista/components/inscripcion-todo/inscripcion-todo.component';
 
 
 export const routes: Routes = [
@@ -77,75 +79,68 @@ export const routes: Routes = [
   },
   // --- Fin Rutas de Inscripción ---
 
-  // Rutas públicas (las que ya tenías)
-  {
-    path: 'inicio/waba',
-    component: Inicio1Component
-  },
-  {
-    path: 'inicio/look',
-    component: Inicio2Component
-  },
-  {
-    path: 'inicio/dodog', // Esta ruta está duplicada en tu configuración original
-    component: Inicio3Component
-  },
-  {
-    path: 'inicio/Olimpiada/1/Visualizacion', // Esta ruta está duplicada en tu configuración original
-    component: VisualizacionListaComponent
-  },
+  // Rutas públicas (las que ya tenías)
+  {
+    path: 'inicio/waba',
+    component: Inicio1Component
+  },
+  {
+    path: 'inicio/look',
+    component: Inicio2Component
+  },
+  {
+    path: 'inicio/dodog', // Esta ruta está duplicada en tu configuración original
+    component: Inicio3Component
+  },
+ 
+{
+  path: 'inicio/Olimpiada/1/Visualizacion', // Esta ruta está duplicada en tu configuración original
+  component: VisualizacionListaComponent
+},
+  {
+    path: 'inicio/mmmm',
+    component: Inicio4Component
+  },
+  {
+    path: 'inicio/OlimpistaForm', // Revisa si este es el nombre final para esta ruta
+    component: OlimpistaPageComponent
+  },
 
-  // {  // Removida la ruta duplicada
-  //     path: 'inicio/dodog',
-  //     component: Inicio3Component
-  // },
-  {
-    path: 'inicio/mmmm',
-    component: Inicio4Component
-  },
-  {
-    path: 'inicio/OlimpistaForm', // Revisa si este es el nombre final para esta ruta
-    component: OlimpistaPageComponent
-  },
+//esto es para admin para entrar a la area
+{
+  path: 'inicio/look/wach/:id',
+  component: VistaAreasCategoriasComponent
+  // Puedes añadir guards o resolvers si son necesarios
+},
 
-  {
-    path: 'inicio/look/wach/:id',
-    component: VistaAreasCategoriasComponent
-    // Puedes añadir guards o resolvers si son necesarios
-  },
-
-
-  // Ruta por defecto
-  {
-    path: '',
-    redirectTo: 'inicio/waba', // O podrías cambiarlo a 'inscripcion/paso1' si quieres que el inicio sea el formulario
-    pathMatch: 'full'
-  },
-
-  // Ruta de respaldo para cualquier otra ruta no encontrada
-  {
-    path: '**',
-    redirectTo: 'inicio/waba'
-  },
-
-
-  {
-    path: 'inicio/OlimpistaForm', // Revisa si este es el nombre final para esta ruta
-    component: OlimpistaPageComponent
-  },
+{ path: 'admin/olimpiada', component: OlimpiadaPageComponent },
 
 
 
-  { path: 'admin/olimpiada', component: OlimpiadaPageComponent },
+  // Ruta por defecto
+  {
+    path: '',
+    redirectTo: 'inicio/waba', // O podrías cambiarlo a 'inscripcion/paso1' si quieres que el inicio sea el formulario
+    pathMatch: 'full'
+  },
 
-  {
-    path: '',
-    redirectTo: 'admin/olimpiada', // Ahora redirigimos directamente al panel de admin
-    pathMatch: 'full'
-  },
-  {
-    path: '**',
-    redirectTo: 'admin/olimpiada'
-  }
+ 
 
+{
+  path: '',
+  redirectTo: 'admin/olimpiada', // Ahora redirigimos directamente al panel de admin
+  pathMatch: 'full'
+},
+
+
+{
+  path: 'inicio/look/inscripcion-todo/:id',
+  component: InscripcionTodoComponent,
+  data: { title: 'Formulario de Inscripción' }
+},
+
+{
+  path: '**',
+  redirectTo: 'admin/olimpiada'
+},
 ];

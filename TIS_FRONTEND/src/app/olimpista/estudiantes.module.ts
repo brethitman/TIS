@@ -1,6 +1,7 @@
 /*
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { InscripcionTodoComponent } from './components/inscripcion-todo/inscripcion-todo.component';
 import { InscripcionesAreasComponent, InscripcionAreasComponent } from './components/inscripcion-areas/inscripcion-areas.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -26,16 +27,17 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BotonExelComponent } from './components/boton-exel/boton-exel.component';
-
+import { InscripcionTodoComponent } from './components/inscripcion-todo/inscripcion-todo.component';
 @NgModule({
   declarations: [
+
     //BotonExelComponentuí
   ],
   imports: [
     CommonModule,
     FormsModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   exports: [
    // BotonExelComponent

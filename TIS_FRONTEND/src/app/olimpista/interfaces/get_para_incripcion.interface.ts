@@ -1,9 +1,10 @@
-export interface IDOlimpiadabyArea {
+export interface GETParaInscripcionResponse {
   id_area:          number;
   id_olimpiada:     number;
-  id_inscripcion:   number | null;
   nombre_area:      string;
   descripcion:      string;
+  gradoIniAr:       string;
+  gradoFinAr:       string;
   created_at:       Date;
   updated_at:       Date;
   nivel_categorias: NivelCategoria[];
@@ -17,6 +18,8 @@ export interface NivelCategoria {
   fecha_examen: Date;
   costo:        string;
   habilitacion: boolean;
+  gradoIniCat:  string;
+  gradoFinCat:  string;
   created_at:   Date;
   updated_at:   Date;
 }
