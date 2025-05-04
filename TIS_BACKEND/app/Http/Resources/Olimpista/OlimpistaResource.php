@@ -32,6 +32,7 @@ class OlimpistaResource extends JsonResource
             'correo' => $this->correo,
             'telefono' => $this->telefono,
             'colegio' => $this->colegio,
+            'curso' => $this->curso,
             'departamento' => $this->departamento,
             'provincia' => $this->provincia,
             'createdAt' => $this->created_at,

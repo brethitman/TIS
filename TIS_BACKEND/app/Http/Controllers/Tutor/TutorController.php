@@ -49,11 +49,9 @@ class TutorController extends Controller
             'id_inscripcion' => 'nullable|exists:inscripcions,id_inscripcion',
             'nombres' => 'required|string|max:100',
             'apellidos' => 'required|string|max:100',
-            'ci' => 'required|string|max:20',
+            'ci' => 'required|string|max:20|unique:tutors,ci',
             'correo' => 'required|email|max:100',
             'telefono' => 'required|string|max:20',
-            'contacto' => 'nullable|string|max:100',
-
         ]);
 
         if ($validator->fails()) {

@@ -24,13 +24,13 @@ class Inscripcion extends Model
 
     // Define los campos que pueden ser asignados masivamente
     protected $fillable = [
-
+        'fecha_inscripcion',
         'estado',
     ];
 
     // Define los campos que deben ser tratados como tipos de datos específicos
     protected $casts = [
-
+        'fecha_inscripcion' => 'date', // Castear a fecha (objeto Carbon)
         'created_at' => 'datetime', // Castear a datetime (objeto Carbon)
         'updated_at' => 'datetime', // Castear a datetime (objeto Carbon)
         // Si 'estado' es un ENUM, no necesitas castearlo a menos que quieras un tipo específico en PHP
