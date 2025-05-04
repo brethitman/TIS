@@ -1,0 +1,18 @@
+<section class="pt-8 pb-8">
+  <div class="container">
+    <ul class="olimpistas__list">
+
+      @for (olimpiada of olimpiada; track olimpiada.id) {
+
+
+        <app-card-olimpiada-usuario
+        [olimpiada]="olimpiada"
+
+        ></app-card-olimpiada-usuario>
+      } @empty {
+        <p class="text-center">No se encontraron resultados</p>
+      }
+
+    </ul>
+  </div>
+</section>
