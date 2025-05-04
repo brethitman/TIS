@@ -1,15 +1,9 @@
 import { Datum } from "./comprobante.interface";
-export interface GetComprobanteRespose {
+
+export interface GetComprobanteResponse {
   data:  Datum[];
   links: Links;
   meta:  Meta;
-}
-
-export interface Links {
-  first: string;
-  last:  string;
-  prev:  null;
-  next:  null;
 }
 
 export interface Meta {
@@ -27,4 +21,11 @@ export interface Link {
   url:    null | string;
   label:  string;
   active: boolean;
+}
+
+export interface Links {
+  first: string;
+  last:  string;
+  prev:  null;
+  next:  null;
 }

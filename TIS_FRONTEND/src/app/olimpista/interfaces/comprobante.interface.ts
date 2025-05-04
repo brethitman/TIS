@@ -1,6 +1,3 @@
-
-
-
 export interface Datum {
   id:                 number;
   idBoleta:           number;
@@ -28,6 +25,9 @@ export interface Inscripcion {
   id:                number;
   fecha_inscripcion: Date;
   estado:            string;
-  createdAt:         null;
-  updatedAt:         null;
+  createdAt:         Date;
+  updatedAt:         Date;
 }
+
+
+

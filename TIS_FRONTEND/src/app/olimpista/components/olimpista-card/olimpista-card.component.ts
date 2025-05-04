@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { Olimpista } from '../../interfaces/olimpista-response';
+import { Inscripcione ,Area,Olimpista,Tutor} from '../../interfaces/inscripcion.interface';
 
 
 @Component({
@@ -13,5 +13,5 @@ import { Olimpista } from '../../interfaces/olimpista-response';
 export class OlimpistaCardComponent {
 
   @Input({required:true})
-    Olimpista!:Olimpista;
+  Inscripcione!:Inscripcione;
 }

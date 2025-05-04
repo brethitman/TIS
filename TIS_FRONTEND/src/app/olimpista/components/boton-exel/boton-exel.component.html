@@ -1,0 +1,74 @@
+<div class="p-4 bg-white rounded-lg shadow-md w-4/5 mx-auto mt-6 w-full">
+  <label for="excelInput"
+    class="inline-block px-4 py-2 text-white bg-blue-600 rounded cursor-pointer hover:bg-blue-700 transition">
+    Subir archivo Excel
+  </label>
+  <input id="excelInput" type="file" (change)="onFileChange($event)" accept=".xlsx, .xls" class="hidden" />
+
+  <!-- Modal para Formato 1 -->
+  <div *ngIf="showModal1" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+    style="background-color: rgba(75, 85, 99, 0.3); ">
+    <div class="bg-white p-6 rounded shadow-md w-96">
+      <h2 class="text-xl font-bold mb-4">Ingrese Información del Tutor</h2>
+      <label class="block mb-2">Nombre del Tutor:</label>
+      <input type="text" [(ngModel)]="tutor.nombre" class="border p-2 w-full mb-4 rounded" />
+      <label class="block mb-2">Apellido del Tutor:</label>
+      <input type="text" [(ngModel)]="tutor.apellido" class="border p-2 w-full mb-4 rounded" />
+      <label class="block mb-2">CI del Tutor:</label>
+      <input type="text" [(ngModel)]="tutor.ci" class="border p-2 w-full mb-4 rounded" />
+      <button (click)="submitTutorInfo()" class="bg-blue-600 text-white px-4 py-2 rounded">Subir Archivo</button>
+      <button (click)="cancelar1()" class="bg-red-600 text-white px-4 py-2 rounded ml-2">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Modal para Formato 2 -->
+  <div *ngIf="showModal2" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+    style="background-color: rgba(75, 85, 99, 0.3); ">
+    <div class="bg-[#ececf4] p-6 rounded shadow-md w-96 rounded-lg">
+      <h2 class="text-xl font-bold mb-4 italic items-center">¿Desea subir este archivo?</h2>
+      <div class="bg-[#ececf4] shadow-md p-3 mx-auto rounded-b-lg">
+        <p>Nombre: {{ nombreArchivo }}</p>
+        <p>Tamaño: {{ tamanoArchivo }} KB</p>
+      </div>
+      <div class="flex justify-center items-center mt-4 gap-6">
+        <button (click)="openModal2()" class="bg-[#1e37a6] hover:bg-[#43487f] text-white px-6 py-2 rounded">Sí,
+          subir</button>
+        <button (click)="cancelar2()"
+          class="bg-[#c14040] hover:bg-[#9E2727] text-white px-6 py-2 rounded">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="confirmSubida == false" class="mt-6 text-gray-600 italic">
+    No se han cargado datos del archivo Excel.
+  </div>
+  <div *ngIf="confirmSubida && datosExcel && datosExcel.length > 0" class="mt-6 overflow-auto">
+    <section class="w-full bg-gradient-to-r from-red-600 to-purple-700 py-3 px-2 animate-gradient">
+      <h1 class="text-white text-2xl font-bold ">Visualizacion del documento de excel</h1>
+    </section>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col p-4 border border-gray-300 rounded-lg shadow-md bg-[#faf5f5]">
+        <h3 class="text-lg font-bold text-gray-800 mb-3">Datos cargados</h3>
+        <div class="flex overflow-auto  w-full">
+          <table class="table-auto max-w-full text-sm text-left text-gray-700 border border-gray-900">
+            <thead class="bg-gray-100">
+              <tr>
+                <th *ngFor="let header of datosExcel[0]" class="px-2 py-2 border font-medium text-nolmal">
+                  {{ header }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of datosExcel.slice(1)">
+                <td *ngFor="let cell of row" class="px-2 py-2 border text-normal">{{ cell }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="flex flex-col items-center justify-center p-4 border border-gray-300 rounded-lg shadow-md">
+        <h3 class="text-lg font-bold text-gray-800 mb-3">Áreas Disponibles</h3>
+        <p class="text-gray-600">Aquí van las áreas que se pueden seleccionar...</p>
+      </div>
+    </div>
+  </div>
+</div>

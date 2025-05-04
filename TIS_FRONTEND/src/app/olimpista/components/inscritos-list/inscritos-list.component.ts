@@ -6,7 +6,6 @@ import { Inscripcion } from '../../interfaces/inscripcion.interface';
   selector: 'app-inscritos-list',
   standalone: true,
   imports: [InscritosCardComponent],
-  templateUrl: './inscritos-list.component.html',
 
 })
 export class InscritosListComponent {

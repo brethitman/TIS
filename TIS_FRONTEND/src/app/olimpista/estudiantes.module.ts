@@ -19,25 +19,29 @@ import { HttpClientModule } from '@angular/common/http';
   ]
 })
 export class EstudiantesModule { }
-*/import { NgModule } from '@angular/core';
+*/
+import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Asegúrate de importar FormsModule
+import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { InscripcionAreasComponent } from './components/inscripcion-areas/inscripcion-areas.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { BotonExelComponent } from './components/boton-exel/boton-exel.component';
 
 @NgModule({
   declarations: [
-
+    //BotonExelComponentuí
   ],
   imports: [
     CommonModule,
-    FormsModule, // Asegúrate de que FormsModule esté aquí
-    HttpClientModule
+    FormsModule,
+    HttpClientModule,
+    ReactiveFormsModule
+  ],
+  exports: [
+   // BotonExelComponent
   ]
 })
 export class EstudiantesModule { }
-
-
 
 
 

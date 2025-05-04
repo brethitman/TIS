@@ -5,26 +5,38 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Modelo para la tabla 'tutors'.
+ * Representa a un tutor asociado a una inscripción.
+ */
 class Tutor extends Model
 {
     use HasFactory;
 
+    // Especifica el nombre de la tabla
     protected $table = 'tutors';
+
+    // Especifica la clave primaria
     protected $primaryKey = 'id_tutor';
 
+    // Especifica el tipo de dato de la clave primaria
+    protected $keyType = 'int'; // O 'bigint'
+
+    // Define los campos que pueden ser asignados masivamente
     protected $fillable = [
+        'id_inscripcion',
         'nombres',
         'apellidos',
         'ci',
         'correo',
-        'telefono'
+        'telefono',
     ];
 
     /**
-     * Obtener las inscripciones relacionadas con el tutor
+     * Relación: Un Tutor pertenece a una Inscripción.
      */
-    public function inscripciones()
+    public function inscripcion()
     {
-        return $this->hasMany(Inscripcion::class, 'id_tutor', 'id_tutor');
+        return $this->belongsTo(Inscripcion::class, 'id_inscripcion', 'id_inscripcion');
     }
 }

@@ -1,0 +1,19 @@
+<div class="max-w-sm mx-auto bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden">
+  <div class="p-6 space-y-4">
+    <h3 class="text-xl font-bold text-blue-800">{{ Olimpiada.nombre_olimpiada }}</h3>
+
+    <div>
+      <p class="text-sm text-gray-600">Desde:</p>
+      <p class="text-blue-700 font-semibold">{{ Olimpiada.fecha_inicio | date:'mediumDate' }}</p>
+      <p class="text-sm text-gray-600 mt-2">Hasta:</p>
+      <p class="text-blue-700 font-semibold">{{ Olimpiada.fecha_final | date:'mediumDate' }}</p>
+    </div>
+
+    <button
+      class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition"
+      (click)="entrar()"
+    >
+      Entrar
+    </button>
+  </div>
+</div>
