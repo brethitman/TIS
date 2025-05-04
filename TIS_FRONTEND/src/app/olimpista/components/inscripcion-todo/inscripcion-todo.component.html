@@ -11,20 +11,7 @@
     <form [formGroup]="inscripcionForm" (ngSubmit)="onSubmit()"
         class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
 
-        <!-- Sección de Datos Generales -->
-        <div class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">
-            <h3 class="text-xl font-semibold text-gray-700 mb-4">Datos Generales</h3>
-            <div class="mb-4">
-                <label for="fecha_inscripcion" class="block text-sm font-medium text-gray-700 mb-1">Fecha de
-                    Inscripción:</label>
-                <input type="date" id="fecha_inscripcion" formControlName="fecha_inscripcion"
-                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                <div *ngIf="inscripcionForm.get('fecha_inscripcion')?.touched && inscripcionForm.get('fecha_inscripcion')?.invalid"
-                    class="text-red-500 text-sm mt-1">
-                    La fecha de inscripción es obligatoria.
-                </div>
-            </div>
-        </div>
+
 
         <!-- Sección de Olimpistas -->
         <div formArrayName="olimpistas" class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">
@@ -138,18 +125,7 @@
                         </div>
                     </div>
 
-                    <!-- Curso -->
-                    <div>
-                        <label [attr.for]="'olimpista_curso_' + i"
-                            class="block text-sm font-medium text-gray-700 mb-1">Curso:</label>
-                        <input type="text" [id]="'olimpista_curso_' + i" formControlName="curso"
-                            placeholder="Ej: 6to Primaria, 2do Secundaria"
-                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                        <div *ngIf="olimpistaGroup.get('curso')?.touched && olimpistaGroup.get('curso')?.invalid"
-                            class="text-red-500 text-sm mt-1">
-                            Curso es obligatorio.
-                        </div>
-                    </div>
+
 
                     <!-- Departamento -->
                     <div>
@@ -252,21 +228,42 @@
                         </div>
                     </div>
 
-                    <!-- Teléfono -->
-                    <div>
-                        <label [attr.for]="'tutor_telefono_' + i"
-                            class="block text-sm font-medium text-gray-700 mb-1">Teléfono:</label>
-                        <input type="text" [id]="'tutor_telefono_' + i" formControlName="telefono"
-                            placeholder="Teléfono"
-                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                        <div *ngIf="tutorGroup.get('telefono')?.touched && tutorGroup.get('telefono')?.invalid"
-                            class="text-red-500 text-sm mt-1">
-                            Teléfono es obligatorio.
-                        </div>
+                  <!-- Teléfono -->
+                  <div>
+                      <label [attr.for]="'tutor_telefono_' + i" class="block text-sm font-medium text-gray-700 mb-1">Teléfono:</label>
+                      <input type="text" [id]="'tutor_telefono_' + i" formControlName="telefono" placeholder="Teléfono"
+                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                      <div *ngIf="tutorGroup.get('telefono')?.touched && tutorGroup.get('telefono')?.invalid"
+                          class="text-red-500 text-sm mt-1">
+                          Teléfono es obligatorio.
+                      </div>
+                  </div>
+
+                   <!-- contacto -->
+
+                   <div class="mb-4">
+                    <label [attr.for]="'tutor_contacto_' + i" class="block text-sm font-medium text-gray-700 mb-1">Contacto (parentesco):</label>
+                    <select
+                      [id]="'tutor_contacto_' + i"
+                      formControlName="contacto"
+                      class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    >
+                      <option value="" disabled selected>-- Seleccione parentesco --</option>
+                      <option value="papa/mama">Papá/Mamá</option>
+                      <option value="profesor">Profesor</option>
+                      <option value="estudiante">Estudiante</option>
+                    </select>
+
+                    <div *ngIf="tutorGroup.get('contacto')?.touched && tutorGroup.get('contacto')?.invalid"
+                         class="text-red-500 text-sm mt-1">
+                      Debe seleccionar una opción de contacto.
                     </div>
-                </div>
-            </div>
-        </div>
+                  </div>
+
+                         <!-- contacto -->
+              </div>
+          </div>
+      </div>
 
         <!-- Sección de Áreas -->
         <div formArrayName="areas" class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">

@@ -25,7 +25,7 @@ class InscripcionResource extends JsonResource
         return [
             'id' => $this->id_inscripcion,
             // Usar toIso8601String() para formato ISO 8601 en PHP
-            'fecha_inscripcion' => $this->fecha_inscripcion ? $this->fecha_inscripcion->toIso8601String() : null,
+
             'estado' => $this->estado,
 
             // Usar el nombre de la relación definida en el modelo (singular para hasOne)

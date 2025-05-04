@@ -32,7 +32,6 @@ class Olimpista extends Model
         'correo',
         'telefono',
         'colegio',
-        'curso',
         'departamento',
         'provincia',
     ];

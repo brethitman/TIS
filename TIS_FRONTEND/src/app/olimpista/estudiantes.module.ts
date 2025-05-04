@@ -21,6 +21,7 @@ import { HttpClientModule } from '@angular/common/http';
 })
 export class EstudiantesModule { }
 */
+
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -38,6 +39,7 @@ import { InscripcionTodoComponent } from './components/inscripcion-todo/inscripc
     FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
+
   ],
   exports: [
    // BotonExelComponent
