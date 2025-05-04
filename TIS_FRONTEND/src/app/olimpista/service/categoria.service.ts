@@ -3,7 +3,7 @@ import { map, catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { NivelesCategoria } from '../interfaces/categoria.interface';
-import { GetNivelesCategoriaResponse } from '../interfaces/get-categoria-response';
+import { GetNivelesCategoria } from '../interfaces/get-categoria-response';
 
 @Injectable({
   providedIn: 'root'
@@ -12,14 +12,14 @@ export class CategoriaService {
 
   private apiUrl = 'http://localhost:8000/api/nivelCategoria'; // Corregido el endpoint
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Crea un nuevo nivel de categoría
    * @param nivelCategoria Datos del nivel a crear
    * @returns Observable con la respuesta del servidor
    */
-  crearNivelCategoria(nivelCategoria: Omit<NivelesCategoria, 'id' | 'created_at' | 'updated_at'>): Observable<any> {
+  crearNivelCategoria(nivelCategoria: Omit<NivelesCategoria, 'id' | 'created_at' | 'updated_at'>): Observable<NivelesCategoria> {
     return this.http.post<NivelesCategoria>(this.apiUrl, nivelCategoria);
   }
 
@@ -27,8 +27,8 @@ export class CategoriaService {
    * Obtiene todos los niveles de categoría
    * @returns Observable con la lista paginada de niveles
    */
-  obtenerNivelesCategoria(): Observable<GetNivelesCategoriaResponse> {
-    return this.http.get<GetNivelesCategoriaResponse>(this.apiUrl);
+  obtenerNivelesCategoria(): Observable<GetNivelesCategoria> {
+    return this.http.get<GetNivelesCategoria>(this.apiUrl);
   }
 
   /**
@@ -46,12 +46,10 @@ export class CategoriaService {
    * @param cambios Objeto con los cambios
    * @returns Observable con el nivel actualizado
    */
-  actualizarNivel(
-    id: number,
-    cambios: { nombre_nivel: string; descripcion?: string | null; fecha_examen: Date | null; costo: number }
-  ): Observable<any> {
+  actualizarNivel(id: number, cambios: Partial<NivelesCategoria>): Observable<NivelesCategoria> {
     return this.http.put<NivelesCategoria>(`${this.apiUrl}/${id}`, cambios);
   }
+
   /**
    * Elimina un nivel de categoría
    * @param id ID del nivel a eliminar

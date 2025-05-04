@@ -1,231 +1,230 @@
 <div class="container mx-auto p-6 bg-gray-100 min-h-screen">
-  <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Formulario de Inscripción</h2>
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">Formulario de Inscripción</h2>
 
-  <div *ngIf="successMessage" class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
-      {{ successMessage }}
-  </div>
-  <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">
-      {{ errorMessage }}
-  </div>
+    <div *ngIf="successMessage" class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
+        {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">
+        {{ errorMessage }}
+    </div>
 
-  <form [formGroup]="inscripcionForm" (ngSubmit)="onSubmit()" class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+    <form [formGroup]="inscripcionForm" (ngSubmit)="onSubmit()"
+        class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
 
-      <!-- Sección de Datos Generales -->
-      <div class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">
-          <h3 class="text-xl font-semibold text-gray-700 mb-4">Datos Generales</h3>
-          <div class="mb-4">
-              <label for="fecha_inscripcion" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Inscripción:</label>
-              <input type="date" id="fecha_inscripcion" formControlName="fecha_inscripcion"
-                  class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-              <div *ngIf="inscripcionForm.get('fecha_inscripcion')?.touched && inscripcionForm.get('fecha_inscripcion')?.invalid"
-                  class="text-red-500 text-sm mt-1">
-                  La fecha de inscripción es obligatoria.
-              </div>
-          </div>
-      </div>
 
-      <!-- Sección de Olimpistas -->
-      <div formArrayName="olimpistas" class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">
-          <h3 class="text-xl font-semibold text-gray-700 mb-4">Olimpistas</h3>
-          <button type="button" (click)="addOlimpista()"
-              class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mb-4">
-              Añadir Olimpista
-          </button>
+        <!-- Sección de Olimpistas -->
+        <div formArrayName="olimpistas" class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">Olimpistas</h3>
+            <button type="button" (click)="addOlimpista()"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mb-4">
+                Añadir Olimpista
+            </button>
 
-          <div *ngFor="let olimpistaGroup of olimpistasFormArray.controls; let i = index"
-              [formGroupName]="i"
-              class="mb-6 p-6 border border-gray-300 rounded-md bg-white shadow-sm">
+            <div *ngFor="let olimpistaGroup of olimpistasFormArray.controls; let i = index" [formGroupName]="i"
+                class="mb-6 p-6 border border-gray-300 rounded-md bg-white shadow-sm">
 
-              <h4 class="text-lg font-medium text-gray-700 mb-4">Olimpista #{{ i + 1 }}</h4>
-              <button type="button" (click)="removeOlimpista(i)"
-                  class="float-right inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                  Eliminar
-              </button>
+                <h4 class="text-lg font-medium text-gray-700 mb-4">Olimpista #{{ i + 1 }}</h4>
+                <button type="button" (click)="removeOlimpista(i)"
+                    class="float-right inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    Eliminar
+                </button>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <!-- Nombres -->
-                  <div>
-                      <label [attr.for]="'olimpista_nombres_' + i" class="block text-sm font-medium text-gray-700 mb-1">Nombres:</label>
-                      <input type="text" [id]="'olimpista_nombres_' + i" formControlName="nombres" placeholder="Nombres"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="olimpistaGroup.get('nombres')?.touched && olimpistaGroup.get('nombres')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          Nombres es obligatorio.
-                      </div>
-                  </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Nombres -->
+                    <div>
+                        <label [attr.for]="'olimpista_nombres_' + i"
+                            class="block text-sm font-medium text-gray-700 mb-1">Nombres:</label>
+                        <input type="text" [id]="'olimpista_nombres_' + i" formControlName="nombres"
+                            placeholder="Nombres"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div *ngIf="olimpistaGroup.get('nombres')?.touched && olimpistaGroup.get('nombres')?.invalid"
+                            class="text-red-500 text-sm mt-1">
+                            Nombres es obligatorio.
+                        </div>
+                    </div>
 
-                  <!-- Apellidos -->
-                  <div>
-                      <label [attr.for]="'olimpista_apellidos_' + i" class="block text-sm font-medium text-gray-700 mb-1">Apellidos:</label>
-                      <input type="text" [id]="'olimpista_apellidos_' + i" formControlName="apellidos" placeholder="Apellidos"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="olimpistaGroup.get('apellidos')?.touched && olimpistaGroup.get('apellidos')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          Apellidos es obligatorio.
-                      </div>
-                  </div>
+                    <!-- Apellidos -->
+                    <div>
+                        <label [attr.for]="'olimpista_apellidos_' + i"
+                            class="block text-sm font-medium text-gray-700 mb-1">Apellidos:</label>
+                        <input type="text" [id]="'olimpista_apellidos_' + i" formControlName="apellidos"
+                            placeholder="Apellidos"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div *ngIf="olimpistaGroup.get('apellidos')?.touched && olimpistaGroup.get('apellidos')?.invalid"
+                            class="text-red-500 text-sm mt-1">
+                            Apellidos es obligatorio.
+                        </div>
+                    </div>
 
-                  <!-- CI -->
-                  <div>
-                      <label [attr.for]="'olimpista_ci_' + i" class="block text-sm font-medium text-gray-700 mb-1">Cédula de Identidad:</label>
-                      <input type="text" [id]="'olimpista_ci_' + i" formControlName="ci" placeholder="Cédula de Identidad"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="olimpistaGroup.get('ci')?.touched && olimpistaGroup.get('ci')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          CI es obligatorio.
-                      </div>
-                  </div>
+                    <!-- CI -->
+                    <div>
+                        <label [attr.for]="'olimpista_ci_' + i"
+                            class="block text-sm font-medium text-gray-700 mb-1">Cédula de Identidad:</label>
+                        <input type="text" [id]="'olimpista_ci_' + i" formControlName="ci"
+                            placeholder="Cédula de Identidad"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div *ngIf="olimpistaGroup.get('ci')?.touched && olimpistaGroup.get('ci')?.invalid"
+                            class="text-red-500 text-sm mt-1">
+                            CI es obligatorio.
+                        </div>
+                    </div>
 
-                  <!-- Fecha Nacimiento -->
-                  <div>
-                      <label [attr.for]="'olimpista_fecha_nacimiento_' + i" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento:</label>
-                      <input type="date" [id]="'olimpista_fecha_nacimiento_' + i" formControlName="fecha_nacimiento"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="olimpistaGroup.get('fecha_nacimiento')?.touched && olimpistaGroup.get('fecha_nacimiento')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          Fecha de nacimiento es obligatoria.
-                      </div>
-                  </div>
+                    <!-- Fecha Nacimiento -->
+                    <div>
+                        <label [attr.for]="'olimpista_fecha_nacimiento_' + i"
+                            class="block text-sm font-medium text-gray-700 mb-1">Fecha de Nacimiento:</label>
+                        <input type="date" [id]="'olimpista_fecha_nacimiento_' + i" formControlName="fecha_nacimiento"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div *ngIf="olimpistaGroup.get('fecha_nacimiento')?.touched && olimpistaGroup.get('fecha_nacimiento')?.invalid"
+                            class="text-red-500 text-sm mt-1">
+                            Fecha de nacimiento es obligatoria.
+                        </div>
+                    </div>
 
-                  <!-- Correo -->
-                  <div>
-                      <label [attr.for]="'olimpista_correo_' + i" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico:</label>
-                      <input type="email" [id]="'olimpista_correo_' + i" formControlName="correo" placeholder="Correo electrónico"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="olimpistaGroup.get('correo')?.touched && olimpistaGroup.get('correo')?.errors?.['required']"
-                          class="text-red-500 text-sm mt-1">
-                          Correo es obligatorio.
-                      </div>
-                      <div *ngIf="olimpistaGroup.get('correo')?.touched && olimpistaGroup.get('correo')?.errors?.['email']"
-                          class="text-red-500 text-sm mt-1">
-                          Formato de correo inválido.
-                      </div>
-                  </div>
+                    <!-- Correo -->
+                    <div>
+                        <label [attr.for]="'olimpista_correo_' + i"
+                            class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico:</label>
+                        <input type="email" [id]="'olimpista_correo_' + i" formControlName="correo"
+                            placeholder="Correo electrónico"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div *ngIf="olimpistaGroup.get('correo')?.touched && olimpistaGroup.get('correo')?.errors?.['required']"
+                            class="text-red-500 text-sm mt-1">
+                            Correo es obligatorio.
+                        </div>
+                        <div *ngIf="olimpistaGroup.get('correo')?.touched && olimpistaGroup.get('correo')?.errors?.['email']"
+                            class="text-red-500 text-sm mt-1">
+                            Formato de correo inválido.
+                        </div>
+                    </div>
 
-                  <!-- Teléfono -->
-                  <div>
-                      <label [attr.for]="'olimpista_telefono_' + i" class="block text-sm font-medium text-gray-700 mb-1">Teléfono:</label>
-                      <input type="text" [id]="'olimpista_telefono_' + i" formControlName="telefono" placeholder="Teléfono"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="olimpistaGroup.get('telefono')?.touched && olimpistaGroup.get('telefono')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          Teléfono es obligatorio.
-                      </div>
-                  </div>
+                    <!-- Teléfono -->
+                    <div>
+                        <label [attr.for]="'olimpista_telefono_' + i"
+                            class="block text-sm font-medium text-gray-700 mb-1">Teléfono:</label>
+                        <input type="text" [id]="'olimpista_telefono_' + i" formControlName="telefono"
+                            placeholder="Teléfono"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div *ngIf="olimpistaGroup.get('telefono')?.touched && olimpistaGroup.get('telefono')?.invalid"
+                            class="text-red-500 text-sm mt-1">
+                            Teléfono es obligatorio.
+                        </div>
+                    </div>
 
-                  <!-- Colegio -->
-                  <div>
-                      <label [attr.for]="'olimpista_colegio_' + i" class="block text-sm font-medium text-gray-700 mb-1">Colegio:</label>
-                      <input type="text" [id]="'olimpista_colegio_' + i" formControlName="colegio" placeholder="Nombre del Colegio"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="olimpistaGroup.get('colegio')?.touched && olimpistaGroup.get('colegio')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          Colegio es obligatorio.
-                      </div>
-                  </div>
+                    <!-- Colegio -->
+                    <div>
+                        <label [attr.for]="'olimpista_colegio_' + i"
+                            class="block text-sm font-medium text-gray-700 mb-1">Colegio:</label>
+                        <input type="text" [id]="'olimpista_colegio_' + i" formControlName="colegio"
+                            placeholder="Nombre del Colegio"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div *ngIf="olimpistaGroup.get('colegio')?.touched && olimpistaGroup.get('colegio')?.invalid"
+                            class="text-red-500 text-sm mt-1">
+                            Colegio es obligatorio.
+                        </div>
+                    </div>
 
-                  <!-- Curso -->
-                  <div>
-                      <label [attr.for]="'olimpista_curso_' + i" class="block text-sm font-medium text-gray-700 mb-1">Curso:</label>
-                      <input type="text" [id]="'olimpista_curso_' + i" formControlName="curso" placeholder="Ej: 6to Primaria, 2do Secundaria"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="olimpistaGroup.get('curso')?.touched && olimpistaGroup.get('curso')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          Curso es obligatorio.
-                      </div>
-                  </div>
 
-                  <!-- Departamento -->
-                  <div>
-                      <label [attr.for]="'olimpista_departamento_' + i" class="block text-sm font-medium text-gray-700 mb-1">Departamento:</label>
-                      <input type="text" [id]="'olimpista_departamento_' + i" formControlName="departamento" placeholder="Departamento"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="olimpistaGroup.get('departamento')?.touched && olimpistaGroup.get('departamento')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          Departamento es obligatorio.
-                      </div>
-                  </div>
+                    <!-- Departamento -->
+                    <div>
+                        <label [attr.for]="'olimpista_departamento_' + i"
+                            class="block text-sm font-medium text-gray-700 mb-1">Departamento:</label>
+                        <input type="text" [id]="'olimpista_departamento_' + i" formControlName="departamento"
+                            placeholder="Departamento"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div *ngIf="olimpistaGroup.get('departamento')?.touched && olimpistaGroup.get('departamento')?.invalid"
+                            class="text-red-500 text-sm mt-1">
+                            Departamento es obligatorio.
+                        </div>
+                    </div>
 
-                  <!-- Provincia -->
-                  <div>
-                      <label [attr.for]="'olimpista_provincia_' + i" class="block text-sm font-medium text-gray-700 mb-1">Provincia:</label>
-                      <input type="text" [id]="'olimpista_provincia_' + i" formControlName="provincia" placeholder="Provincia"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="olimpistaGroup.get('provincia')?.touched && olimpistaGroup.get('provincia')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          Provincia es obligatoria.
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
+                    <!-- Provincia -->
+                    <div>
+                        <label [attr.for]="'olimpista_provincia_' + i"
+                            class="block text-sm font-medium text-gray-700 mb-1">Provincia:</label>
+                        <input type="text" [id]="'olimpista_provincia_' + i" formControlName="provincia"
+                            placeholder="Provincia"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div *ngIf="olimpistaGroup.get('provincia')?.touched && olimpistaGroup.get('provincia')?.invalid"
+                            class="text-red-500 text-sm mt-1">
+                            Provincia es obligatoria.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      <!-- Sección de Tutores -->
-      <div formArrayName="tutors" class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">
-          <h3 class="text-xl font-semibold text-gray-700 mb-4">Tutores</h3>
-          <button type="button" (click)="addTutor()"
-              class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mb-4">
-              Añadir Tutor
-          </button>
+        <!-- Sección de Tutores -->
+        <div formArrayName="tutors" class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">Tutores</h3>
+            <button type="button" (click)="addTutor()"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mb-4">
+                Añadir Tutor
+            </button>
 
-          <div *ngFor="let tutorGroup of tutorsFormArray.controls; let i = index"
-              [formGroupName]="i"
-              class="mb-6 p-6 border border-gray-300 rounded-md bg-white shadow-sm">
+            <div *ngFor="let tutorGroup of tutorsFormArray.controls; let i = index" [formGroupName]="i"
+                class="mb-6 p-6 border border-gray-300 rounded-md bg-white shadow-sm">
 
-              <h4 class="text-lg font-medium text-gray-700 mb-4">Tutor #{{ i + 1 }}</h4>
-              <button type="button" (click)="removeTutor(i)"
-                  class="float-right inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                  Eliminar
-              </button>
+                <h4 class="text-lg font-medium text-gray-700 mb-4">Tutor #{{ i + 1 }}</h4>
+                <button type="button" (click)="removeTutor(i)"
+                    class="float-right inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    Eliminar
+                </button>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <!-- Nombres -->
-                  <div>
-                      <label [attr.for]="'tutor_nombres_' + i" class="block text-sm font-medium text-gray-700 mb-1">Nombres:</label>
-                      <input type="text" [id]="'tutor_nombres_' + i" formControlName="nombres" placeholder="Nombres"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="tutorGroup.get('nombres')?.touched && tutorGroup.get('nombres')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          Nombres es obligatorio.
-                      </div>
-                  </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Nombres -->
+                    <div>
+                        <label [attr.for]="'tutor_nombres_' + i"
+                            class="block text-sm font-medium text-gray-700 mb-1">Nombres:</label>
+                        <input type="text" [id]="'tutor_nombres_' + i" formControlName="nombres" placeholder="Nombres"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div *ngIf="tutorGroup.get('nombres')?.touched && tutorGroup.get('nombres')?.invalid"
+                            class="text-red-500 text-sm mt-1">
+                            Nombres es obligatorio.
+                        </div>
+                    </div>
 
-                  <!-- Apellidos -->
-                  <div>
-                      <label [attr.for]="'tutor_apellidos_' + i" class="block text-sm font-medium text-gray-700 mb-1">Apellidos:</label>
-                      <input type="text" [id]="'tutor_apellidos_' + i" formControlName="apellidos" placeholder="Apellidos"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="tutorGroup.get('apellidos')?.touched && tutorGroup.get('apellidos')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          Apellidos es obligatorio.
-                      </div>
-                  </div>
+                    <!-- Apellidos -->
+                    <div>
+                        <label [attr.for]="'tutor_apellidos_' + i"
+                            class="block text-sm font-medium text-gray-700 mb-1">Apellidos:</label>
+                        <input type="text" [id]="'tutor_apellidos_' + i" formControlName="apellidos"
+                            placeholder="Apellidos"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div *ngIf="tutorGroup.get('apellidos')?.touched && tutorGroup.get('apellidos')?.invalid"
+                            class="text-red-500 text-sm mt-1">
+                            Apellidos es obligatorio.
+                        </div>
+                    </div>
 
-                  <!-- CI -->
-                  <div>
-                      <label [attr.for]="'tutor_ci_' + i" class="block text-sm font-medium text-gray-700 mb-1">Cédula de Identidad:</label>
-                      <input type="text" [id]="'tutor_ci_' + i" formControlName="ci" placeholder="Cédula de Identidad"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="tutorGroup.get('ci')?.touched && tutorGroup.get('ci')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          CI es obligatorio.
-                      </div>
-                  </div>
+                    <!-- CI -->
+                    <div>
+                        <label [attr.for]="'tutor_ci_' + i" class="block text-sm font-medium text-gray-700 mb-1">Cédula
+                            de Identidad:</label>
+                        <input type="text" [id]="'tutor_ci_' + i" formControlName="ci" placeholder="Cédula de Identidad"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div *ngIf="tutorGroup.get('ci')?.touched && tutorGroup.get('ci')?.invalid"
+                            class="text-red-500 text-sm mt-1">
+                            CI es obligatorio.
+                        </div>
+                    </div>
 
-                  <!-- Correo -->
-                  <div>
-                      <label [attr.for]="'tutor_correo_' + i" class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico:</label>
-                      <input type="email" [id]="'tutor_correo_' + i" formControlName="correo" placeholder="Correo electrónico"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                      <div *ngIf="tutorGroup.get('correo')?.touched && tutorGroup.get('correo')?.errors?.['required']"
-                          class="text-red-500 text-sm mt-1">
-                          Correo es obligatorio.
-                      </div>
-                      <div *ngIf="tutorGroup.get('correo')?.touched && tutorGroup.get('correo')?.errors?.['email']"
-                          class="text-red-500 text-sm mt-1">
-                          Formato de correo inválido.
-                      </div>
-                  </div>
+                    <!-- Correo -->
+                    <div>
+                        <label [attr.for]="'tutor_correo_' + i"
+                            class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico:</label>
+                        <input type="email" [id]="'tutor_correo_' + i" formControlName="correo"
+                            placeholder="Correo electrónico"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <div *ngIf="tutorGroup.get('correo')?.touched && tutorGroup.get('correo')?.errors?.['required']"
+                            class="text-red-500 text-sm mt-1">
+                            Correo es obligatorio.
+                        </div>
+                        <div *ngIf="tutorGroup.get('correo')?.touched && tutorGroup.get('correo')?.errors?.['email']"
+                            class="text-red-500 text-sm mt-1">
+                            Formato de correo inválido.
+                        </div>
+                    </div>
 
                   <!-- Teléfono -->
                   <div>
@@ -237,77 +236,101 @@
                           Teléfono es obligatorio.
                       </div>
                   </div>
+
+                   <!-- contacto -->
+
+                   <div class="mb-4">
+                    <label [attr.for]="'tutor_contacto_' + i" class="block text-sm font-medium text-gray-700 mb-1">Contacto (parentesco):</label>
+                    <select
+                      [id]="'tutor_contacto_' + i"
+                      formControlName="contacto"
+                      class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    >
+                      <option value="" disabled selected>-- Seleccione parentesco --</option>
+                      <option value="papa/mama">Papá/Mamá</option>
+                      <option value="profesor">Profesor</option>
+                      <option value="estudiante">Estudiante</option>
+                    </select>
+
+                    <div *ngIf="tutorGroup.get('contacto')?.touched && tutorGroup.get('contacto')?.invalid"
+                         class="text-red-500 text-sm mt-1">
+                      Debe seleccionar una opción de contacto.
+                    </div>
+                  </div>
+
+                         <!-- contacto -->
               </div>
           </div>
       </div>
 
-      <!-- Sección de Áreas -->
-      <div formArrayName="areas" class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">
-          <h3 class="text-xl font-semibold text-gray-700 mb-4">Áreas de Participación</h3>
-          <button type="button" (click)="addArea()"
-              class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mb-4">
-              Añadir Área
-          </button>
+        <!-- Sección de Áreas -->
+        <div formArrayName="areas" class="mb-8 p-6 border border-gray-200 rounded-md bg-gray-50">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">Áreas de Participación</h3>
+            <button type="button" (click)="addArea()"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mb-4">
+                Añadir Área
+            </button>
 
-          <div *ngFor="let areaGroup of areasFormArray.controls; let areaIndex = index"
-              [formGroupName]="areaIndex"
-              class="mb-6 p-6 border border-gray-300 rounded-md bg-white shadow-sm">
+            <div *ngFor="let areaGroup of areasFormArray.controls; let areaIndex = index" [formGroupName]="areaIndex"
+                class="mb-6 p-6 border border-gray-300 rounded-md bg-white shadow-sm">
 
-              <h4 class="text-lg font-medium text-gray-700 mb-4">Área #{{ areaIndex + 1 }}</h4>
-              <button type="button" (click)="removeArea(areaIndex)"
-                  class="float-right inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                  Eliminar
-              </button>
+                <h4 class="text-lg font-medium text-gray-700 mb-4">Área #{{ areaIndex + 1 }}</h4>
+                <button type="button" (click)="removeArea(areaIndex)"
+                    class="float-right inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                    Eliminar
+                </button>
 
-              <div class="grid gap-4">
-                  <!-- Selector de Área -->
-                  <div>
-                      <label [attr.for]="'areaSelect_' + areaIndex" class="block text-sm font-medium text-gray-700 mb-1">Área:</label>
-                      <select [id]="'areaSelect_' + areaIndex" formControlName="area"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                          <option [ngValue]="null" disabled>-- Seleccione un Área --</option>
-                          <option *ngFor="let area of areasDisponibles" [ngValue]="area">
-                              {{ area.nombre_area }}
-                          </option>
-                      </select>
-                      <div *ngIf="areaGroup.get('area')?.touched && areaGroup.get('area')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          Debe seleccionar un área.
-                      </div>
-                  </div>
+                <div class="grid gap-4">
+                    <!-- Selector de Área -->
+                    <div>
+                        <label [attr.for]="'areaSelect_' + areaIndex"
+                            class="block text-sm font-medium text-gray-700 mb-1">Área:</label>
+                        <select [id]="'areaSelect_' + areaIndex" formControlName="area"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            <option [ngValue]="null" disabled>-- Seleccione un Área --</option>
+                            <option *ngFor="let area of areasDisponibles" [ngValue]="area">
+                                {{ area.nombre_area }}
+                            </option>
+                        </select>
+                        <div *ngIf="areaGroup.get('area')?.touched && areaGroup.get('area')?.invalid"
+                            class="text-red-500 text-sm mt-1">
+                            Debe seleccionar un área.
+                        </div>
+                    </div>
 
-                  <!-- Selector de Nivel -->
-                  <div>
-                      <label [attr.for]="'nivelSelect_' + areaIndex" class="block text-sm font-medium text-gray-700 mb-1">Nivel:</label>
-                      <select [id]="'nivelSelect_' + areaIndex" formControlName="nivel"
-                          [disabled]="!areaGroup.value.area"
-                          class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                          <option [ngValue]="null" disabled>-- Seleccione un Nivel --</option>
-                          <option *ngFor="let nivel of getNiveles(areaIndex)" [value]="nivel.id_nivel">
-                              {{ nivel.nombre_nivel }}
-                          </option>
-                      </select>
-                      <div *ngIf="areaGroup.get('nivel')?.touched && areaGroup.get('nivel')?.invalid"
-                          class="text-red-500 text-sm mt-1">
-                          Debe seleccionar un nivel.
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
+                    <!-- Selector de Nivel -->
+                    <div>
+                        <label [attr.for]="'nivelSelect_' + areaIndex"
+                            class="block text-sm font-medium text-gray-700 mb-1">Nivel:</label>
+                        <select [id]="'nivelSelect_' + areaIndex" formControlName="nivel"
+                            [disabled]="!areaGroup.value.area">
+                            <option [ngValue]="null" disabled>-- Seleccione un Nivel --</option>
+                            <!-- Cambia [value] por [ngValue] -->
+                            <option *ngFor="let nivel of getNiveles(areaIndex)" [ngValue]="nivel.id_nivel">
+                                {{ nivel.nombre_nivel }}
+                            </option>
+                        </select>
+                        <div *ngIf="areaGroup.get('nivel')?.touched && areaGroup.get('nivel')?.invalid"
+                            class="text-red-500 text-sm mt-1">
+                            Debe seleccionar un nivel.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      <!-- Botón de Envío -->
-      <div class="text-center">
-          <button type="submit"
-              class="inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              [disabled]="inscripcionForm.invalid">
-              Enviar Inscripción
-          </button>
-      </div>
-  </form>
-<!-- Después del formulario -->
-<div *ngIf="boletaGenerada" class="mt-8">
-  <h3 class="text-2xl font-bold text-center mb-4">Comprobante de Pago Generado</h3>
-  <app-boleta-pago [boletaData]="boletaGenerada"></app-boleta-pago>
-</div>
+        <!-- Botón de Envío -->
+        <div class="text-center">
+            <button type="submit"
+                class="inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                [disabled]="inscripcionForm.invalid">
+                Enviar Inscripción
+            </button>
+        </div>
+    </form>
+    <!-- Después del formulario -->
+    <div *ngIf="boletaGenerada" class="mt-8">
+        <h3 class="text-2xl font-bold text-center mb-4">Comprobante de Pago Generado</h3>
+        <app-boleta-pago [boletaData]="boletaGenerada"></app-boleta-pago>
+    </div>
 </div>

@@ -26,6 +26,7 @@ class TutorResource extends JsonResource
             'telefono' => $this->telefono,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
+          'contacto' => $this->contacto, // 👈 Agregar esto
         ];
     }
 }

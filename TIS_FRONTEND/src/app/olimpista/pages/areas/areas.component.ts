@@ -11,7 +11,6 @@ import { AreaListComponent } from "../../components/area-list/area-list.componen
 import { BotonExelComponent } from '../../components/boton-exel/boton-exel.component';
 import { InscripcionTodoComponent } from '../../components/inscripcion-todo/inscripcion-todo.component';
 
-
 @Component({
   selector: 'app-areas',
   standalone: true,

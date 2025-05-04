@@ -45,129 +45,88 @@ class InscripcionController extends Controller
      */
     public function store(Request $request)
     {
-        // --- 1. Validar Reglas de Validación ---
-        // Validamos la estructura anidada para olimpistas, tutors y areas/niveles
         $validated = $request->validate([
-            'fecha_inscripcion' => 'required|date',
             'estado' => 'required|in:Pendiente,Pagado,Verificado',
 
             'olimpistas' => 'required|array|min:1',
-            'olimpistas.*.nombres' => 'required|string|max:100', // Ajustado según schema
-            'olimpistas.*.apellidos' => 'required|string|max:100', // Ajustado según schema
-            // Validar CI único por olimpista (considera si un olimpista puede tener múltiples inscripciones)
-            // Si un olimpista puede tener múltiples inscripciones, la validación unique debe ser más compleja
-            // o manejarse en la lógica de negocio (buscar si existe por CI antes de crear).
-            'olimpistas.*.ci' => 'required|string|max:20|unique:olimpistas,ci', // Validación unique
+            'olimpistas.*.nombres' => 'required|string|max:100',
+            'olimpistas.*.apellidos' => 'required|string|max:100',
+            'olimpistas.*.ci' => 'required|string|max:20',
             'olimpistas.*.fecha_nacimiento' => 'required|date',
-            'olimpistas.*.correo' => 'required|email|max:100', // Ajustado según schema
-            'olimpistas.*.telefono' => 'required|string|max:20', // Ajustado según schema
-            'olimpistas.*.colegio' => 'required|string|max:100', // Ajustado según schema
-            'olimpistas.*.curso' => 'required|string|max:50', // Ajustado según schema
-            'olimpistas.*.departamento' => 'required|string|max:50', // Ajustado según schema
-            'olimpistas.*.provincia' => 'required|string|max:50', // Ajustado según schema
+            'olimpistas.*.correo' => 'required|email|max:100',
+            'olimpistas.*.telefono' => 'required|string|max:20',
+            'olimpistas.*.colegio' => 'required|string|max:100',
+            'olimpistas.*.departamento' => 'required|string|max:50',
+            'olimpistas.*.provincia' => 'required|string|max:50',
 
             'tutors' => 'required|array|min:1',
-            'tutors.*.nombres' => 'required|string|max:100', // Ajustado según schema
-            'tutors.*.apellidos' => 'required|string|max:100', // Ajustado según schema
-            // Validar CI único por tutor (considera si un tutor puede tener múltiples inscripciones)
-            'tutors.*.ci' => 'required|string|max:20|unique:tutors,ci', // Validación unique
-            'tutors.*.correo' => 'required|email|max:100', // Ajustado según schema
-            'tutors.*.telefono' => 'required|string|max:20', // Ajustado según schema
+            'tutors.*.nombres' => 'required|string|max:100',
+            'tutors.*.apellidos' => 'required|string|max:100',
+            'tutors.*.ci' => 'required|string|max:20',
+            'tutors.*.correo' => 'required|email|max:100',
+            'tutors.*.telefono' => 'required|string|max:20',
+            'tutors.*.contacto' => 'nullable|string|max:100',
 
-            // --- VALIDACIÓN PARA LA ESTRUCTURA ANIDADA DE AREAS Y NIVELES ---
-            // Esperamos un array de objetos, donde cada objeto tiene 'area_id' y 'nivelesCategoria' (array de IDs)
-            'areas' => 'required|array|min:1', // Debe haber al menos una entrada de área/niveles
-            'areas.*.area_id' => 'required|integer|exists:areas,id_area', // Valida que el ID del área exista
-            'areas.*.nivelesCategoria' => 'required|array|min:1', // Valida que nivelesCategoria sea un array no vacío
-            // Valida que cada ID de nivel exista en la tabla nivel_categorias
+            'areas' => 'required|array|min:1',
+            'areas.*.area_id' => 'required|integer|exists:areas,id_area',
+            'areas.*.nivelesCategoria' => 'required|array|min:1',
             'areas.*.nivelesCategoria.*' => 'required|integer|exists:nivel_categorias,id_nivel',
-            // Opcional: Añadir una validación custom para asegurar que el id_nivel pertenezca al area_id especificado.
-            // Esto requiere una regla de validación personalizada.
         ]);
 
-        // Usar una transacción de base de datos para asegurar que todas las operaciones se completen
-        // o se reviertan si algo falla.
         DB::beginTransaction();
 
         try {
-            // --- 2. Crear la Inscripción Principal ---
+            // ✅ Se elimina fecha_inscripcion
             $inscripcion = Inscripcion::create([
-                'fecha_inscripcion' => $validated['fecha_inscripcion'],
                 'estado' => $validated['estado']
-                // created_at y updated_at se llenan automáticamente por Eloquent
             ]);
 
-            // --- 3. Crear Olimpistas Asociados ---
             foreach ($validated['olimpistas'] as $olimpistaData) {
-                // Usar la relación hasMany para crear olimpistas vinculados a la inscripción
-                // Esto automáticamente asigna el id_inscripcion.
                 $inscripcion->olimpistas()->create($olimpistaData);
             }
 
-            // --- 4. Crear Tutores Asociados ---
             foreach ($validated['tutors'] as $tutorData) {
-                 // Usar la relación hasMany para crear tutores vinculados a la inscripción
-                 // Esto automáticamente asigna el id_inscripcion.
                 $inscripcion->tutors()->create($tutorData);
             }
 
-            // --- 5. Procesar Areas y NivelCategorias y llenar la tabla pivote ---
             $inscripcionAreaNivelData = [];
-            $totalCosto = 0; // Variable para calcular el costo total
+            $totalCosto = 0;
 
-            // Recorrer las áreas y los niveles seleccionados
             foreach ($validated['areas'] as $areaData) {
                 $areaId = $areaData['area_id'];
                 $nivelIds = $areaData['nivelesCategoria'];
 
-                // Obtener los NivelCategorias seleccionados con sus costos
                 $nivelesSeleccionados = NivelCategoria::whereIn('id_nivel', $nivelIds)
-                                                    ->where('id_area', $areaId) // Opcional pero recomendado: verificar que el nivel pertenezca al área
-                                                    ->get();
-
-                // Si la validación 'exists' ya asegura que los IDs de nivel existen,
-                // y si confías en la estructura de entrada, podrías omitir la consulta extra aquí
-                // y simplemente calcular el costo después de insertar en la pivote.
-                // Sin embargo, verificar que el nivel pertenece al área aquí añade una capa de seguridad.
+                    ->where('id_area', $areaId)
+                    ->get();
 
                 foreach ($nivelesSeleccionados as $nivel) {
-                    // Añade un registro por cada combinación Inscripción-Área-Nivel seleccionada
                     $inscripcionAreaNivelData[] = [
                         'id_inscripcion' => $inscripcion->id_inscripcion,
-                        'id_area' => $areaId, // Guardamos el ID del área en la tabla pivote
+                        'id_area' => $areaId,
                         'id_nivel' => $nivel->id_nivel,
-                        'created_at' => now(), // Si tu tabla pivote usa timestamps
-                        'updated_at' => now(), // Si tu tabla pivote usa timestamps
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ];
-                    // Sumar el costo del nivel al total
                     $totalCosto += $nivel->costo;
                 }
             }
 
-            // Inserta todos los registros en la tabla pivote 'inscripcion_area_nivel'
             if (!empty($inscripcionAreaNivelData)) {
-                 // Usar insert para insertar múltiples filas de manera eficiente
                 DB::table('inscripcion_area_nivel')->insert($inscripcionAreaNivelData);
             }
 
-            // --- 6. Generar la Boleta de Pago ---
-            // Generar un número de boleta único (puedes usar UUID, un contador, etc.)
-            $numeroBoleta = 'BOL-' . Str::random(8) . '-' . $inscripcion->id_inscripcion; // Ejemplo simple
+            $numeroBoleta = 'BOL-' . Str::random(8) . '-' . $inscripcion->id_inscripcion;
 
             BoletaPago::create([
                 'id_inscripcion' => $inscripcion->id_inscripcion,
                 'numero_boleta' => $numeroBoleta,
-                'monto' => $totalCosto, // Usar el costo total calculado
-                'fecha_generacion' => now()->toDateString(), // Solo la fecha
-                 // created_at y updated_at se llenan automáticamente
+                'monto' => $totalCosto,
+                'fecha_generacion' => now()->toDateString(),
             ]);
 
-
-            // Si todo salió bien, confirma la transacción
             DB::commit();
 
-            // --- 7. Cargar relaciones y retornar respuesta ---
-            // Cargar las relaciones necesarias para que el Resource las incluya
             $inscripcion->load(['olimpistas', 'tutors', 'boletaPago', 'nivelCategorias']);
 
             return response()->json([
@@ -176,16 +135,13 @@ class InscripcionController extends Controller
             ], 201);
 
         } catch (\Exception $e) {
-            // Si algo falla, revierte la transacción
             DB::rollBack();
 
-            // Loguear el error para depuración
-            log::error('Error al crear inscripción: ' . $e->getMessage(), ['exception' => $e]);
+            Log::error('Error al crear inscripción: ' . $e->getMessage(), ['exception' => $e]);
 
-            // Retornar una respuesta de error
             return response()->json([
                 'message' => 'Error al crear la inscripción',
-                'error' => $e->getMessage() // Considera no exponer detalles del error en producción
+                'error' => $e->getMessage()
             ], 500);
         }
     }

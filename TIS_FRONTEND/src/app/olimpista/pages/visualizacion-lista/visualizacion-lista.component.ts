@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { BotonExelComponent } from '../../components/boton-exel/boton-exel.component';
 import { Workbook } from 'exceljs';
 
+
 @Component({
   selector: 'app-visualizacion-lista',
   standalone: true,

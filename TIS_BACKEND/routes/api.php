@@ -34,7 +34,7 @@ Route::delete('/area/{id}', [ AreaController::class, 'destroy'   ]); // Eliminar
 Route::get('/areas/olimpiada/{id}', [AreaController::class, 'getByOlimpiadaId']);
 Route::get('/area/{id}/niveles', [AreaController::class, 'nivelesPorArea']);
 Route::get('/areas', [AreaController::class, 'indexV2']);
-
+Route::post('/areas/basic', [AreaController::class, 'storeBasic']);
 
 // tutor ENDPOINTS--da bien ---GET POST da bien
 //tiene interface
@@ -66,7 +66,7 @@ Route::get('/inscripcion/{id}', [ InscripcionController::class, 'show' ]);
 Route::post('/inscripcion', [ InscripcionController::class, 'store' ]);
 
 Route::get('/olimpiadas/{id}/areas', [AreaController::class, 'getAreasByOlimpiada']);
-
+Route::get('/olimpiadasInscripcion/{id}/areas', [AreaController::class, 'getAreasByOlimpiadaParaInscripcion']);
 
 
 
@@ -83,17 +83,14 @@ Route::patch('/nivelCategoria/{id}/habilitacion', [NivelCategoriaController::cla
 
 //PRUEBA
 Route::get('/nivelCategoria/por-area/{areaId}', [NivelCategoriaController::class, 'porArea']);
-
+//con esto agregamos la categoria al area
+Route::post('/areas/{id_area}/niveles', [NivelCategoriaController::class, 'agregarCategoria_Al_Area']);
 
 // olimpista ENDPOINTS ----------  GET POST da bien
 //tiene interface
 Route::get('/olimpista',         [ OlimpistaController::class, 'index'     ]);
 Route::get('/olimpista/{id}',    [ OlimpistaController::class, 'show'      ]);
 Route::post('/olimpista',        [ OlimpistaController::class, 'store'     ]);
-
-//ENPOINTS DE EXCEL CONTROLLER
-Route::post('/olimpistasExel', [ExelController::class, 'importarExcel'])->name('Excel.importar');
-Route::post('/lee-excel', [ExelController::class,'leerExcel']);
 
 //olimpiada
 
@@ -102,6 +99,8 @@ Route::post('/lee-excel', [ExelController::class,'leerExcel']);
 Route::get('/olimpiada',         [ OlimpiadaController::class, 'index'     ]);
 Route::get('/olimpiada/{id}',    [ OlimpiadaController::class, 'show'      ]);
 Route::post('/olimpiada',        [ OlimpiadaController::class, 'store'     ]);
+Route::delete('/olimpiada/{id}', [ OlimpiadaController::class, 'destroy'   ]);
+Route::put('/olimpiada/{id}',    [ OlimpiadaController::class, 'update'    ]);
 
 
 
@@ -110,7 +109,8 @@ Route::post('/olimpiada',        [ OlimpiadaController::class, 'store'     ]);
 Route::get('/curso',         [ CursoController::class, 'index'     ]);
 Route::get('/curso/{id}',    [ CursoController::class, 'show'      ]);
 Route::post('/curso',        [ CursoController::class, 'store'     ]);
-
+// routes/api.php
+Route::get('/cursos/todos', [CursoController::class, 'getAllCursosSimple']);
 
 ///cursoNivel
 

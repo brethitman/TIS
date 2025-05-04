@@ -36,6 +36,22 @@ class CursoController extends Controller
     }
 
 
+    public function getAllCursosSimple()
+{
+    // Obtener todos los cursos con la relación nivelCategorias
+    $cursos = Curso::with('nivelCategorias')->get();
+
+    // Devolver respuesta JSON directa sin paginación
+    return response()->json([
+        'data' => $cursos->map(function ($curso) {
+            return [
+                'id_curso' => $curso->id_curso,
+                'nameCurso' => $curso->nameCurso,
+                
+            ];
+        })
+    ]);
+}
     public function store(Request $request)
     {
         $validated = $request->validate([

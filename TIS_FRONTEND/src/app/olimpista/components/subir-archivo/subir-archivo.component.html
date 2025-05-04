@@ -1,0 +1,35 @@
+<div class="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+  <div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Subir Archivo</h2>
+
+    <form>
+      <label
+        for="archivo"
+        class="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-6 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition"
+      >
+        <svg
+          class="w-12 h-12 text-gray-400 mb-2"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3 15a4 4 0 004 4h10a4 4 0 004-4M8 12l4-4m0 0l4 4m-4-4v12"
+          />
+        </svg>
+        <p class="text-gray-600">Haz clic para subir un archivo</p>
+        <input id="archivo" type="file" class="hidden" />
+      </label>
+
+      <button
+        type="submit"
+        class="mt-6 w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition"
+      >
+        Subir
+      </button>
+    </form>
+  </div>
+</div>
