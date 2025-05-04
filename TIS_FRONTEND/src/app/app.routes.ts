@@ -17,6 +17,7 @@ import { Iscripcion2Component } from './olimpista/components/iscripcion2/iscripc
 import { Iscripcion3Component } from './olimpista/components/iscripcion3/iscripcion3.component';
 import { VistaAreasCategoriasComponent } from './olimpista/components/vista-areas-categorias/vista-areas-categorias.component';
 import { OlimpiadaService } from './olimpista/service/olimpiada.service';
+import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lista/visualizacion-lista.component';
 
 
 export const routes: Routes = [
