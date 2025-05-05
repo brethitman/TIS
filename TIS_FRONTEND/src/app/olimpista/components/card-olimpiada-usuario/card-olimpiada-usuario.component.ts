@@ -34,7 +34,7 @@ export class CardOlimpiadaUsuarioComponent {
     }
 
     this.router.navigate(
-      ['/inicio/look/inscripcion-todo', this.olimpiada.id],
+      ['/inicio/look/Olimpiada', this.olimpiada.id],
 
       {
         state: {
