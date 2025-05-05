@@ -17,9 +17,7 @@ import { Iscripcion2Component } from './olimpista/components/iscripcion2/iscripc
 import { Iscripcion3Component } from './olimpista/components/iscripcion3/iscripcion3.component';
 import { VistaAreasCategoriasComponent } from './olimpista/components/vista-areas-categorias/vista-areas-categorias.component';
 import { OlimpiadaService } from './olimpista/service/olimpiada.service';
-import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lista/visualizacion-lista.component';
-import { CardOlimpiadaUsuarioComponent } from './olimpista/components/card-olimpiada-usuario/card-olimpiada-usuario.component';
-import { InscripcionTodoComponent } from './olimpista/components/inscripcion-todo/inscripcion-todo.component';
+import { VentanaInformacionOlimpiadaComponent } from './olimpista/pages/ventana-informacion-olimpiada/ventana-informacion-olimpiada.component';
 
 
 export const routes: Routes = [
@@ -37,10 +35,10 @@ export const routes: Routes = [
     path: 'admin',
     component: AdminLayoutComponent,
     children: [
-      {
+      /*{
         path: 'products', // Revisa si 'products' es el nombre correcto para esta sección en tu app
         loadChildren: () => import("./olimpista/estudiantes-routing.module").then(m => m.EstudiantesRoutingModule),
-      },
+      },*/
       {
         path: 'areas',
         component: AreasComponent,
@@ -79,6 +77,7 @@ export const routes: Routes = [
   },
   // --- Fin Rutas de Inscripción ---
 
+
   // Rutas públicas (las que ya tenías)
   {
     path: 'inicio/waba',
@@ -92,11 +91,10 @@ export const routes: Routes = [
     path: 'inicio/dodog', // Esta ruta está duplicada en tu configuración original
     component: Inicio3Component
   },
- 
-{
-  path: 'inicio/Olimpiada/1/Visualizacion', // Esta ruta está duplicada en tu configuración original
-  component: VisualizacionListaComponent
-},
+  // {  // Removida la ruta duplicada
+  //     path: 'inicio/dodog',
+  //     component: Inicio3Component
+  // },
   {
     path: 'inicio/mmmm',
     component: Inicio4Component
@@ -106,14 +104,16 @@ export const routes: Routes = [
     component: OlimpistaPageComponent
   },
 
-//esto es para admin para entrar a la area
 {
   path: 'inicio/look/wach/:id',
   component: VistaAreasCategoriasComponent
   // Puedes añadir guards o resolvers si son necesarios
 },
 
-{ path: 'admin/olimpiada', component: OlimpiadaPageComponent },
+{ 
+  path: 'ventana-informacion-olimpiada/:id', 
+  component: VentanaInformacionOlimpiadaComponent 
+},
 
 
 
@@ -124,23 +124,15 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
 
- 
-
-{
-  path: '',
-  redirectTo: 'admin/olimpiada', // Ahora redirigimos directamente al panel de admin
-  pathMatch: 'full'
-},
-
-
-{
-  path: 'inicio/look/inscripcion-todo/:id',
-  component: InscripcionTodoComponent,
-  data: { title: 'Formulario de Inscripción' }
-},
+  // Ruta de respaldo para cualquier otra ruta no encontrada
+  {
+    path: '**',
+    redirectTo: 'inicio/waba'
+  },
 
 {
   path: '**',
   redirectTo: 'admin/olimpiada'
-},
+}
+
 ];
