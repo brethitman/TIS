@@ -18,7 +18,8 @@ import { Iscripcion3Component } from './olimpista/components/iscripcion3/iscripc
 import { VistaAreasCategoriasComponent } from './olimpista/components/vista-areas-categorias/vista-areas-categorias.component';
 import { OlimpiadaService } from './olimpista/service/olimpiada.service';
 import { VentanaInformacionOlimpiadaComponent } from './olimpista/pages/ventana-informacion-olimpiada/ventana-informacion-olimpiada.component';
-
+import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lista/visualizacion-lista.component';
+import { InscripcionTodoComponent } from './olimpista/components/inscripcion-todo/inscripcion-todo.component';
 
 export const routes: Routes = [
   {
@@ -114,8 +115,15 @@ export const routes: Routes = [
   path: 'ventana-informacion-olimpiada/:id', 
   component: VentanaInformacionOlimpiadaComponent 
 },
-
-
+{
+  path: 'inicio/Olimpiada/1/Visualizacion', // Esta ruta está duplicada en tu configuración original
+  component: VisualizacionListaComponent
+},
+{
+  path: 'inicio/look/inscripcion-todo/:id',
+  component: InscripcionTodoComponent,
+  data: { title: 'Formulario de Inscripción' }
+},
 
   // Ruta por defecto
   {
