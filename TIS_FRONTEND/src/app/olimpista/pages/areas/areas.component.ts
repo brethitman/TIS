@@ -2,11 +2,11 @@
 import { CommonModule} from '@angular/common';
 import { Component, inject, OnInit, signal} from '@angular/core';
 import { GetOlimpiadaService} from '../../service/get.olimpiada.service';
-import { OlimpiadaListComponent} from '../../components/olimpiada-list/olimpiada-list.component';
+import { OlimpiadaListComponent } from '../../components/olimpiada-list/olimpiada-list.component';
 import { CrearOlimpiadaComponent} from '../../components/crear-olimpiada/crear-olimpiada.component';
-import { Olimpiada} from '../../interfaces/olimpiada-interfase';
-import { GetAreaService} from '../../service/get.area.service.ts.service';
-import { Area} from '../../interfaces/area.interface';
+import { Olimpiada } from '../../interfaces/olimpiada-interfase';
+import { GetAreaService } from '../../service/get.area.service.ts.service';
+import { Area } from '../../interfaces/area.interface';
 import { AreaListComponent} from "../../components/area-list/area-list.component";
 import { BotonExelComponent} from '../../components/boton-exel/boton-exel.component';
 import { InscripcionTodoComponent} from '../../components/inscripcion-todo/inscripcion-todo.component';
