@@ -4,6 +4,9 @@ import { CommonModule } from '@angular/common';
 import { VisualizacionPageResponse } from '../../interfaces/olimpiadaVisualizacion.interface';
 import { VisualizacionService } from '../../service/Visualizacion.service';
 import { Olimpiada } from '../../interfaces/olimpiada-interfase';
+import { IDOlimpiadabyArea, NivelCategoria } from '../../interfaces/olimpiadaAreaCategoria.interface';
+import { Subject, takeUntil } from 'rxjs';
+import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
 
 @Component({
   selector: 'app-ventana-informacion-olimpiada',
@@ -11,20 +14,48 @@ import { Olimpiada } from '../../interfaces/olimpiada-interfase';
   imports: [CommonModule],
   templateUrl: './ventana-informacion-olimpiada.component.html',
 })
-export class VentanaInformacionOlimpiadaComponent {
+export class VentanaInformacionOlimpiadaComponent implements OnInit {
 
   olimpiada: any;
-
+  olimpiadaId: number;
+  areas: any[] = [];
   confirmacion: boolean = false;
-  constructor(private route: ActivatedRoute, private router: Router, private servicio: VisualizacionService) {
+  private destroy$ = new Subject<void>();
+  areasDisponibles: IDOlimpiadabyArea[] = [];
+  errorMessage: string | null = null;
+
+  constructor(private route: ActivatedRoute, private router: Router,
+     private servicio: VisualizacionService,private olimpiadaByAreaService: OlimpiadaByAreaService,) {
     const navigation = this.router.getCurrentNavigation();
     const stateData = navigation?.extras.state as { [key: string]: any };
 
     this.olimpiada = stateData ? stateData['olimpiadaData'] : null;
-
+    this.olimpiadaId = this.olimpiada.id;
     if (!this.olimpiada) {
       console.error('No se recibió información de la olimpiada');
     }
+  }
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+        const olimpiadaId = params['id'];
+        if (olimpiadaId) {
+          this.cargarAreas(olimpiadaId);
+        } else {
+          console.error('No se encontró ID de olimpiada en la URL');
+          // Puedes redirigir a una página de error
+        }
+      });
+  }
+  private cargarAreas(olimpiadaId: string): void {
+    this.olimpiadaByAreaService.getAreasByOlimpiadaId(Number(olimpiadaId))
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (areas) => this.areasDisponibles = areas,
+        error: (error) => {
+          console.error('Error cargando áreas:', error);
+          this.errorMessage = 'Error al cargar las áreas disponibles';
+        }
+      });
   }
   entrar(): void {
     if (!this.olimpiada?.id) {

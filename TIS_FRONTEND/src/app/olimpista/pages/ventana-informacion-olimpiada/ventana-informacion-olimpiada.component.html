@@ -5,7 +5,10 @@
 <p>Fecha de finalización: {{ olimpiada?.['fecha_final'] }}</p>
 
 
-  <div class="Areas"></div>
+<h2>Áreas registradas</h2>
+<ul>
+  <li *ngFor="let area of areasDisponibles">{{ area.nombre_area}}</li>
+</ul>
   <div>
     <button (click)="entrar()">
         Formulario de inscripcion
