@@ -3,13 +3,12 @@
 <div *ngIf="confirmacion">
   <div *ngIf="olimpiada; else loading">
     <p><strong>Nombre:</strong> {{ olimpiada.nombre_olimpiada }}</p>
-    <p><strong>Fecha de inicio:</strong> {{ olimpiada.fecha_final}}</p>
+    <p><strong>Descripción:</strong> {{ olimpiada.descripcion_olimpiada }}</p>
+    <p><strong>Fecha de inicio:</strong> {{ olimpiada.fecha_inicio}}</p>
     <p><strong>Fecha de fin:</strong> {{ olimpiada.fecha_final }}</p>
   </div>
-</div>
-<p>{{olimpiadaOtro}}</p>
+  
 
 <ng-template #loading>
   <p>Cargando información...</p>
 </ng-template>
-

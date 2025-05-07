@@ -32,10 +32,8 @@ export class CardOlimpiadaUsuarioComponent {
       console.error('Error: No se puede navegar - Olimpiada sin ID');
       return;
     }
-
     this.router.navigate(
-      ['/inicio/look/Olimpiada', this.olimpiada.id],
-
+      ['/ventana-informacion-olimpiada', this.olimpiada.id],
       {
         state: {
           olimpiadaData: {

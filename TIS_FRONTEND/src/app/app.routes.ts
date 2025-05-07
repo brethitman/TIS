@@ -139,10 +139,9 @@ export const routes: Routes = [
   component: InscripcionTodoComponent,
   data: { title: 'Formulario de Inscripción' }
 },
-{
-  path: 'inicio/look/Olimpiada/:id',
-  component: VentanaInformacionOlimpiadaComponent ,
-  
+{ 
+  path: 'ventana-informacion-olimpiada/:id', 
+  component: VentanaInformacionOlimpiadaComponent 
 },
 
 {
