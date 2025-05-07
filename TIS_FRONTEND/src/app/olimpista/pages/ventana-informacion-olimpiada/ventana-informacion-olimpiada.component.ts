@@ -47,4 +47,24 @@ export class VentanaInformacionOlimpiadaComponent {
     console.log('id de olimpiada: ', this.olimpiada.id)
   }
 
+  variosEstudiantes(): void {
+    if (!this.olimpiada?.id) {
+      console.error('Error: No se puede navegar - Olimpiada sin ID');
+      return;
+    }
+    this.router.navigate(
+      ['inicio/Olimpiada' ,this.olimpiada.id ,'Visualizacion'],
+      {
+        state: {
+          olimpiadaData: {
+            nombre: this.olimpiada.nombre_olimpiada,
+            fechaInicio: this.olimpiada.fecha_inicio,
+            fechaFin: this.olimpiada.fecha_final
+          }
+        }
+      }
+    );
+    console.log('id de olimpiada: ', this.olimpiada.id)
+  }
+
 }

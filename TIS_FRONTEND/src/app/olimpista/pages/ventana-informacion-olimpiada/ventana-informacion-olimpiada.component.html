@@ -1,16 +1,38 @@
-<h2>Información de la Olimpiada</h2>
 
-<h1>{{ olimpiada?.['nombre_olimpiada'] }}</h1>
-<p>Fecha de inicio: {{ olimpiada?.['fecha_inicio'] }}</p>
-<p>Fecha de finalización: {{ olimpiada?.['fecha_final'] }}</p>
+    <!-- Título -->
+  <section class="w-full bg-gradient-to-r from-red-600 to-purple-500 py-4 px-4 animate-gradient">
+      <h1 class="text-white text-3xl font-bold">{{olimpiada.nombre_olimpiada}}</h1>
+  </section>
 
+  <!-- Descripción -->
+  <section class="bg-white shadow rounded-lg p-6">
+    <h2 class="text-lg font-semibold mb-2">DESCRIPCIÓN</h2>
+    <p class="text-lg leading-relaxed pl-6 animate_animated animatefadeInUp animate_delay-1s">
+      {{olimpiada.descripcion_olimpiada}}
+    </p>
+  </section>
 
-  <div class="Areas"></div>
-  <div>
-    <button (click)="entrar()">
-        Formulario de inscripcion
-    </button>
-    <button>
-        Inscripcion por una lista de excel
-    </button>
-  </div>
+      <!-- Título -->
+      <section class="w-full bg-gradient-to-r from-red-600 to-purple-500 py-4 px-4 animate-gradient">
+        <h1 class="text-white text-3xl font-bold">Áreas de la olimpiada</h1>
+    </section> 
+
+<ng-template #loading>
+  <p>Cargando información...</p>
+</ng-template>
+
+<!-- Botón para inscribirse o ir a la siguiente vista -->
+<div class="flex justify-center space-x-6 mt-6">
+  <button
+  style="background-color: #0D1271;"
+    class="text-white font-semibold py-2 px-6 rounded-lg shadow hover:shadow-md transition duration-300"
+    (click)="entrar()">
+    Inscripcion a un solo estudiante
+  </button>
+  <button
+  style="background-color: #0D1271;"
+    class="text-white font-semibold py-2 px-6 rounded-lg shadow hover:shadow-md transition duration-300"
+    (click)="variosEstudiantes()">
+    Inscripcion a un grupo de estudiantes
+  </button>
+</div>
