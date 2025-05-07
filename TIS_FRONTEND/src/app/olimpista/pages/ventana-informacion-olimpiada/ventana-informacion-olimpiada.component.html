@@ -1,14 +1,16 @@
 <h2>Información de la Olimpiada</h2>
 
-<div *ngIf="confirmacion">
-  <div *ngIf="olimpiada; else loading">
-    <p><strong>Nombre:</strong> {{ olimpiada.nombre_olimpiada }}</p>
-    <p><strong>Descripción:</strong> {{ olimpiada.descripcion_olimpiada }}</p>
-    <p><strong>Fecha de inicio:</strong> {{ olimpiada.fecha_inicio}}</p>
-    <p><strong>Fecha de fin:</strong> {{ olimpiada.fecha_final }}</p>
-  </div>
-  
+<h1>{{ olimpiada?.['nombre_olimpiada'] }}</h1>
+<p>Fecha de inicio: {{ olimpiada?.['fecha_inicio'] }}</p>
+<p>Fecha de finalización: {{ olimpiada?.['fecha_final'] }}</p>
 
-<ng-template #loading>
-  <p>Cargando información...</p>
-</ng-template>
+
+  <div class="Areas"></div>
+  <div>
+    <button (click)="entrar()">
+        Formulario de inscripcion
+    </button>
+    <button>
+        Inscripcion por una lista de excel
+    </button>
+  </div>

@@ -11,34 +11,39 @@ import { Olimpiada } from '../../interfaces/olimpiada-interfase';
   imports: [CommonModule],
   templateUrl: './ventana-informacion-olimpiada.component.html',
 })
-export class VentanaInformacionOlimpiadaComponent implements OnInit {
+export class VentanaInformacionOlimpiadaComponent {
 
-  olimpiada:any;
-  
+  olimpiada: any;
+
   confirmacion: boolean = false;
-  constructor(private route: ActivatedRoute, private router: Router, private servicio: VisualizacionService) { }
+  constructor(private route: ActivatedRoute, private router: Router, private servicio: VisualizacionService) {
+    const navigation = this.router.getCurrentNavigation();
+    const stateData = navigation?.extras.state as { [key: string]: any };
 
-  ngOnInit() {
-  this.cargaDatos();
-}
+    this.olimpiada = stateData ? stateData['olimpiadaData'] : null;
 
-cargaDatos() {
-  this.route.params.subscribe(params => {
-    const olimpiadaId = params['id'];
-    if (olimpiadaId) {
-      this.servicio.getOlimpiadaById(olimpiadaId).subscribe({
-        next: (data) => {
-          this.olimpiada = data;
-          this.confirmacion = true;
-          console.log('Datos cargados desde servicio:', this.olimpiada);
-        },
-        error: (err) => {
-          console.error('Error al obtener datos:', err);
-        }
-      });
+    if (!this.olimpiada) {
+      console.error('No se recibió información de la olimpiada');
     }
-  });
-}
-
+  }
+  entrar(): void {
+    if (!this.olimpiada?.id) {
+      console.error('Error: No se puede navegar - Olimpiada sin ID');
+      return;
+    }
+    this.router.navigate(
+      ['inicio/look/inscripcion-todo', this.olimpiada.id],
+      {
+        state: {
+          olimpiadaData: {
+            nombre: this.olimpiada.nombre_olimpiada,
+            fechaInicio: this.olimpiada.fecha_inicio,
+            fechaFin: this.olimpiada.fecha_final
+          }
+        }
+      }
+    );
+    console.log('id de olimpiada: ', this.olimpiada.id)
+  }
 
 }
