@@ -21,6 +21,7 @@ import { VentanaInformacionOlimpiadaComponent } from './olimpista/pages/ventana-
 import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lista/visualizacion-lista.component';
 import { InscripcionTodoComponent } from './olimpista/components/inscripcion-todo/inscripcion-todo.component';
 
+
 export const routes: Routes = [
   {
     path: 'auth',
@@ -132,11 +133,24 @@ export const routes: Routes = [
     pathMatch: 'full'
   },
 
-  // Ruta de respaldo para cualquier otra ruta no encontrada
-  {
-    path: '**',
-    redirectTo: 'inicio/waba'
-  },
+ 
+
+{
+  path: '',
+  redirectTo: 'admin/olimpiada', // Ahora redirigimos directamente al panel de admin
+  pathMatch: 'full'
+},
+
+
+{
+  path: 'inicio/look/inscripcion-todo/:id',
+  component: InscripcionTodoComponent,
+  data: { title: 'Formulario de Inscripción' }
+},
+{ 
+  path: 'ventana-informacion-olimpiada/:id', 
+  component: VentanaInformacionOlimpiadaComponent 
+},
 
 {
   path: '**',

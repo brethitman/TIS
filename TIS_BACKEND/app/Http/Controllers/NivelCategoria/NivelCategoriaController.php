@@ -92,7 +92,7 @@ class NivelCategoriaController extends Controller
     public function agregarCategoria_Al_Area(Request $request, $id_area)
     {
         $area = Area::findOrFail($id_area);
-    
+
         $validated = $request->validate([
             'niveles' => 'required|array|min:1',
             'niveles.*.nombre_nivel' => 'required|string|max:100',
@@ -103,12 +103,17 @@ class NivelCategoriaController extends Controller
             'niveles.*.costo' => 'required|numeric|min:0',
             'niveles.*.habilitacion' => 'required|boolean',
         ]);
-    
+
         $niveles = $area->niveles()->createMany($validated['niveles']);
-    
+
         return response()->json([
-            'message' => count($validated['niveles']).' niveles agregados al área',
+            'message' => count($validated['niveles']) . ' niveles agregados al área',
             'niveles' => new NivelCategoriaCollection($niveles->load('area'))
         ], 201);
     }
+    public function porArea($areaId)
+    {
+        return response()->json(NivelCategoria::where('id_area', $areaId)->get());
+    }
+
 }

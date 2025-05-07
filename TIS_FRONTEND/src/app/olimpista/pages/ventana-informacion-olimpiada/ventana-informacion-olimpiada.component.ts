@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
-
-import { OlimpiadaService } from '../../service/olimpiada.service';
+import { VisualizacionPageResponse } from '../../interfaces/olimpiadaVisualizacion.interface';
+import { VisualizacionService } from '../../service/Visualizacion.service';
 import { Olimpiada } from '../../interfaces/olimpiada-interfase';
 
 @Component({
@@ -13,43 +13,33 @@ import { Olimpiada } from '../../interfaces/olimpiada-interfase';
   
 })
 export class VentanaInformacionOlimpiadaComponent implements OnInit {
-  olimpiadaId!: number;
-  olimpiada: Olimpiada | null = null;
-  loading = true;
-  error = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private olimpiadaService: OlimpiadaService
-  ) {}
+  olimpiada:any;
+  
+  confirmacion: boolean = false;
+  constructor(private route: ActivatedRoute, private router: Router, private servicio: VisualizacionService) { }
 
-  ngOnInit(): void {
-    // 1. Leer el param 'id' como número
-    this.route.params.subscribe(params => {
-      this.olimpiadaId = +params['id'];
-      console.log('ID Olimpiada:', this.olimpiadaId);
+  ngOnInit() {
+  this.cargaDatos();
+}
 
-      // 2. Resetear estados
-      this.loading = true;
-      this.error = '';
-      this.olimpiada = null;
+cargaDatos() {
+  this.route.params.subscribe(params => {
+    const olimpiadaId = params['id'];
+    if (olimpiadaId) {
+      this.servicio.getOlimpiadaById(olimpiadaId).subscribe({
+        next: (data) => {
+          this.olimpiada = data;
+          this.confirmacion = true;
+          console.log('Datos cargados desde servicio:', this.olimpiada);
+        },
+        error: (err) => {
+          console.error('Error al obtener datos:', err);
+        }
+      });
+    }
+  });
+}
 
-      // 3. Llamar al servicio getOlimpiadaById
-      this.olimpiadaService.getOlimpiadaById(this.olimpiadaId)
-        .subscribe({
-          next: (data: Olimpiada) => {
-            console.log('Payload Olimpiada:', data);
-            this.olimpiada = data;
-            this.loading = false;
-          },
-          
-          
-          error: (err) => {
-            console.error('Error cargando olimpiada:', err);
-            this.error = 'No se pudo cargar la información de la olimpiada.';
-            this.loading = false;
-          }
-        });
-    });
-  }
+
 }

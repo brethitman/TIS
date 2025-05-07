@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { OlimpiadaService } from '../../service/olimpiada.service';
 
 @Component({
   selector: 'app-formas-inscripcion',
