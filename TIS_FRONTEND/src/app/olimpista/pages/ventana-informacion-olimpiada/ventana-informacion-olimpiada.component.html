@@ -1,5 +1,8 @@
+<ng-template #loading>
+  <p>Cargando información...</p>
+</ng-template>
 <!-- Título -->
-<section class="w-full bg-gradient-to-r from-red-600 to-purple-500 py-4 px-4 animate-gradient">
+<section class="w-full bg-gradient-to-r from-red-600 to-purple-500 py-2 px-6 animate-gradient">
   <h1 class="text-white text-3xl font-bold">{{olimpiada.nombre_olimpiada}}</h1>
 </section>
 
@@ -12,18 +15,12 @@
 </section>
 
 <!-- Título -->
-<section class="w-full bg-gradient-to-r from-red-600 to-purple-500 py-4 px-4 animate-gradient">
+<section class="w-full bg-gradient-to-r from-red-600 to-purple-500 py-2 px-4 animate-gradient">
   <h1 class="text-white text-3xl font-bold">Áreas de la olimpiada</h1>
 </section>
+<app-areas-carrusel [Area]="areasDisponibles" (areaSelected)="cargarCategoriasPorArea($event.id_area)"></app-areas-carrusel>
+<app-categorias-home [categorias]="categorias"></app-categorias-home>
 
-<div *ngFor="let area of areasDisponibles" >
-  <li>{{ area.nombre_area }}</li>
-
-</div>
-
-<ng-template #loading>
-  <p>Cargando información...</p>
-</ng-template>
 
 <!-- Botón para inscribirse o ir a la siguiente vista -->
 <div class="flex justify-center space-x-6 mt-6">

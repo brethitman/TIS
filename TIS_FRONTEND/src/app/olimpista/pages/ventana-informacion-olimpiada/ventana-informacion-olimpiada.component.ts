@@ -6,12 +6,14 @@ import { VisualizacionPageResponse, Area } from '../../interfaces/olimpiadaVisua
 import { VisualizacionService } from '../../service/Visualizacion.service';
 import { AreasCarruselComponent } from '../../components/areas-carrusel/areas-carrusel.component';
 import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
-import { IDOlimpiadabyArea, NivelCategoria } from '../../interfaces/olimpiadaAreaCategoria.interface';
+import { olimpiadabyArea, NivelCategoria } from '../../interfaces/areavisualizacion.interface';
+import { CategoriasHomeComponent } from '../../components/categorias-home/categorias-home.component';
+import { CategoriaVisualizacionService } from '../../service/categoriaVisualizacion.service'; 
 
 @Component({
   selector: 'app-ventana-informacion-olimpiada',
   standalone: true,
-  imports: [CommonModule, AreasCarruselComponent],
+  imports: [CommonModule, AreasCarruselComponent, CategoriasHomeComponent],
   templateUrl: './ventana-informacion-olimpiada.component.html',
 
 })
@@ -19,17 +21,18 @@ export class VentanaInformacionOlimpiadaComponent implements OnInit {
 
   olimpiada: any;
   olimpiadaId: number;
-  public Area = signal<Area[]>([]);
   confirmacion: boolean = false;
-  areasDisponibles: IDOlimpiadabyArea[] = [];
+  areasDisponibles:  olimpiadabyArea[]= [];
   errorMessage: string | null = null;
   areasDisponiblest: any;
+  categorias: NivelCategoria[] = [];
 
-
+  public Area = signal<Area[]>([]);
   private destroy$ = new Subject<void>();
 
   constructor(private route: ActivatedRoute, private router: Router,
-    private servicio: VisualizacionService, private olimpiadaByAreaService: OlimpiadaByAreaService,) {
+    private servicio: VisualizacionService, private olimpiadaByAreaService: OlimpiadaByAreaService,
+    private categoriaService: CategoriaVisualizacionService) {
     const navigation = this.router.getCurrentNavigation();
     const stateData = navigation?.extras.state as { [key: string]: any };
 
@@ -59,13 +62,29 @@ export class VentanaInformacionOlimpiadaComponent implements OnInit {
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (areas) => {
-        this.areasDisponibles = areas;
+        this.areasDisponibles = areas.map(area => ({
+          id_area: area.id_area, 
+
+          nombre_area: area.nombre_area,
+          descripcion: area.descripcion,
+        }));
       },
       error: (error) => {
         console.error('Error cargando áreas:', error);
         this.errorMessage = 'Error al cargar las áreas disponibles';
       }
     });
+  }
+  cargarCategoriasPorArea(areaId: number): void {
+    this.categoriaService.getCategoriasPorArea(areaId).subscribe(
+      (categorias) => {
+        this.categorias = categorias;
+        console.log('Categorías:', categorias);
+      },
+      (error) => {
+        console.error('Error al cargar categorías:', error);
+      }
+    );
   }
 
   //Botones

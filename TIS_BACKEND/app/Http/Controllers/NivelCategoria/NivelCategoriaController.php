@@ -111,9 +111,12 @@ class NivelCategoriaController extends Controller
             'niveles' => new NivelCategoriaCollection($niveles->load('area'))
         ], 201);
     }
-    public function porArea($areaId)
+
+    //buscar las categorias
+    public function obtenerCategoriasPorArea($idarea)
     {
-        return response()->json(NivelCategoria::where('id_area', $areaId)->get());
+        $categorias = NivelCategoria::where('id_area', $idarea)->get();
+        return response()->json($categorias);
     }
 
 }
