@@ -6,14 +6,15 @@
 
 
 <h2>Áreas registradas</h2>
-<ul>
-  <li *ngFor="let area of areasDisponibles">{{ area.nombre_area}}</li>
-</ul>
-  <div>
-    <button (click)="entrar()">
-        Formulario de inscripcion
-    </button>
-    <button>
-        Inscripcion por una lista de excel
-    </button>
-  </div>
+<app-areas-carrusel 
+[Area]="areasDisponibles" >
+</app-areas-carrusel>
+
+<div>
+  <button (click)="entrar()">
+    Formulario de inscripcion
+  </button>
+  <button>
+    Inscripcion por una lista de excel
+  </button>
+</div>
