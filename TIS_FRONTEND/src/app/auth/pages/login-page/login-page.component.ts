@@ -33,7 +33,7 @@ passwordVisible: any;
       next: (success) => {
         this.isLoading = false;
         if (success) {
-          this.router.navigate(['/admin/products']); // Redirige al dashboard después de login
+          this.router.navigate(['/admin/olimpiada']); // Redirige al dashboard después de login
         } else {
           this.errorMessage = 'Credenciales incorrectas';
         }
@@ -45,6 +45,6 @@ passwordVisible: any;
     });
   }
   onCancel() {
-    this.router.navigate(['/inicio/waba']); // Cambia a ruta de Home
+    this.router.navigate(['/admin/products']); // Cambia a ruta de Home
   }
 }

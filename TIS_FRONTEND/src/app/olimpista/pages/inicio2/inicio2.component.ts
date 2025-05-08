@@ -4,7 +4,6 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { GetOlimpiadaService } from '../../service/get.olimpiada.service';
 import { OlimpiadaListComponent } from '../../components/olimpiada-list/olimpiada-list.component';
 
-import { CrearOlimpiadaComponent } from '../../components/crear-olimpiada/crear-olimpiada.component';
 import { Olimpiada } from '../../interfaces/olimpiada-interfase';
 import { GetAreaService } from '../../service/get.area.service.ts.service';
 import { Area } from '../../interfaces/area.interface';
