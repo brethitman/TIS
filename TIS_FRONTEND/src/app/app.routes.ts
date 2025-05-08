@@ -21,8 +21,12 @@ import { VentanaInformacionOlimpiadaComponent } from './olimpista/pages/ventana-
 import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lista/visualizacion-lista.component';
 import { InscripcionTodoComponent } from './olimpista/components/inscripcion-todo/inscripcion-todo.component';
 
+import { PruebaOcrComponent } from './olimpista/components/prueba-ocr/prueba-ocr.component';
+
 
 export const routes: Routes = [
+
+  { path: 'prueba-ocr', component: PruebaOcrComponent },//SOLO PARA PRUEBA OCR
   {
     path: 'auth',
     component: AuthLayoutComponent,
