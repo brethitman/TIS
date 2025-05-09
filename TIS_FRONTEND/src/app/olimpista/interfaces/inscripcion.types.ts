@@ -1,6 +1,6 @@
 // --- Interfaces para el Payload (Datos enviados al backend) ---
 
-// Olimpista: Eliminamos el campo 'curso' que no existe en tu API actual
+
 export interface Olimpista {
   nombres: string;
   apellidos: string;
