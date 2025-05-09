@@ -241,7 +241,7 @@ export class OlimpiadaCardComponent implements OnInit {
   // Nuevo método para el botón "Entrar"
   entrar(): void {
     if (this.olimpiada?.id) {
-      localStorage.setItem('olimpiadaSeleccionada', JSON.stringify(this.olimpiada));
+      localStorage.setItem('olimpiadaAreaCategoria', JSON.stringify(this.olimpiada));
       this.router.navigate([`inicio/look/wach/${this.olimpiada.id}`]);
     }
   }

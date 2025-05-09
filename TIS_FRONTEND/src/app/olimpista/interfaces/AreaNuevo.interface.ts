@@ -3,13 +3,17 @@ export interface Curso {
     nameCurso: string;
   }
   
+  export interface CursoRequest {
+    id_curso: number;
+  }
+  
   export interface AreaBasicRequest {
     id_olimpiada: number;
     nombre_area: string;
     descripcion?: string;
     gradoIniAr: string;
     gradoFinAr: string;
-    cursos: number[];
+    cursos: CursoRequest[];
   }
   
   export interface AreaBasicResponse {

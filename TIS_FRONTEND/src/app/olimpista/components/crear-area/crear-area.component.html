@@ -1,84 +1,95 @@
-<form (ngSubmit)="onSubmit()" class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md space-y-6">
-  <!-- Mensajes de estado -->
-  <div *ngIf="successMessage" class="p-4 bg-green-100 text-green-700 rounded-lg">
-    {{ successMessage }}
-  </div>
-  
-  <div *ngIf="errorMessage" class="p-4 bg-red-100 text-red-700 rounded-lg">
-    {{ errorMessage }}
-  </div>
+<div class="mb-8">
+  <button 
+    (click)="toggleFormulario()" 
+    class="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300"
+  >
+    {{ mostrarFormulario ? 'Cancelar' : '+ Agregar Área Nueva' }}
+  </button>
 
-  <!-- Sección Área -->
-  <div class="space-y-4">
-    <h2 class="text-xl font-semibold text-gray-800">Datos del Área</h2>
+  <div *ngIf="mostrarFormulario" class="mt-6 bg-white p-6 rounded-xl shadow-lg border border-gray-200 animate-fade-in">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">Nueva Área</h2>
     
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre del Área</label>
-        <input type="text" [(ngModel)]="areaData.nombre_area" name="nombre_area" required
-               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-      </div>
-      
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-        <input type="text" [(ngModel)]="areaData.descripcion" name="descripcion"
-               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-      </div>
-      
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Grado Inicial</label>
-        <input type="text" [(ngModel)]="areaData.gradoIniAr" name="gradoIniAr" required
-               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-      </div>
-      
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Grado Final</label>
-        <input type="text" [(ngModel)]="areaData.gradoFinAr" name="gradoFinAr" required
-               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-      </div>
+    <!-- Mensajes de estado -->
+    <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-50 text-red-700 rounded-lg">
+      <p class="font-medium">Error:</p>
+      <p>{{ errorMessage }}</p>
     </div>
-  </div>
-
-  <!-- Sección Cursos -->
-  <div class="space-y-4">
-    <h2 class="text-xl font-semibold text-gray-800">Selección de Cursos</h2>
     
-    <div class="flex flex-wrap gap-4 p-4 border rounded-lg">
-      <div *ngFor="let curso of cursos" class="flex items-center space-x-2">
+    <div *ngIf="successMessage" class="mb-4 p-4 bg-green-50 text-green-700 rounded-lg">
+      {{ successMessage }}
+    </div>
+    
+    <form (ngSubmit)="crearArea()" class="space-y-4">
+      <!-- Nombre del área -->
+      <div>
+        <label for="nombre_area" class="block text-sm font-medium text-gray-700 mb-1">Nombre del área</label>
         <input 
-          type="checkbox" 
-          [id]="'curso-' + curso.id_curso"
-          [value]="curso.id_curso"
-          [checked]="selectedCursos.includes(curso.id_curso)"
-          (change)="toggleSelection(curso.id_curso)"
-          class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          type="text" 
+          id="nombre_area" 
+          [(ngModel)]="areaData.nombre_area" 
+          name="nombre_area" 
+          class="w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Ej: Matemáticas"
+          required
         >
-        <label 
-          [for]="'curso-' + curso.id_curso"
-          class="text-sm text-gray-700 cursor-pointer whitespace-nowrap"
+      </div>
+      
+      <!-- Selección de grados mediante checkboxes -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Rango de grados</label>
+        <p class="text-sm text-gray-500 mb-2">
+          Seleccione el rango de grados para esta área. El primero y último definen el rango completo.
+        </p>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+          <div *ngFor="let grado of grados; let i = index" 
+               class="flex items-center">
+            <input 
+              type="checkbox" 
+              [id]="'grado-' + i" 
+              [checked]="gradosSeleccionados[i]" 
+              (change)="onCheckboxChange(i)" 
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+            <label [for]="'grado-' + i" class="ml-2 block text-sm text-gray-700">
+              {{ grado }}
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Grados seleccionados (visual feedback) -->
+      <div *ngIf="areaData.gradoIniAr && areaData.gradoFinAr" class="p-3 bg-blue-50 rounded-lg">
+        <p class="text-sm text-blue-700">
+          <strong>Rango seleccionado:</strong> 
+          {{ areaData.gradoIniAr }} 
+          <span *ngIf="areaData.gradoIniAr !== areaData.gradoFinAr">
+            hasta {{ areaData.gradoFinAr }}
+          </span>
+        </p>
+        <!-- Mostrar cursos generados -->
+        <p *ngIf="areaData.cursos && areaData.cursos.length > 0" class="text-sm text-blue-700 mt-2">
+          <strong>Cursos asociados:</strong> 
+          {{ areaData.cursos.join(', ') }}
+        </p>
+      </div>
+      
+      <!-- Botones -->
+      <div class="flex justify-end pt-2">
+        <button 
+          type="button" 
+          (click)="toggleFormulario()" 
+          class="mr-2 px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
         >
-          {{ curso.nameCurso }}
-        </label>
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          [disabled]="enviando || !areaData.cursos || areaData.cursos.length === 0" 
+          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed"
+        >
+          {{ enviando ? 'Creando...' : 'Crear Área' }}
+        </button>
       </div>
-    </div>
-
-    <!-- Cursos seleccionados -->
-    <div *ngIf="selectedCursos.length > 0" class="mt-4 p-4 bg-gray-50 rounded-lg">
-      <p class="text-sm font-medium text-gray-700 mb-2">Cursos seleccionados:</p>
-      <div class="flex flex-wrap gap-2">
-        <span *ngFor="let id of selectedCursos" 
-              class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-          {{ getCursoName(id) }}
-        </span>
-      </div>
-    </div>
+    </form>
   </div>
-
-  <!-- Botón de envío -->
-  <div class="flex justify-end">
-    <button type="submit" 
-            class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
-      Crear Área
-    </button>
-  </div>
-</form>
+</div>
