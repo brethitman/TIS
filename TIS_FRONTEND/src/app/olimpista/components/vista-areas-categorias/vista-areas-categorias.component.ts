@@ -231,52 +231,98 @@ export class VistaAreasCategoriasComponent implements OnInit {
     this.mostrarModal = false;
   }
 
-  enviarNiveles(): void {
-    if (!this.areaActivaId) {
-      this.mostrarModalMensaje('error', 'No se ha seleccionado un área válida para agregar niveles.');
-      return;
+  private validateForm(): boolean {
+    if (!this.currentNewLevel.nombre_nivel) {
+      this.formErrors.push('El nombre del nivel es requerido');
+      return false;
     }
+    if (!this.currentNewLevel.gradoIniCat || !this.currentNewLevel.gradoFinCat) {
+      this.formErrors.push('Debe seleccionar al menos un grado');
+      return false;
+    }
+    if (!this.currentNewLevel.fecha_examen) {
+      this.formErrors.push('La fecha del examen es requerida');
+      return false;
+    }
+    if (!this.currentNewLevel.costo) {
+      this.formErrors.push('El costo es requerido');
+      return false;
+    }
+    return true;
+  }
 
-    if (!this.validarCurrentNewLevel()) {
+  private resetForm(): void {
+    this.currentNewLevel = this.initializeNewLevel();
+    this.gradosSeleccionadosNivel = this.grados.map(() => false);
+    this.advertenciaMultiplesGrados = false;
+    this.formErrors = [];
+  }
+
+  private mostrarModalExito(mensaje: string): void {
+    this.modalTipo = 'exito';
+    this.modalMensaje = mensaje;
+    this.mostrarModal = true;
+  }
+
+  enviarNiveles(): void {
+    if (!this.validateForm()) {
       return;
     }
 
     this.enviando = true;
-    this.errores = [];
-    this.successMessage = null;
+    this.formErrors = [];
 
-    const bulkRequest: CreateNivelesBulkRequest = {
-      niveles: [this.currentNewLevel]
+    const nivelData = {
+      ...this.currentNewLevel,
+      id_area: this.areaActivaId
     };
 
-    this.nivelService.crearNivelesEnArea(this.areaActivaId, bulkRequest)
-      .subscribe({
-        next: (response) => {
-          this.mostrarModalMensaje('exito', response.message || 'Nivel guardado correctamente.');
-          this.currentNewLevel = this.initializeNewLevel();
-          this.areaActivaId = null;
-          this.formErrors = [];
-          this.gradosSeleccionadosNivel = this.grados.map(() => false);
-          this.advertenciaMultiplesGrados = false;
-          this.cargarAreas();
-        },
-        error: (err) => {
-          console.error('Error al crear nivel:', err);
-          let mensajeError = 'Error desconocido al crear el nivel.';
-          if (err.error?.message) {
-            mensajeError = `Error al crear nivel: ${err.error.message}`;
-          } else if (err.message) {
-            mensajeError = `Error al crear nivel: ${err.message}`;
-          }
-          this.mostrarModalMensaje('error', mensajeError);
-        },
-        complete: () => {
-          this.enviando = false;
+    const bulkRequest = {
+      niveles: [nivelData]
+    };
+
+    this.nivelService.crearNivelesEnArea(this.areaActivaId!, bulkRequest).subscribe({
+      next: (response: any) => {
+        this.mostrarModalExito('Nivel creado exitosamente');
+        this.resetForm();
+        this.toggleFormulario(this.areaActivaId!);
+        // Recargar los datos del área actual
+        this.cargarAreas();
+      },
+      error: (error: any) => {
+        console.error('Error al crear nivel:', error);
+        this.enviando = false;
+        if (error.error?.message) {
+          this.formErrors.push(error.error.message);
+        } else {
+          this.formErrors.push('Error al crear el nivel. Por favor, intente nuevamente.');
         }
-      });
+      }
+    });
   }
 
   getEstadoTexto(habilitacion: boolean): string {
     return habilitacion ? 'Habilitado' : 'Deshabilitado';
+  }
+
+  toggleHabilitacion(nivel: NivelCategoria): void {
+    if (!nivel.id_nivel) {
+      this.mostrarModalMensaje('error', 'ID de nivel no válido');
+      return;
+    }
+
+    const nuevoEstado = !nivel.habilitacion;
+    
+    this.nivelService.updateHabilitacion(nivel.id_nivel, nuevoEstado).subscribe({
+      next: (response: any) => {
+        // Actualizar el estado localmente
+        nivel.habilitacion = nuevoEstado;
+        this.mostrarModalExito(`Nivel ${nuevoEstado ? 'habilitado' : 'deshabilitado'} exitosamente`);
+      },
+      error: (error: any) => {
+        console.error('Error al actualizar estado del nivel:', error);
+        this.mostrarModalMensaje('error', 'Error al actualizar el estado del nivel');
+      }
+    });
   }
 }

@@ -79,7 +79,7 @@ export class CrearAreaComponent implements OnInit {
       this.areaData.gradoFinAr = this.grados[ultimoIndice];
       
       // Generamos automáticamente los IDs de cursos basados en el rango seleccionado
-      this.generarCursosPorRango();
+      this.generarCursosPorRango(primerIndice, ultimoIndice);
     } else {
       this.areaData.gradoIniAr = '';
       this.areaData.gradoFinAr = '';
@@ -88,35 +88,34 @@ export class CrearAreaComponent implements OnInit {
   }
   
   // Método para generar automáticamente los IDs de cursos basados en el rango de grados
-  private generarCursosPorRango(): void {
-    if (!this.areaData.gradoIniAr || !this.areaData.gradoFinAr) {
+  private generarCursosPorRango(primerIndice: number, ultimoIndice: number): void {
+    if (primerIndice === -1 || ultimoIndice === -1) {
       this.areaData.cursos = [];
       return;
     }
 
-    // Extraer solo el número del grado (eliminar "° Primaria" o "° Secundaria")
-    const gradoIni = parseInt(this.areaData.gradoIniAr.split('°')[0].trim());
-    const gradoFin = parseInt(this.areaData.gradoFinAr.split('°')[0].trim());
-    
-    // Mapeo de grados a IDs de cursos
-    const mapeoGradosCursos: { [key: number]: number } = {
-      1: 1,  // Primero
-      2: 2,  // Segundo
-      3: 3,  // Tercero
-      4: 4,  // Cuarto
-      5: 5,  // Quinto
-      6: 6,  // Sexto
-      7: 7,  // Séptimo
-      8: 8,  // Octavo
-      9: 9,  // Noveno
-      10: 10, // Décimo
-      11: 11  // Undécimo
+    // Mapeo correcto de índices de grados a IDs de cursos
+    const mapeoIndiceACurso: { [key: number]: number } = {
+      0: 1,  // 1° Primaria -> ID 1
+      1: 2,  // 2° Primaria -> ID 2
+      2: 3,  // 3° Primaria -> ID 3
+      3: 4,  // 4° Primaria -> ID 4
+      4: 5,  // 5° Primaria -> ID 5
+      5: 6,  // 6° Primaria -> ID 6
+      6: 7,  // 1° Secundaria -> ID 7
+      7: 8,  // 2° Secundaria -> ID 8
+      8: 9,  // 3° Secundaria -> ID 9
+      9: 10, // 4° Secundaria -> ID 10
+      10: 11, // 5° Secundaria -> ID 11
+      11: 12  // 6° Secundaria -> ID 12
     };
 
     this.areaData.cursos = [];
-    for (let grado = gradoIni; grado <= gradoFin; grado++) {
-      if (mapeoGradosCursos[grado]) {
-        this.areaData.cursos.push({ id_curso: mapeoGradosCursos[grado] });
+    
+    // Incluir todos los cursos en el rango seleccionado
+    for (let i = primerIndice; i <= ultimoIndice; i++) {
+      if (this.gradosSeleccionados[i] && mapeoIndiceACurso[i]) {
+        this.areaData.cursos.push(mapeoIndiceACurso[i]);
       }
     }
 
@@ -158,17 +157,21 @@ export class CrearAreaComponent implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    const areaData: AreaBasicRequest = {
-      id_olimpiada: this.idOlimpiada,
-      nombre_area: this.areaData.nombre_area,
-      descripcion: this.areaData.descripcion || '',
-      gradoIniAr: this.areaData.gradoIniAr.split('°')[0].trim(),
-      gradoFinAr: this.areaData.gradoFinAr.split('°')[0].trim(),
-      cursos: this.areaData.cursos
+    // Extrae solo el número del grado para enviar al backend
+    const extraerNumeroGrado = (gradoTexto: string): string => {
+      return gradoTexto.split('°')[0].trim();
     };
 
-    console.log('Cursos antes de enviar:', this.areaData.cursos);
-    console.log('Datos completos a enviar:', areaData);
+    const areaData: AreaBasicRequest = {
+      id_olimpiada: this.idOlimpiada,
+      nombre_area: this.areaData.nombre_area.trim(),
+      descripcion: this.areaData.descripcion?.trim() || '',
+      gradoIniAr: extraerNumeroGrado(this.areaData.gradoIniAr),
+      gradoFinAr: extraerNumeroGrado(this.areaData.gradoFinAr),
+      cursos: [...this.areaData.cursos] // Copia para evitar problemas de referencia
+    };
+
+    console.log('Datos a enviar al backend:', areaData);
 
     this.areaService.crearAreaBasica(areaData).subscribe({
       next: (response: AreaBasicResponse) => {
@@ -208,20 +211,6 @@ export class CrearAreaComponent implements OnInit {
     };
     this.gradosSeleccionados = this.grados.map(() => false);
     this.clearMessages();
-  }
-
-  // Muestra mensaje de éxito
-  private showSuccess(message: string): void {
-    this.successMessage = message;
-    this.errorMessage = null;
-    setTimeout(() => this.successMessage = null, 5000);
-  }
-
-  // Muestra mensaje de error
-  private showError(message: string): void {
-    this.errorMessage = message;
-    this.successMessage = null;
-    setTimeout(() => this.errorMessage = null, 5000);
   }
 
   // Limpia los mensajes de estado

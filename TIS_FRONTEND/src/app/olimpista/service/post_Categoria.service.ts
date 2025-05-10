@@ -27,16 +27,17 @@ export class NivelService {
     );
   }
 
-  actualizarNivel(idNivel: number, datosActualizacion: Partial<CreateNivelRequest>): Observable<NivelResponse> {
-    return this.http.put<NivelResponse>(
-      `${this.apiUrl}/niveles/${idNivel}`,
-      datosActualizacion
-    );
+  actualizarNivel(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/nivelCategoria/${id}`, data);
+  }
+
+  updateHabilitacion(id: number, habilitacion: boolean): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/nivelCategoria/${id}/habilitacion`, { habilitacion });
   }
 
   eliminarNivel(idNivel: number): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(
-      `${this.apiUrl}/niveles/${idNivel}`
+      `${this.apiUrl}/nivelCategoria/${idNivel}`
     );
   }
 }

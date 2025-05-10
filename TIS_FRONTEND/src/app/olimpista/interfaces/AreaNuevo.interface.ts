@@ -13,7 +13,7 @@ export interface Curso {
     descripcion?: string;
     gradoIniAr: string;
     gradoFinAr: string;
-    cursos: CursoRequest[];
+    cursos: number[];
   }
   
   export interface AreaBasicResponse {
