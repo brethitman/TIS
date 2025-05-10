@@ -23,6 +23,7 @@
     "@types/exceljs": "^0.5.3",
     "exceljs": "^4.4.0",
     "rxjs": "~7.8.0",
+    "swiper": "^11.2.6",
     "tslib": "^2.3.0",
     "xlsx": "^0.18.5",
     "xlsx-style": "^0.8.13",

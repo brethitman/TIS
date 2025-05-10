@@ -1,0 +1,84 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="max-w-7xl mx-auto px-4">
+    <!-- Carrusel Container -->
+    <div class="relative mb-16">
+        <!-- Controles del Carrusel -->
+        <div class="flex justify-between absolute inset-y-0 items-center z-10 px-2 pointer-events-none w-full">
+            <button (click)="prev()"
+                class="bg-white p-3 rounded-full shadow-lg text-gray-800 pointer-events-auto focus:outline-none hover:bg-gray-50 transition hover:shadow-xl">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button (click)="next()"
+                class="bg-white p-3 rounded-full shadow-lg text-gray-800 pointer-events-auto focus:outline-none hover:bg-gray-50 transition hover:shadow-xl">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <!-- Contenedor del Carrusel -->
+        <div class="overflow-hidden py-8 px-2">
+            <!-- Tarjetas del Carrusel -->
+            <div class="flex transition-transform duration-300" [style.transform]="'translateX(-' + (currentIndex * cardWidth) + 'px)'">
+                @for (olimpiada of olimpiadas; track olimpiada.id) {
+                <div class="flex-shrink-0 w-80 mx-2">
+                    <div class="relative rounded-xl bg-white p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border-t-4 border-purple-600">
+                        <!-- Icono superior -->
+                        <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-red-600 text-white shadow-lg">
+                            <i class="fas fa-trophy text-xl"></i>
+                        </div>
+
+                        <!-- Contenido de la tarjeta -->
+                        <h2 class="text-center text-xl font-bold mb-4 mt-4 text-gray-800">
+                            {{ olimpiada.nombre_olimpiada }}
+                        </h2>
+
+                        <!-- Fechas -->
+                        <div class="space-y-3 text-gray-700">
+                            <div class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                                <span>
+                                    {{ olimpiada.fecha_inicio | date:'dd/MM/yyyy' }} - {{ olimpiada.fecha_final | date:'dd/MM/yyyy' }}
+                                </span>
+                            </div>
+                            <div class="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>{{ getEstadoOlimpiada(olimpiada) }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Botón de registro -->
+                        <div class="mt-6 pt-4 border-t border-gray-100">
+                            <button (click)="navigateToOlimpiadaInfo(olimpiada)"
+                                class="w-full bg-gradient-to-r from-purple-600 to-red-600 text-white font-semibold px-6 py-2 rounded-md hover:shadow-md transition">
+                                Registrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                } @empty {
+                <div class="col-span-full text-center py-8 w-full">
+                    <div class="bg-gray-50 rounded-xl p-8 max-w-md mx-auto">
+                        <i class="fas fa-calendar-times text-4xl text-gray-300 mb-4"></i>
+                        <p class="text-gray-600 font-medium">No hay olimpiadas disponibles actualmente</p>
+                        <p class="text-gray-500 text-sm mt-2">Vuelve a consultar más tarde</p>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicadores de Paginación -->
+    <div class="flex justify-center mb-12 space-x-2">
+        @for (dot of getPaginationDots(); track $index) {
+        <button (click)="goToPage($index)"
+            class="rounded-full h-3 focus:outline-none transition-all"
+            [class]="{'bg-purple-600 w-5': isActiveDot($index), 'bg-gray-300 w-3': !isActiveDot($index)}">
+        </button>
+        }
+    </div>
+</div>
