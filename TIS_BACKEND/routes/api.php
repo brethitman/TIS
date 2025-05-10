@@ -118,3 +118,5 @@ Route::get('/cursos/todos', [CursoController::class, 'getAllCursosSimple']);
 Route::get('/   ', [CursoNivelController::class, 'index']);
 Route::get('/cursoNivel/{id}', [CursoNivelController::class, 'show']);
 Route::post('/cursoNivel', [CursoNivelController::class, 'store']);
+// Cambia esta línea en tu api.php
+Route::post('/email', [\App\Http\Controllers\EmailController::class, 'send']);

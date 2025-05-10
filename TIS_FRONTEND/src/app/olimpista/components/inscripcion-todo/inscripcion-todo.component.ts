@@ -7,6 +7,7 @@
   // Servicios
   import { InscripcionServicee } from '../../service/iscripcionn.service';
   import { AreaService } from '../../service/area.service';
+  import { EmailService } from '../../service/email.service';
 
   // Cambia estos imports
   import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
@@ -42,7 +43,7 @@
       private route: ActivatedRoute, // ✅ Añade esto
       private router: Router, // ✅ Para navegación después de éxito/error
       private olimpiadaByAreaService: OlimpiadaByAreaService,
-
+      private emailService: EmailService
   ) { }
 
     ngOnInit(): void {
@@ -197,14 +198,53 @@
         }))
       };
     }
-    private handleSuccess(response: InscripcionPostSuccessResponse): void {
-      this.successMessage = '¡Inscripción exitosa!';
-      this.boletaGenerada = response.inscripcion.boleta_pago;
-      this.inscripcionForm.reset();
-      this.initForm();
-
+    // Modificar el método handleSuccess
+private handleSuccess(response: InscripcionPostSuccessResponse): void {
+  this.successMessage = '¡Inscripción exitosa!';
+  
+  if (response && response.inscripcion && response.inscripcion.boleta_pago) {
+    console.log('Boleta recibida:', response.inscripcion.boleta_pago);
+    
+    this.boletaGenerada = response.inscripcion.boleta_pago;
+    
+    if (!this.boletaGenerada.fecha_generacion) {
+      this.boletaGenerada.fecha_generacion = new Date().toISOString();
     }
+    
+    if (!this.boletaGenerada.monto) {
+      this.boletaGenerada.monto = '0';
+    }
+    
+    // Enviar el correo electrónico con la boleta
+    // Obtenemos el correo del primer olimpista (puedes modificar según tu lógica)
+    const correoOlimpista = this.olimpistasFormArray.at(0).get('correo')?.value;
+    
+    if (correoOlimpista) {
+      this.enviarBoletaPorEmail(this.boletaGenerada, correoOlimpista);
+    }
+  } else {
+    console.error('La respuesta no contiene datos de boleta válidos:', response);
+    this.errorMessage = 'Se procesó la inscripción pero no se recibieron datos de la boleta.';
+  }
+  
+  this.inscripcionForm.reset();
+  this.initForm();
+}
 
+// Añadir este método
+private enviarBoletaPorEmail(boletaData: BoletaPagoResponse, correo: string): void {
+  this.emailService.enviarBoletaPorEmail(boletaData, correo)
+    .subscribe({
+      next: (response) => {
+        console.log('Boleta enviada por email:', response);
+        this.successMessage += ' Se ha enviado una copia al correo: ' + correo;
+      },
+      error: (error) => {
+        console.error('Error al enviar boleta por email:', error);
+        this.errorMessage = 'La inscripción fue exitosa, pero hubo un error al enviar la boleta por email.';
+      }
+    });
+}
     private handleError(error: any): void {
       console.error('Error en la inscripción:', error);
       this.errorMessage = 'Error al procesar la inscripción. Intente nuevamente.';

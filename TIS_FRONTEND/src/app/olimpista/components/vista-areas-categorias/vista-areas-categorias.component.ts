@@ -51,6 +51,9 @@ export class VistaAreasCategoriasComponent implements OnInit {
   public errores: string[] = [];
   public formErrors: string[] = [];
   public successMessage: string | null = null;
+  
+  // Nuevo estado para controlar la visibilidad del componente de crear área
+  public mostrarCrearArea: boolean = false;
 
   ngOnInit(): void {
     this.obtenerIdOlimpiada();
@@ -119,6 +122,17 @@ export class VistaAreasCategoriasComponent implements OnInit {
           this.errores = ['Error al cargar áreas. Por favor, intente de nuevo.'];
         }
       });
+  }
+
+  // Nuevo método para cambiar el estado de visibilidad del formulario de creación de área
+  toggleCrearArea(): void {
+    this.mostrarCrearArea = !this.mostrarCrearArea;
+  }
+
+  // Método para manejar el evento cuando se ha creado un área nueva
+  onAreaCreada(): void {
+    this.mostrarCrearArea = false; // Ocultar el formulario después de crear
+    this.cargarAreas(); // Recargar la lista de áreas
   }
 
   toggleFormulario(areaId: number): void {

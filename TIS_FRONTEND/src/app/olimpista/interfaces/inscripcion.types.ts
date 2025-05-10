@@ -97,6 +97,7 @@ export interface InscripcionResponse {
 export interface InscripcionPostSuccessResponse {
     message: string; // El mensaje "Inscripción creada exitosamente"
     inscripcion: InscripcionResponse; // El objeto con todos los detalles de la inscripción creada
-}
+    boleta_pago: BoletaPagoResponse;
+  }
 
 // --- Fin Interfaces para la Respuesta ---
