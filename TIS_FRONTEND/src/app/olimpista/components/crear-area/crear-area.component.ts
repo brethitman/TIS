@@ -1,8 +1,9 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { CursoGETService } from '../../service/cursoGET.service';
 import { AreaNuevoService } from '../../service/AreaNuevo.service';
-import { AreaBasicRequest, AreaBasicResponse } from '../../interfaces/AreaNuevo.interface';
+import { Curso, AreaBasicRequest, AreaBasicResponse } from '../../interfaces/AreaNuevo.interface';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-crear-area',
@@ -11,47 +12,45 @@ import { AreaBasicRequest, AreaBasicResponse } from '../../interfaces/AreaNuevo.
   templateUrl: './crear-area.component.html',
 })
 export class CrearAreaComponent implements OnInit {
-  @Input() idOlimpiada!: number; // Recibe el ID de la olimpiada desde el componente padre
+  @Input() idOlimpiada!: number;
   @Output() areaCreadaEvent = new EventEmitter<void>();
   
-  // Estados de UI
-  public mostrarFormulario: boolean = false;
-  public enviando: boolean = false;
-  public successMessage: string | null = null;
-  public errorMessage: string | null = null;
-  
-  // Lista de grados disponibles
-  public grados: string[] = [
-    '1° Primaria', '2° Primaria', '3° Primaria', '4° Primaria', '5° Primaria', '6° Primaria',
-    '1° Secundaria', '2° Secundaria', '3° Secundaria', '4° Secundaria', '5° Secundaria', '6° Secundaria'
+  cursos: Curso[] = [];
+  cursosFiltrados: Curso[] = [];
+  selectedCursos: number[] = [];
+  loading: boolean = false;
+  enviando: boolean = false;
+  mostrarFormulario: boolean = false;
+  grados: string[] = [
+    '1ro Primaria', '2do Primaria', '3ro Primaria', '4to Primaria', '5to Primaria', '6to Primaria',
+    '1ro Secundaria', '2do Secundaria', '3ro Secundaria', '4to Secundaria', '5to Secundaria', '6to Secundaria'
   ];
-  // Checkboxes para selección de grados
-  public gradosSeleccionados: boolean[] = [];
+  gradosSeleccionados: boolean[] = [];
   
-  // Objeto de datos del área
   areaData: AreaBasicRequest = {
     id_olimpiada: 0,
     nombre_area: '',
     descripcion: '',
     gradoIniAr: '',
     gradoFinAr: '',
-    cursos: [] // Array of CursoRequest
+    cursos: []
   };
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
 
   constructor(
+    private cursoService: CursoGETService,
     private areaService: AreaNuevoService
-  ) {}
-
-  ngOnInit(): void {
-    // Verificar y asignar el ID de la olimpiada
-    if (this.idOlimpiada) {
-      this.areaData.id_olimpiada = this.idOlimpiada;
-    }
-    // Inicializar array de checkboxes para grados
+  ) {
     this.gradosSeleccionados = this.grados.map(() => false);
   }
-  
-  // Método para mostrar/ocultar el formulario
+
+  ngOnInit(): void {
+    console.log('ID Olimpiada recibido:', this.idOlimpiada);
+    this.areaData.id_olimpiada = this.idOlimpiada;
+    this.loadCursos();
+  }
+
   toggleFormulario(): void {
     this.mostrarFormulario = !this.mostrarFormulario;
     if (!this.mostrarFormulario) {
@@ -59,148 +58,238 @@ export class CrearAreaComponent implements OnInit {
     }
   }
 
-  // Maneja la selección de checkboxes de grados
   onCheckboxChange(index: number): void {
+    // Cambiamos el estado del checkbox actual
     this.gradosSeleccionados[index] = !this.gradosSeleccionados[index];
-    this.actualizarRangoGrados();
-    console.log('Cursos generados:', this.areaData.cursos); // Para debugging
-  }
-  
-  // Actualiza el rango de grados basado en las selecciones
-  actualizarRangoGrados(): void {
-    // Encontrar el primer grado seleccionado
-    const primerIndice = this.gradosSeleccionados.findIndex(selected => selected);
     
-    // Encontrar el último grado seleccionado
-    const ultimoIndice = this.gradosSeleccionados.lastIndexOf(true);
-    
-    if (primerIndice !== -1 && ultimoIndice !== -1) {
+    // Si este checkbox está ahora seleccionado, mantenemos seleccionados solo los grados en el rango
+    if (this.gradosSeleccionados[index]) {
+      // Encontrar el primer y último grado seleccionado
+      const primerIndice = this.gradosSeleccionados.findIndex(selected => selected);
+      const ultimoIndice = this.gradosSeleccionados.lastIndexOf(true);
+      
+      // Seleccionamos automáticamente todos los grados intermedios
+      for (let i = primerIndice; i <= ultimoIndice; i++) {
+        this.gradosSeleccionados[i] = true;
+      }
+      
+      // Actualizamos los valores de grado inicial y final
       this.areaData.gradoIniAr = this.grados[primerIndice];
       this.areaData.gradoFinAr = this.grados[ultimoIndice];
       
-      // Generamos automáticamente los IDs de cursos basados en el rango seleccionado
-      this.generarCursosPorRango(primerIndice, ultimoIndice);
+      // Filtramos los cursos correspondientes
+      this.filtrarCursosPorGrado(primerIndice, ultimoIndice);
+      this.clearMessages(); // Limpiamos mensajes anteriores
     } else {
-      this.areaData.gradoIniAr = '';
-      this.areaData.gradoFinAr = '';
-      this.areaData.cursos = [];
+      // Si desmarcamos un checkbox, tenemos que recalcular el rango
+      const primerIndice = this.gradosSeleccionados.findIndex(selected => selected);
+      const ultimoIndice = this.gradosSeleccionados.lastIndexOf(true);
+      
+      if (primerIndice !== -1 && ultimoIndice !== -1) {
+        // Todavía hay algún grado seleccionado, actualizamos el rango
+        this.areaData.gradoIniAr = this.grados[primerIndice];
+        this.areaData.gradoFinAr = this.grados[ultimoIndice];
+        this.filtrarCursosPorGrado(primerIndice, ultimoIndice);
+      } else {
+        // No quedan grados seleccionados
+        this.areaData.gradoIniAr = '';
+        this.areaData.gradoFinAr = '';
+        this.cursosFiltrados = [];
+        this.selectedCursos = [];
+      }
     }
+    
+    console.log('Rango seleccionado:', this.areaData.gradoIniAr, 'hasta', this.areaData.gradoFinAr);
   }
-  
-  // Método para generar automáticamente los IDs de cursos basados en el rango de grados
-  private generarCursosPorRango(primerIndice: number, ultimoIndice: number): void {
-    if (primerIndice === -1 || ultimoIndice === -1) {
+
+  filtrarCursosPorGrado(indiceInicio: number, indiceFin: number): void {
+    // Si no hay un rango válido seleccionado, vaciar la lista de cursos
+    if (indiceInicio === -1 || indiceFin === -1) {
+      this.cursosFiltrados = [];
+      this.selectedCursos = [];
       this.areaData.cursos = [];
       return;
     }
-
-    // Mapeo correcto de índices de grados a IDs de cursos
-    const mapeoIndiceACurso: { [key: number]: number } = {
-      0: 1,  // 1° Primaria -> ID 1
-      1: 2,  // 2° Primaria -> ID 2
-      2: 3,  // 3° Primaria -> ID 3
-      3: 4,  // 4° Primaria -> ID 4
-      4: 5,  // 5° Primaria -> ID 5
-      5: 6,  // 6° Primaria -> ID 6
-      6: 7,  // 1° Secundaria -> ID 7
-      7: 8,  // 2° Secundaria -> ID 8
-      8: 9,  // 3° Secundaria -> ID 9
-      9: 10, // 4° Secundaria -> ID 10
-      10: 11, // 5° Secundaria -> ID 11
-      11: 12  // 6° Secundaria -> ID 12
-    };
-
-    this.areaData.cursos = [];
     
-    // Incluir todos los cursos en el rango seleccionado
-    for (let i = primerIndice; i <= ultimoIndice; i++) {
-      if (this.gradosSeleccionados[i] && mapeoIndiceACurso[i]) {
-        this.areaData.cursos.push(mapeoIndiceACurso[i]);
-      }
+    // Primero intentamos filtrar por el método de coincidencia del nombre
+    let cursosFiltradosPorGrado = this.cursos.filter(curso => {
+      const cursoGradoIndex = this.obtenerIndiceGradoDeCurso(curso);
+      return cursoGradoIndex >= indiceInicio && cursoGradoIndex <= indiceFin;
+    });
+    
+    // Si no encontramos cursos que coincidan, usamos todos los cursos pero mostramos una advertencia
+    if (cursosFiltradosPorGrado.length === 0) {
+      console.warn('No se detectaron cursos en el rango seleccionado. Mostrando todos los cursos disponibles.');
+      this.showError('No se pudo determinar qué cursos pertenecen a los grados seleccionados. Se incluirán todos los cursos disponibles.');
+      cursosFiltradosPorGrado = [...this.cursos];
     }
-
-    console.log('Cursos generados:', this.areaData.cursos);
+    
+    this.cursosFiltrados = cursosFiltradosPorGrado;
+    
+    // Automáticamente seleccionamos todos los cursos filtrados
+    this.selectedCursos = this.cursosFiltrados.map(curso => curso.id_curso);
+    this.areaData.cursos = [...this.selectedCursos];
+    
+    console.log('Cursos seleccionados automáticamente:', this.selectedCursos);
   }
 
-  // Validación del formulario
-  validateForm(): boolean {
-    if (!this.areaData.nombre_area) {
-      this.errorMessage = 'El nombre del área es requerido';
+  // Este método es un ejemplo - debes implementarlo según tu estructura de datos real
+  obtenerIndiceGradoDeCurso(curso: Curso): number {
+    // Intentamos encontrar coincidencias entre el nombre del curso y los grados
+    const nombreCurso = curso.nameCurso.toLowerCase();
+    
+    // Verificamos si el nombre del curso contiene alguno de los grados
+    for (let i = 0; i < this.grados.length; i++) {
+      const grado = this.grados[i].toLowerCase();
+      // Si el nombre del curso contiene el grado (ej: "Matemáticas 1ro Primaria")
+      if (nombreCurso.includes(grado)) {
+        return i;
+      }
+    }
+    
+    // También buscamos coincidencias parciales
+    const gradosPrimaria = ['1ro', '2do', '3ro', '4to', '5to', '6to'];
+    const gradosSecundaria = ['1ro sec', '2do sec', '3ro sec', '4to sec', '5to sec', '6to sec'];
+    
+    // Primaria
+    for (let i = 0; i < gradosPrimaria.length; i++) {
+      if (nombreCurso.includes(gradosPrimaria[i].toLowerCase()) && 
+          nombreCurso.includes('primaria')) {
+        return i;
+      }
+    }
+    
+    // Secundaria
+    for (let i = 0; i < gradosSecundaria.length; i++) {
+      const secIndex = i + 6; // Offset para secundaria
+      if ((nombreCurso.includes(gradosPrimaria[i].toLowerCase()) && 
+           nombreCurso.includes('secundaria')) || 
+          nombreCurso.includes(gradosSecundaria[i].toLowerCase())) {
+        return secIndex;
+      }
+    }
+    
+    // Si no encontramos coincidencia, devolvemos -1
+    // (eso hará que el curso no esté en ningún rango)
+    return -1;
+  }
+
+  // Ya no necesitamos toggleCurso ya que no habrá selección manual
+  // Pero lo dejamos por si es necesario para la interfaz de administración
+  toggleCurso(cursoId: number): void {
+    // No hacemos nada - los cursos están automáticamente seleccionados
+    // Si en el futuro necesitamos deshacer la selección, podemos habilitar este código
+    /*
+    const index = this.selectedCursos.indexOf(cursoId);
+    if (index === -1) {
+      this.selectedCursos.push(cursoId);
+    } else {
+      this.selectedCursos.splice(index, 1);
+    }
+    this.areaData.cursos = [...this.selectedCursos];
+    */
+  }
+
+  loadCursos(): void {
+    this.loading = true;
+    this.cursoService.obtenerTodosLosCursos().subscribe({
+      next: (response) => {
+        this.cursos = response.data;
+        console.log('Cursos cargados:', this.cursos);
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Error cargando cursos:', err);
+        this.showError('Error al cargar la lista de cursos');
+        this.loading = false;
+      }
+    });
+  }
+
+  onSubmit(): void {
+    if (!this.validateForm()) {
+      console.log('Validación del formulario fallida');
+      return;
+    }
+
+    this.enviando = true;
+    this.clearMessages();
+    
+    const datosEnvio: AreaBasicRequest = {
+      id_olimpiada: this.idOlimpiada,
+      nombre_area: this.areaData.nombre_area.trim(),
+      descripcion: this.areaData.descripcion?.trim() || '',
+      gradoIniAr: this.areaData.gradoIniAr.trim(),
+      gradoFinAr: this.areaData.gradoFinAr.trim(),
+      cursos: [...this.selectedCursos]
+    };
+
+    console.log('Datos a enviar al backend:', datosEnvio);
+
+    this.areaService.crearAreaBasica(datosEnvio).subscribe({
+      next: (response) => {
+        console.log('Respuesta exitosa:', response);
+        this.showSuccess(response.message || 'Área creada exitosamente');
+        this.resetForm();
+        this.areaCreadaEvent.emit();
+        this.enviando = false;
+      },
+      error: (err) => {
+        console.error('Error completo:', err);
+        let errorMsg = 'Error al crear el área. Verifique los datos.';
+        
+        if (err.error) {
+          if (typeof err.error === 'string') {
+            errorMsg = err.error;
+          } else if (err.error.message) {
+            errorMsg = err.error.message;
+          } else if (err.error.errors) {
+            const errorMsgs = [];
+            for (const field in err.error.errors) {
+              errorMsgs.push(err.error.errors[field].join(' '));
+            }
+            errorMsg = errorMsgs.join('. ');
+          }
+        }
+        
+        this.showError(errorMsg);
+        this.enviando = false;
+      }
+    });
+  }
+
+  private validateForm(): boolean {
+    this.clearMessages();
+    
+    if (!this.idOlimpiada || this.idOlimpiada <= 0) {
+      this.showError('No se pudo determinar la olimpiada asociada');
+      return false;
+    }
+    
+    if (!this.areaData.nombre_area?.trim()) {
+      this.showError('El nombre del área es requerido');
+      return false;
+    }
+    
+    if (!this.areaData.gradoIniAr?.trim()) {
+      this.showError('Debe seleccionar al menos un grado para definir el rango');
+      return false;
+    }
+    
+    if (!this.areaData.gradoFinAr?.trim()) {
+      this.showError('Debe seleccionar al menos un grado para definir el rango');
       return false;
     }
 
-    if (!this.areaData.gradoIniAr || !this.areaData.gradoFinAr) {
-      this.errorMessage = 'Debe seleccionar un rango de grados';
-      return false;
-    }
-
-    if (!this.areaData.cursos || this.areaData.cursos.length === 0) {
-      this.errorMessage = 'Debe seleccionar al menos un curso';
-      return false;
-    }
-
-    if (!this.idOlimpiada) {
-      this.errorMessage = 'No se ha seleccionado una olimpiada';
+    if (this.selectedCursos.length === 0) {
+      this.showError('No hay cursos disponibles para el rango de grados seleccionado');
       return false;
     }
 
     return true;
   }
 
-  // Envío del formulario
-  crearArea(): void {
-    if (!this.validateForm()) {
-      return;
-    }
-
-    this.enviando = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    // Extrae solo el número del grado para enviar al backend
-    const extraerNumeroGrado = (gradoTexto: string): string => {
-      return gradoTexto.split('°')[0].trim();
-    };
-
-    const areaData: AreaBasicRequest = {
-      id_olimpiada: this.idOlimpiada,
-      nombre_area: this.areaData.nombre_area.trim(),
-      descripcion: this.areaData.descripcion?.trim() || '',
-      gradoIniAr: extraerNumeroGrado(this.areaData.gradoIniAr),
-      gradoFinAr: extraerNumeroGrado(this.areaData.gradoFinAr),
-      cursos: [...this.areaData.cursos] // Copia para evitar problemas de referencia
-    };
-
-    console.log('Datos a enviar al backend:', areaData);
-
-    this.areaService.crearAreaBasica(areaData).subscribe({
-      next: (response: AreaBasicResponse) => {
-        this.successMessage = 'Área creada exitosamente';
-        this.enviando = false;
-        this.resetForm();
-        this.toggleFormulario();
-        this.areaCreadaEvent.emit();
-      },
-      error: (error) => {
-        console.error('Error creando área:', error);
-        this.enviando = false;
-        
-        if (error.error && error.error.message) {
-          this.errorMessage = error.error.message;
-        } else if (error.error && error.error.errors) {
-          // Manejar errores de validación específicos
-          const errorMessages = Object.values(error.error.errors).flat();
-          this.errorMessage = errorMessages.join(', ');
-        } else {
-          this.errorMessage = 'Error al crear el área. Por favor, intente nuevamente.';
-        }
-      }
-    });
-  }
-
-  // Resetea el formulario
   private resetForm(): void {
-    // Mantiene el ID de olimpiada al resetear
     this.areaData = {
       id_olimpiada: this.idOlimpiada,
       nombre_area: '',
@@ -209,11 +298,21 @@ export class CrearAreaComponent implements OnInit {
       gradoFinAr: '',
       cursos: []
     };
+    this.selectedCursos = [];
     this.gradosSeleccionados = this.grados.map(() => false);
-    this.clearMessages();
+    this.cursosFiltrados = [];
   }
 
-  // Limpia los mensajes de estado
+  private showSuccess(message: string): void {
+    this.successMessage = message;
+    setTimeout(() => this.successMessage = null, 5000);
+  }
+
+  private showError(message: string): void {
+    this.errorMessage = message;
+    setTimeout(() => this.errorMessage = null, 5000);
+  }
+
   private clearMessages(): void {
     this.successMessage = null;
     this.errorMessage = null;
