@@ -1,6 +1,6 @@
 // src/app/interfaces/inscripcion.types.ts (o donde tengas tus tipos)
 
-// --- Interfaces para el Payload (lo que envías) - Estas ya las tienes ---
+
 export interface Olimpista {
   nombres: string;
   apellidos: string;
