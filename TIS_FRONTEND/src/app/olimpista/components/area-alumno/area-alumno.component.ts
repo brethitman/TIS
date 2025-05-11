@@ -1,13 +1,27 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+
+// Define the Curso interface here since the file is missing
+interface Curso {
+  id: number;
+  nameCurso: string;
+  // Add other properties as needed
+}
 
 @Component({
-  selector: 'app-area-alumno', // ← Este debe coincidir con el usado en el HTML
+  selector: 'app-area-alumno',
+  standalone: true,  // Add this for standalone components
   templateUrl: './area-alumno.component.html',
   styleUrls: [],
-  imports: [CommonModule]
+  imports: [CommonModule, HttpClientModule]  // Add HttpClientModule here
 })
-export class AreaAlumnoComponent {
+export class AreaAlumnoComponent implements OnInit {
+  cursos: Curso[] = [];
+  isCursoDropdownOpen = false;
+  
+  constructor(private http: HttpClient) {}
+  
   @Input() estudiantes: any[] = [];
   @Input() areas: any[] = [];
 
@@ -32,6 +46,7 @@ export class AreaAlumnoComponent {
       this.isStudentDropdownOpen = false;
     }
   }
+
   seleccionarEstudiante(estudiante: any): void {
     this.estudianteSeleccionado.emit(estudiante);
     this.isStudentDropdownOpen = false;
@@ -44,5 +59,24 @@ export class AreaAlumnoComponent {
 
   inscribirEstudiante(): void {
     this.inscribir.emit();
+  }
+
+  ngOnInit(): void {
+    this.obtenerCursos();
+  }
+
+  obtenerCursos(): void {
+    this.http.get<Curso[]>('http://127.0.0.1:8000/api/cursos').subscribe(
+      (data: Curso[]) => {
+        this.cursos = data;
+      },
+      (error: any) => {
+        console.error('Error al obtener cursos:', error);
+      }
+    );
+  }
+
+  toggleCursoDropdown(): void {
+    this.isCursoDropdownOpen = !this.isCursoDropdownOpen;
   }
 }
