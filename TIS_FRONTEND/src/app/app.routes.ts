@@ -117,7 +117,7 @@ export const routes: Routes = [
   component: VentanaInformacionOlimpiadaComponent 
 },
 {
-  path: 'inicio/Olimpiada/1/Visualizacion', // Esta ruta está duplicada en tu configuración original
+  path: 'inicio/Olimpiada/:id/Visualizacion', // Esta ruta está duplicada en tu configuración original
   component: VisualizacionListaComponent
 },
 {

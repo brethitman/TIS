@@ -35,7 +35,7 @@
       <div class="flex flex-wrap gap-2 mb-4">
         <span *ngFor="let area of areas" 
               class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-          {{ area.nombre }}
+          {{ areasDisponibles }}
         </span>
       </div>
     </div>
@@ -62,9 +62,9 @@
         <div *ngIf="isAreaDropdownOpen"
           class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
           <div class="divide-y divide-gray-100">
-            <div *ngFor="let area of areas" 
+            <div *ngFor="let area of areasDisponibles" 
                  class="px-4 py-2 hover:bg-blue-50 cursor-pointer">
-              <p class="font-medium text-gray-800">{{ area.nombre }}</p>
+              <p class="font-medium text-gray-800">{{ area.nombre_area}}</p>
             </div>
           </div>
         </div>
