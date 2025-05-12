@@ -161,7 +161,15 @@ export class InscripcionOlimpiadaComponent {
     
     const inicio = new Date(this.olimpiada.fecha_inicio);
     const final = new Date(this.olimpiada.fecha_final);
+    const today = new Date(this.formatDate(new Date()));
+    const maxStart = new Date(this.maxStartDate);
     
+    // Validar fecha inicio: rango hoy - hoy+1 año
+    if (isNaN(inicio.getTime()) || inicio < today || inicio > maxStart) {
+      this.errors.fechas = `La fecha de inicio debe estar entre ${this.minDate} y ${this.maxStartDate}`;
+      return false;
+    }
+
     if (inicio >= final) {
       this.errors.fechas = 'La fecha final debe ser posterior a la fecha incial';
       return false;

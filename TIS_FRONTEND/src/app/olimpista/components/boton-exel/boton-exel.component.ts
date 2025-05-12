@@ -22,10 +22,10 @@ export class BotonExelComponent {
   confirmSubida: boolean = false;
   nombreArchivo: string = '';
   tamanoArchivo: string = '';
-  mensajeError: string = '';
   datosExcel: any[][] = [];
   datosEstudiantes: any[][] = [];
   datosTutores: any[][] = [];
+  mensajeError: string[] = [];
   tutor = {
     nombre: '',
     apellido: '',
@@ -67,7 +67,7 @@ export class BotonExelComponent {
         console.log('Datos subidos:', this.datosExcel);
       } else if (this.confirmSubida && fileName === 'Formato_Varios_Tutores.xlsx') {
         console.log('Formato 2 subido correctamente1:', fileName, fileSize);
-      }  else  {
+      } else {
       }
       this.procesarDatosExcel(this.datosExcel, file.name);
     };
@@ -190,7 +190,7 @@ export class BotonExelComponent {
     this.datosEstudiantes = [];
     this.datosTutores = [];
     this.tamanoArchivo = '';
-    this.nombreArchivo= '';
+    this.nombreArchivo = '';
     console.log('Subida cancelada');
   }
 
@@ -247,33 +247,32 @@ export class BotonExelComponent {
   }
   validacionesTutor(datosTutor: any[][]) {
     const listaTutor = datosTutor.slice(1);
-    let mensaje = "";
+    this.mensajeError = [];
 
     for (let index = 0; index < listaTutor.length; index++) {
       const fila = listaTutor[index];
 
       for (let celdaIndex = 0; celdaIndex < fila.length; celdaIndex++) {
-          const celda = fila[celdaIndex];
+        const celda = fila[celdaIndex];
 
-          if (!celda || celda.toString().trim() === "") {
-              mensaje += `Error: Ninguna información del tutor no debe estar vacia\n`;
-              break; 
-          }
-          const correo = fila[3]?.toString().trim();
-        if (!correo.includes("@") || correo.includes(" ") || 
-            (!correo.endsWith("@gmail.com") && !correo.endsWith("@Outlook.com"))) {
-            mensaje += `Error: Correo electrónico inválido:'${correo}'.\n`;
-            break;
+        if (!celda || celda.toString().trim() === "") {
+          this.mensajeError.push(`Error: Ninguna información del tutor no debe estar vacia\n`);
+          break;
+        }
+        const correo = fila[3]?.toString().trim();
+        if (!correo.includes("@") || correo.includes(" ") ||
+          (!correo.endsWith("@gmail.com") && !correo.endsWith("@Outlook.com"))) {
+          this.mensajeError.push(`Error: Correo electrónico inválido:'${correo}'.\n`);
+          break;
         }
         const celular = fila[4]?.toString().trim();
         if (!/^[67]\d{7}$/.test(celular)) {
-            mensaje += `Error: Número de celular inválido (El numero debe ser de bolivia): '${celular}'.\n `;
-            break;
+          this.mensajeError.push(`Error: Número de celular inválido (El numero debe ser de bolivia): '${celular}'.\n `);
+          break;
         }
       }
-  }
-    this.mensajeError = mensaje;
-    console.log("Este es el mensaje de validacion:", mensaje, "y este mensaje que se copio",this.mensajeError);
+    }
+    console.log("Lista de errores:", this.mensajeError);
 
   }
 

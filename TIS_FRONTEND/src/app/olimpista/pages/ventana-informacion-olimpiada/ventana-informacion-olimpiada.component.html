@@ -9,7 +9,7 @@
 <!-- Descripción -->
 <section class="bg-white shadow rounded-lg p-6">
   <h2 class="text-lg font-semibold mb-2">DESCRIPCIÓN</h2>
-  <p class="text-lg leading-relaxed pl-6 animate_animated animatefadeInUp animate_delay-1s">
+  <p class="text-lg leading-relaxed pl-6 animate_animated animatefadeInUp animate_delay-1s whitespace-pre-line">
     {{olimpiada.descripcion_olimpiada}}
   </p>
 </section>
@@ -18,20 +18,39 @@
 <section class="w-full bg-gradient-to-r from-red-600 to-purple-500 py-2 px-4 animate-gradient">
   <h1 class="text-white text-3xl font-bold">Áreas de la olimpiada</h1>
 </section>
-<app-areas-carrusel [Area]="areasDisponibles" (areaSelected)="cargarCategoriasPorArea($event.id_area)"></app-areas-carrusel>
-<app-categorias-home [categorias]="categorias"></app-categorias-home>
+
+<!-- Carrusel de áreas (solo si hay áreas disponibles) -->
+<ng-container *ngIf="areasDisponibles.length > 0; else noAreas">
+  <app-areas-carrusel [Area]="areasDisponibles" (areaSelected)="cargarCategoriasPorArea($event.id_area)"></app-areas-carrusel>
+</ng-container>
+<ng-template #noAreas>
+  <div class="text-center text-gray-500 py-4">
+    No hay áreas disponibles por el momento.
+  </div>
+</ng-template>
+
+<!-- Categorías (solo si hay categorías disponibles) -->
+<ng-container *ngIf="categorias.length > 0; else noCategorias">
+  <app-categorias-home [categorias]="categorias"></app-categorias-home>
+</ng-container>
+<ng-template #noCategorias>
+  <!--<div class="text-center text-gray-500 py-4">
+    Aún no hay categorías disponibles para esta área.
+  </div>-->
+</ng-template>
+
 
 
 <!-- Botón para inscribirse o ir a la siguiente vista -->
-<div class="flex justify-center space-x-6 mt-6">
-  <button style="background-color: #0D1271;"
-    class="text-white font-semibold py-2 px-6 rounded-lg shadow hover:shadow-md transition duration-300"
+<div class="flex justify-center space-x-6" [class.mt-6]="categorias.length > 0">
+  <button 
+    class="text-white font-semibold py-2 px-6 rounded-lg shadow hover:shadow-md transition duration-300 bg-[#0D1271]"
     (click)="entrar()">
-    Inscripcion a un solo estudiante
+    Inscripción a un solo estudiante
   </button>
-  <button style="background-color: #0D1271;"
-    class="text-white font-semibold py-2 px-6 rounded-lg shadow hover:shadow-md transition duration-300"
+  <button 
+    class="text-white font-semibold py-2 px-6 rounded-lg shadow hover:shadow-md transition duration-300 bg-[#0D1271]"
     (click)="variosEstudiantes()">
-    Inscripcion a un grupo de estudiantes
+    Inscripción a un grupo de estudiantes
   </button>
 </div>
