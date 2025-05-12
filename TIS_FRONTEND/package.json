@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -22,6 +22,8 @@
     "@tailwindcss/postcss": "^4.0.11",
     "@types/exceljs": "^0.5.3",
     "exceljs": "^4.4.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
     "pdfmake": "^0.2.20",
     "rxjs": "~7.8.0",
     "tesseract.js": "^6.0.1",

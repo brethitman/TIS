@@ -1,131 +1,184 @@
-// boleta-pago.component.ts
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
-import { BoletaPagoResponse } from '../../interfaces/inscripcion.types'; // Asegúrate de que la ruta sea correcta para tu proyecto
+import { BoletaPagoResponse } from '../../interfaces/inscripcion.types';
+import { EmailService } from '../../service/email.service';
+import { HttpClientModule } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
-// *** Importaciones de pdfmake ***
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+// Importación y configuración correcta de pdfMake
+declare const pdfMake: any;
 
-// *** Configuración de fuentes (¡Correcta!) ***
-// Esta línea debe estar FUERA de la clase del componente
-pdfMake.vfs = pdfFonts.vfs;
-// *********************************
+// Importamos las fuentes en forma separada
+import 'pdfmake/build/pdfmake';
+import 'pdfmake/build/vfs_fonts';
 
 @Component({
   selector: 'app-boleta-pago',
   standalone: true,
-  imports: [CommonModule], // CommonModule es necesario para pipes como DatePipe y CurrencyPipe
-  templateUrl: './boleta-pago.component.html', // Ruta a tu plantilla HTML
-  providers: [DatePipe, CurrencyPipe] // Provee los pipes si no están provistos globalmente
+  imports: [CommonModule, HttpClientModule],
+  templateUrl: './boleta-pago.component.html',
+  providers: [DatePipe, CurrencyPipe, EmailService]
 })
-export class BoletaPagoComponent {
-  // Input para recibir los datos de la boleta del componente padre
+export class BoletaPagoComponent implements OnChanges {
   @Input() boletaData!: BoletaPagoResponse;
+  apiBaseUrl: string = environment.apiUrl;
+  
+  // Variables para mensajes
+  envioExitoso: boolean | null = null;
+  mensajeEnvio: string = '';
 
   constructor(
     // Inyecta los pipes para formatear la fecha y la moneda
     private datePipe: DatePipe,
-    private currencyPipe: CurrencyPipe
-  ) {}
+    private currencyPipe: CurrencyPipe,
+    private emailService: EmailService
+  ) {
+    console.log('API Base URL:', this.apiBaseUrl);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['boletaData'] && changes['boletaData'].currentValue) {
+      console.log('boletaData recibido:', this.boletaData);
+      
+      // Asegurar que el monto sea una cadena válida y nunca sea null
+      if (this.boletaData && this.boletaData.monto === null) {
+        this.boletaData.monto = '0';
+      }
+      
+      // Si el monto es un número, convertirlo a string
+      if (this.boletaData && typeof this.boletaData.monto === 'number') {
+        this.boletaData.monto = String(this.boletaData.monto);
+      }
+      
+      console.log('Monto procesado:', this.boletaData.monto, 'Tipo:', typeof this.boletaData.monto);
+    }
+  }
 
   // Método para formatear la fecha
-  formatDate(date: string): string {
-    // Usa el DatePipe para formatear la fecha
-    return this.datePipe.transform(date, 'dd/MM/yyyy HH:mm') || '';
+  formatDate(date: string | Date | null): string {
+    if (!date) return 'N/A';
+    try {
+      return this.datePipe.transform(date, 'dd/MM/yyyy HH:mm') || 'N/A';
+    } catch (error) {
+      console.error('Error formateando fecha:', error);
+      return 'N/A';
+    }
   }
 
   // Método para formatear la moneda
-  formatCurrency(amount: string): string {
-     // Usa el CurrencyPipe. Ajusta 'BOB' y 'es-BO' si tu moneda o locale es diferente.
-     // 'symbol' para incluir el símbolo de moneda. '1.2-2' para 1 dígito antes del punto decimal y 2 después.
-     return this.currencyPipe.transform(amount, 'BOB', 'symbol', '1.2-2', 'es-BO') || '';
+  formatCurrency(amount: string | number | null): string {
+    console.log('formatCurrency llamado con:', amount, 'Tipo:', typeof amount);
+    
+    if (amount === null || amount === undefined || amount === '') {
+      console.log('Monto nulo o indefinido, retornando N/A');
+      return 'N/A';
+    }
+    
+    try {
+      // Convertir a número si es un string
+      let numericAmount: number;
+      
+      if (typeof amount === 'string') {
+        // Eliminar cualquier caracter no numérico excepto punto decimal
+        const cleanAmount = amount.replace(/[^\d.]/g, '');
+        numericAmount = parseFloat(cleanAmount);
+      } else {
+        numericAmount = amount;
+      }
+      
+      // Verificar si es un número válido
+      if (isNaN(numericAmount)) {
+        console.error('El monto no es un número válido:', amount);
+        return 'N/A';
+      }
+      
+      console.log('Monto numérico a formatear:', numericAmount);
+      
+      // Usar directamente toFixed para evitar problemas con el pipe
+      const formatted = numericAmount.toFixed(2);
+      // Aplicar formato de moneda boliviana
+      return `Bs. ${formatted}`;
+    } catch (error) {
+      console.error('Error formateando moneda:', error, 'Valor recibido:', amount, 'Tipo:', typeof amount);
+      return 'N/A';
+    }
   }
 
   // Método para generar el PDF
-  generatePdfBoleta() {
-    // *** AGREGADO: Log al inicio para verificar que la función se llama ***
-    console.log('generatePdfBoleta() called. Attempting to generate PDF...');
+  generatePdfBoleta(): void {
+    console.log('generatePdfBoleta() llamado. Intentando generar PDF...');
 
-    // Verifica si los datos de la boleta están disponibles
     if (!this.boletaData) {
-      // *** AGREGADO: Mensaje de error más claro si faltan datos ***
-      console.error('ERROR: boletaData is missing or null. Cannot generate PDF.');
-      // Podrías mostrar un mensaje al usuario aquí también si lo deseas
-      return; // Sale de la función si no hay datos
+      console.error('ERROR: boletaData es nulo o indefinido. No se puede generar PDF.');
+      this.mensajeEnvio = 'No hay datos disponibles para generar la boleta';
+      this.envioExitoso = false;
+      return;
     }
 
-    // *** AGREGADO: Log para verificar los datos que se usarán ***
-    console.log('boletaData received:', this.boletaData);
+    console.log('Datos de la boleta a usar:', this.boletaData);
+    console.log('Monto para PDF:', this.boletaData.monto, 'Tipo:', typeof this.boletaData.monto);
 
-    // *** AGREGADO: Bloque try...catch para capturar errores durante la creación del PDF ***
     try {
-      // Definición del contenido y estilos del documento PDF usando pdfmake
+      // Formatear el monto para el PDF
+      let montoFormateado = 'N/A';
+      if (this.boletaData.monto !== null && this.boletaData.monto !== undefined) {
+        montoFormateado = this.formatCurrency(this.boletaData.monto);
+      }
+      
+      console.log('Monto formateado para PDF:', montoFormateado);
+
       const pdfDefinition: any = {
         content: [
           {
-            text: 'Boleta de Pago', // Título principal
-            style: 'header' // Aplica el estilo 'header'
+            text: 'Boleta de Pago',
+            style: 'header'
           },
           {
-            text: [ // Contenido para el número de boleta (label en negrita + valor)
+            text: [
               { text: 'Número de Boleta: ', bold: true },
-              // ✅ AGREGADO: Verificación para numero_boleta antes de usarlo, muestra 'N/A' si es null/undefined
               { text: this.boletaData.numero_boleta ? this.boletaData.numero_boleta.toString() : 'N/A' }
             ],
-            margin: [0, 10, 0, 5] // Margen [izquierda, arriba, derecha, abajo]
+            margin: [0, 10, 0, 5]
           },
           {
-            text: [ // Contenido para el monto (label en negrita + valor formateado)
+            text: [
               { text: 'Monto: ', bold: true },
-              // ✅ AGREGADO: Verificación para monto antes de usarlo y formatearlo
-              { text: this.boletaData.monto ? this.formatCurrency(this.boletaData.monto) : 'N/A' }
+              { text: montoFormateado }
             ],
             margin: [0, 0, 0, 5]
           },
           {
-            text: [ // Contenido para la fecha de generación (label en negrita + valor formateado)
+            text: [
               { text: 'Fecha de Generación: ', bold: true },
-              // ✅ AGREGADO: Verificación para fecha_generacion antes de usarlo y formatearlo
-              { text: this.boletaData.fecha_generacion ? this.formatDate(this.boletaData.fecha_generacion) : 'N/A' }
+              { text: this.boletaData.fecha_generacion ? 
+                  this.formatDate(this.boletaData.fecha_generacion) : 'N/A' }
             ],
             margin: [0, 0, 0, 10]
           }
-          // Puedes añadir más elementos aquí siguiendo la estructura
         ],
-        // Definición de estilos reutilizables
         styles: {
           header: {
-            fontSize: 18, // Tamaño de fuente
-            bold: true,   // Texto en negrita
-            margin: [0, 0, 0, 20], // Margen debajo del título
-            alignment: 'center' // Alineación central
+            fontSize: 18,
+            bold: true,
+            margin: [0, 0, 0, 20],
+            alignment: 'center'
           }
-          // Puedes añadir otros estilos como 'fieldLabel', 'fieldValue', etc.
         }
       };
 
-      // *** AGREGADO: Log antes de crear el objeto PDF ***
-      console.log('PDF definition created. Calling pdfMake.createPdf()...');
-
-      // Crea el documento PDF
+      console.log('Definición del PDF creada. Llamando a pdfMake.createPdf()...');
       const pdf = pdfMake.createPdf(pdfDefinition);
 
-      // *** AGREGADO: Log antes de llamar a download ***
-      console.log('PDF object created. Calling pdf.download()...');
-
-      // Descarga el documento PDF
-      // ✅ AGREGADO: Ajusta el nombre del archivo en caso de que numero_boleta sea null
+      console.log('Objeto PDF creado. Llamando a pdf.download()...');
       pdf.download(`boleta_pago_${this.boletaData.numero_boleta || 'sin_numero'}.pdf`);
-
-      // *** AGREGADO: Log después de llamar a download ***
-      console.log('pdf.download() called.');
-
+      
+      this.mensajeEnvio = 'PDF generado exitosamente.';
+      this.envioExitoso = true;
+      
     } catch (error) {
-      // *** AGREGADO: Captura y loguea cualquier error ocurrido durante la creación/descarga ***
-      console.error('AN ERROR OCCURRED DURING PDF GENERATION:', error);
-      // Opcional: Muestra un mensaje de error al usuario en la UI
-      // alert('Ocurrió un error al generar el PDF. Por favor, intente de nuevo.');
+      console.error('OCURRIÓ UN ERROR DURANTE LA GENERACIÓN DEL PDF:', error);
+      this.mensajeEnvio = 'Ocurrió un error al generar el PDF. Por favor, intente de nuevo.';
+      this.envioExitoso = false;
     }
   }
 }
