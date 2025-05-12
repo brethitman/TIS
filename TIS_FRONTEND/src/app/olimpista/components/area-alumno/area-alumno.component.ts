@@ -48,19 +48,21 @@ export class AreaAlumnoComponent implements OnInit {
 
   }
   private cargarCursos(): void {
-  this.cursoService.obtenerCursos()
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (data) => {
-        console.log('Respuesta del servicio:', data); // Verifica en la consola
-        this.cursos = Array.isArray(data) ? data : (data as any).cursos; // Tipo 'any' para evitar error
-      },
-      error: (error) => {
-        console.error('Error cargando cursos:', error);
-        this.errorMessage = 'Error al cargar los cursos';
-      }
-    });
-}
+    this.cursoService.obtenerCursos()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          console.log('Respuesta del servicio:', data); // Verifica en la consola
+          console.log('Cantidad de cursos:', this.cursos.length);
+          console.log('Lista de cursos:', this.cursos);
+          this.cursos = Array.isArray(data) ? data : (data as any).cursos; // Tipo 'any' para evitar error
+        },
+        error: (error) => {
+          console.error('Error cargando cursos:', error);
+          this.errorMessage = 'Error al cargar los cursos';
+        }
+      });
+  }
 
   //traer areas y categorias
   private cargarOlimpiadaId(): void {
