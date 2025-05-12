@@ -278,6 +278,29 @@
             margin-right: 15px;
         }
         
+        .upload-notice {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px 20px;
+            margin-top: 25px;
+            font-weight: 500;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .upload-notice i {
+            color: #4caf50;
+            font-size: 24px;
+            margin-right: 15px;
+        }
+        
+        .upload-link {
+            font-weight: 700;
+            color: #00447c;
+            text-decoration: underline;
+        }
+        
         @media print {
             body {
                 background-color: white;
@@ -366,8 +389,14 @@
                     <li>Presente esta boleta impresa en cualquiera de las cajas habilitadas de la Universidad Mayor de San Simón.</li>
                     <li>Realice el pago únicamente con el monto exacto indicado.</li>
                     <li>Conserve su comprobante de pago como respaldo.</li>
-                    <li>Una vez realizado el pago, podrá completar su proceso de inscripción en línea o en las ventanillas de su facultad.</li>
+                    <li>Una vez realizado el pago, debe tomar una fotografía clara del comprobante y subirla a <a href="http://localhost:4200/prueba-ocr" class="upload-link">http://localhost:4200/prueba-ocr</a> para continuar con su proceso de inscripción.</li>
+                    <li>Después de verificar su comprobante, podrá completar su proceso de inscripción en línea o en las ventanillas de su facultad.</li>
                 </ol>
+            </div>
+            
+            <div class="upload-notice">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <span><strong>IMPORTANTE:</strong> Para continuar con su proceso de inscripción, es <strong>obligatorio</strong> subir una foto clara del comprobante de pago al enlace <a href="http://localhost:4200/prueba-ocr" class="upload-link">http://localhost:4200/prueba-ocr</a>.</span>
             </div>
         </div>
 
