@@ -24,24 +24,13 @@
         <input type="text" [(ngModel)]="areaData.descripcion" name="descripcion"
                class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
       </div>
-      
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Grado Inicial</label>
-        <input type="text" [(ngModel)]="areaData.gradoIniAr" name="gradoIniAr" required
-               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-      </div>
-      
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Grado Final</label>
-        <input type="text" [(ngModel)]="areaData.gradoFinAr" name="gradoFinAr" required
-               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-      </div>
     </div>
   </div>
 
   <!-- Sección Cursos -->
   <div class="space-y-4">
     <h2 class="text-xl font-semibold text-gray-800">Selección de Cursos</h2>
+    <p class="text-sm text-gray-600">Seleccione los cursos para esta área. El sistema detectará automáticamente el grado inicial y final.</p>
     
     <div class="flex flex-wrap gap-4 p-4 border rounded-lg">
       <div *ngFor="let curso of cursos" class="flex items-center space-x-2">
@@ -70,6 +59,12 @@
               class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
           {{ getCursoName(id) }}
         </span>
+      </div>
+      
+      <!-- Mostrar los grados detectados (opcional) -->
+      <div *ngIf="selectedCursos.length > 0" class="mt-3 text-sm text-gray-700">
+        <p class="font-medium">Rango de grados detectado:</p>
+        <p>{{ determineGrades().gradoInicial }} - {{ determineGrades().gradoFinal }}</p>
       </div>
     </div>
   </div>

@@ -10,11 +10,14 @@ export interface BoletasPago {
 }
 
 export interface Inscripcion {
+
   id:                number;
+  
   fecha_inscripcion: Date;
   estado:            Estado;
   createdAt:         Date;
   updatedAt:         Date;
+  
 }
 
 export enum Estado {
