@@ -40,6 +40,12 @@ class NivelCategoria extends Model
         'created_at',
         'updated_at',
     ];
+    // En NivelCategoria.php
+protected $casts = [
+    'habilitacion' => 'boolean',
+    'fecha_examen' => 'date:Y-m-d',
+    'costo' => 'decimal:2'
+];
 
     /**
      * Relación: Un NivelCategoria pertenece a un Área.

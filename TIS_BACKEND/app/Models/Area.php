@@ -70,4 +70,11 @@ class Area extends Model
     }
 
 
+    public function cursos()
+    {
+        return $this->belongsToMany(Curso::class, 'curso_area', 'id_area', 'id_curso');
+    }
+
+
+    
 }

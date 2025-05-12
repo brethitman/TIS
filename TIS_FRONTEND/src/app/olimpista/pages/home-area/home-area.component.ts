@@ -20,6 +20,8 @@ export class HomeAreaComponent {
   public area = signal<Area[]>([]);
   categorias: NivelesCategoria[] = [];
 
+
+
   constructor(private categoriaService: CategoriaService) {}
 
   ngOnInit(): void {
@@ -34,7 +36,7 @@ export class HomeAreaComponent {
       });
   }
   cargarCategoriasPorArea(areaId: number): void {
-    this.categoriaService.getNivelesPorArea(areaId).subscribe(
+    this.categoriaService.getNivelesByArea(areaId).subscribe(
       (categorias) => {
         this.categorias = categorias;
         console.log('Categorías:', categorias);
@@ -43,6 +45,9 @@ export class HomeAreaComponent {
         console.error('Error al cargar categorías:', error);
       }
     );
+      
+      
+    console.log('enviando',this.categorias)
   }
 }
 

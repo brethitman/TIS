@@ -1,25 +1,24 @@
 <div class="min-h-screen px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="text-2xl font-bold mb-8 text-left">Categorias</h1>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mx-auto">
 
         <div *ngFor="let categoria of categorias"
-            class="card bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-xl mx-2">
-            <!-- Header con imagen local -->
-            <div class="relative h-40 flex items-center justify-center bg-cover bg-center"
-                style="background-image: url('/icon/compu.jpg')">
-                <!-- Overlay para mejor contraste -->
-                <div class="absolute inset-0 bg-black/30"></div>
-                <!-- Icono centrado -->
-                <i class="fas fa-graduation-cap text-white text-5xl z-10"></i>
-                <!-- Texto en la parte inferior -->
-                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent z-10">
-                    <h2 class="text-xl font-bold text-white">{{categoria.nombre_nivel}}</h2>
-                    <p class="text-sm text-white/80">{{categoria.descripcion}}</p>
+            class="card overflow-hidden transition-all duration-300 justify-center mx-2"
+            style="background-color: #535AA9;border-radius:25px;">
+            <div class="relative flex items-center justify-center bg-[#535AA9]"></div>
+            <div class="flex justify-center items-center w-full translate-y-1/2">
+                <div class="bg-white text-indigo-800 font-bold text-center rounded-full border-2 border-indigo-700 p-3 max-w-4/4"
+                    style="background-color: rgba(217, 217, 235, 0.92); ">
+                    <p>{{categoria.nombre_nivel}}</p>
                 </div>
             </div>
-            <!-- Contenido -->
-            <div class="p-6" style="background-color: aliceblue;">
-                <div class="space-y-4 mb-6">
+
+            <div class="p-6 rounded-b-xl" style="background-color: aliceblue;">
+                <div class="space-y-2 mb-4">
+                    <!-- cuarso -->
+                    <div class="flex items-center mt-2">
+                        <span class="text-gray-700">Abiertos para: {{categoria.gradoIniCat}}</span>
+                    </div>
                     <!-- Fecha -->
                     <div class="flex items-center">
                         <span class="text-gray-700">Fecha: {{categoria.fecha_examen | date:'dd/MM/yyyy' }}</span>
@@ -35,19 +34,9 @@
                         </div>
 
                     </div>
-                    <div class="flex items-center">
-                        <div>
-                            <p class="text-gray-700 text-sm">Provincia: Cercado</p>
-                        </div>
-                    </div>
                 </div>
-
-                <!-- Botón -->
-                <button (click)="seleccionarCategoria(categoria.id_area, categoria.id, categoria.nombre_nivel,categoria.descripcion,categoria.costo)"
-                    class="w-full py-3 text-white font-semibold rounded-lg shadow-md flex items-center justify-center bg-[#9C9CA4] hover:bg-[#7c7c84] transition-colors duration-300">
-                    <span>Registrarse</span>
-                    <i class="fas fa-arrow-right ml-2 text-sm"></i>
-                </button>
             </div>
         </div>
+
     </div>
+</div>

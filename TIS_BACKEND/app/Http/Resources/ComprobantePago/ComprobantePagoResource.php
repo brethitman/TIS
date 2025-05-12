@@ -30,3 +30,4 @@ class ComprobantePagoResource extends JsonResource
     }
 
 }
+

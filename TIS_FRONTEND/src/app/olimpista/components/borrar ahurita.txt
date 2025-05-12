@@ -658,3 +658,407 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   }
 
 }
+
+
+
+
+
+============================================================
+============================================================
+============================================================
+============================================================
+
+import { Component, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IDOlimpiadabyArea } from '../../interfaces/olimpiadaAreaCategoria.interface';
+import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
+import { CrearAreaComponent } from '../crear-area/crear-area.component';
+
+
+
+@Component({
+  selector: 'app-vista-areas-categorias',
+  standalone: true,
+  imports: [
+    CommonModule,
+    DatePipe,
+    CurrencyPipe,
+    CrearAreaComponent,
+    FormsModule
+  ],
+  templateUrl: './vista-areas-categorias.component.html',
+})
+export class VistaAreasCategoriasComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private olimpiadaByAreaService = inject(OlimpiadaByAreaService);
+
+
+  public areas: IDOlimpiadabyArea[] = [];
+  public cargando: boolean = true;
+  public errorCarga: string | null = null;
+  public idOlimpiada: number | null = null;
+
+  public areaActiva: number | null = null;
+  public enviando: boolean = false;
+  public errores: string[] = [];
+
+  ngOnInit(): void {
+    this.obtenerIdOlimpiada();
+  }
+
+  // Obtiene el ID de la olimpiada desde la URL
+  private obtenerIdOlimpiada(): void {
+    const idParam = this.route.snapshot.paramMap.get('id');
+    this.idOlimpiada = idParam ? Number(idParam) : null;
+
+    if (!this.idOlimpiada || isNaN(this.idOlimpiada)) {
+      this.errorCarga = 'ID de olimpiada inválido';
+      this.cargando = false;
+      return;
+    }
+    this.cargarAreas();
+  }
+
+  // Carga las áreas con cache-busting
+  private cargarAreas(): void {
+    this.cargando = true;
+    this.olimpiadaByAreaService.getAreasByOlimpiadaId(this.idOlimpiada!)
+      .subscribe({
+        next: (data) => {
+          this.areas = data;
+          this.cargando = false;
+        },
+        error: (err) => {
+          console.error('Error:', err);
+          this.errorCarga = 'Error al cargar áreas';
+          this.cargando = false;
+        }
+      });
+  }
+
+
+
+  // Muestra/oculta el formulario de nuevo nivel
+  toggleFormulario(areaId: number): void {
+    this.areaActiva = this.areaActiva === areaId ? null : areaId;
+
+    this.errores = [];
+  }
+
+  // Valida los campos del formulario
+  validarFormulario(): boolean {
+    this.errores = [];
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // Normaliza la fecha actual
+
+
+
+    return this.errores.length === 0;
+  }
+
+
+
+  // Texto para estado de habilitación
+  getEstadoTexto(habilitacion: number): string {
+    return habilitacion === 1 ? 'Habilitado' : 'Deshabilitado';
+  }
+}
+
+============================================================
+============================================================
+============================================================
+============================================================
+
+<div class="space-y-8">
+  <!-- Sección creación de áreas -->
+  <div class="p-4 bg-blue-50 rounded-lg">
+    <h2 class="text-xl font-semibold text-blue-800 mb-3">Gestión de Áreas</h2>
+    <app-crear-area
+      *ngIf="idOlimpiada"
+      [idOlimpiada]="idOlimpiada"
+      class="block mb-4"
+    ></app-crear-area>
+    <p class="text-gray-600">Desde aquí podrás crear nuevas áreas para la olimpiada.</p>
+  </div>
+
+  <!-- Listado de áreas existentes -->
+  <div class="p-6 container mx-auto">
+    <h1 class="text-2xl font-bold mb-6 text-blue-800">Áreas y Categorías Existentes</h1>
+
+    <!-- Estados de carga -->
+    <div *ngIf="cargando" class="text-center text-blue-600 animate-pulse">
+      <i class="fas fa-spinner fa-spin mr-2"></i>Cargando áreas...
+    </div>
+
+    <!-- Manejo de errores generales -->
+    <div *ngIf="errorCarga" class="p-4 bg-red-50 text-red-700 rounded-lg text-center mb-4">
+      ⚠️ {{ errorCarga }}
+    </div>
+
+    <!-- Listado de áreas -->
+    <div *ngIf="!cargando && !errorCarga">
+      <!-- Caso sin áreas -->
+      <div *ngIf="areas.length === 0" class="text-center text-gray-500 p-8 border-2 border-dashed rounded-xl">
+        No se han encontrado áreas registradas
+      </div>
+
+      <!-- Áreas existentes -->
+      <div *ngIf="areas.length > 0" class="space-y-8">
+        <div *ngFor="let area of areas" class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 hover:shadow-xl transition-shadow">
+          <div class="mb-4">
+            <h2 class="text-2xl font-semibold text-gray-800">{{ area.nombre_area }}</h2>
+            <p class="text-gray-600 mt-1">{{ area.descripcion || 'Sin descripción' }}</p>
+          </div>
+
+          <!-- Sección de niveles -->
+          <div class="border-t pt-4">
+            <!-- Encabezado y botón -->
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-lg font-semibold text-gray-800">Niveles asociados</h3>
+
+            </div>
+
+            <!-- Mensajes de error del formulario -->
+            <div *ngIf="errores.length > 0 && areaActiva === area.id_area" class="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">
+              <ul class="list-disc pl-4">
+                <li *ngFor="let error of errores" class="mb-1 last:mb-0">{{ error }}</li>
+              </ul>
+            </div>
+
+
+
+
+            <!-- Listado de niveles existentes -->
+            <div *ngIf="!area.nivel_categorias?.length" class="text-gray-400 italic py-2">
+              No se han definido niveles para esta área
+            </div>
+
+            <div *ngIf="area.nivel_categorias?.length" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div *ngFor="let nivel of area.nivel_categorias" class="bg-gray-50 p-4 rounded-lg border border-gray-100 hover:bg-white transition-colors">
+                <h4 class="text-lg font-semibold text-gray-700 mb-2">{{ nivel.nombre_nivel }}</h4>
+
+                <div class="space-y-1.5 text-sm">
+                  <p *ngIf="nivel.descripcion" class="text-gray-500 italic">
+                    {{ nivel.descripcion }}
+                  </p>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Fecha examen:</span>
+                    <span class="font-medium text-gray-700">
+                      {{ nivel.fecha_examen | date:'dd/MM/yyyy' }}
+                    </span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Costo:</span>
+                    <span class="font-medium text-gray-700">
+                      {{ nivel.costo | currency:'USD':'symbol':'1.2-2' }}
+                    </span>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+=====================================
+======================================
+========================================
+
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+
+// Servicios
+import { InscripcionServicee } from '../../service/iscripcionn.service';
+import { OlimpiadaService } from '../../service/olimpiada.service';
+
+// Interfaces
+import { InscripcionPayload, InscripcionPostSuccessResponse, BoletaPagoResponse } from '../../interfaces/inscripcion.types';
+import { BoletaPagoComponent } from "../boleta-pago/boleta-pago.component";
+import { IDOlimpiadabyArea } from '../../interfaces/olimpiadaAreaCategoria.interface';
+//Nivele
+@Component({
+  selector: 'app-inscripcion-todo',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, BoletaPagoComponent],
+  templateUrl: './inscripcion-todo.component.html',
+})
+export class InscripcionTodoComponent implements OnInit, OnDestroy {
+  inscripcionForm!: FormGroup;
+  successMessage: string | null = null;
+  errorMessage: string | null = null;
+  areasDisponibles: IDOlimpiadabyArea[] = [];
+  boletaGenerada: BoletaPagoResponse | null = null;
+  private destroy$ = new Subject<void>();
+  olimpiadaId!: number;
+
+  constructor(
+    private fb: FormBuilder,
+    private inscripcionService: InscripcionServicee,
+    private olimpiadaService: OlimpiadaService,
+    private route: ActivatedRoute
+  ) { }
+
+  ngOnInit(): void {
+    this.olimpiadaId = Number(this.route.snapshot.paramMap.get('id_olimpiada'));
+    this.initForm();
+    this.cargarAreas();
+  }
+
+  private initForm(): void {
+    this.inscripcionForm = this.fb.group({
+      fecha_inscripcion: ['', Validators.required],
+      estado: ['Pendiente', Validators.required],
+      olimpistas: this.fb.array([], Validators.required),
+      tutors: this.fb.array([], Validators.required),
+      areas: this.fb.array([], Validators.required)
+    });
+
+    this.addOlimpista();
+    this.addTutor();
+    this.addArea();
+  }
+
+  private cargarAreas(): void {
+    this.olimpiadaService.getAreasByOlimpiadaId(this.olimpiadaId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (areas) => this.areasDisponibles = areas,
+        error: (error) => console.error('Error cargando áreas:', error)
+      });
+  }
+
+  // Getters para FormArrays
+  get olimpistasFormArray(): FormArray { return this.inscripcionForm.get('olimpistas') as FormArray; }
+  get tutorsFormArray(): FormArray { return this.inscripcionForm.get('tutors') as FormArray; }
+  get areasFormArray(): FormArray { return this.inscripcionForm.get('areas') as FormArray; }
+
+  // Métodos para Olimpistas
+  private createOlimpista(): FormGroup {
+    return this.fb.group({
+      nombres: ['', Validators.required],
+      apellidos: ['', Validators.required],
+      ci: ['', Validators.required],
+      fecha_nacimiento: ['', Validators.required],
+      correo: ['', [Validators.required, Validators.email]],
+      telefono: ['', Validators.required],
+      colegio: ['', Validators.required],
+      curso: ['', Validators.required],
+      departamento: ['', Validators.required],
+      provincia: ['', Validators.required]
+    });
+  }
+
+  addOlimpista(): void { this.olimpistasFormArray.push(this.createOlimpista()); }
+  removeOlimpista(index: number): void { this.olimpistasFormArray.removeAt(index); }
+
+  // Métodos para Tutores
+  private createTutor(): FormGroup {
+    return this.fb.group({
+      nombres: ['', Validators.required],
+      apellidos: ['', Validators.required],
+      ci: ['', Validators.required],
+      correo: ['', [Validators.required, Validators.email]],
+      telefono: ['', Validators.required]
+    });
+  }
+
+  addTutor(): void { this.tutorsFormArray.push(this.createTutor()); }
+  removeTutor(index: number): void { this.tutorsFormArray.removeAt(index); }
+
+  // Métodos para Áreas (modificados)
+  private createArea(): FormGroup {
+    return this.fb.group({
+      area: [null, Validators.required],
+      nivel: [{ value: null, disabled: true }, Validators.required]
+    });
+  }
+
+  addArea(): void {
+    const areaGroup = this.createArea();
+    this.setupAreaListeners(areaGroup);
+    this.areasFormArray.push(areaGroup);
+  }
+
+  private setupAreaListeners(areaGroup: FormGroup): void {
+    areaGroup.get('area')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((selectedArea: IDOlimpiadabyArea) => {
+        const nivelControl = areaGroup.get('nivel');
+        if (selectedArea?.nivel_categorias?.length) {
+          nivelControl?.enable();
+          nivelControl?.setValue(null);
+        } else {
+          nivelControl?.disable();
+          nivelControl?.setValue(null);
+        }
+      });
+  }
+
+  removeArea(index: number): void { this.areasFormArray.removeAt(index); }
+
+  getNiveles(areaIndex: number): Nivele[] {
+    return this.areasFormArray.at(areaIndex).get('area')?.value?.nivel_categorias || [];
+  }
+
+  // Submit (modificado)
+  onSubmit(): void {
+    this.inscripcionForm.markAllAsTouched();
+    this.successMessage = null;
+    this.errorMessage = null;
+    this.boletaGenerada = null;
+
+    if (this.inscripcionForm.valid) {
+      const payload = this.preparePayload();
+      this.inscripcionService.crearInscripcion(payload).subscribe({
+        next: (response) => this.handleSuccess(response),
+        error: (error) => this.handleError(error)
+      });
+    } else {
+      this.errorMessage = 'Por favor complete todos los campos requeridos.';
+    }
+  }
+
+  private preparePayload(): InscripcionPayload {
+    const formValue = this.inscripcionForm.value;
+    return {
+      ...formValue,
+      id_olimpiada: this.olimpiadaId,
+      areas: formValue.areas.map((areaGroup: any) => ({
+        area_id: areaGroup.area.id_area,
+        nivelesCategoria: [{
+          id_nivel: areaGroup.nivel.id_nivel,
+          costo: areaGroup.nivel.costo
+        }]
+      }))
+    };
+  }
+
+  private handleSuccess(response: InscripcionPostSuccessResponse): void {
+    this.successMessage = '¡Inscripción exitosa!';
+    this.boletaGenerada = response.inscripcion.boleta_pago;
+    this.inscripcionForm.reset();
+    this.initForm();
+  }
+
+  private handleError(error: any): void {
+    console.error('Error en la inscripción:', error);
+    this.errorMessage = error.error?.message || 'Error al procesar la inscripción. Intente nuevamente.';
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}

@@ -2,20 +2,20 @@
 
 /*
 export interface GetInscripcionResponse {
-  inscripciones: Inscripcion[];
+  inscripciones: Inscripcione[];
   links:         Links;
   meta:          Meta;
 }
 
 
- export interface Links {
+export interface Links {
   first: string;
   last:  null;
   prev:  null;
   next:  null;
 }
 
- export interface Meta {
+export interface Meta {
   current_page: number;
   from:         number;
   path:         string;
