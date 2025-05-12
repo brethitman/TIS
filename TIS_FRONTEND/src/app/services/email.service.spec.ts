@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { EmailService } from './email.service';
+import { EmailService } from '../olimpista/service/email.service';
 
 describe('EmailService', () => {
   let service: EmailService;

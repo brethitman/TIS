@@ -62,7 +62,7 @@ export interface TutorResponse extends Tutor { // Hereda del payload si quieres
 export interface BoletaPagoResponse {
     id: number;
     numero_boleta: string;
-    monto: string; // O number si lo conviertes
+    monto: string | number; // O number si lo conviertes
     fecha_generacion: string; // O Date
     createdAt: string;
     updatedAt: string;

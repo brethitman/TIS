@@ -21,6 +21,8 @@ class BoletaMail extends Mailable
     {
         return $this->view('emails.boleta')
                    ->subject('Tu boleta de pago')
-                   ->attachData($this->pdf->output(), 'boleta_pago.pdf');
+                   ->attachData($this->pdf->output(), 'boleta_pago.pdf', [
+                       'mime' => 'application/pdf',
+                   ]);
     }
 }
