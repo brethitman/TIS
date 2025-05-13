@@ -102,13 +102,13 @@
           <div class="mb-4 flex-1">
             <label class="block font-semibold mb-1">Fecha de inicio:</label>
             <input type="date" [(ngModel)]="editableOlimpiada.fecha_inicio" name="fechaInicio"
-              class="w-full border rounded px-3 py-2 bg-white" required />
+              class="w-full border rounded px-3 py-2 bg-white" [min]="formatDateToInput(olimpiada.fecha_inicio)" [max]="formatDateToInput(addYearsDate(olimpiada.fecha_inicio, 1))" required />
           </div>
 
           <div class="mb-4 flex-1">
             <label class="block font-semibold mb-1">Fecha fin:</label>
             <input type="date" [(ngModel)]="editableOlimpiada.fecha_final" name="fechaFinal"
-              class="w-full border rounded px-3 py-2 bg-white" required />
+              class="w-full border rounded px-3 py-2 bg-white" [min]="formatDateToInput(editableOlimpiada.fecha_inicio)" required />
           </div>
         </div>
 

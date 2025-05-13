@@ -17,6 +17,7 @@ use App\Http\Controllers\Olimpiada\OlimpiadaController;
 use App\Http\Resources\ComprobantePago\ComprobantePagoCollection;
 use App\Models\ComprobantePago;
 use App\Models\CursoNivel;
+use App\Http\Controllers\EmailController\EmailController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -42,14 +43,11 @@ Route::get('/tutor', [TutorController::class, 'index']);
 Route::get('/tutor/{id}', [TutorController::class, 'show']);
 Route::post('/tutor', [TutorController::class, 'store']);
 
-
-
 // boleta ENDPOINTS--da bien---GET POST da bien
 //tiene interface
 Route::get('/boleta', [BoletaPagoController::class, 'index']);
 Route::get('/boleta/{id}', [BoletaPagoController::class, 'show']);
 Route::post('/boleta', [BoletaPagoController::class, 'store']);
-
 
 //ver lueguito
 // comprobante ENDPOINTS--da bien solo GEt
@@ -57,7 +55,6 @@ Route::get('/comprobante', [ComprobantePagoController::class, 'index']);
 Route::get('/comprobante/{id}', [ComprobantePagoController::class, 'show']);
 Route::post('/comprobante', [ComprobantePagoController::class, 'store']);
 /// todavia no puse las interfaces de esto en el frontend
-
 
 // inscripcion ENDPOINTS   GET POST da bien
 //tiene interface
@@ -68,11 +65,9 @@ Route::post('/inscripcion', [InscripcionController::class, 'store']);
 Route::get('/olimpiadas/{id}/areas', [AreaController::class, 'getAreasByOlimpiada']);
 Route::get('/olimpiadasInscripcion/{id}/areas', [AreaController::class, 'getAreasByOlimpiadaParaInscripcion']);
 
-
-
 // categoria ENDPOINTS  ---- GET POST da bien
 //tiene interface
-Route::apiResource('    ', NivelCategoriaController::class);
+Route::apiResource('nivel-categoria', NivelCategoriaController::class);
 Route::get('/nivelCategoria', [NivelCategoriaController::class, 'index']);
 Route::get('/nivelCategoria/{id}', [NivelCategoriaController::class, 'show']);
 Route::post('/nivelCategoria', [NivelCategoriaController::class, 'store']);
@@ -94,8 +89,7 @@ Route::get('/olimpista/{id}', [OlimpistaController::class, 'show']);
 Route::post('/olimpista', [OlimpistaController::class, 'store']);
 
 //olimpiada
-
-// olimpista ENDPOINTS --------------------------- GET POST da bien
+// olimpiada ENDPOINTS --------------------------- GET POST da bien
 //tiene interface
 Route::get('/olimpiada', [OlimpiadaController::class, 'index']);
 Route::get('/olimpiada/{id}', [OlimpiadaController::class, 'show']);
@@ -103,10 +97,7 @@ Route::post('/olimpiada', [OlimpiadaController::class, 'store']);
 Route::delete('/olimpiada/{id}', [OlimpiadaController::class, 'destroy']);
 Route::put('/olimpiada/{id}', [OlimpiadaController::class, 'update']);
 
-
-
 /// curso
-
 Route::get('/curso', [CursoController::class, 'index']);
 Route::get('/curso/{id}', [CursoController::class, 'show']);
 Route::post('/curso', [CursoController::class, 'store']);
@@ -114,7 +105,9 @@ Route::post('/curso', [CursoController::class, 'store']);
 Route::get('/cursos/todos', [CursoController::class, 'getAllCursosSimple']);
 
 ///cursoNivel
-
-Route::get('/   ', [CursoNivelController::class, 'index']);
+Route::get('/curso-nivel', [CursoNivelController::class, 'index']);
 Route::get('/cursoNivel/{id}', [CursoNivelController::class, 'show']);
 Route::post('/cursoNivel', [CursoNivelController::class, 'store']);
+
+// Ruta para el envío de email - Corregida
+Route::post('/email', [EmailController::class, 'enviarEmail']);
