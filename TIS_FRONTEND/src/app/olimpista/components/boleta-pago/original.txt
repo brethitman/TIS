@@ -1,0 +1,215 @@
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
+import { BoletaPagoResponse } from '../../interfaces/inscripcion.types';
+import { EmailService } from '../../service/email.service';
+import { HttpClientModule } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
+
+declare const pdfMake: any;
+import 'pdfmake/build/pdfmake';
+import 'pdfmake/build/vfs_fonts';
+
+@Component({
+  selector: 'app-boleta-pago',
+  standalone: true,
+  imports: [CommonModule, HttpClientModule],
+  templateUrl:'./boleta-pago.component.html',
+  providers: [DatePipe, CurrencyPipe, EmailService]
+})
+export class BoletaPagoComponent implements OnChanges {
+  @Input() boletaData!: BoletaPagoResponse;
+  apiBaseUrl: string = environment.apiUrl;
+
+  envioExitoso: boolean | null = null;
+  mensajeEnvio: string = '';
+
+  constructor(
+    private datePipe: DatePipe,
+    private currencyPipe: CurrencyPipe,
+    private emailService: EmailService
+  ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['boletaData']?.currentValue) {
+      console.log('Datos de boleta actualizados:', this.boletaData);
+    }
+  }
+
+  formatDate(date: string): string {
+    return this.datePipe.transform(date, 'dd/MM/yyyy HH:mm') || 'N/A';
+  }
+
+  formatCurrency(amount: string): string {
+    try {
+      const numericAmount = parseFloat(amount);
+      return `Bs. ${numericAmount.toFixed(2)}`;
+    } catch (error) {
+      console.error('Error formateando moneda:', amount);
+      return 'N/A';
+    }
+  }
+
+  private getDatosParticipante(): any[] {
+    if (!this.boletaData) return [];
+
+    return [
+      {
+        text: [
+          { text: 'Olimpista: ', bold: true },
+          `${this.boletaData.olimpista.nombres} ${this.boletaData.olimpista.apellidos}`
+        ],
+        margin: [0, 5]
+      },
+      {
+        text: [
+          { text: 'CI: ', bold: true },
+          this.boletaData.olimpista.ci
+        ],
+        margin: [0, 5]
+      },
+      {
+        text: [
+          { text: 'Colegio: ', bold: true },
+          this.boletaData.olimpista.colegio
+        ],
+        margin: [0, 5]
+      },
+      {
+        text: [
+          { text: 'Ubicación: ', bold: true },
+          `${this.boletaData.olimpista.departamento} - ${this.boletaData.olimpista.provincia}`
+        ],
+        margin: [0, 5]
+      }
+    ];
+  }
+
+  private getDatosTutor(): any[] {
+    if (!this.boletaData) return [];
+
+    return [
+      {
+        text: [
+          { text: 'Tutor: ', bold: true },
+          `${this.boletaData.tutor.nombres} ${this.boletaData.tutor.apellidos}`
+        ],
+        margin: [0, 5]
+      },
+      {
+        text: [
+          { text: 'Contacto: ', bold: true },
+          this.boletaData.tutor.contacto || 'N/A'
+        ],
+        margin: [0, 5]
+      },
+      {
+        text: [
+          { text: 'Teléfono: ', bold: true },
+          this.boletaData.tutor.telefono
+        ],
+        margin: [0, 5]
+      },
+      {
+        text: [
+          { text: 'Correo: ', bold: true },
+          this.boletaData.tutor.correo
+        ],
+        margin: [0, 5]
+      }
+    ];
+  }
+
+  private getNivelesInscritos(): any {
+    if (!this.boletaData?.areas_niveles?.length) return [];
+
+    const niveles = this.boletaData.areas_niveles.map(area => ({
+      ul: area.niveles.map(nivel => ({
+        text: `${area.area_nombre} - ${nivel.nivel_nombre}`,
+        margin: [15, 2]
+      }))
+    }));
+
+    return [
+      { text: 'Niveles Inscritos:', style: 'subheader' },
+      ...niveles
+    ];
+  }
+
+  generatePdfBoleta(): void {
+    try {
+      if (!this.boletaData?.id) {
+        throw new Error('Datos de boleta inválidos o incompletos');
+      }
+
+      // Validar campos requeridos
+      const requiredFields: (keyof BoletaPagoResponse)[] = [
+        'numero_boleta',
+        'monto',
+        'fecha_generacion',
+        'nombre_olimpiada'
+      ];
+
+      requiredFields.forEach(field => {
+        if (!this.boletaData[field]) {
+          throw new Error(`Campo requerido faltante: ${field}`);
+        }
+      });
+
+      const contenidoPDF = [
+        { text: this.boletaData.nombre_olimpiada, style: 'header' },
+        { text: `Boleta: ${this.boletaData.numero_boleta}`, margin: [0, 5] },
+        { text: `Fecha: ${this.formatDate(this.boletaData.fecha_generacion)}`, margin: [0, 5] },
+        { text: `Monto: ${this.formatCurrency(this.boletaData.monto)}`, margin: [0, 10] },
+
+        // Sección Participante
+        { text: 'Datos del Participante:', style: 'subheader' },
+        ...this.getDatosParticipante(),
+
+        // Sección Tutor
+        { text: 'Datos del Tutor:', style: 'subheader' },
+        ...this.getDatosTutor(),
+
+        // Sección Niveles
+        ...this.getNivelesInscritos(),
+
+        // Footer
+        { text: '¡Gracias por su inscripción!', style: 'footer', margin: [0, 20] }
+      ];
+
+      const pdfDefinition: any = {
+        content: contenidoPDF,
+        styles: {
+          header: {
+            fontSize: 18,
+            bold: true,
+            alignment: 'center',
+            margin: [0, 0, 0, 10]
+          },
+          subheader: {
+            fontSize: 14,
+            bold: true,
+            margin: [0, 10, 0, 5],
+            color: '#2c3e50'
+          },
+          footer: {
+            fontSize: 12,
+            italics: true,
+            alignment: 'center',
+            color: '#7f8c8d'
+          }
+        }
+      };
+
+      const pdf = pdfMake.createPdf(pdfDefinition);
+      pdf.download(`Boleta_${this.boletaData.numero_boleta}.pdf`);
+
+      this.mensajeEnvio = 'Boleta generada exitosamente';
+      this.envioExitoso = true;
+
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+      this.mensajeEnvio = error instanceof Error ? error.message : 'Error al generar la boleta';
+      this.envioExitoso = false;
+    }
+  }
+}
