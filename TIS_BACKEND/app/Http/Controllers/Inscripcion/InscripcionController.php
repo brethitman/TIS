@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inscripcion;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Inscripcion\InscripcionCollection;
 use App\Http\Resources\Inscripcion\InscripcionResource;
+use Symfony\Component\HttpFoundation\Response;
 use App\Models\Area;
 use App\Models\Inscripcion;
 use App\Models\NivelCategoria;
@@ -268,4 +269,70 @@ class InscripcionController extends Controller
 
         return response()->json($areas);
     }
+
+    //verificar con el ocr de frontend
+
+    public function verificarPago(Request $request)
+{
+    $request->validate([
+        'numero_boleta' => 'required|string|max:50',
+        'estado' => 'required|in:Pagado' // Solo permite cambiar a Pagado
+    ]);
+
+    DB::beginTransaction();
+
+    try {
+        // Buscar boleta con relaciones
+        $boleta = BoletaPago::with('inscripcion')
+            ->where('numero_boleta', $request->numero_boleta)
+            ->firstOrFail();
+
+        // Validar transición de estado válida
+        if ($boleta->inscripcion->estado === 'Pagado') {
+            return response()->json([
+                'message' => 'La boleta ya tiene estado Pagado',
+                'estado_actual' => $boleta->inscripcion->estado
+            ], Response::HTTP_CONFLICT); // 409 Conflict
+        }
+
+        // Validar que solo se pueda cambiar desde Pendiente
+        if ($boleta->inscripcion->estado !== 'Pendiente') {
+            return response()->json([
+                'message' => 'Solo se puede pagar inscripciones en estado Pendiente',
+                'estado_actual' => $boleta->inscripcion->estado
+            ], Response::HTTP_UNPROCESSABLE_ENTITY); // 422
+        }
+
+        // Actualizar estado
+        $boleta->inscripcion->update(['estado' => $request->estado]);
+
+        // Cargar relaciones para la respuesta
+        $inscripcionActualizada = $boleta->inscripcion->load([
+            'olimpistas',
+            'tutors',
+            'boletaPago',
+            'nivelCategorias'
+        ]);
+
+        DB::commit();
+
+        return response()->json([
+            'message' => 'Estado actualizado exitosamente',
+            'data' => new InscripcionResource($inscripcionActualizada)
+        ]);
+
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        DB::rollBack();
+        return response()->json([
+            'message' => 'Boleta no encontrada'
+        ], Response::HTTP_NOT_FOUND); // 404
+
+    } catch (\Throwable $e) {
+        DB::rollBack();
+        return response()->json([
+            'message' => 'Error al procesar la solicitud',
+            'error' => $e->getMessage()
+        ], Response::HTTP_INTERNAL_SERVER_ERROR); // 500
+    }
+}
 }

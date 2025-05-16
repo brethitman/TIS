@@ -29,15 +29,20 @@ class Inscripcion extends Model
         return $this->hasMany(Olimpista::class, 'id_inscripcion');
     }
 
+
     public function tutors()
     {
         return $this->hasMany(Tutor::class, 'id_inscripcion');
     }
 
+
+
     public function boletaPago()
     {
         return $this->hasOne(BoletaPago::class, 'id_inscripcion');
     }
+
+
 
     public function nivelCategorias()
     {
@@ -45,4 +50,9 @@ class Inscripcion extends Model
             ->withPivot('id_area')
             ->withTimestamps();
     }
+
+
+
+
+
 }
