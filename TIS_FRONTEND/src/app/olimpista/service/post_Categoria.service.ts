@@ -29,6 +29,10 @@ export class NivelService {
       request
     );
   }
+  updateHabilitacion(idNivel: number, habilitacion: boolean): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/niveles/${idNivel}/habilitacion`, { habilitacion });
+  }
+
 
   /**
    * Crea un solo nivel para un área específica.

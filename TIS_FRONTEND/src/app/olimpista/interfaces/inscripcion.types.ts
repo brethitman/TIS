@@ -28,11 +28,13 @@ export interface AreaInscripcion {
 }
 
 export interface InscripcionPayload {
+  olimpiada_id: number; // Añadido este campo que faltaba
   estado: string;
   olimpistas: Olimpista[];
   tutors: Tutor[];
   areas: AreaInscripcion[];
 }
+
 // --- Fin Interfaces para el Payload ---
 
 
