@@ -1,34 +1,75 @@
-<div class="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Subir Comprobante</h2>
-  
-    <!-- Botón para seleccionar archivo -->
-    <input type="file" accept="image/*" (change)="onFileSelected($event)" id="fileInput" hidden />
-    <button
-      class="bg-[#0D1271] text-white px-6 py-3 rounded-lg shadow hover:shadow-lg transition duration-300 mb-4"
-      (click)="triggerFileInput()"
-    >
-      Seleccionar Imagen
-    </button>
-  
-    <!-- Mensaje de confirmación -->
-    <div *ngIf="imagenConfirmada" class="bg-green-100 text-green-800 px-4 py-2 rounded mb-4 shadow">
-      Imagen subida correctamente.
+<div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-50 to-gray-200 p-6">
+  <div class="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8 space-y-6">
+    <div class="text-center mb-2">
+      <h2 class="text-3xl font-bold text-gray-800">Reconocimiento de Comprobante</h2>
+      <p class="text-gray-600 mt-2">Sube una imagen de tu comprobante para procesarla</p>
     </div>
-  
-    <!-- Imagen cargada -->
-    <div *ngIf="imagenCargada" class="mb-4">
-      <img [src]="imagenCargada" alt="Imagen subida" class="max-w-xs rounded shadow" />
+
+    <div class="border-t border-gray-200 my-6"></div>
+    
+    <!-- Sección de carga de archivo -->
+    <div class="flex flex-col items-center">
+      <!-- Input oculto para archivo -->
+      <input type="file" accept="image/*" (change)="onFileSelected($event)" id="fileInput" class="hidden" />
+      
+      <!-- Botón para seleccionar archivo -->
+      <button
+        class="bg-indigo-700 hover:bg-indigo-800 text-white px-6 py-3 rounded-lg shadow-md transition duration-300 flex items-center gap-2 font-medium"
+        (click)="triggerFileInput()"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+        </svg>
+        Seleccionar Imagen
+      </button>
+      
+      <!-- Mensaje informativo -->
+      <p class="text-sm text-gray-500 mt-2">Formatos aceptados: JPG, PNG, GIF</p>
     </div>
-  
-    <!-- Progreso OCR -->
-    <div *ngIf="cargandoOCR" class="text-blue-600 mb-4">
-      Procesando OCR...
+
+    <!-- Alerta de confirmación -->
+    <div *ngIf="imagenConfirmada" class="bg-green-50 border-l-4 border-green-500 p-4 rounded-md shadow-sm transition-all duration-300 animate-fade-in">
+      <div class="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <p class="text-green-700 font-medium">Imagen subida correctamente</p>
+      </div>
     </div>
-  
-    <!-- Resultado OCR -->
-    <div *ngIf="ocrResultado && !cargandoOCR" class="w-full max-w-xl bg-white p-4 rounded shadow">
-      <h3 class="font-semibold mb-2 text-gray-700">Texto reconocido:</h3>
-      <pre class="text-sm text-gray-800 whitespace-pre-wrap">{{ ocrResultado }}</pre>
+
+    <!-- Sección de imagen y resultados -->
+    <div *ngIf="imagenCargada" class="flex flex-col md:flex-row gap-6 mt-4">
+      <!-- Imagen cargada -->
+      <div class="md:w-1/2">
+        <div class="bg-gray-50 p-2 rounded-lg border border-gray-200">
+          <p class="text-sm text-gray-500 mb-2 font-medium">Vista previa:</p>
+          <img [src]="imagenCargada" alt="Imagen subida" class="w-full h-auto rounded shadow-sm object-contain max-h-64" />
+        </div>
+      </div>
+
+      <!-- Resultado OCR -->
+      <div class="md:w-1/2">
+        <!-- Estado de carga -->
+        <div *ngIf="cargandoOCR" class="bg-blue-50 p-4 rounded-lg flex items-center justify-center shadow-sm border border-blue-100 h-full">
+          <div class="flex flex-col items-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-700 mb-2"></div>
+            <p class="text-indigo-700 font-medium">Procesando OCR...</p>
+          </div>
+        </div>
+
+        <!-- Resultado final -->
+        <div *ngIf="ocrResultado && !cargandoOCR" class="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm h-full">
+          <div class="flex items-center mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h3 class="font-semibold text-gray-800">Texto reconocido:</h3>
+          </div>
+          <div class="bg-white p-3 rounded border border-gray-200 max-h-60 overflow-auto">
+            <pre class="text-sm text-gray-800 whitespace-pre-wrap font-mono">{{ ocrResultado }}</pre>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  
+</div>

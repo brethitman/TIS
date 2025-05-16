@@ -7,7 +7,6 @@ import * as Tesseract from 'tesseract.js';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './prueba-ocr.component.html',
-  //styleUrls: ['./prueba-ocr.component.css'] // opcional
 })
 export class PruebaOcrComponent {
   ocrResultado: string = '';

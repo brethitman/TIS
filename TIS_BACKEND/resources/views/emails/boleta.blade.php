@@ -313,7 +313,6 @@
                 display: none;
             }
 
-            /* Asegurar que los colores se impriman */
             .header, .header::after, 
             .title-icon, .boleta-titulo::after,
             .boleta-label, .boleta-label i,
