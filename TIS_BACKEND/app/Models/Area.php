@@ -64,10 +64,7 @@ class Area extends Model
                     ->using(InscripcionAreaNivel::class) // Usar el modelo de la tabla pivote
                     ->withTimestamps(); // Si la tabla pivote tiene created_at y updated_at
     }
-    public function niveles()
-    {
-        return $this->hasMany(NivelCategoria::class, 'id_area', 'id_area');
-    }
+
 
 
     public function cursos()
@@ -76,5 +73,8 @@ class Area extends Model
     }
 
 
-    
+
+public function niveles() {
+    return $this->hasMany(NivelCategoria::class, 'id_area', 'id_area');
+}
 }

@@ -64,6 +64,9 @@ Route::post('/inscripcion', [InscripcionController::class, 'store']);
 
 Route::get('/olimpiadas/{id}/areas', [AreaController::class, 'getAreasByOlimpiada']);
 Route::get('/olimpiadasInscripcion/{id}/areas', [AreaController::class, 'getAreasByOlimpiadaParaInscripcion']);
+///verificar con ocr del frontend
+Route::post('/inscripciones/verificar-pago', [InscripcionController::class, 'verificarPago']);
+
 
 // categoria ENDPOINTS  ---- GET POST da bien
 //tiene interface
