@@ -25,24 +25,39 @@ class BoletaPago extends Model
     ];
 
     protected $casts = [
-        'fecha_generacion' => 'date',
+        'fecha_generacion' => 'datetime', // Cambiado de 'date' a 'datetime'
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'areas_niveles' => 'array', // Esto es CRUCIAL para el JSON
+        'areas_niveles' => 'array',
     ];
 
+    // Relación con Inscripcion (ajustada para usar la clave correcta)
     public function inscripcion()
     {
-        return $this->belongsTo(Inscripcion::class, 'id_inscripcion');
+        return $this->belongsTo(
+            Inscripcion::class,
+            'id_inscripcion', // Clave foránea en boleta_pagos
+            'id_inscripcion' // Clave primaria en inscripcions
+        );
     }
 
+    // Relación con Olimpista (ajustada)
     public function olimpista()
     {
-        return $this->belongsTo(Olimpista::class, 'id_olimpista');
+        return $this->belongsTo(
+            Olimpista::class,
+            'id_olimpista',
+            'id_olimpista' // Asegurar que coincida con la clave primaria de Olimpista
+        );
     }
 
+    // Relación con Tutor (ajustada)
     public function tutor()
     {
-        return $this->belongsTo(Tutor::class, 'id_tutor');
+        return $this->belongsTo(
+            Tutor::class,
+            'id_tutor',
+            'id_tutor' // Clave primaria en tutors
+        );
     }
 }

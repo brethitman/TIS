@@ -1,28 +1,40 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VerificarBoletaService } from '../../service/verificarBoleta.service';
-import { Inscripcion, VerificarPagoPayload } from '../../interfaces/postVerificarBoleta.interface';
+import { Observable, finalize } from 'rxjs';
+import {
+  VerificarPagoPayload,
+  VerificarPagoResponse,
+  InscripcionDetallada
+} from '../../interfaces/postVerificarBoleta.interface';
 import * as Tesseract from 'tesseract.js';
+import { VerificarBoletaService } from '../../service/verificarBoleta.service';
 
 @Component({
   selector: 'app-prueba-ocr',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './prueba-ocr.component.html',
-
 })
 export class PruebaOcrComponent {
+  // Estados del componente
   ocrResultado: string = '';
   imagenCargada: string | null = null;
   cargandoOCR: boolean = false;
   procesandoPago: boolean = false;
-  inscripcionVerificada?: Inscripcion;
+  inscripcionVerificada?: InscripcionDetallada;
   errorMensaje: string = '';
   estadoDetectado: string = '';
   numeroBoletaDetectado: string = '';
 
+  private readonly patronesBoleta = [
+    /BOL-[\w\d]{8,}-\d+/i,
+    /BOL[\W_]?[\dA-Z]{6,}/i,
+    /(?:COD|ID|N°?)[\W_]*[\dA-Z-]{6,}/i
+  ];
+
   constructor(private verificarBoletaService: VerificarBoletaService) {}
 
+  // Métodos públicos
   triggerFileInput(): void {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     fileInput?.click();
@@ -31,108 +43,132 @@ export class PruebaOcrComponent {
   onFileSelected(event: Event): void {
     this.limpiarEstado();
     const input = event.target as HTMLInputElement;
-
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.procesarImagen(file);
+    
+    if (input.files?.length) {
+      this.procesarImagen(input.files[0]);
     }
   }
 
+  // Métodos privados
   private limpiarEstado(): void {
-    this.ocrResultado = '';
     this.imagenCargada = null;
     this.inscripcionVerificada = undefined;
     this.errorMensaje = '';
     this.estadoDetectado = '';
     this.numeroBoletaDetectado = '';
+    this.ocrResultado = '';
   }
 
   private procesarImagen(file: File): void {
     const reader = new FileReader();
-
-    reader.onload = () => {
-      this.imagenCargada = reader.result as string;
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      this.imagenCargada = e.target?.result as string;
       this.reconocerTexto(this.imagenCargada);
     };
-
     reader.readAsDataURL(file);
   }
 
   private reconocerTexto(imagenBase64: string): void {
     this.cargandoOCR = true;
-
+    
     Tesseract.recognize(imagenBase64, 'spa', {
-      logger: m => console.log(m)
-    }).then(({ data: { text } }) => {
+      logger: info => console.debug('Proceso OCR:', info)
+    })
+    .then(({ data: { text } }) => {
       this.ocrResultado = text;
       this.validarDatosOCR();
-      this.cargandoOCR = false;
-    }).catch(error => {
-      console.error('Error OCR:', error);
-      this.cargandoOCR = false;
-      this.errorMensaje = 'Error al procesar la imagen';
-    });
+    })
+    .catch(error => {
+      console.error('Error en OCR:', error);
+      this.errorMensaje = 'Error al procesar la imagen. Intente con una foto más clara.';
+    })
+    .finally(() => this.cargandoOCR = false);
   }
 
   private validarDatosOCR(): void {
     this.numeroBoletaDetectado = this.extraerNumeroBoleta(this.ocrResultado);
-    this.estadoDetectado = this.extraerEstado(this.ocrResultado);
-
+    
     if (!this.numeroBoletaDetectado) {
-      this.errorMensaje = 'No se detectó número de boleta válido';
+      this.errorMensaje = '❌ No se pudo detectar el número de boleta';
       return;
     }
-
-    if (this.estadoDetectado !== 'Pendiente') {
-      this.errorMensaje = 'El estado detectado no es "Pendiente"';
-      return;
-    }
-
+    
     this.verificarPagoAutomatico();
   }
 
   private extraerNumeroBoleta(texto: string): string {
-    const patrones = [
-      /BOL-[A-Z0-9]{6,}-\d+/i,
-      /BOLETA\s*N°?\s*\d+/i,
-      /COD:\s*\d{6,}/i,
-      /No\.?\s*[\w-]+/i
-    ];
-
-    for (const patron of patrones) {
-      const match = texto.match(patron);
+    const textoLimpio = texto.replace(/[\s_]/g, '');
+    
+    for (const patron of this.patronesBoleta) {
+      const match = textoLimpio.match(patron);
       if (match) {
-        return match[0].toUpperCase().replace(/\s/g, '');
+        return match[0]
+          .toUpperCase()
+          .replace(/[^A-Z0-9-]/g, '')
+          .replace(/O/g, '0');
       }
     }
     return '';
   }
 
-  private extraerEstado(texto: string): string {
-    const regex = /(Estado|Status|Situación):\s*([A-Za-záéíóú]+)/i;
-    const match = texto.match(regex);
-    return match ? match[2].trim() : '';
-  }
-
   private verificarPagoAutomatico(): void {
     this.procesandoPago = true;
     this.errorMensaje = '';
-
+    
     const payload: VerificarPagoPayload = {
       numero_boleta: this.numeroBoletaDetectado,
       estado: 'Pagado'
     };
+    
+    this.verificarBoletaService.verificarPago(payload)
+      .pipe(finalize(() => this.procesandoPago = false))
+      .subscribe({
+        next: (response) => {
+          console.log('Respuesta completa:', response);
+          this.inscripcionVerificada = response.data;
+          this.estadoDetectado = response.data.estado;
+          this.errorMensaje = '';
+          
+          // Convertir tipos de datos numéricos
+          this.normalizarTiposDatos();
+        },
+        error: (error) => this.manejarErrorVerificacion(error)
+      });
+  }
 
-    this.verificarBoletaService.verificarPago(payload).subscribe({
-      next: (inscripcion) => {
-        this.procesandoPago = false;
-        this.inscripcionVerificada = inscripcion;
-      },
-      error: (error) => {
-        this.procesandoPago = false;
-        this.errorMensaje = error.error?.message || 'Error al verificar el pago';
-        console.error('Error:', error);
-      }
+  private normalizarTiposDatos(): void {
+    if (!this.inscripcionVerificada) return;
+
+    // Convertir montos de string a number si es necesario
+    if (typeof this.inscripcionVerificada.detalles_academicos.boleta.monto === 'string') {
+      this.inscripcionVerificada.detalles_academicos.boleta.monto = 
+        parseFloat(this.inscripcionVerificada.detalles_academicos.boleta.monto);
+    }
+
+    // Convertir costos de niveles
+    this.inscripcionVerificada.detalles_academicos.areas.forEach(area => {
+      area.niveles.forEach(nivel => {
+        if (typeof nivel.costo === 'string') {
+          nivel.costo = parseFloat(nivel.costo);
+        }
+      });
     });
+  }
+
+  private manejarErrorVerificacion(error: any): void {
+    console.error('Error en verificación:', error);
+    this.errorMensaje = error.message || '⛔ Error al conectar con el servidor';
+
+    if (error.error) {
+      // Manejo de errores estructurados del servidor
+      if (error.error.data) {
+        this.inscripcionVerificada = error.error.data.datos;
+        this.estadoDetectado = error.error.data.estado_actual;
+      }
+      
+      if (error.status === 409) {
+        this.errorMensaje += '. La boleta ya tiene un pago registrado anteriormente.';
+      }
+    }
   }
 }

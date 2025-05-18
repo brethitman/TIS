@@ -7,22 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class Inscripcion extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
     protected $table = 'inscripcions';
     protected $primaryKey = 'id_inscripcion';
     protected $keyType = 'int';
 
+    // Eliminar 'fecha_inscripcion' de $fillable
     protected $fillable = [
-        'estado',
-        'fecha_inscripcion'
+        'estado'
     ];
 
+    // Ajustar casts para usar created_at
     protected $casts = [
-        'fecha_inscripcion' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
 
     public function olimpistas()
     {

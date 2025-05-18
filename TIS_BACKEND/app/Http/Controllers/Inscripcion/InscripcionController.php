@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-
+use Illuminate\Validation\Rule;
 
 
 class InscripcionController extends Controller
@@ -272,67 +272,151 @@ class InscripcionController extends Controller
 
     //verificar con el ocr de frontend
 
-    public function verificarPago(Request $request)
+public function verificarPago(Request $request)
 {
-    $request->validate([
+    $validatedData = $request->validate([
         'numero_boleta' => 'required|string|max:50',
-        'estado' => 'required|in:Pagado' // Solo permite cambiar a Pagado
+        'estado' => ['required', Rule::in(['Pagado'])]
+    ], [
+        'estado.in' => 'Diríjase a pagar a caja de la facultad de tecnología UMSS',
     ]);
 
     DB::beginTransaction();
 
     try {
-        // Buscar boleta con relaciones
-        $boleta = BoletaPago::with('inscripcion')
-            ->where('numero_boleta', $request->numero_boleta)
-            ->firstOrFail();
+        // Normalización del número de boleta
+        $numeroBoleta = strtoupper(
+            preg_replace(
+                '/[^A-Z0-9]/i',
+                '',
+                str_replace(['O', '-'], ['0', ''], $request->numero_boleta)
+            )
+        );
 
-        // Validar transición de estado válida
+        // Búsqueda con carga completa de relaciones
+        $boleta = BoletaPago::with([
+            'inscripcion.olimpistas',
+            'inscripcion.tutors',
+            'inscripcion.nivelCategorias.area.olimpiada'
+        ])->whereRaw("REPLACE(REPLACE(numero_boleta, 'O', '0'), '-', '') = ?", [$numeroBoleta])
+          ->firstOrFail();
+
+        // Respuesta base
+        $response = [
+            'estado_actual' => $boleta->inscripcion->estado,
+            'datos' => $this->formatearRespuestaCompleta($boleta->inscripcion)
+        ];
+
+        // Validar estados
         if ($boleta->inscripcion->estado === 'Pagado') {
             return response()->json([
-                'message' => 'La boleta ya tiene estado Pagado',
-                'estado_actual' => $boleta->inscripcion->estado
-            ], Response::HTTP_CONFLICT); // 409 Conflict
+                'message' => 'La boleta ya fue pagada anteriormente',
+                'data' => $response
+            ], 409);
         }
 
-        // Validar que solo se pueda cambiar desde Pendiente
         if ($boleta->inscripcion->estado !== 'Pendiente') {
             return response()->json([
-                'message' => 'Solo se puede pagar inscripciones en estado Pendiente',
-                'estado_actual' => $boleta->inscripcion->estado
-            ], Response::HTTP_UNPROCESSABLE_ENTITY); // 422
+                'message' => 'Estado incompatible para pago',
+                'data' => $response
+            ], 422);
         }
 
         // Actualizar estado
-        $boleta->inscripcion->update(['estado' => $request->estado]);
-
-        // Cargar relaciones para la respuesta
-        $inscripcionActualizada = $boleta->inscripcion->load([
+        $boleta->inscripcion->update(['estado' => 'Pagado']);
+        $inscripcionActualizada = $boleta->inscripcion->fresh()->loadMissing([
             'olimpistas',
             'tutors',
-            'boletaPago',
-            'nivelCategorias'
+            'nivelCategorias.area.olimpiada'
         ]);
 
         DB::commit();
 
         return response()->json([
-            'message' => 'Estado actualizado exitosamente',
-            'data' => new InscripcionResource($inscripcionActualizada)
+            'message' => 'Pago registrado exitosamente',
+            'data' => $this->formatearRespuestaCompleta($inscripcionActualizada)
         ]);
 
     } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
         DB::rollBack();
         return response()->json([
-            'message' => 'Boleta no encontrada'
-        ], Response::HTTP_NOT_FOUND); // 404
+            'message' => 'Boleta no encontrada',
+            'sugerencias' => [
+                'Verifique el formato: BOL-XXXXX-XX',
+                'Confirme que el número no contenga errores'
+            ]
+        ], 404);
 
     } catch (\Throwable $e) {
         DB::rollBack();
+        Log::error('Error en verificación de pago: ' . $e->getMessage(), [
+            'exception' => $e,
+            'request' => $request->all()
+        ]);
+
         return response()->json([
-            'message' => 'Error al procesar la solicitud',
-            'error' => $e->getMessage()
-        ], Response::HTTP_INTERNAL_SERVER_ERROR); // 500
+            'message' => 'Error interno del servidor',
+            'incidente_id' => Str::uuid(),
+            'soporte' => 'contacto@tecnologia.umss.edu.bo'
+        ], 500);
     }
+}
+
+private function formatearRespuestaCompleta($inscripcion)
+{
+    return [
+        'id_inscripcion' => $inscripcion->id_inscripcion,
+        'estado' => $inscripcion->estado,
+        'fechas' => [
+            'inscripcion' => $inscripcion->created_at->toDateTimeString(),
+            'actualizacion' => $inscripcion->updated_at->toDateTimeString()
+        ],
+        'olimpiada' => $inscripcion->nivelCategorias->first()?->area?->olimpiada?->nombre_olimpiada ?? 'No especificada',
+        'participante' => $inscripcion->olimpistas->map(function($olimpista) {
+            return [
+                'nombres' => $olimpista->nombres,
+                'apellidos' => $olimpista->apellidos,
+                'ci' => $olimpista->ci,
+                'colegio' => $olimpista->colegio,
+                'contacto' => [
+                    'email' => $olimpista->correo,
+                    'telefono' => $olimpista->telefono
+                ]
+            ];
+        })->first(),
+        'tutor' => $inscripcion->tutors->map(function($tutor) {
+            return [
+                'nombres' => $tutor->nombres,
+                'apellidos' => $tutor->apellidos,
+                'ci' => $tutor->ci,
+                'contacto' => [
+                    'email' => $tutor->correo,
+                    'telefono' => $tutor->telefono,
+                    'parentesco' => $tutor->contacto
+                ]
+            ];
+        })->first(),
+        'detalles_academicos' => [
+            'boleta' => [
+                'numero' => $inscripcion->boletaPago->numero_boleta,
+                'monto' => $inscripcion->boletaPago->monto,
+                'fecha_emision' => $inscripcion->boletaPago->fecha_generacion
+            ],
+            'areas' => $inscripcion->nivelCategorias->groupBy('area.id_area')->map(function($niveles) {
+                $area = $niveles->first()?->area;
+
+                return [
+                    'nombre' => $area->nombre_area ?? 'Área desconocida',
+                    'niveles' => $niveles->map(function($nivel) {
+                        return [
+                            'nombre' => $nivel->nombre_nivel,
+                            'costo' => $nivel->costo,
+                            'fecha_examen' => $nivel->fecha_examen->toDateString()
+                        ];
+                    })
+                ];
+            })->values()
+        ]
+    ];
 }
 }

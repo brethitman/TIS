@@ -139,7 +139,7 @@ export class BoletaPagoComponent implements OnChanges {
                         ],
                         [
                           { text: 'Estado:', style: 'tableLabel' },
-                          { text: 'Pendiente de Pago', style: 'tableValueGreen' }
+                          { text: 'Pendiente', style: 'tableValueGreen' }
                         ]
                       ]
                     },

@@ -1,122 +1,299 @@
-<div class="flex flex-col items-center min-h-screen bg-gray-50 p-6">
-  <h1 class="text-3xl font-bold text-gray-800 mb-8">Verificador de Pagos</h1>
-
-  <!-- Sección de carga de imagen -->
-  <div class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 mb-8">
-    <div class="text-center">
-      <input
-        type="file"
-        accept="image/*"
-        (change)="onFileSelected($event)"
-        id="fileInput"
-        class="hidden"
-      />
-      <label
-        for="fileInput"
-        class="cursor-pointer bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
-      >
-        <i class="fas fa-upload mr-2"></i>Subir Comprobante
-      </label>
-
-      <p class="text-sm text-gray-500 mt-2">
-        Formatos soportados: JPG, PNG, PDF
+<div class="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
+  <div class="max-w-4xl mx-auto space-y-8">
+    <!-- Encabezado -->
+    <header class="text-center">
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+        Verificador de Pagos
+      </h1>
+      <p class="text-gray-600 sm:text-lg">
+        Valide sus comprobantes de pago de la Olimpiada Nacional
       </p>
-    </div>
+    </header>
 
-    <!-- Vista previa de imagen -->
-    <div *ngIf="imagenCargada" class="mt-6">
-      <h3 class="text-lg font-semibold mb-3">Vista previa del comprobante:</h3>
-      <div class="border-2 border-dashed border-gray-200 rounded-lg p-2">
-        <img
-          [src]="imagenCargada"
-          alt="Comprobante subido"
-          class="max-h-64 w-full object-contain"
-        />
-      </div>
-    </div>
-  </div>
+    <!-- Sección de carga -->
+    <section class="bg-white rounded-2xl shadow-sm p-6 sm:p-8">
+      <input type="file" id="fileInput" class="hidden"
+             accept="image/*" (change)="onFileSelected($event)">
 
-  <!-- Sección de resultados -->
-  <div *ngIf="ocrResultado" class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6">
-    <!-- Indicadores de estado -->
-    <div class="grid grid-cols-2 gap-4 mb-6">
-      <div class="bg-blue-50 p-4 rounded-lg">
-        <p class="text-sm font-medium text-blue-600">N° Boleta detectado</p>
-        <p class="text-xl font-semibold text-blue-800">{{ numeroBoletaDetectado || 'No encontrado' }}</p>
-      </div>
+      <div class="text-center space-y-4">
+        <button (click)="triggerFileInput()"
+               class="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700
+                      text-white font-medium rounded-lg transition-all cursor-pointer
+                      focus:ring-4 focus:ring-indigo-100 focus:outline-none">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+          </svg>
+          Subir Comprobante
+        </button>
 
-      <div class="bg-yellow-50 p-4 rounded-lg">
-        <p class="text-sm font-medium text-yellow-600">Estado detectado</p>
-        <p class="text-xl font-semibold text-yellow-800">{{ estadoDetectado || 'No identificado' }}</p>
-      </div>
-    </div>
-
-    <!-- Progreso -->
-    <div *ngIf="cargandoOCR || procesandoPago" class="mb-6">
-      <div class="flex items-center justify-center space-x-2 text-blue-600">
-        <i class="fas fa-spinner fa-spin"></i>
-        <span>{{ cargandoOCR ? 'Procesando imagen...' : 'Verificando pago...' }}</span>
-      </div>
-    </div>
-
-    <!-- Resultado exitoso -->
-    <div *ngIf="inscripcionVerificada" class="bg-green-50 p-6 rounded-lg">
-      <div class="flex items-center mb-4">
-        <i class="fas fa-check-circle text-2xl text-green-600 mr-2"></i>
-        <h2 class="text-xl font-bold text-green-800">¡Pago Verificado Correctamente!</h2>
+        <p class="text-sm text-gray-500">
+          Formatos soportados: JPEG, PNG, PDF (Máx. 5MB)
+        </p>
       </div>
 
-      <div class="space-y-4">
-        <!-- Datos de la boleta -->
-        <div>
-          <h3 class="font-semibold text-green-700 mb-2">Información del Pago</h3>
-          <div class="grid grid-cols-2 gap-4">
+      <!-- Vista previa de imagen -->
+      <div *ngIf="imagenCargada" class="mt-8">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Vista previa</h2>
+        <div class="border-2 border-dashed border-gray-200 rounded-xl overflow-hidden">
+          <img [src]="imagenCargada" alt="Comprobante escaneado"
+               class="w-full h-64 object-contain bg-gray-50 p-4">
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección de resultados -->
+    <section *ngIf="ocrResultado" class="bg-white rounded-2xl shadow-sm p-6 sm:p-8">
+
+      <!-- Mensajes de estado -->
+      <div *ngIf="errorMensaje"
+           [ngClass]="{
+             'bg-red-50 border-red-200 text-red-700': !inscripcionVerificada,
+             'bg-green-50 border-green-200 text-green-700': inscripcionVerificada
+           }"
+           class="p-6 rounded-xl border mt-8">
+        <div class="flex items-center mb-3">
+          <svg *ngIf="!inscripcionVerificada" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          <svg *ngIf="inscripcionVerificada" class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M5 13l4 4L19 7"/>
+          </svg>
+          <h3 class="font-semibold">
+            {{ inscripcionVerificada ? 'Inscripción verificada' : 'Error en la verificación' }}
+          </h3>
+        </div>
+        <p>{{ errorMensaje }}</p>
+      </div>
+
+      <!-- Estado del proceso -->
+      <div class="grid gap-4 sm:grid-cols-2 mb-8">
+        <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <dt class="text-sm font-medium text-blue-600">Número de Boleta</dt>
+          <dd class="mt-1 text-xl font-semibold text-blue-900 truncate">
+            {{ numeroBoletaDetectado || 'No detectado' }}
+          </dd>
+        </div>
+        <div class="p-4 bg-amber-50 rounded-lg border border-amber-200">
+          <dt class="text-sm font-medium text-amber-600">Estado Actual</dt>
+          <dd class="mt-1 text-xl font-semibold text-amber-900">
+            {{ estadoDetectado || 'No identificado' }}
+          </dd>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div *ngIf="cargandoOCR || procesandoPago"
+           class="p-6 text-center space-y-3 animate-pulse">
+        <div class="inline-flex items-center text-indigo-600">
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span class="text-gray-700">
+            {{ cargandoOCR ? 'Procesando imagen...' : 'Validando pago...' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Datos de verificación exitosa -->
+      <div *ngIf="inscripcionVerificada" class="space-y-8">
+        <!-- Encabezado de éxito -->
+        <div class="bg-green-50 p-6 rounded-xl border border-green-200">
+          <div class="flex items-center mb-4">
+            <svg class="w-6 h-6 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
             <div>
-              <p class="text-sm text-gray-600">Número de Boleta</p>
-              <p class="font-medium">{{ inscripcionVerificada.boleta_pago.numero_boleta }}</p>
-            </div>
-            <div>
-              <p class="text-sm text-gray-600">Monto Pagado</p>
-              <p class="font-medium text-green-700">Bs. {{ inscripcionVerificada.boleta_pago.monto }}</p>
+              <h2 class="text-xl font-bold text-green-900">¡Pago Verificado Exitosamente!</h2>
+              <p class="text-green-700 mt-1">N° de Boleta: {{ inscripcionVerificada.detalles_academicos.boleta.numero }}</p>
             </div>
           </div>
         </div>
 
-        <!-- Datos del participante -->
-        <div *ngIf="inscripcionVerificada.olimpistas[0]">
-          <h3 class="font-semibold text-green-700 mb-2">Datos del Participante</h3>
-          <div class="space-y-1">
-            <p>{{ inscripcionVerificada.olimpistas[0].nombres }} {{ inscripcionVerificada.olimpistas[0].apellidos }}</p>
-            <p class="text-sm text-gray-600">{{ inscripcionVerificada.olimpistas[0].colegio }}</p>
-            <p class="text-sm text-gray-600">{{ inscripcionVerificada.olimpistas[0].departamento }}</p>
+        <!-- Información principal -->
+        <div class="bg-white rounded-lg shadow-sm p-6 space-y-6">
+          <!-- Sección superior: Inscripción y Pago -->
+          <div class="grid gap-6 md:grid-cols-2">
+            <!-- Detalles de inscripción -->
+            <div class="space-y-4">
+              <h3 class="font-semibold text-lg text-gray-800">Información de la Inscripción</h3>
+              <dl class="space-y-3">
+                <div>
+                  <dt class="text-sm text-gray-600">ID Inscripción</dt>
+                  <dd class="font-medium text-gray-900">{{ inscripcionVerificada.id_inscripcion }}</dd>
+                </div>
+                <div>
+                  <dt class="text-sm text-gray-600">Estado</dt>
+                  <dd class="font-medium">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm"
+                      [ngClass]="{
+                        'bg-green-100 text-green-800': inscripcionVerificada.estado === 'Pagado',
+                        'bg-yellow-100 text-yellow-800': inscripcionVerificada.estado === 'Pendiente',
+                        'bg-blue-100 text-blue-800': inscripcionVerificada.estado === 'Verificado'
+                      }">
+                      {{ inscripcionVerificada.estado }}
+                    </span>
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-sm text-gray-600">Fecha de inscripción</dt>
+                  <dd class="font-medium text-gray-900">
+                    {{ inscripcionVerificada.fechas.inscripcion | date:'dd/MM/yyyy HH:mm' }}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <!-- Detalles de pago -->
+            <div class="space-y-4">
+              <h3 class="font-semibold text-lg text-gray-800">Detalles del Pago</h3>
+              <dl class="space-y-3">
+                <div>
+                  <dt class="text-sm text-gray-600">Monto total</dt>
+                  <dd class="font-medium text-gray-900">
+                    {{ inscripcionVerificada.detalles_academicos.boleta.monto | currency:'Bs. ' }}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-sm text-gray-600">Fecha de emisión</dt>
+                  <dd class="font-medium text-gray-900">
+                    {{ inscripcionVerificada.detalles_academicos.boleta.fecha_emision | date:'dd/MM/yyyy' }}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-sm text-gray-600">Olimpiada</dt>
+                  <dd class="font-medium text-gray-900">{{ inscripcionVerificada.olimpiada }}</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+
+          <!-- Sección media: Participante y Tutor -->
+          <div class="grid gap-6 md:grid-cols-2">
+            <!-- Participante -->
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="font-semibold text-lg mb-3 text-gray-800">Participante</h3>
+              <dl class="space-y-3">
+                <div>
+                  <dt class="text-sm text-gray-600">Nombre completo</dt>
+                  <dd class="font-medium text-gray-900">
+                    {{ inscripcionVerificada.participante.nombres }} 
+                    {{ inscripcionVerificada.participante.apellidos }}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-sm text-gray-600">Cédula</dt>
+                  <dd class="font-medium text-gray-900">
+                    {{ inscripcionVerificada.participante.ci }}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-sm text-gray-600">Colegio</dt>
+                  <dd class="font-medium text-gray-900">
+                    {{ inscripcionVerificada.participante.colegio }}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-sm text-gray-600">Contacto</dt>
+                  <dd class="font-medium text-gray-900">
+                    <div>{{ inscripcionVerificada.participante.contacto.telefono }}</div>
+                    <div class="text-indigo-600 break-all">
+                      {{ inscripcionVerificada.participante.contacto.email }}
+                    </div>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <!-- Tutor -->
+            <div class="bg-gray-50 p-4 rounded-lg" *ngIf="inscripcionVerificada.tutor">
+              <h3 class="font-semibold text-lg mb-3 text-gray-800">Tutor</h3>
+              <dl class="space-y-3">
+                <div>
+                  <dt class="text-sm text-gray-600">Nombre completo</dt>
+                  <dd class="font-medium text-gray-900">
+                    {{ inscripcionVerificada.tutor.nombres }} 
+                    {{ inscripcionVerificada.tutor.apellidos }}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-sm text-gray-600">Cédula</dt>
+                  <dd class="font-medium text-gray-900">
+                    {{ inscripcionVerificada.tutor.ci }}
+                  </dd>
+                </div>
+                <div>
+                  <dt class="text-sm text-gray-600">Contacto</dt>
+                  <dd class="font-medium text-gray-900">
+                    <div>{{ inscripcionVerificada.tutor.contacto.telefono }}</div>
+                    <div class="text-indigo-600 break-all">
+                      {{ inscripcionVerificada.tutor.contacto.email }}
+                    </div>
+                  </dd>
+                </div>
+                <div *ngIf="inscripcionVerificada.tutor.contacto.parentesco">
+                  <dt class="text-sm text-gray-600">Parentesco</dt>
+                  <dd class="font-medium text-gray-900">
+                    {{ inscripcionVerificada.tutor.contacto.parentesco }}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+
+          <!-- Áreas inscritas -->
+          <div class="bg-gray-50 p-4 rounded-lg" 
+              *ngIf="inscripcionVerificada.detalles_academicos?.areas?.length">
+            <h3 class="font-semibold text-lg mb-4 text-gray-800">Áreas Inscritas</h3>
+            <div class="space-y-4">
+              <div *ngFor="let area of inscripcionVerificada.detalles_academicos.areas" 
+                  class="bg-white p-4 rounded-lg shadow-sm">
+                <h4 class="font-medium text-gray-900 mb-3">{{ area.nombre }}</h4>
+                <div class="grid gap-4 md:grid-cols-2">
+                  <div *ngFor="let nivel of area.niveles" 
+                      class="bg-gray-50 p-3 rounded-md">
+                    <dl class="space-y-2">
+                      <div>
+                        <dt class="text-sm text-gray-600">Nivel</dt>
+                        <dd class="font-medium text-gray-900">{{ nivel.nombre }}</dd>
+                      </div>
+                      <div>
+                        <dt class="text-sm text-gray-600">Costo</dt>
+                        <dd class="font-medium text-gray-900">
+                          {{ nivel.costo | currency:'Bs. ' }}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt class="text-sm text-gray-600">Fecha de examen</dt>
+                        <dd class="font-medium text-gray-900">
+                          {{ nivel.fecha_examen | date:'dd/MM/yyyy' }}
+                        </dd>
+                      </div>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Mensajes de error -->
-    <div *ngIf="errorMensaje" class="bg-red-50 p-4 rounded-lg mt-6">
-      <div class="flex items-center mb-2">
-        <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
-        <h3 class="font-semibold text-red-800">Error en la verificación</h3>
+      <!-- Texto OCR procesado -->
+      <div class="mt-8 pt-8 border-t border-gray-200">
+        <details class="group">
+          <summary class="flex items-center cursor-pointer text-gray-700">
+            <span class="text-lg font-medium">Texto Reconocido</span>
+            <svg class="w-5 h-5 ml-2 transform group-open:rotate-180 transition-transform"
+                 fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="mt-4 bg-gray-50 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+            <pre class="whitespace-pre-wrap break-words">{{ ocrResultado }}</pre>
+          </div>
+        </details>
       </div>
-      <p class="text-red-700">{{ errorMensaje }}</p>
-
-      <div *ngIf="estadoDetectado !== 'Pendiente'" class="mt-4 text-sm text-red-600">
-        <p class="font-medium">Requisitos no cumplidos:</p>
-        <ul class="list-disc pl-5">
-          <li>El comprobante debe mostrar claramente "Estado: Pendiente"</li>
-          <li>El número de boleta debe ser visible y legible</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Texto OCR procesado -->
-    <div class="mt-6 border-t pt-6">
-      <h3 class="text-lg font-semibold mb-3">Texto reconocido:</h3>
-      <div class="bg-gray-50 p-4 rounded-lg">
-        <pre class="whitespace-pre-wrap break-words text-sm">{{ ocrResultado }}</pre>
-      </div>
-    </div>
+    </section>
   </div>
 </div>

@@ -1,160 +1,143 @@
-<div class="bg-white p-8 rounded-lg shadow-xl border border-gray-300 max-w-4xl mx-auto">
-  <!-- Encabezado Universitario -->
-  <div class="flex justify-between items-center mb-6 border-b-2 border-blue-800 pb-4">
-    <div class="flex items-center">
-      <img src="icon/umss.png" alt="Logo UMSS" class="h-24">
-      <div>
-        <h1 class="text-3xl font-bold text-blue-900">{{ boletaData.nombre_olimpiada || 'Olimpiada Nacional Universitaria' }}</h1>
-        <p class="text-red-600 italic">Universidad Mayor de San Simon</p>
-      </div>
-    </div>
-  </div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boleta de Inscripción - UMSS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+<div class="bg-white p-8 rounded-lg shadow-xl border border-gray-300 max-w-4xl mx-auto" style="font-family: 'Arial', sans-serif;">
 
-  <!-- Datos Principales -->
-  <div class="grid grid-cols-2 gap-6 mb-8">
-    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-      <h3 class="text-lg font-semibold text-blue-800 mb-3 border-b border-blue-200 pb-2">Información de Pago</h3>
-      <div class="space-y-2">
-        <div class="flex justify-between">
-          <span class="font-medium text-gray-700">Fecha de Emisión:</span>
-          <span class="text-gray-900">{{ formatDate(boletaData.fecha_generacion) }}</span>
+  <!-- Encabezado Principal -->
+  <header class="mb-6 border-b-2 border-blue-800 pb-4">
+    <div class="flex items-start">
+      <img src="icon/umss.png" alt="Logo UMSS" class="h-24 mr-4" aria-hidden="true">
+      <div class="flex-1">
+        <div class="mb-2">
+          <h1 class="text-3xl font-bold text-blue-900">
+            {{ boletaData.nombre_olimpiada || 'Olimpiada Nacional Universitaria' }}
+          </h1>
+        <div class="mt-1 space-y-3 text-lg">
+  <div class="flex items-baseline">
+    <p class="font-bold text-gray-900 w-48">Numero de boleta:</p>
+    <p class="font-bold text-black text-xl">{{ boletaData.numero_boleta || '0000' }}</p>
+  </div>
+  <div class="flex items-baseline">
+    <p class="font-bold text-gray-900 w-48">Estado:</p>
+    <p class="font-bold text-red-700 text-xl">Pendiente</p>
+  </div>
+</div>
         </div>
-        <div class="flex justify-between">
-          <span class="font-medium text-gray-700">Estado:</span>
-          <span class="font-bold text-red-600">Pendiente </span>
+        <p class="text-red-600 italic text-lg mt-2">Universidad Mayor de San Simon</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sección de Pago -->
+  <section class="mb-8">
+    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-4">
+      <h2 class="text-lg font-bold text-blue-800 mb-3">INFORMACIÓN DE PAGO</h2>
+      <div class="grid grid-cols-2 gap-y-3 text-base">
+        <div>
+          <p class="font-semibold">Fecha de Emisión:</p>
+          <p>{{ formatDate(boletaData.fecha_generacion) }}</p>
         </div>
-        <!-- Número de Boleta movido aquí -->
-        <div class="flex justify-between items-center pt-2 border-t border-blue-100">
-          <span class="font-medium text-gray-700">Número de Boleta:</span>
-          <span class="text-blue-900 font-bold">{{ boletaData.numero_boleta || '0000' }}</span>
+        <div>
+          <p class="font-semibold">Monto Total:</p>
+          <p class="text-xl font-bold text-blue-900">{{ formatCurrency(boletaData.monto) }}</p>
         </div>
       </div>
     </div>
+  </section>
 
-    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-      <h3 class="text-lg font-semibold text-blue-800 mb-3 border-b border-blue-200 pb-2">Monto Total</h3>
-      <div class="text-center">
-        <span class="text-3xl font-bold text-blue-900">{{ formatCurrency(boletaData.monto) }}</span>
+  <!-- Datos del Participante -->
+  <section class="mb-8 bg-gray-50 p-4 rounded-lg border border-gray-200">
+    <h2 class="text-xl font-bold mb-4 text-blue-800 border-b pb-2">📝 DATOS DEL PARTICIPANTE</h2>
+    <div class="grid grid-cols-2 gap-4 text-base">
+      <div>
+        <p class="font-semibold">Nombre Completo:</p>
+        <p>{{ boletaData.olimpista.nombres }} {{ boletaData.olimpista.apellidos }}</p>
+      </div>
+      <div>
+        <p class="font-semibold">Carnet de Identidad:</p>
+        <p>{{ boletaData.olimpista.ci }}</p>
+      </div>
+      <div>
+        <p class="font-semibold">Institución Educativa:</p>
+        <p>{{ boletaData.olimpista.colegio }}</p>
+      </div>
+      <div>
+        <p class="font-semibold">Ubicación:</p>
+        <p>{{ boletaData.olimpista.departamento }} - {{ boletaData.olimpista.provincia }}</p>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Resto del código se mantiene igual -->
-  <!-- Sección Participante -->
-  <div class="mb-8 p-5 bg-gray-50 rounded-lg border border-gray-200">
-    <h3 class="text-xl font-bold mb-4 text-blue-800 border-b border-blue-200 pb-2 flex items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-      </svg>
-      Datos del Participante
-    </h3>
-    <div class="grid grid-cols-2 gap-4">
+  <!-- Datos del Tutor -->
+  <section class="mb-8 bg-gray-50 p-4 rounded-lg border border-gray-200">
+    <h2 class="text-xl font-bold mb-4 text-blue-800 border-b pb-2">👤 DATOS DEL TUTOR</h2>
+    <div class="grid grid-cols-2 gap-4 text-base">
       <div>
-        <span class="block text-sm font-medium text-gray-500">Nombre Completo</span>
-        <span class="text-lg">{{ boletaData.olimpista.nombres }} {{ boletaData.olimpista.apellidos }}</span>
+        <p class="font-semibold">Nombre Completo:</p>
+        <p>{{ boletaData.tutor.nombres }} {{ boletaData.tutor.apellidos }}</p>
       </div>
       <div>
-        <span class="block text-sm font-medium text-gray-500">Carnet de Identidad</span>
-        <span class="text-lg">{{ boletaData.olimpista.ci }}</span>
+        <p class="font-semibold">Teléfono:</p>
+        <p>{{ boletaData.tutor.telefono }}</p>
       </div>
       <div>
-        <span class="block text-sm font-medium text-gray-500">Institución Educativa</span>
-        <span class="text-lg">{{ boletaData.olimpista.colegio }}</span>
+        <p class="font-semibold">Correo Electrónico:</p>
+        <p>{{ boletaData.tutor.correo }}</p>
       </div>
       <div>
-        <span class="block text-sm font-medium text-gray-500">Ubicación</span>
-        <span class="text-lg">{{ boletaData.olimpista.departamento }} - {{ boletaData.olimpista.provincia }}</span>
+        <p class="font-semibold">Parentesco:</p>
+        <p>{{ boletaData.tutor.contacto || 'No especificado' }}</p>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Sección Tutor -->
-  <div class="mb-8 p-5 bg-gray-50 rounded-lg border border-gray-200">
-    <h3 class="text-xl font-bold mb-4 text-blue-800 border-b border-blue-200 pb-2 flex items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-      </svg>
-      Datos del Tutor
-    </h3>
-    <div class="grid grid-cols-2 gap-4">
-      <div>
-        <span class="block text-sm font-medium text-gray-500">Nombre Completo</span>
-        <span class="text-lg">{{ boletaData.tutor.nombres }} {{ boletaData.tutor.apellidos }}</span>
-      </div>
-      <div>
-        <span class="block text-sm font-medium text-gray-500">Teléfono</span>
-        <span class="text-lg">{{ boletaData.tutor.telefono }}</span>
-      </div>
-      <div>
-        <span class="block text-sm font-medium text-gray-500">Correo Electrónico</span>
-        <span class="text-lg">{{ boletaData.tutor.correo }}</span>
-      </div>
-      <div>
-        <span class="block text-sm font-medium text-gray-500">Contacto/parentesco</span>
-        <span class="text-lg">{{ boletaData.tutor.contacto || 'N/A' }}</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Sección Niveles -->
-  <div *ngIf="boletaData?.areas_niveles?.length" class="mb-8 p-5 bg-gray-50 rounded-lg border border-gray-200">
-    <h3 class="text-xl font-bold mb-4 text-blue-800 border-b border-blue-200 pb-2 flex items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-      </svg>
-      Niveles Inscritos
-    </h3>
-    <div class="grid grid-cols-2 gap-4">
-      <div *ngFor="let area of boletaData.areas_niveles" class="bg-white p-3 rounded border border-gray-200">
-        <h4 class="font-bold text-blue-700 mb-2">{{ area.area_nombre }}</h4>
+  <!-- Niveles Inscritos -->
+  <section *ngIf="boletaData?.areas_niveles?.length" class="mb-8 bg-gray-50 p-4 rounded-lg border border-gray-200">
+    <h2 class="text-xl font-bold mb-4 text-blue-800 border-b pb-2">📚 NIVELES INSCRITOS</h2>
+    <div class="grid grid-cols-1 gap-4 text-base">
+      <div *ngFor="let area of boletaData.areas_niveles" class="bg-white p-3 rounded border">
+        <h3 class="font-bold text-blue-700 mb-2">{{ area.area_nombre }}</h3>
         <ul class="list-disc pl-5 space-y-1">
-          <li *ngFor="let nivel of area.niveles" class="text-gray-700">
-            {{ nivel.nivel_nombre }}
-          </li>
+          <li *ngFor="let nivel of area.niveles">{{ nivel.nivel_nombre }}</li>
         </ul>
       </div>
     </div>
+  </section>
+
+  <!-- Mensajes de Estado -->
+  <div *ngIf="envioExitoso !== null" class="mt-6 p-4 rounded-lg border text-base"
+     [ngClass]="{
+       'bg-green-50 border-green-200 text-green-800': envioExitoso,
+       'bg-red-50 border-red-200 text-red-800': !envioExitoso
+     }">
+    <p class="font-bold">{{ envioExitoso ? '✓' : '⚠' }} {{ mensajeEnvio }}</p>
   </div>
 
-  <!-- Mensajes de estado -->
-  <div *ngIf="envioExitoso !== null" class="mt-6 p-4 rounded-lg border"
-       [ngClass]="{
-         'bg-green-50 border-green-200 text-green-800': envioExitoso,
-         'bg-red-50 border-red-200 text-red-800': !envioExitoso
-       }">
-    <div class="flex items-center">
-      <span *ngIf="envioExitoso" class="text-green-500 mr-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </span>
-      <span *ngIf="!envioExitoso" class="text-red-500 mr-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      </span>
-      <span class="font-medium">{{ mensajeEnvio }}</span>
-    </div>
-  </div>
-
-  <!-- Botón de acción -->
+  <!-- Botón de Acción -->
   <div class="mt-8 text-center">
     <button (click)="generatePdfBoleta()"
-            class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-lg
-                   transition-all duration-200 transform hover:scale-105 focus:outline-none
-                   focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50 shadow-lg
-                   flex items-center justify-center mx-auto"
-            [disabled]="!boletaData">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-      </svg>
-      Descargar Boleta en PDF
+          class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-lg text-base
+                 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all"
+          [disabled]="!boletaData">
+      ⬇ Descargar Boleta PDF
     </button>
   </div>
 
-  <!-- Pie de página -->
-  <div class="mt-8 pt-4 border-t border-gray-300 text-center text-sm text-gray-500">
-    <p>Universidad Nacional de Ciencias • Dirección: Av. Académica #1234 • Teléfono: (591) 123-4567</p>
-    <p class="mt-1">Esta boleta es un documento oficial válido para el proceso de inscripción</p>
-  </div>
+  <!-- Pie de Página -->
+  <footer class="mt-8 pt-4 border-t border-gray-300 text-center text-sm text-gray-700">
+    <div class="space-y-1">
+      <p class="font-semibold">Universidad Mayor de San Simón</p>
+      <p>Av. Oquendo s/n, Cochabamba - Bolivia</p>
+      <p>Teléfono: (591-4) 423-1234</p>
+      <p class="mt-2 font-medium">Documento válido para proceso de inscripción</p>
+    </div>
+  </footer>
 </div>
+</body>
+</html>
