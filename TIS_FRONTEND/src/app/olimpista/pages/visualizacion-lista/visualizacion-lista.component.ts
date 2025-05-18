@@ -41,18 +41,6 @@ export class VisualizacionListaComponent {
       'Correo Electrónico', 'Colegio', 'Departamento', 'Provincia'
     ]);
 
-    // Datos de ejemplo
-    const estudiantes = [
-      ['Juan', 'Perez', '12345678', '15/05/2000', 'juan.perez@email.com', 'Colegio Nacional', 'La Paz', 'Murillo'],
-      ['Ana', 'Lopez', '87654321', '20/08/2001', 'ana.lopez@email.com', 'Colegio Privado', 'Santa Cruz', 'Andrés Ibáñez'],
-      ['Carlos', 'Gomez', '45678912', '10/03/2002', 'carlos.gomez@email.com', 'Colegio Modelo', 'Cochabamba', 'Cercado'],
-      ['Maria', 'Rodriguez', '78912345', '25/07/2001', 'maria.rodriguez@email.com', 'Colegio Alemán', 'La Paz', 'Murillo'],
-      ['Luis', 'Fernandez', '32165498', '30/11/2000', 'luis.fernandez@email.com', 'Colegio Francés', 'Santa Cruz', 'Warnes'],
-      ['Sofia', 'Martinez', '65498732', '05/01/2003', 'sofia.martinez@email.com', 'Colegio Británico', 'Tarija', 'Cercado']
-    ];
-
-    estudiantes.forEach(estudiante => worksheet.addRow(estudiante));
-
     // Estilo encabezados (negrita y fondo)
     const headerRow = worksheet.getRow(1);
     headerRow.font = { bold: true };
@@ -110,7 +98,7 @@ export class VisualizacionListaComponent {
     const encabezadosEstudiantes = [
       'Nombre Estudiante', 'Apellido Estudiante', 'CI',
       'Fecha de Nacimiento', 'Correo Electrónico',
-      'Colegio', 'Curso', 'Departamento', 'Provincia'
+      'Colegio', 'Departamento', 'Provincia'
     ];
     worksheet.addRow(encabezadosEstudiantes);
 
