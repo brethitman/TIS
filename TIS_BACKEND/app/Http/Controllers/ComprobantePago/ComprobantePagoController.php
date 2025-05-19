@@ -19,6 +19,9 @@ class ComprobantePagoController extends Controller
         $comprobantes = ComprobantePago::with(['boletaPago', 'boletaPago.inscripcion'])->orderBy("created_at", "desc")->paginate(10);
         return ComprobantePagoResource::collection($comprobantes);
 
+
+
+
     }
 
     /**

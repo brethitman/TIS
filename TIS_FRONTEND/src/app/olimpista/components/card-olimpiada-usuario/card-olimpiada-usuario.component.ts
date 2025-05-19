@@ -27,15 +27,24 @@ export class CardOlimpiadaUsuarioComponent {
   private olimpiadaService = inject(OlimpiadaService);
 
   // Método mejorado para navegación
-  entrar(): void {
+  irVisualizacion(){
     if (!this.olimpiada?.id) {
       console.error('Error: No se puede navegar - Olimpiada sin ID');
       return;
     }
-
     this.router.navigate(
-      ['/inicio/look/inscripcion-todo', this.olimpiada.id],
-
+      ['/ventana-informacion-olimpiada', this.olimpiada.id],
+      {
+        state: { olimpiadaData: this.olimpiada }
+      } );}
+  }
+  /**entrar(): void {
+    if (!this.olimpiada?.id) {
+      console.error('Error: No se puede navegar - Olimpiada sin ID');
+      return;
+    }
+    this.router.navigate(
+      ['/ventana-informacion-olimpiada', this.olimpiada.id],
       {
         state: {
           olimpiadaData: {
@@ -45,8 +54,5 @@ export class CardOlimpiadaUsuarioComponent {
           }
         }
       }
-
     );
-
-  }
-}
+  }**/

@@ -100,19 +100,45 @@ export class OlimpiadaCardComponent implements OnInit {
   }
 
   saveEdit(): void {
+  // 1) Validaciones de nombre y descripción
+  if (!this.validateForm()) {
+    return;
+  }
 
-    if (!this.validateForm()) {
-      return;
-    }
+  // 2) Rango permitido para fecha de inicio
+  const minInicio = new Date(this.olimpiada.fecha_inicio);
+  const maxInicio = new Date(minInicio);
+  maxInicio.setFullYear(maxInicio.getFullYear() + 1);
 
-    const inicio = new Date(this.editableOlimpiada.fecha_inicio);
-    const fin = new Date(this.editableOlimpiada.fecha_final);
+  // 3) Parseo de las fechas introducidas
+  const inicio = new Date(this.editableOlimpiada.fecha_inicio);
+  const fin    = new Date(this.editableOlimpiada.fecha_final);
 
-    if (fin <= inicio) {
-      this.errorMessage = 'La fecha final debe ser posterior a la fecha de inicio.';
-      return;
-    }
+  // 4) Validar que inicio sea válido y esté entre minInicio y maxInicio
+  if (
+    isNaN(inicio.getTime()) ||
+    inicio < minInicio ||
+    inicio > maxInicio
+  ) {
+    this.errorMessage = `La fecha de inicio debe estar entre ${this.formatDateToInput(minInicio)} y ${this.formatDateToInput(maxInicio)}.`;
+    return;
+  }
 
+  // 5) Calcular el máximo para la fecha final: un año desde 'inicio'
+  const maxFin = new Date(inicio);
+  maxFin.setFullYear(maxFin.getFullYear() + 1);
+
+  // 6) Validar que fin sea posterior a inicio y no exceda maxFin
+  if (
+    isNaN(fin.getTime()) ||
+    fin <= inicio ||
+    fin > maxFin
+  ) {
+    this.errorMessage = `La fecha final debe ser posterior a la de inicio y, como máximo un año después de la fecha inicio (${this.formatDateToInput(maxFin)}).`;
+    return;
+  }
+
+  // 7) Si todo OK, seguimos con la llamada al servicio
     this.editando = true;
 
     const updatedOlimpiada = {
@@ -172,6 +198,12 @@ export class OlimpiadaCardComponent implements OnInit {
   formatDateToInput(date: Date | string): string {
     const d = new Date(date);
     return d.toISOString().split('T')[0];
+  }
+
+  addYearsDate(orig: Date, years: number): Date {
+    const d = new Date(orig);
+    d.setFullYear(d.getFullYear() + years);
+    return d;
   }
 
   onButton2Click(): void {

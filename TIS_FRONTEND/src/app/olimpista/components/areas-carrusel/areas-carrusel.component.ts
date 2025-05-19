@@ -1,6 +1,6 @@
 import { Component,EventEmitter, Input, Output} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Area } from '../../interfaces/area.interface';
+import { olimpiadabyArea } from '../../interfaces/areavisualizacion.interface';
 
 @Component({
   selector: 'app-areas-carrusel',
@@ -11,13 +11,13 @@ import { Area } from '../../interfaces/area.interface';
 export class AreasCarruselComponent {
 
   @Input({ required: true })
-  Area!: Area[];
+  Area!: olimpiadabyArea[];
 
   @Output()
-  areaSelected = new EventEmitter<Area>(); 
+  areaSelected = new EventEmitter<olimpiadabyArea>(); 
   areaSeleccionada: any;
 
-  onAreaClick(area: Area) {
+  onAreaClick(area: olimpiadabyArea) {
     this.areaSelected.emit(area);
     this.areaSeleccionada = area;
   }

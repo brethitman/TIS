@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { NivelesCategoria } from '../interfaces/categoria.interface';
 import { GetNivelesCategoria } from '../interfaces/get-categoria-response';
+import { NivelCategoria } from "../interfaces/areavisualizacion.interface";
 
 @Injectable({
   providedIn: 'root'
@@ -112,4 +113,6 @@ export class CategoriaService {
       })
     );
   }
+
+  
 }

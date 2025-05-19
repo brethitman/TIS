@@ -4,9 +4,7 @@
   <div class="space-y-3">
     <div>
       <span class="font-semibold">Número de Boleta:</span>
-      <span class="ml-2 text-gray-700">{{ boletaData.numero_boleta }}</span>
-
-
+      <span class="ml-2 text-gray-700">{{ boletaData.numero_boleta || 'N/A' }}</span>
     </div>
 
     <div>
@@ -22,5 +20,18 @@
         {{ formatDate(boletaData.fecha_generacion) }}
       </span>
     </div>
+  </div>
+
+  <!-- Mensajes de estado -->
+  <div *ngIf="envioExitoso !== null" class="mt-4 p-3 rounded"
+    [ngClass]="{'bg-green-100 text-green-700': envioExitoso, 'bg-red-100 text-red-700': !envioExitoso}">
+    {{ mensajeEnvio }}
+  </div>
+
+  <div class="mt-6 text-center">
+    <button (click)="generatePdfBoleta()"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+      Descargar Boleta PDF
+    </button>
   </div>
 </div>

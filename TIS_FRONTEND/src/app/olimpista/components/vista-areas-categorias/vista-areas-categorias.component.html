@@ -4,14 +4,35 @@
     <h2 class="text-4xl font-bold text-white text-center mb-3">{{ olimpiadaSeleccionada?.nombre || 'Olimpiada' }}</h2>
   </div>
 
-  <app-crear-area 
-    *ngIf="idOlimpiada"
-    [idOlimpiada]="idOlimpiada"
-    class="block mb-4"
-  ></app-crear-area>
+  <!-- Botón para mostrar/ocultar formulario de creación de área -->
+  <div class="flex justify-end px-6">
+    <button 
+      (click)="toggleCrearArea()" 
+      class="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-normal rounded-full hover:opacity-90 flex items-center transition-colors"
+    >
+      <svg *ngIf="!mostrarCrearArea" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      <svg *ngIf="mostrarCrearArea" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+      Agregar Área Nueva
+    </button>
+  </div>
+
+  <!-- Componente de creación de área (visible/oculto según estado) -->
+  <div *ngIf="mostrarCrearArea" class="transition-all duration-300 ease-in-out" 
+       [ngClass]="{'opacity-100 max-h-[2000px]': mostrarCrearArea, 'opacity-0 max-h-0 overflow-hidden': !mostrarCrearArea}">
+    <app-crear-area 
+      *ngIf="idOlimpiada"
+      [idOlimpiada]="idOlimpiada"
+      class="block mb-4"
+      (areaCreada)="onAreaCreada()"
+    ></app-crear-area>
+  </div>
 
   <!-- Listado de áreas existentes -->
-  <div class="bg-gradient-to-r from-red-500 via-purple-600 to-blue-800 py-2">
+  <div class="bg-gradient-to-l from-black to-[#0e087f] py-2">
     <div class="container mx-auto px-4">
       <h1 class="text-2xl font-bold text-white">ÁREAS DE LA OLIMPIADA</h1>
     </div>
@@ -138,17 +159,18 @@
                   class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                 >
               </div>
-<div class="space-y-2">
-  <label class="block text-sm font-medium text-gray-700">Habilitado</label>
-  <select
-    [(ngModel)]="nuevoNivel.habilitacion"
-    name="habilitacion"
-    class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-  >
-    <option [ngValue]="true">Sí</option>
-    <option [ngValue]="false">No</option>
-  </select>
-</div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Habilitado</label>
+                <select
+                  [(ngModel)]="nuevoNivel.habilitacion"
+                  name="habilitacion"
+                  class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                >
+                  <option [ngValue]="true">Sí</option>
+                  <option [ngValue]="false">No</option>
+                </select>
+              </div>
 
               <div class="md:col-span-2 space-y-2">
                 <label class="block text-sm font-medium text-gray-700">Descripción</label>
@@ -181,86 +203,85 @@
 
           <!-- Lista de niveles existentes -->
           <!-- Mensaje cuando no hay niveles definidos -->
-<div *ngIf="!areaSeleccionada.nivel_categorias?.length" class="flex items-center justify-center p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-500">
-  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-  </svg>
-  <span class="italic font-medium">No se han definido niveles para esta área</span>
-</div>
+          <div *ngIf="!areaSeleccionada.nivel_categorias?.length" class="flex items-center justify-center p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="italic font-medium">No se han definido niveles para esta área</span>
+          </div>
 
-<!-- Grid de niveles -->
-<div *ngIf="areaSeleccionada.nivel_categorias?.length" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-  <div
-    *ngFor="let nivel of areaSeleccionada.nivel_categorias"
-    class="rounded-xl overflow-hidden shadow-lg border border-gray-200 bg-white hover:shadow-xl transition-shadow duration-300"
-  >
-    <!-- Cabecera -->
-    <div class="bg-indigo-700 h-12 flex items-center justify-center relative">
-      <div
-        class="absolute top-1/2 -translate-y-1/2 bg-white text-indigo-800 font-bold text-center rounded-full px-6 py-1.5 border-2 border-indigo-700 shadow-md"
-      >
-        {{ nivel.nombre_nivel }}
-      </div>
-    </div>
+          <!-- Grid de niveles -->
+          <div *ngIf="areaSeleccionada.nivel_categorias?.length" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div
+              *ngFor="let nivel of areaSeleccionada.nivel_categorias"
+              class="rounded-xl overflow-hidden shadow-lg border border-gray-200 bg-white hover:shadow-xl transition-shadow duration-300"
+            >
+              <!-- Cabecera -->
+              <div class="bg-indigo-700 h-12 flex items-center justify-center relative">
+                <div
+                  class="absolute top-1/2 -translate-y-1/2 bg-white text-indigo-800 font-bold text-center rounded-full px-6 py-1.5 border-2 border-indigo-700 shadow-md"
+                >
+                  {{ nivel.nombre_nivel }}
+                </div>
+              </div>
 
-    <!-- Contenido -->
-    <div class="p-6 pt-10 text-gray-700 space-y-3">
-      <p class="flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-        <span class="font-medium">Abierto para:</span> 
-        <span class="ml-1">{{ nivel.descripcion }}</span>
-      </p>
-      
-      <p class="flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span class="font-medium">Costo:</span> 
-        <span class="ml-1">{{ nivel.costo }} bs</span>
-      </p>
-      
-      <p class="flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <span class="font-medium">Fecha:</span> 
-        <span class="ml-1">{{ nivel.fecha_examen | date:'d/MM/yyyy' }}</span>
-      </p>
-      
-      <p class="flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span class="font-medium">Estado:</span>
-        <span
-          [ngClass]="{
-            'text-green-600': isHabilitado(nivel.habilitacion),
-            'text-red-600': isDeshabilitado(nivel.habilitacion)
-          }"
-          class="ml-1 font-semibold"
-        >
-          {{ getEstadoTexto(nivel.habilitacion) }}
-        </span>
-      </p>
-    </div>
+              <!-- Contenido -->
+              <div class="p-6 pt-10 text-gray-700 space-y-3">
+                <p class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  <span class="font-medium">Abierto para:</span> 
+                  <span class="ml-1">{{ nivel.descripcion }}</span>
+                </p>
+                
+                <p class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span class="font-medium">Costo:</span> 
+                  <span class="ml-1">{{ nivel.costo }} bs</span>
+                </p>
+                
+                <p class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span class="font-medium">Fecha:</span> 
+                  <span class="ml-1">{{ nivel.fecha_examen | date:'d/MM/yyyy' }}</span>
+                </p>
+                
+                <p class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span class="font-medium">Estado:</span>
+                  <span
+                    [ngClass]="{
+                      'text-green-600': isHabilitado(nivel.habilitacion),
+                      'text-red-600': isDeshabilitado(nivel.habilitacion)
+                    }"
+                    class="ml-1 font-semibold"
+                  >
+                    {{ getEstadoTexto(nivel.habilitacion) }}
+                  </span>
+                </p>
+              </div>
 
-    <!-- Separador -->
-    <div class="border-t border-gray-200"></div>
+              <!-- Separador -->
+              <div class="border-t border-gray-200"></div>
 
-    <!-- Botón -->
-    <div class="p-4 flex justify-center bg-gray-50">
-      <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-colors duration-300 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-        </svg>
-        INSCRIBIRSE
-      </button>
-    </div>
-  </div>
-</div>
-          
+              <!-- Botón -->
+              <div class="p-4 flex justify-center bg-gray-50">
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg shadow transition-colors duration-300 flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  INSCRIBIRSE
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

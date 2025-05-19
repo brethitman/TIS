@@ -1,6 +1,6 @@
 // src/app/interfaces/inscripcion.types.ts (o donde tengas tus tipos)
 
-// --- Interfaces para el Payload (lo que envías) - Estas ya las tienes ---
+
 export interface Olimpista {
   nombres: string;
   apellidos: string;
@@ -62,7 +62,7 @@ export interface TutorResponse extends Tutor { // Hereda del payload si quieres
 export interface BoletaPagoResponse {
     id: number;
     numero_boleta: string;
-    monto: string; // O number si lo conviertes
+    monto: string | number; // O number si lo conviertes
     fecha_generacion: string; // O Date
     createdAt: string;
     updatedAt: string;
@@ -97,6 +97,7 @@ export interface InscripcionResponse {
 export interface InscripcionPostSuccessResponse {
     message: string; // El mensaje "Inscripción creada exitosamente"
     inscripcion: InscripcionResponse; // El objeto con todos los detalles de la inscripción creada
-}
+    boleta_pago: BoletaPagoResponse;
+  }
 
 // --- Fin Interfaces para la Respuesta ---

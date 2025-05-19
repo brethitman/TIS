@@ -1,4 +1,3 @@
-// crear-area.component.ts
 import { Component, OnInit, Input } from '@angular/core';
 import { CursoGETService } from '../../service/cursoGET.service';
 import { AreaNuevoService } from '../../service/AreaNuevo.service';
@@ -41,6 +40,8 @@ export class CrearAreaComponent implements OnInit {
   loadCursos(): void {
     this.cursoService.obtenerTodosLosCursos().subscribe({
       next: (response) => {
+        // Asumiendo que los cursos vienen en un orden lógico (1°, 2°, etc.)
+        // Si no es así, se podría ordenar aquí según algún criterio
         this.cursos = response.data;
       },
       error: (err) => {
@@ -64,9 +65,45 @@ export class CrearAreaComponent implements OnInit {
     return curso ? curso.nameCurso : 'Curso no encontrado';
   }
 
+  // Método para determinar el grado inicial y final basado en los cursos seleccionados
+  determineGrades(): { gradoInicial: string, gradoFinal: string } {
+    if (this.selectedCursos.length === 0) {
+      return { gradoInicial: '', gradoFinal: '' };
+    }
+
+    // Obtener los cursos completos seleccionados
+    const cursosSeleccionados = this.cursos.filter(curso => 
+      this.selectedCursos.includes(curso.id_curso)
+    );
+
+    // Ordenar los cursos por algún criterio (asumiendo que hay un campo para ordenar)
+    // Si no existe tal campo, se podría usar el nombre o algún otro criterio
+    cursosSeleccionados.sort((a, b) => {
+      // Aquí se podría implementar una lógica de ordenamiento específica
+      // Por ejemplo, si los nombres siguen un patrón como "1° Básico", "2° Básico"...
+      return a.nameCurso.localeCompare(b.nameCurso);
+    });
+
+    // El primer curso en la lista ordenada será el grado inicial
+    const gradoInicial = cursosSeleccionados[0].nameCurso;
+    
+    // El último curso en la lista ordenada será el grado final
+    const gradoFinal = cursosSeleccionados[cursosSeleccionados.length - 1].nameCurso;
+
+    return { gradoInicial, gradoFinal };
+  }
+
   onSubmit(): void {
     if (!this.validateForm()) return;
 
+    // Determinar grados inicial y final
+    const { gradoInicial, gradoFinal } = this.determineGrades();
+    
+    // Asignar los grados determinados
+    this.areaData.gradoIniAr = gradoInicial;
+    this.areaData.gradoFinAr = gradoFinal;
+    
+    // Asignar los cursos seleccionados
     this.areaData.cursos = this.selectedCursos;
 
     this.areaService.crearAreaBasica(this.areaData).subscribe({
@@ -92,16 +129,6 @@ export class CrearAreaComponent implements OnInit {
     
     if (!this.areaData.nombre_area?.trim()) {
       this.showError('El nombre del área es requerido');
-      return false;
-    }
-    
-    if (!this.areaData.gradoIniAr?.trim()) {
-      this.showError('El grado inicial es requerido');
-      return false;
-    }
-    
-    if (!this.areaData.gradoFinAr?.trim()) {
-      this.showError('El grado final es requerido');
       return false;
     }
 
