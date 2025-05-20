@@ -3,30 +3,21 @@ import { LoginPageComponent } from './auth/pages/login-page/login-page.component
 import { RegisterPageComponent } from './auth/pages/register-page/register-page.component';
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
-import { AreasComponent } from './olimpista/pages/areas/areas.component';
 import { Inicio1Component } from './olimpista/pages/inicio1/inicio1.component';
-import { Inicio2Component } from './olimpista/pages/inicio2/inicio2.component';
 import { Inicio3Component } from './olimpista/pages/inicio3/inicio3.component';
-import { OlimpistaPageComponent } from './olimpista/pages/olimpista-page/olimpista-page.component';
-import { Inicio4Component } from './olimpista/pages/inicio4/inicio4.component';
 import { OlimpiadaPageComponent } from './olimpista/pages/olimpiada-page/olimpiada-page.component';
-
+import { Inicio5ReportesComponent } from './olimpista/pages/inicio5-reportes/inicio5-reportes.component';//pagina de reportes
 // Importa tus nuevos componentes de inscripción
-import { Iscripcion1Component } from './olimpista/components/iscripcion1/iscripcion1.component';
-import { Iscripcion2Component } from './olimpista/components/iscripcion2/iscripcion2.component';
-import { Iscripcion3Component } from './olimpista/components/iscripcion3/iscripcion3.component';
 import { VistaAreasCategoriasComponent } from './olimpista/components/vista-areas-categorias/vista-areas-categorias.component';
-import { OlimpiadaService } from './olimpista/service/olimpiada.service';
 import { VentanaInformacionOlimpiadaComponent } from './olimpista/pages/ventana-informacion-olimpiada/ventana-informacion-olimpiada.component';
 import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lista/visualizacion-lista.component';
 import { InscripcionTodoComponent } from './olimpista/components/inscripcion-todo/inscripcion-todo.component';
 
 import { PruebaOcrComponent } from './olimpista/components/prueba-ocr/prueba-ocr.component';
 
-
 export const routes: Routes = [
 
-  { path: 'prueba-ocr', component: PruebaOcrComponent },//SOLO PARA PRUEBA OCR
+  { path: 'prueba-ocr', component: PruebaOcrComponent },
   {
     path: 'auth',
     component: AuthLayoutComponent,
@@ -45,10 +36,6 @@ export const routes: Routes = [
         path: 'products', // Revisa si 'products' es el nombre correcto para esta sección en tu app
         loadChildren: () => import("./olimpista/estudiantes-routing.module").then(m => m.EstudiantesRoutingModule),
       },*/
-      {
-        path: 'areas',
-        component: AreasComponent,
-      },
       {
         path: 'olimpiada',
         component: OlimpiadaPageComponent
@@ -63,18 +50,7 @@ export const routes: Routes = [
    },
 
   // --- Rutas de Inscripción ---
-  {
-    path: 'inscripcion/paso1',
-    component: Iscripcion1Component
-  },
-  {
-    path: 'inscripcion/paso2',
-    component: Iscripcion2Component
-  },
-  {
-    path: 'inscripcion/paso3',
-    component: Iscripcion3Component
-  },
+  
    // Opcional: Redirigir '/inscripcion' al paso 1
   {
     path: 'inscripcion',
@@ -90,10 +66,6 @@ export const routes: Routes = [
     component: Inicio1Component
   },
   {
-    path: 'inicio/look',
-    component: Inicio2Component
-  },
-  {
     path: 'inicio/dodog', // Esta ruta está duplicada en tu configuración original
     component: Inicio3Component
   },
@@ -101,14 +73,6 @@ export const routes: Routes = [
   //     path: 'inicio/dodog',
   //     component: Inicio3Component
   // },
-  {
-    path: 'inicio/mmmm',
-    component: Inicio4Component
-  },
-  {
-    path: 'inicio/OlimpistaForm', // Revisa si este es el nombre final para esta ruta
-    component: OlimpistaPageComponent
-  },
 
 {
   path: 'inicio/look/wach/:id',
@@ -160,5 +124,7 @@ export const routes: Routes = [
   path: '**',
   redirectTo: 'admin/olimpiada'
 }
+
+
 
 ];

@@ -1,0 +1,10 @@
+<div class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
+    style="background-color: rgba(75, 85, 99, 0.3); ">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-96">
+        <h2>Lista de errores</h2>
+        <ul>
+            <li *ngFor="let error of erroresLista">{{ error }}</li>
+        </ul>
+        <button (click)="cerrarModal()">Cerrar</button>
+    </div>
+</div>
