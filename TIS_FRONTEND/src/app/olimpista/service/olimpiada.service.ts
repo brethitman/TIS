@@ -7,7 +7,7 @@ import { Olimpiada } from '../interfaces/olimpiada-interfase';
   providedIn: 'root'
 })
 export class OlimpiadaService {
-  private apiUrl = 'http://localhost:8000/api/olimpiada'; // URL base para endpoints de olimpiada
+  private apiUrl = 'http://bluenebula.tis.cs.umss.edu.bo/api/olimpiada'; // URL base para endpoints de olimpiada
 
   constructor(private http: HttpClient) {}
 

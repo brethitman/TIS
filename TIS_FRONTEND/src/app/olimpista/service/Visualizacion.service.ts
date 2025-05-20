@@ -7,7 +7,7 @@ import { Injectable } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 
 export class VisualizacionService {
-    private apiUrl = 'http://localhost:8000/api/olimpiada';
+    private apiUrl = 'http://bluenebula.tis.cs.umss.edu.bo/api/olimpiada';
 
     constructor(private http: HttpClient) { }
 

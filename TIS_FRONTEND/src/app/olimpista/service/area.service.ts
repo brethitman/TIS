@@ -8,7 +8,7 @@ import { GetAreaRespose } from '../interfaces/get-area-response';
   providedIn: 'root'
 })
 export class AreaService {
-  private apiUrl = 'http://localhost:8000/api/area';
+  private apiUrl = 'http://bluenebula.tis.cs.umss.edu.bo/api/area';
 
   constructor(private http: HttpClient) { }
 

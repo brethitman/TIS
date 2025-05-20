@@ -9,7 +9,7 @@ import { NivelCategoria } from "../interfaces/areavisualizacion.interface";
 })
 export class CategoriaVisualizacionService {
 
-  private apiUrl = 'http://localhost:8000/api/categorias'; 
+  private apiUrl = 'http://bluenebula.tis.cs.umss.edu.bo/api/categorias'; 
 
   constructor(private http: HttpClient) {}
   getCategoriasPorArea(idArea: number): Observable<NivelCategoria[]> {

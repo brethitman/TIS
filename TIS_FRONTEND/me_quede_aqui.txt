@@ -28,7 +28,7 @@ import { Area } from '../interfaces/area.interface';
   providedIn: 'root'
 })
 export class AreaService {
-  private apiUrl = 'http://localhost:8000/api/area'; // URL de tu API
+  private apiUrl = 'http://bluenebula.tis.cs.umss.edu.bo/api/area'; // URL de tu API
 
   constructor(private http: HttpClient) {}
 

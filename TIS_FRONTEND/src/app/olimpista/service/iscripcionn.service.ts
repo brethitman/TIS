@@ -7,7 +7,7 @@ import { InscripcionPayload } from '../interfaces/inscripcion.types';
   providedIn: 'root'
 })
 export class InscripcionServicee {
-  private apiUrl = 'http://localhost:8000/api/inscripcion'; // Reemplaza con la URL real de tu API si es diferente
+  private apiUrl = 'http://bluenebula.tis.cs.umss.edu.bo/api/inscripcion'; // Reemplaza con la URL real de tu API si es diferente
 
   constructor(private http: HttpClient) { }
 
@@ -33,7 +33,7 @@ import { InscripcionPayload, InscripcionPostSuccessResponse } from '../interface
   providedIn: 'root'
 })
 export class InscripcionServicee {
-  private apiUrl = 'http://localhost:8000/api/inscripcion';
+  private apiUrl = 'http://bluenebula.tis.cs.umss.edu.bo/api/inscripcion';
 
   constructor(private http: HttpClient) { }
 

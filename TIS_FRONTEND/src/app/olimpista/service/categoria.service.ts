@@ -11,7 +11,7 @@ import { NivelCategoria } from "../interfaces/areavisualizacion.interface";
 })
 export class CategoriaService {
 
-  private apiUrl = 'http://localhost:8000/api/nivelCategoria'; // Corregido el endpoint
+  private apiUrl = 'http://bluenebula.tis.cs.umss.edu.bo/api/nivelCategoria'; // Corregido el endpoint
 
   constructor(private http: HttpClient) {}
 

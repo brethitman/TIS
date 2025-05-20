@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ExcelService {
 
-  private apiUrl= 'http://localhost:8000/api/lee-excel'
+  private apiUrl= 'http://bluenebula.tis.cs.umss.edu.bo/api/lee-excel'
   constructor(private http:HttpClient ) {}
 
   enviarArchivo(archivo: File): Observable<any> {

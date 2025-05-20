@@ -5,7 +5,7 @@ import { Tutor } from '../interfaces/inscripcion.interface';
 
 @Injectable({ providedIn: 'root' })
 export class TutorService {
-  private apiUrl = 'http://localhost:8000/api/tutor';
+  private apiUrl = 'http://bluenebula.tis.cs.umss.edu.bo/api/tutor';
 
   constructor(private http: HttpClient) {}
 

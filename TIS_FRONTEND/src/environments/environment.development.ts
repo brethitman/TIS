@@ -1,3 +1,3 @@
 export const environment = {
-   apiUrl:"http://localhost:8000/api"
+   apiUrl:"http://bluenebula.tis.cs.umss.edu.bo/api"
 };

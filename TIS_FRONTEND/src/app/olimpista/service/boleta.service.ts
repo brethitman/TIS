@@ -8,10 +8,10 @@ import { Observable } from 'rxjs';
 })
 export class BoletaService {
   // Si usaste la Opción A (cambiaste a /email en Laravel)
-  private apiUrl = 'http://localhost:8000/api/email';
+  private apiUrl = 'http://bluenebula.tis.cs.umss.edu.bo/api/email';
   
   // O si usaste la Opción B (mantuviste /enviar-boleta en Laravel)
-  // private apiUrl = 'http://localhost:8000/api/enviar-boleta';
+  // private apiUrl = 'http://bluenebula.tis.cs.umss.edu.bo/api/enviar-boleta';
 
   constructor(private http: HttpClient) { }
 
