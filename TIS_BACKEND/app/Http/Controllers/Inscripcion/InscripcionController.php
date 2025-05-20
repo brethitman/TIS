@@ -235,4 +235,90 @@ class InscripcionController extends Controller
 
         return response()->json($areas);
     }
+
+    public function storeList(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'estado' => 'required|in:Pendiente,Pagado,Verificado',
+                'olimpistas' => 'required|array|min:2',
+                'olimpistas.*.nombres' => 'required|string|max:100',
+                'olimpistas.*.apellidos' => 'required|string|max:100',
+                'olimpistas.*.ci' => 'required|string|max:20',
+                'olimpistas.*.fecha_nacimiento' => 'required|date',
+                'olimpistas.*.correo' => 'required|email|max:100',
+                'olimpistas.*.telefono' => 'required|string|max:20',
+                'olimpistas.*.colegio' => 'required|string|max:100',
+                'olimpistas.*.departamento' => 'required|string|max:50',
+                'olimpistas.*.provincia' => 'required|string|max:50',
+                'tutors' => 'required|array|min:1',
+                'tutors.*.nombres' => 'required|string|max:100',
+                'tutors.*.apellidos' => 'required|string|max:100',
+                'tutors.*.ci' => 'required|string|max:20',
+                'tutors.*.correo' => 'required|email|max:100',
+                'tutors.*.telefono' => 'required|string|max:20',
+                'tutors.*.contacto' => 'nullable|string|max:100',
+                'areas' => 'required|array|min:1',
+                'areas.*.area_id' => 'required|integer|exists:areas,id_area',
+                'areas.*.nivelesCategoria' => 'required|array|min:1',
+                'areas.*.nivelesCategoria.*' => 'required|integer|exists:nivel_categorias,id_nivel',
+            ]);
+
+            DB::beginTransaction();
+
+            $inscripcion = Inscripcion::create(['estado' => $validated['estado']]);
+
+            foreach ($validated['olimpistas'] as $olimpistaData) {
+                $inscripcion->olimpistas()->create($olimpistaData);
+            }
+
+            foreach ($validated['tutors'] as $tutorData) {
+                $inscripcion->tutors()->create($tutorData);
+            }
+
+            $inscripcionAreaNivelData = [];
+
+            foreach ($validated['areas'] as $areaData) {
+                $areaId = $areaData['area_id'];
+                $nivelIds = $areaData['nivelesCategoria'];
+
+                $nivelesSeleccionados = NivelCategoria::whereIn('id_nivel', $nivelIds)
+                    ->where('id_area', $areaId)
+                    ->get();
+
+                foreach ($nivelesSeleccionados as $nivel) {
+                    $inscripcionAreaNivelData[] = [
+                        'id_inscripcion' => $inscripcion->id_inscripcion,
+                        'id_area' => $areaId,
+                        'id_nivel' => $nivel->id_nivel,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+
+            if (!empty($inscripcionAreaNivelData)) {
+                DB::table('inscripcion_area_nivel')->insert($inscripcionAreaNivelData);
+            }
+
+            DB::commit();
+
+            $inscripcion->load(['olimpistas', 'tutors', 'nivelCategorias']);
+
+            return response()->json([
+                'message' => 'Inscripción creada exitosamente',
+                'inscripcion' => new InscripcionResource($inscripcion)
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al crear inscripción: ' . $e->getMessage(), ['exception' => $e]);
+
+            return response()->json([
+                'message' => 'Error al crear la inscripción',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }
