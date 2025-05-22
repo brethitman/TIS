@@ -24,6 +24,7 @@ export class BoletaPagoComponent implements OnChanges {
   mensajeEnvio: string = '';
 
   constructor(
+    // Inyecta los pipes para formatear la fecha y la moneda
     private datePipe: DatePipe,
     private currencyPipe: CurrencyPipe,
     private emailService: EmailService

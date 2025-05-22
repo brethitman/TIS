@@ -68,6 +68,10 @@ Route::get('/olimpiadasInscripcion/{id}/areas', [AreaController::class, 'getArea
 Route::post('/inscripciones/verificar-pago', [InscripcionController::class, 'verificarPago']);
 
 
+//ENPOINSTS PARA LA LISTA
+Route::post('/inscripcionList', [InscripcionController::class, 'storeList']);
+
+
 // categoria ENDPOINTS  ---- GET POST da bien
 //tiene interface
 Route::apiResource('nivel-categoria', NivelCategoriaController::class);

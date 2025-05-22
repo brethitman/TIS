@@ -1,6 +1,6 @@
 // src/app/interfaces/inscripcion.types.ts
 
-// --- Interfaces para el Payload (Datos enviados al backend) ---
+
 export interface Olimpista {
   nombres: string;
   apellidos: string;

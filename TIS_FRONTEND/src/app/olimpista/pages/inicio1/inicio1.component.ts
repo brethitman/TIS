@@ -4,11 +4,12 @@ import { GetOlimpiadaService } from '../../service/get.olimpiada.service';
 import { Olimpiada } from '../../interfaces/olimpiada-interfase';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
+import { OlimpiadasGridComponent } from '../../components/olimpiadas-grid/olimpiadas-grid.component'; 
 
 @Component({
   selector: 'app-inicio1',
   standalone: true,
-  imports: [CommonModule, DatePipe], // Añade DatePipe para formatear fechas
+  imports: [CommonModule, DatePipe, OlimpiadasGridComponent], // Añade DatePipe para formatear fechas
   templateUrl: './inicio1.component.html',
 })
 export class Inicio1Component implements OnInit {

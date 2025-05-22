@@ -20,12 +20,13 @@ export class BotonExelComponent {
   showModal1: boolean = false;
   showModal2: boolean = false;
   confirmSubida: boolean = false;
+  modalError: boolean = false;
   nombreArchivo: string = '';
   tamanoArchivo: string = '';
-  mensajeError: string = '';
   datosExcel: any[][] = [];
   datosEstudiantes: any[][] = [];
   datosTutores: any[][] = [];
+  mensajeError: string[] = [];
   tutor = {
     nombre: '',
     apellido: '',
@@ -59,7 +60,21 @@ export class BotonExelComponent {
       const nombreHoja: string = workbook.SheetNames[0];
       const hoja = workbook.Sheets[nombreHoja];
 
-      const datos: any[][] = XLSX.utils.sheet_to_json(hoja, { header: 1 });
+      let datos: any[][] = XLSX.utils.sheet_to_json(hoja, { header: 1 });
+      const encabezados = datos[0];
+      const indiceFechaNacimiento = encabezados.indexOf('Fecha de Nacimiento');
+      if (indiceFechaNacimiento !== -1) { // Si la columna existe
+        datos = datos.map((row, rowIndex) =>
+          row.map((cell, colIndex) => {
+            if (typeof cell === 'number' && cell > 30000 && colIndex === indiceFechaNacimiento) {
+              // Convertimos solo si está en la columna de Fecha de Nacimiento
+              const fechaConvertida = new Date((cell - 25569) * 86400000);
+              return fechaConvertida.toLocaleDateString('es-ES'); // Formato dd/mm/aaaa
+            }
+            return cell;
+          })
+        );
+      }
       this.datosExcel = datos;
       this.procesarEstudiantes(datos);
 
@@ -67,7 +82,7 @@ export class BotonExelComponent {
         console.log('Datos subidos:', this.datosExcel);
       } else if (this.confirmSubida && fileName === 'Formato_Varios_Tutores.xlsx') {
         console.log('Formato 2 subido correctamente1:', fileName, fileSize);
-      }  else  {
+      } else {
       }
       this.procesarDatosExcel(this.datosExcel, file.name);
     };
@@ -90,14 +105,11 @@ export class BotonExelComponent {
       this.estudiantes = [];
       return;
     }
-
-    // Asumimos que la primera fila son los encabezados
     const encabezados = datos[0].map(h => h.toString().trim());
     const filasDatos = datos.slice(1);
 
-    console.log('Encabezados encontrados:', encabezados); // Para depuración
+    console.log('Encabezados encontrados:', encabezados);
 
-    // Buscar índices de columnas con nombres flexibles
     const nombreIndex = encabezados.findIndex(h =>
       h.toLowerCase().includes('nombre') || h.toLowerCase().includes('nombres')
     );
@@ -117,12 +129,10 @@ export class BotonExelComponent {
     console.log('Estudiantes procesados:', this.estudiantes); // Para depuración
   }
 
-  // Función para validar los campos del tutor
   validateTutor(): boolean {
     let isValid = true;
     this.errors = { nombre: '', apellido: '', ci: '' };
 
-    // Validación para nombre
     if (!this.tutor.nombre || this.tutor.nombre.trim() === '') {
       this.errors.nombre = 'El nombre es requerido';
       isValid = false;
@@ -131,7 +141,6 @@ export class BotonExelComponent {
       isValid = false;
     }
 
-    // Validación para apellido
     if (!this.tutor.apellido || this.tutor.apellido.trim() === '') {
       this.errors.apellido = 'El apellido es requerido';
       isValid = false;
@@ -139,7 +148,7 @@ export class BotonExelComponent {
       this.errors.apellido = 'El apellido solo debe contener letras';
       isValid = false;
     }
-    // Validación para CI
+
     if (!this.tutor.ci || this.tutor.ci.trim() === '') {
       this.errors.ci = 'El CI es requerido';
       isValid = false;
@@ -155,25 +164,21 @@ export class BotonExelComponent {
   }
 
   submitTutorInfo(): void {
-    // Validar antes de enviar
     if (!this.validateTutor()) {
       return;
     }
     this.confirmSubida = true;
+    this.modalError  = true;
     console.log('Datos del tutor:', this.tutor);
     this.showModal1 = false;
-    // Resetear el formulario después de enviar
     this.tutor = { nombre: '', apellido: '', ci: '' };
     this.errors = { nombre: '', apellido: '', ci: '' };
-
   }
 
   cancelar1(): void {
     this.confirmSubida = false;
     this.showModal1 = false;
     console.log('Subida cancelada');
-
-    // Resetear el formulario al cancelar
     this.tutor = { nombre: '', apellido: '', ci: '' };
     this.errors = { nombre: '', apellido: '', ci: '' };
   }
@@ -181,6 +186,7 @@ export class BotonExelComponent {
   openModal2(): void {
     this.confirmSubida = true;
     this.showModal2 = false;
+    this.modalError  = true;
   }
 
   cancelar2(): void {
@@ -190,8 +196,31 @@ export class BotonExelComponent {
     this.datosEstudiantes = [];
     this.datosTutores = [];
     this.tamanoArchivo = '';
-    this.nombreArchivo= '';
+    this.nombreArchivo = '';
     console.log('Subida cancelada');
+  }
+
+  volverSubir() {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+    this.modalError  = false;
+    this.mensajeError = [];
+    this.confirmSubida = false;
+    this.datosEstudiantes = [];
+    this.datosTutores = [];
+    this.datosExcel = [];
+    this.tamanoArchivo = '';
+    this.nombreArchivo = '';
+  }
+
+  cerrar() {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+    this.modalError  = false;
   }
 
   procesarDatosExcel(datos: any[][], fileName: string): void {
@@ -227,53 +256,110 @@ export class BotonExelComponent {
     });
     this.datosEstudiantes = estudiantes;
     this.datosTutores = tutores;
-    console.log("Lista de los tutores:", tutores)
     this.validacionesEst(this.datosEstudiantes)
     this.validacionesTutor(this.datosTutores)
   }
 
   validacionesEst(datosEst: any[][]) {
     const listaEstudiante = datosEst.slice(1);
-    let mensaje = "";
 
-    listaEstudiante.forEach((fila, index) => {
-      fila.forEach((celda, celdaIndex) => {
-        if (!celda || celda.toString().trim() === "") {
-          mensaje += `Error: La celda en fila ${index + 1}, columna ${celdaIndex + 1} está vacía.\n`;
+    for (let index = 0; index < listaEstudiante.length; index++) {
+      const fila = listaEstudiante[index];
+
+      for (let celdaIndex = 0; celdaIndex < fila.length; celdaIndex++) {
+        const nombre = fila[0]?.toString().trim();
+        const apellido = fila[1]?.toString().trim();
+        if (!nombre || !apellido) {
+          this.mensajeError.push(`Error: Nombre y apellido son obligatorios en la fila ${index + 1}.\n`);
+          break;
         }
-      });
-    });
+        const ci = fila[2]?.toString().trim();
+        if (!/^[19]\d{6,7}$/.test(ci)) {
+          this.mensajeError.push(`Error: CI inválido en la fila ${index + 1}.\n`);
+          break;
+        }
+        if (!ci) {
+          this.mensajeError.push(`Error: El CI del tutor es obligatorio.\n`);
+          break;
+        }
+        const fechaNacimiento = fila[3]?.toString().trim();
+        if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(fechaNacimiento)) {
+          this.mensajeError.push(`Error: Fecha de nacimiento inválida en la fila ${index + 1}. Debe cumplir con el formato dd/mm/aa.\n`);
+          break;
+        }
+        if (!fechaNacimiento) {
+          this.mensajeError.push(`Error: La fecha de nacimiento del estudiante es obligatorio.\n`);
+          break;
+        }
+        const correo = fila[4]?.toString().trim();
+        if (!correo.includes("@") || correo.includes(" ") ||
+          (!correo.endsWith("@gmail.com") && !correo.endsWith("@Outlook.com"))) {
+          this.mensajeError.push(`Error: Correo electrónico inválido:'${correo}'.\n`);
+          break;
+        }
+        const unidadEducativa = fila[5]?.toString().trim();
+        if (!unidadEducativa) {
+          this.mensajeError.push(`Error: Unidad educativa es obligatoria en la fila ${index + 1}.\n`);
+          break;
+        }
+        const departamento = fila[6]?.toString().trim();
+        if (!departamento) {
+          this.mensajeError.push(`Error: Departamento es obligatorio en la fila ${index + 1}.\n`);
+          break;
+        }
+        const provincia = fila[7]?.toString().trim();
+        if (!provincia) {
+          this.mensajeError.push(`Error: Provincia es obligatoria en la fila ${index + 1}.\n`);
+          break;
+        }
+      }
+    }
 
   }
   validacionesTutor(datosTutor: any[][]) {
     const listaTutor = datosTutor.slice(1);
-    let mensaje = "";
 
     for (let index = 0; index < listaTutor.length; index++) {
       const fila = listaTutor[index];
 
       for (let celdaIndex = 0; celdaIndex < fila.length; celdaIndex++) {
-          const celda = fila[celdaIndex];
-
-          if (!celda || celda.toString().trim() === "") {
-              mensaje += `Error: Ninguna información del tutor no debe estar vacia\n`;
-              break; 
-          }
-          const correo = fila[3]?.toString().trim();
-        if (!correo.includes("@") || correo.includes(" ") || 
-            (!correo.endsWith("@gmail.com") && !correo.endsWith("@Outlook.com"))) {
-            mensaje += `Error: Correo electrónico inválido:'${correo}'.\n`;
-            break;
+        const nombre = fila[0]?.toString().trim();
+        const apellido = fila[1]?.toString().trim();
+        if (!nombre || !apellido) {
+          this.mensajeError.push(`Error: Nombre y apellido son obligatorios en la fila ${index + 1}.\n`);
+          break;
+        }
+        const ci = fila[2]?.toString().trim();
+        if (!/^[19]\d{6,7}$/.test(ci)) {
+          this.mensajeError.push(`Error: CI inválido en la fila ${index + 1}.\n`);
+          break;
+        }
+        if (!ci) {
+          this.mensajeError.push(`Error: El CI del tutor es obligatorio.\n`);
+          break;
+        }
+        const correo = fila[3]?.toString().trim();
+        if (!correo.includes("@") || correo.includes(" ") ||
+          (!correo.endsWith("@gmail.com") && !correo.endsWith("@Outlook.com"))) {
+          this.mensajeError.push(`Error: Correo electrónico inválido:'${correo}'.\n`);
+          break;
+        }
+        if (!correo) {
+          this.mensajeError.push(`Error: El Correo del tutor es obligatorio.\n`);
+          break;
         }
         const celular = fila[4]?.toString().trim();
         if (!/^[67]\d{7}$/.test(celular)) {
-            mensaje += `Error: Número de celular inválido (El numero debe ser de bolivia): '${celular}'.\n `;
-            break;
+          this.mensajeError.push(`Error: Número de celular inválido: '${celular}'.\n `);
+          break;
+        }
+        if (!celular) {
+          this.mensajeError.push(`Error: El Número de celular del tutor es obligatorio.\n`);
+          break;
         }
       }
-  }
-    this.mensajeError = mensaje;
-    console.log("Este es el mensaje de validacion:", mensaje, "y este mensaje que se copio",this.mensajeError);
+    }
+    console.log("Lista de errores:", this.mensajeError);
 
   }
 
