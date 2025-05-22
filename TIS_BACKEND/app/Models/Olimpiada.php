@@ -29,14 +29,23 @@ class Olimpiada extends Model
     protected $fillable = [
         'nombre_olimpiada',
         'descripcion_olimpiada',
+        'presentacion',           // ← Incluir estos campos
+        'requisitos',
+        'premios',
+        'informacion_adicional',
+        'fecha_inscripcion_inicio',
+        'fecha_inscripcion_final',
         'fecha_inicio',
-        'fecha_final',
+        'fecha_final'
     ];
+
 
     // Define los campos que deben ser tratados como fechas
     protected $dates = [
         'fecha_inicio',
         'fecha_final',
+        'fecha_inscripcion_inicio',
+        'fecha_inscripcion_final',
         'created_at',
         'updated_at',
     ];

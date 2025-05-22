@@ -1,75 +1,153 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-
 <div class="bg-[#E3102C] py-5 mb-8 w-screen shadow-md">
   <h1 class="text-white font-bold text-2xl flex items-center px-4">
     ADMINISTRADOR
   </h1>
 </div>
 
+<div class="container mx-auto p-4 max-w-4xl">
+  <h2 class="text-2xl font-bold mb-6 text-gray-500">Registrar nueva Olimpiada</h2>
 
-<div class="container mx-auto p-4">
-  <h2 class="text-2xl font-bold mb-4 text-gray-500">Registrar nueva Olimpiada</h2>
+  <form (ngSubmit)="onSubmit()" class="space-y-6">
+    <!-- Información Básica -->
+    <div class="bg-white p-6 rounded-lg shadow-md border">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+        <i class="fas fa-info-circle mr-2 text-blue-500"></i>
+        Información Básica
+      </h3>
+      
+      <!-- Nombre de la olimpiada -->
+      <div class="mb-4">
+        <label for="nombre_olimpiada" class="block text-sm font-medium text-gray-700">Nombre de la Olimpiada *</label>
+        <input type="text" id="nombre_olimpiada" name="nombre_olimpiada" [(ngModel)]="olimpiada.nombre_olimpiada"
+          (blur)="validateNombreOlimpiada()"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+        <p class="text-red-500 text-sm mt-1">{{ errors.nombreOlimpiada }}</p>
+      </div>
 
-  <form (ngSubmit)="onSubmit()" class="space-y-4">
-    <!-- Nombre de la olimpiada -->
-    <div>
-      <label for="nombre_olimpiada" class="block text-sm font-medium text-gray-700">Nombre de la Olimpiada</label>
-      <input type="text" id="nombre_olimpiada" name="nombre_olimpiada" [(ngModel)]="olimpiada.nombre_olimpiada"
-        (blur)="validateNombreOlimpiada()"
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
-      <p class="text-red-500 text-sm mt-1">{{ errors.nombreOlimpiada }}</p>
-    </div>
+      <!-- Descripción -->
+      <div class="mb-4">
+        <label for="descripcion_olimpiada" class="block text-sm font-medium text-gray-700">Descripción *</label>
+        <textarea id="descripcion_olimpiada" name="descripcion_olimpiada" [(ngModel)]="olimpiada.descripcion_olimpiada"
+          (blur)="validateDescripcion()" rows="4"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea>
+        <p class="text-red-500 text-sm mt-1">{{ errors.descripcion }}</p>
+      </div>
 
-    <!-- Descripción -->
-    <div>
-      <label for="descripcion_olimpiada" class="block text-sm font-medium text-gray-700">Descripción</label>
-      <textarea id="descripcion_olimpiada" name="descripcion_olimpiada" [(ngModel)]="olimpiada.descripcion_olimpiada"
-        (blur)="validateDescripcion()" rows="4"
-        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea>
-      <p class="text-red-500 text-sm mt-1">{{ errors.descripcion }}</p>
+      <!-- Presentación -->
+      <div>
+        <label for="presentacion" class="block text-sm font-medium text-gray-700">Presentación</label>
+        <textarea id="presentacion" name="presentacion" [(ngModel)]="olimpiada.presentacion"
+          (blur)="validatePresentacion()" rows="4" placeholder="Descripción detallada de la olimpiada, objetivos y propósito..."
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea>
+        <p class="text-red-500 text-sm mt-1">{{ errors.presentacion }}</p>
+      </div>
     </div>
 
     <!-- Fechas -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div>
-        <label for="fecha_inicio" class="block text-sm font-medium text-gray-700">Fecha de Inicio</label>
-        <input type="date" id="fecha_inicio" name="fecha_inicio" [(ngModel)]="olimpiada.fecha_inicio"
-          (change)="onStartDateChange($event)" [min]="minDate" [max]="maxStartDate"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
-          required>
+    <div class="bg-white p-6 rounded-lg shadow-md border">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+        <i class="fas fa-calendar-alt mr-2 text-green-500"></i>
+        Fechas Importantes
+      </h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Fechas de la Olimpiada -->
+        <div>
+          <label for="fecha_inicio" class="block text-sm font-medium text-gray-700">Fecha de Inicio de la Olimpiada *</label>
+          <input type="date" id="fecha_inicio" name="fecha_inicio" [(ngModel)]="olimpiada.fecha_inicio"
+            (change)="onStartDateChange($event)" [min]="minDate" [max]="maxStartDate"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
+            required>
+        </div>
+        <div>
+          <label for="fecha_final" class="block text-sm font-medium text-gray-700">Fecha Final de la Olimpiada *</label>
+          <input type="date" id="fecha_final" name="fecha_final" [(ngModel)]="olimpiada.fecha_final"
+            (change)="validateFechas()" [min]="minEndDate" [max]="maxEndDate" [disabled]="!fechaFinalHabilitada"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
+            [ngClass]="{'bg-gray-100': !fechaFinalHabilitada}" required>
+        </div>
+        
+        <!-- Fechas de Inscripción -->
+        <div>
+          <label for="fecha_inscripcion_inicio" class="block text-sm font-medium text-gray-700">Fecha de Inicio de Inscripciones</label>
+          <input type="date" id="fecha_inscripcion_inicio" name="fecha_inscripcion_inicio" [(ngModel)]="olimpiada.fecha_inscripcion_inicio"
+            (change)="onInscripcionStartDateChange($event)" [min]="minDate" [max]="maxInscripcionStartDate"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border">
+        </div>
+        <div>
+          <label for="fecha_inscripcion_final" class="block text-sm font-medium text-gray-700">Fecha Final de Inscripciones</label>
+          <input type="date" id="fecha_inscripcion_final" name="fecha_inscripcion_final" [(ngModel)]="olimpiada.fecha_inscripcion_final"
+            (change)="validateFechasInscripcion()" [min]="minInscripcionEndDate" [max]="maxInscripcionEndDate" [disabled]="!fechaInscripcionFinalHabilitada"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
+            [ngClass]="{'bg-gray-100': !fechaInscripcionFinalHabilitada}">
+        </div>
       </div>
-      <div>
-        <label for="fecha_final" class="block text-sm font-medium text-gray-700">Fecha Final</label>
-        <input type="date" id="fecha_final" name="fecha_final" [(ngModel)]="olimpiada.fecha_final"
-          (change)="validateFechas()" [min]="minEndDate" [max]="maxEndDate" [disabled]="!fechaFinalHabilitada"
-          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"
-          [ngClass]="{'bg-gray-100': !fechaFinalHabilitada}" required>
+      <p class="text-red-500 text-sm mt-2">{{ errors.fechas }}</p>
+      <p class="text-red-500 text-sm mt-1">{{ errors.fechasInscripcion }}</p>
+    </div>
+
+    <!-- Requisitos y Premios -->
+    <div class="bg-white p-6 rounded-lg shadow-md border">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+        <i class="fas fa-clipboard-list mr-2 text-purple-500"></i>
+        Requisitos y Premios
+      </h3>
+      
+      <!-- Requisitos -->
+      <div class="mb-4">
+        <label for="requisitos" class="block text-sm font-medium text-gray-700">Requisitos</label>
+        <textarea id="requisitos" name="requisitos" [(ngModel)]="olimpiada.requisitos"
+          (blur)="validateRequisitos()" rows="4" placeholder="Requisitos para participar en la olimpiada..."
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea>
+        <p class="text-red-500 text-sm mt-1">{{ errors.requisitos }}</p>
       </div>
-      <p class="text-red-500 text-sm mt-1 col-span-2">{{ errors.fechas }}</p>
+
+      <!-- Premios -->
+      <div>
+        <label for="premios" class="block text-sm font-medium text-gray-700">Premios</label>
+        <textarea id="premios" name="premios" [(ngModel)]="olimpiada.premios"
+          (blur)="validatePremios()" rows="4" placeholder="Descripción de los premios y reconocimientos..."
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea>
+        <p class="text-red-500 text-sm mt-1">{{ errors.premios }}</p>
+      </div>
+    </div>
+
+    <!-- Información Adicional -->
+    <div class="bg-white p-6 rounded-lg shadow-md border">
+      <h3 class="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+        <i class="fas fa-plus-circle mr-2 text-orange-500"></i>
+        Información Adicional
+      </h3>
+      
+      <div>
+        <label for="informacion_adicional" class="block text-sm font-medium text-gray-700">Información Adicional</label>
+        <textarea id="informacion_adicional" name="informacion_adicional" [(ngModel)]="olimpiada.informacion_adicional"
+          (blur)="validateInformacionAdicional()" rows="4" placeholder="Cualquier información adicional relevante..."
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border"></textarea>
+        <p class="text-red-500 text-sm mt-1">{{ errors.informacionAdicional }}</p>
+      </div>
     </div>
 
     <!-- Mensaje de error por duplicado -->
     <p class="text-red-500 text-sm mt-1">{{ errors.duplicado }}</p>
 
     <!-- Botones -->
-    <div class="flex justify-end space-x-4">
-      <button type="button" (click)="resetForm()" class="px-4 py-2 bg-[#BDBCBC] text-white rounded-md hover:bg-red-700">
+    <div class="flex justify-end space-x-4 pt-4">
+      <button type="button" (click)="resetForm()" class="px-6 py-2 bg-[#BDBCBC] text-white rounded-md hover:bg-red-700 transition-colors">
         Cancelar
       </button>
       <button type="submit"
-        class="px-4 py-2 bg-[#0F0981] text-white  hover:bg-[#0a005f] rounded-md flex items-center gap-2 font-bold">
+        class="px-6 py-2 bg-[#0F0981] text-white hover:bg-[#0a005f] rounded-md flex items-center gap-2 font-bold transition-colors">
         <i class="fas fa-plus"></i> Añadir Olimpiada
       </button>
-
-
     </div>
   </form>
+
   <!-- Modal de éxito o error -->
-  <div *ngIf="mostrarModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-transparent">
-
-    <div class="bg-gray-100 rounded-xl shadow-2xl p-6 max-w-md w-full text-center relative animate-fade-in">
-
+  <div *ngIf="mostrarModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50">
+    <div class="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full text-center relative animate-fade-in">
       <div *ngIf="modalTipo === 'exito'" class="text-green-600 text-4xl mb-3">
         <i class="fas fa-check-circle"></i>
       </div>
@@ -78,7 +156,7 @@
       </div>
       <p class="text-lg text-gray-700 mb-6">{{ modalMensaje }}</p>
       <button (click)="ocultarModal()"
-        class="px-4 py-2 bg-[#0b0069] text-white rounded-md hover:bg-[#0a005f] transition">
+        class="px-4 py-2 bg-[#0b0069] text-white rounded-md hover:bg-[#0a005f] transition-colors">
         Cerrar
       </button>
     </div>

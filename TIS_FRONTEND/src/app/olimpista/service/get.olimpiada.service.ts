@@ -23,6 +23,12 @@ export class GetOlimpiadaService {
   crearOlimpiada(olimpiadaData: {
     nombre_olimpiada: string;
     descripcion_olimpiada: string;
+    presentacion?: string;
+    requisitos?: string;
+    fecha_inscripcion_inicio?: string;
+    fecha_inscripcion_final?: string;
+    premios?: string;
+    informacion_adicional?: string;
     fecha_inicio: string;
     fecha_final: string;
     areas: {
@@ -35,4 +41,5 @@ export class GetOlimpiadaService {
       olimpiadaData
     );
   }
+
 }

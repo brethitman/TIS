@@ -2,16 +2,21 @@
 
 
 export interface Olimpiada {
-  id:                    number;
-  nombre_olimpiada:      string;
-  descripcion_olimpiada: string;
-  fecha_inicio:          Date;
-  fecha_final:           Date;
-  areas:                 Area[];
-  createdAt:             Date;
-  updatedAt:             Date;
+  id:                        number;
+  nombre_olimpiada:          string;
+  descripcion_olimpiada:     string;
+  presentacion?:             string;
+  requisitos?:               string;
+  fecha_inscripcion_inicio?: Date;
+  fecha_inscripcion_final?:  Date;
+  premios?:                  string;
+  informacion_adicional?:    string;
+  fecha_inicio:              Date;
+  fecha_final:               Date;
+  areas:                     Area[];
+  createdAt:                 Date;
+  updatedAt:                 Date;
 }
-
 export interface Area {
   id_area:      number;
   id_olimpiada: number;

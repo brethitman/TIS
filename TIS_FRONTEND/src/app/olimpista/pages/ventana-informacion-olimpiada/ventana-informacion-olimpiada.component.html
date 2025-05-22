@@ -1,20 +1,118 @@
 <ng-template #loading>
   <p>Cargando información...</p>
 </ng-template>
+
 <!-- Título -->
 <section class="w-full bg-gradient-to-r from-red-600 to-purple-500 py-2 px-6 animate-gradient">
   <h1 class="text-white text-3xl font-bold">{{olimpiada.nombre_olimpiada}}</h1>
 </section>
 
 <!-- Descripción -->
-<section class="bg-white shadow rounded-lg p-6">
-  <h2 class="text-lg font-semibold mb-2">DESCRIPCIÓN</h2>
+<section class="bg-white shadow rounded-lg p-6 mb-6">
+  <h2 class="text-lg font-semibold mb-2 flex items-center">
+    <i class="fas fa-info-circle mr-2 text-blue-500"></i>
+    DESCRIPCIÓN
+  </h2>
   <p class="text-lg leading-relaxed pl-6 animate_animated animatefadeInUp animate_delay-1s whitespace-pre-line">
     {{olimpiada.descripcion_olimpiada}}
   </p>
 </section>
 
-<!-- Título -->
+<!-- Presentación (solo si existe) -->
+<section *ngIf="olimpiada.presentacion" class="bg-white shadow rounded-lg p-6 mb-6">
+  <h2 class="text-lg font-semibold mb-2 flex items-center">
+    <i class="fas fa-presentation mr-2 text-green-500"></i>
+    PRESENTACIÓN
+  </h2>
+  <p class="text-gray-700 leading-relaxed pl-6 whitespace-pre-line">
+    {{olimpiada.presentacion}}
+  </p>
+</section>
+
+<!-- Fechas Importantes -->
+<section class="bg-white shadow rounded-lg p-6 mb-6">
+  <h2 class="text-lg font-semibold mb-4 flex items-center">
+    <i class="fas fa-calendar-alt mr-2 text-purple-500"></i>
+    FECHAS IMPORTANTES
+  </h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pl-6">
+    <!-- Fechas de la Olimpiada -->
+    <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+      <h3 class="font-semibold text-blue-700 mb-2">Olimpiada</h3>
+      <div class="space-y-2 text-sm">
+        <div class="flex items-center">
+          <i class="fas fa-play-circle mr-2 text-green-600"></i>
+          <span class="font-medium">Inicio:</span>
+          <span class="ml-2">{{olimpiada.fecha_inicio | date:'dd/MM/yyyy'}}</span>
+        </div>
+        <div class="flex items-center">
+          <i class="fas fa-stop-circle mr-2 text-red-600"></i>
+          <span class="font-medium">Fin:</span>
+          <span class="ml-2">{{olimpiada.fecha_final | date:'dd/MM/yyyy'}}</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Fechas de Inscripción (solo si existen) -->
+    <div *ngIf="olimpiada.fecha_inscripcion_inicio || olimpiada.fecha_inscripcion_final" 
+         class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
+      <h3 class="font-semibold text-orange-700 mb-2">Inscripciones</h3>
+      <div class="space-y-2 text-sm">
+        <div *ngIf="olimpiada.fecha_inscripcion_inicio" class="flex items-center">
+          <i class="fas fa-calendar-plus mr-2 text-green-600"></i>
+          <span class="font-medium">Apertura:</span>
+          <span class="ml-2">{{olimpiada.fecha_inscripcion_inicio | date:'dd/MM/yyyy'}}</span>
+        </div>
+        <div *ngIf="olimpiada.fecha_inscripcion_final" class="flex items-center">
+          <i class="fas fa-calendar-times mr-2 text-red-600"></i>
+          <span class="font-medium">Cierre:</span>
+          <span class="ml-2">{{olimpiada.fecha_inscripcion_final | date:'dd/MM/yyyy'}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Requisitos (solo si existen) -->
+<section *ngIf="olimpiada.requisitos" class="bg-white shadow rounded-lg p-6 mb-6">
+  <h2 class="text-lg font-semibold mb-2 flex items-center">
+    <i class="fas fa-clipboard-list mr-2 text-orange-500"></i>
+    REQUISITOS
+  </h2>
+  <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 ml-6">
+    <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+      {{olimpiada.requisitos}}
+    </p>
+  </div>
+</section>
+
+<!-- Premios (solo si existen) -->
+<section *ngIf="olimpiada.premios" class="bg-white shadow rounded-lg p-6 mb-6">
+  <h2 class="text-lg font-semibold mb-2 flex items-center">
+    <i class="fas fa-trophy mr-2 text-yellow-500"></i>
+    PREMIOS
+  </h2>
+  <div class="bg-gradient-to-r from-yellow-50 to-amber-50 border-l-4 border-yellow-500 p-4 ml-6 rounded-r-lg">
+    <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+      {{olimpiada.premios}}
+    </p>
+  </div>
+</section>
+
+<!-- Información Adicional (solo si existe) -->
+<section *ngIf="olimpiada.informacion_adicional" class="bg-white shadow rounded-lg p-6 mb-6">
+  <h2 class="text-lg font-semibold mb-2 flex items-center">
+    <i class="fas fa-plus-circle mr-2 text-gray-500"></i>
+    INFORMACIÓN ADICIONAL
+  </h2>
+  <div class="bg-gray-50 border-l-4 border-gray-400 p-4 ml-6 rounded-r-lg">
+    <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+      {{olimpiada.informacion_adicional}}
+    </p>
+  </div>
+</section>
+
+<!-- Título de Áreas -->
 <section class="w-full bg-gradient-to-r from-red-600 to-purple-500 py-2 px-4 animate-gradient">
   <h1 class="text-white text-3xl font-bold">Áreas de la olimpiada</h1>
 </section>
@@ -39,18 +137,18 @@
   </div>-->
 </ng-template>
 
-
-
 <!-- Botón para inscribirse o ir a la siguiente vista -->
-<div class="flex justify-center space-x-6" [class.mt-6]="categorias.length > 0">
+<div class="flex justify-center space-x-6 mt-8 mb-6">
   <button 
-    class="text-white font-semibold py-2 px-6 rounded-lg shadow hover:shadow-md transition duration-300 bg-[#0D1271]"
-    (click)="entrar()">
+    class="text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition duration-300 bg-[#0D1271] hover:bg-[#0a0f5c] transform hover:scale-105">
+    <i class="fas fa-user mr-2"></i>
     Inscripción a un solo estudiante
+    <span (click)="entrar()"></span>
   </button>
   <button 
-    class="text-white font-semibold py-2 px-6 rounded-lg shadow hover:shadow-md transition duration-300 bg-[#0D1271]"
-    (click)="variosEstudiantes()">
+    class="text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition duration-300 bg-[#0D1271] hover:bg-[#0a0f5c] transform hover:scale-105">
+    <i class="fas fa-users mr-2"></i>
     Inscripción a un grupo de estudiantes
+    <span (click)="variosEstudiantes()"></span>
   </button>
 </div>
