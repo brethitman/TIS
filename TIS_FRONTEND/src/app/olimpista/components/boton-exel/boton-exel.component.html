@@ -109,36 +109,76 @@
     </div>
   </div>
 </div>
-<div *ngIf="confirmSubida == true && modalError == true"
-  class="flex p-2 fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
-  style="background-color: rgba(75, 85, 99, 0.3);">
+
+<!-- Modal para errores-->
+
+<div *ngIf="confirmSubida && modalError" 
+     class="fixed inset-0 z-50 flex items-center justify-center p-4"style="background-color: rgba(75, 85, 99, 0.3);">
+     
+  <!-- Modal de error -->
   <div *ngIf="mensajeError.length > 0"
-    class="flex flex-col items-center p-6 bg-[#faf5f5] rounded-lg w-300 rounded-lg shadow-xl w-96">
-    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="red" class="bi bi-exclamation-triangle">
-      <path
-        d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
-      <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
-    </svg>
-    <ul class="text-lg text-red-700 font-medium text-center list-disc">
-      <li *ngFor="let error of mensajeError">{{ error }}</li>
+       class="relative w-full max-w-md p-6 bg-white rounded-xl shadow-2xl transform transition-all"
+       @scaleInOut>
+       
+    <!-- Icono de error -->
+    <div class="flex justify-center mb-4">
+      <div class="p-3 bg-red-100 rounded-full">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+    </div>
+    
+    <!-- Título -->
+    <h2 class="mb-4 text-2xl font-bold text-center text-gray-800">Error en el documento</h2>
+    
+    <!-- Lista de errores -->
+    <ul class="mb-6 space-y-2 text-gray-700">
+      <li *ngFor="let error of mensajeError" class="flex items-start">
+        <svg xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0 w-5 h-5 mt-1 mr-2 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+        <span>{{ error }}</span>
+      </li>
     </ul>
-    <button (click)="volverSubir()"
-      class="inline-block px-4 py-2 text-white bg-[#0D1271] rounded cursor-pointer hover:bg-[#090C4A] transition">
-      Volver a subir excel</button>
-  </div>
-  <div *ngIf="mensajeError.length === 0" class="flex flex-col items-center p-6 bg-[#faf5f5] rounded-lg w-300 rounded-lg shadow-xl">
-    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="green" class="bi bi-check-square"
-      viewBox="0 0 16 16">
-      <path
-        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-      <path
-        d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z" />
-    </svg>
-    <p class="text-2xl text-slate-700 font-medium">
-      Su documento no tiene ningun error puede generar una boleta de pago
+    
+    <!-- Botón de acción -->
+    <div class="flex justify-center">
+      <button (click)="volverSubir()"
+              class="px-6 py-3 font-medium text-white transition-colors duration-300 transform bg-gradient-to-r from-red-600 to-red-700 rounded-lg hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+        Volver a subir documento
+      </button>
+    </div>
+    
+  <!-- Modal de éxito -->
+  <div *ngIf="mensajeError.length === 0"
+       class="relative w-full max-w-md p-6 bg-white rounded-xl shadow-2xl transform transition-all"
+       @scaleInOut>
+       
+    <!-- Icono de éxito -->
+    <div class="flex justify-center mb-4">
+      <div class="p-3 bg-green-100 rounded-full">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+    </div>
+    
+    <!-- Título -->
+    <h2 class="mb-4 text-2xl font-bold text-center text-gray-800">Documento válido</h2>
+    
+    <!-- Mensaje -->
+    <p class="mb-6 text-center text-gray-700">
+      Su documento no tiene ningún error. Puede generar una boleta de pago.
     </p>
-    <button (click)="cerrar()"
-      class="inline-block px-4 py-2 text-white bg-[#0D1271] rounded cursor-pointer hover:hover:bg-[#090C4A] transition">
-      Empezar a inscribirte</button>
+    
+    <!-- Botón de acción -->
+    <div class="flex justify-center">
+      <button (click)="cerrar()"
+              class="px-6 py-3 font-medium text-white transition-colors duration-300 transform bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        Empezar a inscribir
+      </button>
+    </div>
+    
   </div>
 </div>

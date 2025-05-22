@@ -39,6 +39,7 @@ export class BotonExelComponent {
   };
   isStudentDropdownOpen: boolean = false;
   estudiantes: any[] = [];
+  
 
   onFileChange(event: any): void {
     const target: DataTransfer = <DataTransfer>event.target;
@@ -362,5 +363,6 @@ export class BotonExelComponent {
     console.log("Lista de errores:", this.mensajeError);
 
   }
+  
 
 }
