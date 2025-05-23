@@ -26,13 +26,19 @@ export class AreaAlumnoComponent implements OnInit {
   @Output() inscribir = new EventEmitter<void>();
 
   isStudentDropdownOpen = false;
+  isCursoDropdownOpen = false;
   isAreaDropdownOpen = false;
+  isAreaDropdownOpen2 = false;
   estudianteActual: any = null;
   successMessage: string | null = null;
   errorMessage: string | null = null;
   areasDisponibles: IDOlimpiadabyArea[] = [];
   categorias!: NivelCategoria[];
   cursos: Curso[] = [];
+  isDuplicated = false;
+  seleccionArea1: string = 'Seleccionar área';
+  seleccionArea2: string = 'Seleccionar área';
+  stArea1: IDOlimpiadabyArea | null = null;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -89,11 +95,14 @@ export class AreaAlumnoComponent implements OnInit {
   }
 
 
+
+
   //seleccion
   toggleStudentDropdown(): void {
     this.isStudentDropdownOpen = !this.isStudentDropdownOpen;
     if (this.isStudentDropdownOpen) {
       this.isAreaDropdownOpen = false;
+      this.isAreaDropdownOpen2 = false
     }
   }
 
@@ -103,7 +112,12 @@ export class AreaAlumnoComponent implements OnInit {
       this.isStudentDropdownOpen = false;
     }
   }
-  isCursoDropdownOpen = false;
+  toggleAreaDropdown2(): void {
+    this.isAreaDropdownOpen2 = !this.isAreaDropdownOpen2;
+    if (this.isAreaDropdownOpen2) {
+      this.isStudentDropdownOpen = false;
+    }
+  }
 
   toggleCursoDropdown(): void {
     this.isCursoDropdownOpen = !this.isCursoDropdownOpen;
@@ -114,12 +128,34 @@ export class AreaAlumnoComponent implements OnInit {
     this.isStudentDropdownOpen = false;
   }
 
-  seleccionarArea(area: any): void {
-    this.areaSeleccionada.emit(area);
+ selectArea1(areaNombre: string) {
+  const areaSeleccionada = this.areasDisponibles.find(area => area.nombre_area === areaNombre);
+  
+  if (areaSeleccionada) {
+    this.seleccionArea1 = areaNombre; 
+    this.categorias = areaSeleccionada.nivel_categorias?? []; 
     this.isAreaDropdownOpen = false;
+    console.log("Categorias", this.categorias)
+  }
+}
+  selectArea2(area2: string) {
+    const areaSeleccionada = this.areasDisponibles.find(area => area.nombre_area === area2);
+  
+  if (areaSeleccionada) {
+    this.seleccionArea2 = area2; 
+    this.categorias = areaSeleccionada.nivel_categorias?? []; 
+    this.isAreaDropdownOpen = false;
+    console.log("Categorias", this.categorias)
+  }
   }
 
   inscribirEstudiante(): void {
     this.inscribir.emit();
   }
+
+  toggleDuplicado() {
+    this.isDuplicated = !this.isDuplicated;
+    this.seleccionArea2 = 'Seleccionar área'
+  }
+
 }

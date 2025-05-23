@@ -270,21 +270,21 @@ export class BotonExelComponent {
         const nombre = fila[0]?.toString().trim();
         const apellido = fila[1]?.toString().trim();
         if (!nombre || !apellido) {
-          this.mensajeError.push(`Error: Nombre y apellido son obligatorios en la fila ${index + 1}.\n`);
+          this.mensajeError.push(`Error: El nombre y apellido del estudiante son obligatorios en la fila ${index + 1}.\n`);
           break;
         }
         const ci = fila[2]?.toString().trim();
-        if (!/^[19]\d{6,7}$/.test(ci)) {
-          this.mensajeError.push(`Error: CI inválido en la fila ${index + 1}.\n`);
+        if (!/^\d{7,8}$/.test(ci)) {
+          this.mensajeError.push(`Error: CI del estudiante inválido en la fila ${index + 1}.\n`);
           break;
         }
         if (!ci) {
-          this.mensajeError.push(`Error: El CI del tutor es obligatorio.\n`);
+          this.mensajeError.push(`Error: El CI ddel estudiante es obligatorio.\n`);
           break;
         }
         const fechaNacimiento = fila[3]?.toString().trim();
         if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(fechaNacimiento)) {
-          this.mensajeError.push(`Error: Fecha de nacimiento inválida en la fila ${index + 1}. Debe cumplir con el formato dd/mm/aa.\n`);
+          this.mensajeError.push(`Error: Fecha de nacimiento del estudiante inválida en la fila ${index + 1}. Debe cumplir con el formato dd/mm/aa.\n`);
           break;
         }
         if (!fechaNacimiento) {
@@ -294,7 +294,7 @@ export class BotonExelComponent {
         const correo = fila[4]?.toString().trim();
         if (!correo.includes("@") || correo.includes(" ") ||
           (!correo.endsWith("@gmail.com") && !correo.endsWith("@Outlook.com"))) {
-          this.mensajeError.push(`Error: Correo electrónico inválido:'${correo}'.\n`);
+          this.mensajeError.push(`Error: Correo electrónico inválido del estudiante:'${correo}'.\n`);
           break;
         }
         const unidadEducativa = fila[5]?.toString().trim();
@@ -326,12 +326,12 @@ export class BotonExelComponent {
         const nombre = fila[0]?.toString().trim();
         const apellido = fila[1]?.toString().trim();
         if (!nombre || !apellido) {
-          this.mensajeError.push(`Error: Nombre y apellido son obligatorios en la fila ${index + 1}.\n`);
+          this.mensajeError.push(`Error: Nombre y apellido del tutor son obligatorios en la fila ${index + 1}.\n`);
           break;
         }
         const ci = fila[2]?.toString().trim();
-        if (!/^[19]\d{6,7}$/.test(ci)) {
-          this.mensajeError.push(`Error: CI inválido en la fila ${index + 1}.\n`);
+        if (!/^\d{7,8}$/.test(ci)) {
+          this.mensajeError.push(`Error: CI del tutor inválido en la fila ${index + 1}.\n`);
           break;
         }
         if (!ci) {
