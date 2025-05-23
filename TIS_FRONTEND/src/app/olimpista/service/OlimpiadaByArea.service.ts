@@ -31,4 +31,9 @@ export class OlimpiadaByAreaService {
     const url = `${this.baseUrl}/olimpiadas/${olimpiadaId}`;
     return this.http.get<OlimpiadaResponse>(url);
   }
+
+  //obtiene 
+   getNivelesPorArea(idArea: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/areas/${idArea}/niveles`);
+  }
 }
