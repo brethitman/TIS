@@ -30,6 +30,12 @@ export class AreaAlumnoComponent implements OnInit {
   isCursoDropdownOpen = false;
   isAreaDropdownOpen = false;
   isAreaDropdownOpen2 = false;
+
+  isCategoriaDropdownOpen1 = false;
+  categoriaSeleccionada1: NivelCategoria | null = null;
+  isCategoriaDropdownOpen2 = false;
+  categoriaSeleccionada2: NivelCategoria | null = null;
+
   estudianteActual: any = null;
   estudiantesSeleccionados: any[] = [];
   successMessage: string | null = null;
@@ -38,6 +44,7 @@ export class AreaAlumnoComponent implements OnInit {
   categorias!: NivelCategoria[];
   cursos: Curso[] = [];
   isDuplicated = false;
+  cursoSeleccionado: Curso | null = null;
   seleccionArea1: string = 'Seleccionar área';
   seleccionArea2: string = 'Seleccionar área';
   stArea1: IDOlimpiadabyArea | null = null;
@@ -55,41 +62,21 @@ export class AreaAlumnoComponent implements OnInit {
     this.cargarCursos();
   }
   private cargarCursos(): void {
-  this.cursoService.obtenerCursos().subscribe({
-    next: (response: any) => {
-      // Fuerza la conversión a array sin importar el formato
-      const rawData = JSON.parse(JSON.stringify(response));
-      
-      // Extrae los cursos sin importar cómo vengan
-      this.cursos = rawData?.data || rawData?.cursos || rawData || [];
-      
-      // DEBUG: Verifica TODOS los cursos recibidos
-      console.log('=== DEBUG: TODOS LOS CURSOS RECIBIDOS ===');
-      console.table(this.cursos);
-      
-      // DEBUG: Filtra específicamente primaria
-      console.log('=== DEBUG: CURSOS PRIMARIA ===');
-      console.table(this.cursos.filter((c: any) => c.nameCurso?.includes('primaria')));
-      
-      // Asignación final forzada (incluyendo manualmente si es necesario)
-      if (!this.cursos.some((c: any) => c.nameCurso === '1ro primaria')) {
-        this.cursos.unshift({ id: 13, nameCurso: '1ro primaria', nivelCategorias: [] });
-      }
-      if (!this.cursos.some((c: any) => c.nameCurso === '2do primaria')) {
-        this.cursos.unshift({ id: 14, nameCurso: '2do primaria', nivelCategorias: [] });
-      }
-    },
-    error: (error) => {
-      console.error('Error:', error);
-      // Asignación manual de emergencia
-      this.cursos = [
-        { id: 13, nameCurso: '1ro primaria', nivelCategorias: [] },
-        { id: 14, nameCurso: '2do primaria', nivelCategorias: [] },
-        // ... otros cursos manualmente si es necesario
-      ];
-    }
-  });
-}
+    this.cursoService.obtenerCursos()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.cursos = Array.isArray(data) ? data : (data as any).cursos; // Asigna primero
+          console.log('Respuesta del servicio:', this.cursos); 
+          console.log('Cantidad de cursos:', this.cursos.length);
+          console.log('Lista de cursos:', this.cursos);
+        },
+        error: (error) => {
+          console.error('Error cargando cursos:', error);
+          this.errorMessage = 'Error al cargar los cursos';
+        }
+      });
+ }
 
   //traer areas y categorias
   private cargarOlimpiadaId(): void {
@@ -159,6 +146,13 @@ export class AreaAlumnoComponent implements OnInit {
     this.estudiantesSeleccionados = this.estudiantes.filter(est => est.seleccionado);
     this.estudianteSeleccionado.emit(this.estudiantesSeleccionados);
   }
+
+  seleccionarCurso(curso: Curso): void {
+  this.cursoSeleccionado = curso;
+  this.isCursoDropdownOpen = false;
+  console.log('Curso seleccionado:', curso);
+}
+  
  selectArea1(areaNombre: string) {
   const areaSeleccionada = this.areasDisponibles.find(area => area.nombre_area === areaNombre);
   
@@ -187,6 +181,35 @@ export class AreaAlumnoComponent implements OnInit {
   toggleDuplicado() {
     this.isDuplicated = !this.isDuplicated;
     this.seleccionArea2 = 'Seleccionar área'
+  }
+
+  toggleCategoriaDropdown1(): void {
+    this.isCategoriaDropdownOpen1 = !this.isCategoriaDropdownOpen1;
+    if (this.isCategoriaDropdownOpen1) {
+      this.isCategoriaDropdownOpen2 = false;
+      this.isStudentDropdownOpen = this.isAreaDropdownOpen = this.isAreaDropdownOpen2 = this.isCursoDropdownOpen = false;
+    }
+  }
+
+  seleccionarCategoria1(categoria: NivelCategoria): void {
+    this.categoriaSeleccionada1 = categoria;
+    this.isCategoriaDropdownOpen1 = false;
+    console.log('Categoría área 1 seleccionada:', categoria);
+  }
+
+  // Para la segunda área duplicada
+  toggleCategoriaDropdown2(): void {
+    this.isCategoriaDropdownOpen2 = !this.isCategoriaDropdownOpen2;
+    if (this.isCategoriaDropdownOpen2) {
+      this.isCategoriaDropdownOpen1 = false;
+      this.isStudentDropdownOpen = this.isAreaDropdownOpen = this.isAreaDropdownOpen2 = this.isCursoDropdownOpen = false;
+    }
+  }
+
+  seleccionarCategoria2(categoria: NivelCategoria): void {
+    this.categoriaSeleccionada2 = categoria;
+    this.isCategoriaDropdownOpen2 = false;
+    console.log('Categoría área 2 seleccionada:', categoria);
   }
 
 }

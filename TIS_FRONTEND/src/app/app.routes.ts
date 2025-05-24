@@ -6,21 +6,18 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
 import { Inicio1Component } from './olimpista/pages/inicio1/inicio1.component';
 import { Inicio3Component } from './olimpista/pages/inicio3/inicio3.component';
 import { OlimpiadaPageComponent } from './olimpista/pages/olimpiada-page/olimpiada-page.component';
-
+import { Inicio5ReportesComponent } from './olimpista/pages/inicio5-reportes/inicio5-reportes.component';//pagina de reportes
 // Importa tus nuevos componentes de inscripción
-
 import { VistaAreasCategoriasComponent } from './olimpista/components/vista-areas-categorias/vista-areas-categorias.component';
-import { OlimpiadaService } from './olimpista/service/olimpiada.service';
 import { VentanaInformacionOlimpiadaComponent } from './olimpista/pages/ventana-informacion-olimpiada/ventana-informacion-olimpiada.component';
 import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lista/visualizacion-lista.component';
 import { InscripcionTodoComponent } from './olimpista/components/inscripcion-todo/inscripcion-todo.component';
 
 import { PruebaOcrComponent } from './olimpista/components/prueba-ocr/prueba-ocr.component';
 
-
 export const routes: Routes = [
 
-  { path: 'prueba-ocr', component: PruebaOcrComponent },//SOLO PARA PRUEBA OCR
+  { path: 'prueba-ocr', component: PruebaOcrComponent },
   {
     path: 'auth',
     component: AuthLayoutComponent,
@@ -39,7 +36,6 @@ export const routes: Routes = [
         path: 'products', // Revisa si 'products' es el nombre correcto para esta sección en tu app
         loadChildren: () => import("./olimpista/estudiantes-routing.module").then(m => m.EstudiantesRoutingModule),
       },*/
-     
       {
         path: 'olimpiada',
         component: OlimpiadaPageComponent
@@ -53,7 +49,8 @@ export const routes: Routes = [
      ]
    },
 
-
+  // --- Rutas de Inscripción ---
+  
    // Opcional: Redirigir '/inscripcion' al paso 1
   {
     path: 'inscripcion',
@@ -68,7 +65,6 @@ export const routes: Routes = [
     path: 'inicio/waba',
     component: Inicio1Component
   },
- 
   {
     path: 'inicio/dodog', // Esta ruta está duplicada en tu configuración original
     component: Inicio3Component
@@ -89,7 +85,7 @@ export const routes: Routes = [
   component: VentanaInformacionOlimpiadaComponent 
 },
 {
-  path: 'inicio/Olimpiada/1/Visualizacion', // Esta ruta está duplicada en tu configuración original
+  path: 'inicio/Olimpiada/:id/Visualizacion', // Esta ruta está duplicada en tu configuración original
   component: VisualizacionListaComponent
 },
 {
@@ -128,5 +124,7 @@ export const routes: Routes = [
   path: '**',
   redirectTo: 'admin/olimpiada'
 }
+
+
 
 ];
