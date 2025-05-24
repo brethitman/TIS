@@ -1,28 +1,57 @@
-<div class="flex justify-center my-4 p-2">
-  <div
-    class="flex-wrap w-full max-w-500 overflow-x-auto scrollbar-thin scrollbar-thumb-white scrollbar-track-transparent 
-    border-gray-300 shadow-lg shadow-gray-500/50 border-b-2 rounded-lg mx-8 justify-center bg-neutral-50 "
-  >
-    <div class="flex space-x-6 px-4 min-w-max justify-center">
-      <div
-        *ngFor="let area of Area"
-        [ngClass]="{
-          'bg-gradient-to-r from-red-500 to-blue-500 p-[3px]': areaSeleccionada === area,
-          'p-[2px]': true
-        }"
-        class="rounded-2xl flex-shrink-0 transition-all duration-300"
-      >
-        <button
-          (click)="onAreaClick(area)"
-          class="w-full h-full px-8 py-3 text-black bg-white rounded-2xl transition-all duration-200"
-          [ngClass]="{
-            'border-transparent hover:border-gray-500': areaSeleccionada !== area,
-            'border-transparent': areaSeleccionada === area
-          }"
-        >
-          <span class="font-medium">{{ area.nombre_area }}</span>
-        </button>
+<div class="relative my-4 p-2 max-w-4xl mx-auto">
+  <!-- Flechas de navegación -->
+  <div class="flex justify-between absolute inset-y-0 items-center z-10 w-full pointer-events-none px-2">
+    <button (click)="prevArea()" [disabled]="currentIndex === 0"
+      class="bg-white p-3 rounded-full shadow-lg text-gray-800 pointer-events-auto focus:outline-none hover:bg-gray-50 transition hover:shadow-xl disabled:opacity-50 disabled:pointer-events-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+      </svg>
+    </button>
+    <button (click)="nextArea()" [disabled]="currentIndex >= getTotalPages() - 1"
+      class="bg-white p-3 rounded-full shadow-lg text-gray-800 pointer-events-auto focus:outline-none hover:bg-gray-50 transition hover:shadow-xl disabled:opacity-50 disabled:pointer-events-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Contenedor del carrusel -->
+  <div class="overflow-hidden">
+    <div class="flex transition-transform duration-300 ease-in-out"
+         [style.transform]="'translateX(-' + (currentIndex * 100) + '%)'">
+      <div *ngFor="let areaGroup of getAreaGroups()" 
+           class="flex-shrink-0 w-full px-2">
+        <div class="flex justify-center space-x-4">
+          <div *ngFor="let area of areaGroup" 
+               [ngClass]="{
+                 'bg-gradient-to-r from-red-500 to-blue-500 p-[3px]': areaSeleccionada === area,
+                 'p-[2px]': true
+               }"
+               class="rounded-2xl flex-shrink-0 transition-all duration-300">
+            <button
+              (click)="onAreaClick(area)"
+              class="w-full h-full px-6 py-3 text-black bg-white rounded-2xl transition-all duration-200 whitespace-nowrap"
+              [ngClass]="{
+                'border-transparent hover:border-gray-500': areaSeleccionada !== area,
+                'border-transparent': areaSeleccionada === area
+              }">
+              <span class="font-medium">{{ area.nombre_area }}</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- Puntos de paginación -->
+  <div class="flex justify-center mt-4 space-x-2">
+    <button *ngFor="let dot of getPaginationDots(); let i = index" 
+            (click)="goToArea(i)"
+            class="rounded-full h-3 focus:outline-none transition-all"
+            [ngClass]="{
+              'bg-gradient-to-r from-red-500 to-blue-500 w-5': currentIndex === i,
+              'bg-gray-300 w-3': currentIndex !== i
+            }">
+    </button>
   </div>
 </div>

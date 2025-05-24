@@ -10,6 +10,7 @@ import { Olimpiada } from '../../interfaces/olimpiada-interfase';
   templateUrl: './categorias-home.component.html',
   standalone: true,
 })
+
 export class CategoriasHomeComponent {
   @Input()
   categorias!: NivelCategoria[];
