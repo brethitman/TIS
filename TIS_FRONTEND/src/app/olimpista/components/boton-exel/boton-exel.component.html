@@ -104,16 +104,16 @@
           </table>
         </div>
       </div>
-      <app-area-alumno [estudiantes]="datosEstudiantes">
+      <app-area-alumno [estudiantes]="estudiantes">
       </app-area-alumno>
     </div>
   </div>
 </div>
 
-<!-- Modal para errores-->
+<!-- Modal para errores -->
 
 <div *ngIf="confirmSubida && modalError" 
-     class="fixed inset-0 z-50 flex items-center justify-center p-4"style="background-color: rgba(75, 85, 99, 0.3);">
+     class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background-color: rgba(75, 85, 99, 0.3);">
      
   <!-- Modal de error -->
   <div *ngIf="mensajeError.length > 0"
@@ -149,11 +149,11 @@
         Volver a subir documento
       </button>
     </div>
-    
+  </div>
+  
   <!-- Modal de éxito -->
   <div *ngIf="mensajeError.length === 0"
-       class="relative w-full max-w-md p-6 bg-white rounded-xl shadow-2xl transform transition-all"
-       @scaleInOut>
+       class="relative w-full max-w-md p-6 bg-white rounded-xl shadow-2xl transform transition-all">
        
     <!-- Icono de éxito -->
     <div class="flex justify-center mb-4">
