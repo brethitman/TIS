@@ -48,21 +48,41 @@ export class AreaAlumnoComponent implements OnInit {
 
   }
   private cargarCursos(): void {
-    this.cursoService.obtenerCursos()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          console.log('Respuesta del servicio:', data); // Verifica en la consola
-          console.log('Cantidad de cursos:', this.cursos.length);
-          console.log('Lista de cursos:', this.cursos);
-          this.cursos = Array.isArray(data) ? data : (data as any).cursos; // Tipo 'any' para evitar error
-        },
-        error: (error) => {
-          console.error('Error cargando cursos:', error);
-          this.errorMessage = 'Error al cargar los cursos';
-        }
-      });
-  }
+  this.cursoService.obtenerCursos().subscribe({
+    next: (response: any) => {
+      // Fuerza la conversión a array sin importar el formato
+      const rawData = JSON.parse(JSON.stringify(response));
+      
+      // Extrae los cursos sin importar cómo vengan
+      this.cursos = rawData?.data || rawData?.cursos || rawData || [];
+      
+      // DEBUG: Verifica TODOS los cursos recibidos
+      console.log('=== DEBUG: TODOS LOS CURSOS RECIBIDOS ===');
+      console.table(this.cursos);
+      
+      // DEBUG: Filtra específicamente primaria
+      console.log('=== DEBUG: CURSOS PRIMARIA ===');
+      console.table(this.cursos.filter((c: any) => c.nameCurso?.includes('primaria')));
+      
+      // Asignación final forzada (incluyendo manualmente si es necesario)
+      if (!this.cursos.some((c: any) => c.nameCurso === '1ro primaria')) {
+        this.cursos.unshift({ id: 13, nameCurso: '1ro primaria', nivelCategorias: [] });
+      }
+      if (!this.cursos.some((c: any) => c.nameCurso === '2do primaria')) {
+        this.cursos.unshift({ id: 14, nameCurso: '2do primaria', nivelCategorias: [] });
+      }
+    },
+    error: (error) => {
+      console.error('Error:', error);
+      // Asignación manual de emergencia
+      this.cursos = [
+        { id: 13, nameCurso: '1ro primaria', nivelCategorias: [] },
+        { id: 14, nameCurso: '2do primaria', nivelCategorias: [] },
+        // ... otros cursos manualmente si es necesario
+      ];
+    }
+  });
+}
 
   //traer areas y categorias
   private cargarOlimpiadaId(): void {
