@@ -9,13 +9,14 @@ import { IDOlimpiadabyArea, NivelCategoria } from '../../interfaces/olimpiadaAre
 import { AreaService } from '../../service/area.service';
 import { CursoService } from '../../service/curso.service';
 import { Curso } from '../../interfaces/curso.interface';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-area-alumno',
   standalone: true,  // Add this for standalone components
   templateUrl: './area-alumno.component.html',
   styleUrls: [],
-  imports: [CommonModule]
+  imports: [CommonModule, FormsModule]
 })
 export class AreaAlumnoComponent implements OnInit {
   @Input() estudiantes: any[] = [];
@@ -26,13 +27,20 @@ export class AreaAlumnoComponent implements OnInit {
   @Output() inscribir = new EventEmitter<void>();
 
   isStudentDropdownOpen = false;
+  isCursoDropdownOpen = false;
   isAreaDropdownOpen = false;
+  isAreaDropdownOpen2 = false;
   estudianteActual: any = null;
+  estudiantesSeleccionados: any[] = [];
   successMessage: string | null = null;
   errorMessage: string | null = null;
   areasDisponibles: IDOlimpiadabyArea[] = [];
   categorias!: NivelCategoria[];
   cursos: Curso[] = [];
+  isDuplicated = false;
+  seleccionArea1: string = 'Seleccionar área';
+  seleccionArea2: string = 'Seleccionar área';
+  stArea1: IDOlimpiadabyArea | null = null;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -45,7 +53,6 @@ export class AreaAlumnoComponent implements OnInit {
   ngOnInit(): void {
     this.cargarOlimpiadaId();
     this.cargarCursos();
-
   }
   private cargarCursos(): void {
   this.cursoService.obtenerCursos().subscribe({
@@ -109,11 +116,14 @@ export class AreaAlumnoComponent implements OnInit {
   }
 
 
+
+
   //seleccion
   toggleStudentDropdown(): void {
     this.isStudentDropdownOpen = !this.isStudentDropdownOpen;
     if (this.isStudentDropdownOpen) {
       this.isAreaDropdownOpen = false;
+      this.isAreaDropdownOpen2 = false
     }
   }
 
@@ -123,23 +133,60 @@ export class AreaAlumnoComponent implements OnInit {
       this.isStudentDropdownOpen = false;
     }
   }
-  isCursoDropdownOpen = false;
+  toggleAreaDropdown2(): void {
+    this.isAreaDropdownOpen2 = !this.isAreaDropdownOpen2;
+    if (this.isAreaDropdownOpen2) {
+      this.isStudentDropdownOpen = false;
+    }
+  }
 
   toggleCursoDropdown(): void {
     this.isCursoDropdownOpen = !this.isCursoDropdownOpen;
   }
 
   seleccionarEstudiante(estudiante: any): void {
-    this.estudianteSeleccionado.emit(estudiante);
-    this.isStudentDropdownOpen = false;
+    estudiante.seleccionado = !estudiante.seleccionado;
+    this.actualizarSeleccionados();
+    this.confirmarSeleccion();
   }
-
-  seleccionarArea(area: any): void {
-    this.areaSeleccionada.emit(area);
+    confirmarSeleccion(): void {
+    if (this.estudianteActual) {
+      this.estudianteSeleccionado.emit(this.estudianteActual);
+      this.isStudentDropdownOpen = false;
+    }
+  }
+  actualizarSeleccionados(): void {
+    this.estudiantesSeleccionados = this.estudiantes.filter(est => est.seleccionado);
+    this.estudianteSeleccionado.emit(this.estudiantesSeleccionados);
+  }
+ selectArea1(areaNombre: string) {
+  const areaSeleccionada = this.areasDisponibles.find(area => area.nombre_area === areaNombre);
+  
+  if (areaSeleccionada) {
+    this.seleccionArea1 = areaNombre; 
+    this.categorias = areaSeleccionada.nivel_categorias?? []; 
     this.isAreaDropdownOpen = false;
+    console.log("Categorias", this.categorias)
+  }
+}
+  selectArea2(area2: string) {
+    const areaSeleccionada = this.areasDisponibles.find(area => area.nombre_area === area2);
+  
+  if (areaSeleccionada) {
+    this.seleccionArea2 = area2; 
+    this.categorias = areaSeleccionada.nivel_categorias?? []; 
+    this.isAreaDropdownOpen = false;
+    console.log("Categorias", this.categorias)
+  }
   }
 
   inscribirEstudiante(): void {
     this.inscribir.emit();
   }
+
+  toggleDuplicado() {
+    this.isDuplicated = !this.isDuplicated;
+    this.seleccionArea2 = 'Seleccionar área'
+  }
+
 }

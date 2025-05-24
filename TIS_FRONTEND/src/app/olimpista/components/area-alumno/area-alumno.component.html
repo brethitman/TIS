@@ -1,13 +1,15 @@
-<div class="flex flex-col p-4 border border-gray-300 rounded-lg shadow-md bg-white w-full max-w-2xl mx-auto">
+<div class="flex flex-col p-4 border border-gray-300 rounded-lg shadow-md bg-white w-full h-[350]">
   <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">INSCRIPCIÓN</h3>
   <!-- Dropdown de Estudiantes -->
   <div class="relative mb-4">
     <button (click)="toggleStudentDropdown()"
       class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
-      <span>Seleccionar estudiante</span>
-      <svg class="ml-2 h-5 w-5 text-gray-500" [class.transform]="isStudentDropdownOpen"
-        [class.rotate-180]="isStudentDropdownOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-        fill="currentColor">
+      <!-- Muestra el estudiante seleccionado o el texto por defecto -->
+      <span>
+        {{ estudianteActual ? (estudianteActual.nombre + ' ' + estudianteActual.apellido) : 'Seleccionar estudiante' }}
+      </span>
+      <svg class="ml-2 h-5 w-5 text-gray-500" [class.rotate-180]="isStudentDropdownOpen"
+        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd"
           d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
           clip-rule="evenodd" />
@@ -18,10 +20,19 @@
     <div *ngIf="isStudentDropdownOpen"
       class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
       <div class="divide-y divide-gray-100">
-        <div *ngFor="let estudiante of estudiantes" class="px-4 py-2 hover:bg-blue-50 cursor-pointer">
-          <p class="text-sm text-gray-800 font-medium">
-            {{ estudiante.nombre }} {{ estudiante.apellido }}
-          </p>
+        <div *ngFor="let estudiante of estudiantes" class="flex items-center px-4 py-2 hover:bg-blue-50 cursor-pointer">
+
+          <!-- Radio button para selección única -->
+          <input type="radio" [id]="'estudiante-' + estudiante.id" [value]="estudiante" [(ngModel)]="estudianteActual"
+            (click)="confirmarSeleccion()" name="estudianteSelection"
+            class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 mr-3">
+
+          <!-- Info del estudiante -->
+          <label [for]="'estudiante-' + estudiante.id" class="flex-grow cursor-pointer">
+            <p class="text-sm text-gray-800 font-medium">
+              {{ estudiante.nombre }} {{ estudiante.apellido }}
+            </p>
+          </label>
         </div>
       </div>
     </div>
@@ -50,44 +61,80 @@
     </div>
   </div>
   <!-- Área para inscribirse -->
-  <div>
-    <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">ÁREA PARA INSCRIBIRSE</h4>
+  <div class="flex">
     <!-- Dropdown de Áreas -->
-    <div class="relative mb-4">
-      <button (click)="toggleAreaDropdown()"
-        class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
-        <span>Seleccionar área</span>
-        <svg class="ml-2 h-5 w-5 text-gray-500" [class.transform]="isAreaDropdownOpen"
-          [class.rotate-180]="isAreaDropdownOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-          fill="currentColor">
-          <path fill-rule="evenodd"
-            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-            clip-rule="evenodd" />
-        </svg>
-      </button>
+    <div class="w-1/2">
+      <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">ÁREA PARA INSCRIBIRSE</h4>
 
-      <!-- Lista de áreas -->
-      <div *ngIf="isAreaDropdownOpen"
-        class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-        <div class="divide-y divide-gray-100">
-          <div *ngFor="let area of areasDisponibles" class="px-4 py-2 hover:bg-blue-50 cursor-pointer">
-            <p class="font-medium text-gray-800">{{ area.nombre_area}}</p>
+      <div class="relative mb-4">
+        <button (click)="toggleAreaDropdown()"
+          class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+          <span>{{ seleccionArea1 }}</span>
+        </button>
+
+        <div *ngIf="isAreaDropdownOpen"
+          class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+          <div *ngFor="let area of areasDisponibles" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+            (click)="selectArea1(area.nombre_area)">
+            <p class="font-medium text-gray-800">{{area.nombre_area}}</p>
           </div>
         </div>
       </div>
+
+      <!-- Sección de Categorías -->
+      <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">CATEGORÍAS</h4>
+      <div *ngIf="categorias && categorias.length > 0" class="mt-2 p-2 bg-gray-100 rounded">
+        <ul>
+          <li *ngFor="let categoria of categorias" class="text-gray-600">
+            {{ categoria.nombre_nivel }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Botón para añadir duplicado -->
+      <button (click)="toggleDuplicado()" *ngIf="!isDuplicated"
+        class="px-3 py-2 bg-green-500 text-white font-medium rounded-md hover:bg-green-600">
+        Añadir otra área
+      </button>
+    </div>
+
+    <!-- Sección duplicada (solo se muestra una vez) -->
+    <div class="w-1/2 ml-4" *ngIf="isDuplicated">
+      <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">ÁREA ADICIONAL</h4>
+
+      <div class="relative mb-4">
+        <button (click)="toggleAreaDropdown2()"
+          class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+          <span>{{ seleccionArea2 }}</span>
+        </button>
+
+        <div *ngIf="isAreaDropdownOpen2"
+          class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+          <div *ngFor="let area of areasDisponibles" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+            (click)="selectArea2(area.nombre_area)">
+            <p class="font-medium text-gray-800"> {{area.nombre_area}}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categorías duplicadas -->
+      <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">CATEGORÍAS ADICIONALES</h4>
+      <div *ngIf="categorias && categorias.length > 0" class="mt-2 p-2 bg-gray-100 rounded">
+        <ul>
+          <li *ngFor="let categoria of categorias" class="text-gray-600">
+            {{ categoria.nombre_nivel }}
+          </li>
+        </ul>
+      </div>
+
+      <!-- Botón para eliminar sección duplicada -->
+      <button (click)="toggleDuplicado()"
+        class="px-3 py-2 bg-red-500 text-white font-medium rounded-md hover:bg-red-600">
+        Eliminar área adicional
+      </button>
     </div>
   </div>
-  <!-- Sección de Categorías -->
-  <div class="mb-6">
-    <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">CATEGORÍAS</h4>
-    <div class="flex flex-wrap gap-2 mb-4">
-      <span *ngFor="let area of areas" class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-        {{ areasDisponibles }}
-      </span>
-    </div>
-    <!-- Botón de inscripción -->
-    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
-      Inscribir Estudiante
-    </button>
-  </div>
-</div>
+  <!-- Botón de inscripción -->
+  <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+    Inscribir Estudiante
+  </button>

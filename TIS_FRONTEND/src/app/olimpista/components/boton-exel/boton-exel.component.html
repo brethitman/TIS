@@ -3,57 +3,91 @@
     class="inline-block px-4 py-2 text-white bg-[#0D1271] rounded cursor-pointer hover:bg-blue-700 transition">
     Subir archivo Excel
   </label>
-  <input id="excelInput" type="file" (change)="onFileChange($event)" accept=".xlsx, .xls" class="hidden" />
-
+  <input #excelInput id="excelInput" type="file" (change)="onFileChange($event)" accept=".xlsx, .xls" class="hidden" />
   <!-- Modal para Formato 1 -->
-  <div *ngIf="showModal1" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-    style="background-color: rgba(75, 85, 99, 0.3); z-index: 1000;">
-    <div class="bg-white p-6 rounded-lg shadow-xl w-96">
-      <h2 class="text-xl font-bold mb-4 text-gray-800">Ingrese Información del Tutor</h2>
+  <div *ngIf="showModal1" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    style="background-color: rgba(75, 85, 99, 0.3);">
+    <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-md p-6 border-t-4 border-blue-600">
+      <!-- Icono superior -->
+      <div
+        class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-blue-400 text-white shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+      </div>
+
+      <!-- Título -->
+      <h2 class="text-center text-xl font-bold mb-4 mt-2 text-gray-800">Información del Tutor</h2>
 
       <form (ngSubmit)="submitTutorInfo()" class="space-y-4">
-        <!-- Campo Nombre -->
+        <!-- Campos del tutor -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Nombre del Tutor:</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nombre:</label>
           <input type="text" [(ngModel)]="tutor.nombre" name="nombre"
-            class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             [class.border-red-500]="errors.nombre">
           <div *ngIf="errors.nombre" class="mt-1 text-sm text-red-600">
             {{ errors.nombre }}
           </div>
         </div>
 
-        <!-- Campo Apellido -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Apellido del Tutor:</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Apellido:</label>
           <input type="text" [(ngModel)]="tutor.apellido" name="apellido"
-            class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             [class.border-red-500]="errors.apellido">
           <div *ngIf="errors.apellido" class="mt-1 text-sm text-red-600">
             {{ errors.apellido }}
           </div>
         </div>
 
-        <!-- Campo CI -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">CI del Tutor:</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Carnet de Identidad:</label>
           <input type="text" [(ngModel)]="tutor.ci" name="ci"
-            class="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             [class.border-red-500]="errors.ci">
           <div *ngIf="errors.ci" class="mt-1 text-sm text-red-600">
             {{ errors.ci }}
           </div>
         </div>
 
+        <!-- Sección de confirmación de archivo -->
+        <div *ngIf="nombreArchivo" class="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-4">
+          <h3 class="text-sm font-semibold text-gray-700 mb-2 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            ARCHIVO SELECCIONADO
+          </h3>
+          <div class="flex items-center mb-1 text-sm text-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <span class="truncate">{{ nombreArchivo }}</span>
+          </div>
+          <div class="flex items-center text-sm text-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+            </svg>
+            <span>{{ tamanoArchivo }} KB</span>
+          </div>
+        </div>
+
         <!-- Botones -->
-        <div class="flex justify-end space-x-3 pt-2">
+        <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200 mt-6">
           <button type="button" (click)="cancelar1()"
-            class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+            class="px-4 py-2 text-white rounded-md hover:shadow-lg transition-all duration-300 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600">
             Cancelar
           </button>
           <button type="submit"
-            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-            Subir Archivo
+            class="px-4 py-2 text-white rounded-md hover:shadow-lg transition-all duration-300 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600">
+            Confirmar y Subir
           </button>
         </div>
       </form>
@@ -61,19 +95,53 @@
   </div>
 
   <!-- Modal para Formato 2 -->
-  <div *ngIf="showModal2" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-    style="background-color: rgba(75, 85, 99, 0.3); ">
-    <div class="bg-[#faf5f5] p-6 rounded shadow-md w-96 rounded-lg">
-      <h2 class="text-xl font-bold mb-4 italic items-center">¿Desea subir este archivo?</h2>
-      <div class="bg-[#faf5f5] shadow-md p-3 mx-auto rounded-b-lg">
-        <p>Nombre: {{ nombreArchivo }}</p>
-        <p>Tamaño: {{ tamanoArchivo }} KB</p>
+  <div *ngIf="showModal2" class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    style="background-color: rgba(75, 85, 99, 0.3);">
+    <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-md p-6 border-t-4 border-purple-600">
+      <!-- Icono superior -->
+      <div
+        class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-blue-500 text-white shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        </svg>
       </div>
-      <div class="flex justify-center items-center mt-4 gap-6">
-        <button (click)="openModal2()" class="bg-[#1e37a6] hover:bg-[#43487f] text-white px-6 py-2 rounded">Sí,
-          subir</button>
+
+      <!-- Título -->
+      <h2 class="text-center text-xl font-bold mb-4 mt-2 text-gray-800">Confirmar Subida de Archivo</h2>
+
+      <!-- Detalles del archivo -->
+      <div class="bg-gray-50 p-4 rounded-lg mb-4">
+        <div class="flex items-center mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          <span class="font-medium">Nombre:</span>
+          <span class="ml-2 text-gray-700">{{ nombreArchivo }}</span>
+        </div>
+        <div class="flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+          </svg>
+          <span class="font-medium">Tamaño:</span>
+          <span class="ml-2 text-gray-700">{{ tamanoArchivo }} KB</span>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="flex justify-center space-x-4 pt-4 border-t border-gray-200 mt-6">
         <button (click)="cancelar2()"
-          class="bg-[#c14040] hover:bg-[#9E2727] text-white px-6 py-2 rounded">Cancelar</button>
+          class="px-6 py-2 text-white rounded-md hover:shadow-lg transition-all duration-300 bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600">
+          Cancelar
+        </button>
+        <button (click)="openModal2()"
+          class="px-6 py-2 text-white rounded-md hover:shadow-lg transition-all duration-300 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600">
+          Sí, subir
+        </button>
       </div>
     </div>
   </div>
@@ -104,41 +172,86 @@
           </table>
         </div>
       </div>
-      <app-area-alumno [estudiantes]="datosEstudiantes">
+      <app-area-alumno [estudiantes]="estudiantes">
       </app-area-alumno>
     </div>
   </div>
 </div>
-<div *ngIf="confirmSubida == true && modalError == true"
-  class="flex p-2 fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50"
+
+<!-- Modal para errores -->
+
+<div *ngIf="confirmSubida && modalError" class="fixed inset-0 z-50 flex items-center justify-center p-4"
   style="background-color: rgba(75, 85, 99, 0.3);">
+
+  <!-- Modal de error -->
   <div *ngIf="mensajeError.length > 0"
-    class="flex flex-col items-center p-6 bg-[#faf5f5] rounded-lg w-300 rounded-lg shadow-xl w-96">
-    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="red" class="bi bi-exclamation-triangle">
-      <path
-        d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
-      <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
-    </svg>
-    <ul class="text-lg text-red-700 font-medium text-center list-disc">
-      <li *ngFor="let error of mensajeError">{{ error }}</li>
+    class="relative w-full max-w-md p-6 bg-white rounded-xl shadow-2xl transform transition-all">
+
+    <!-- Icono de error -->
+    <div class="flex justify-center mb-4">
+      <div class="p-3 bg-red-100 rounded-full">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-red-600" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Título -->
+    <h2 class="mb-4 text-2xl font-bold text-center text-gray-800">Error en el documento</h2>
+
+    <!-- Lista de errores -->
+    <ul class="mb-6 space-y-2 text-gray-700">
+      <li *ngFor="let error of mensajeError" class="flex items-start">
+        <svg xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0 w-5 h-5 mt-1 mr-2 text-red-500" viewBox="0 0 20 20"
+          fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+            clip-rule="evenodd" />
+        </svg>
+        <span>{{ error }}</span>
+      </li>
     </ul>
-    <button (click)="volverSubir()"
-      class="inline-block px-4 py-2 text-white bg-[#0D1271] rounded cursor-pointer hover:bg-[#090C4A] transition">
-      Volver a subir excel</button>
+
+    <!-- Botón de acción -->
+    <div class="flex justify-center">
+      <button (click)="volverSubir()"
+        class="px-6 py-3 font-medium text-white transition-colors duration-300 transform bg-gradient-to-r from-red-600 to-red-700 rounded-lg hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+        Volver a subir documento
+      </button>
+    </div>
   </div>
-  <div *ngIf="mensajeError.length === 0" class="flex flex-col items-center p-6 bg-[#faf5f5] rounded-lg w-300 rounded-lg shadow-xl">
-    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="green" class="bi bi-check-square"
-      viewBox="0 0 16 16">
-      <path
-        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-      <path
-        d="M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z" />
-    </svg>
-    <p class="text-2xl text-slate-700 font-medium">
-      Su documento no tiene ningun error puede generar una boleta de pago
+
+  <!-- Modal de éxito -->
+  <div *ngIf="mensajeError.length === 0"
+    class="relative w-full max-w-md p-6 bg-white rounded-xl shadow-2xl transform transition-all">
+
+    <!-- Icono de éxito -->
+    <div class="flex justify-center mb-4">
+      <div class="p-3 bg-green-100 rounded-full">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-green-600" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Título -->
+    <h2 class="mb-4 text-2xl font-bold text-center text-gray-800">Documento válido</h2>
+
+    <!-- Mensaje -->
+    <p class="mb-6 text-center text-gray-700">
+      Su documento no tiene ningún error. Puede generar una boleta de pago.
     </p>
-    <button (click)="cerrar()"
-      class="inline-block px-4 py-2 text-white bg-[#0D1271] rounded cursor-pointer hover:hover:bg-[#090C4A] transition">
-      Empezar a inscribirte</button>
+
+    <!-- Botón de acción -->
+    <div class="flex justify-center">
+      <button (click)="cerrar()"
+        class="px-6 py-3 font-medium text-white transition-colors duration-300 transform bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        Empezar a inscribir
+      </button>
+    </div>
+
   </div>
 </div>
