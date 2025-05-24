@@ -34,6 +34,7 @@ export class AreaAlumnoComponent implements OnInit {
   errorMessage: string | null = null;
   areasDisponibles: IDOlimpiadabyArea[] = [];
   categorias!: NivelCategoria[];
+  categorias2!:NivelCategoria[];
   cursos: Curso[] = [];
   isDuplicated = false;
   seleccionArea1: string = 'Seleccionar área';
@@ -143,9 +144,9 @@ export class AreaAlumnoComponent implements OnInit {
   
   if (areaSeleccionada) {
     this.seleccionArea2 = area2; 
-    this.categorias = areaSeleccionada.nivel_categorias?? []; 
-    this.isAreaDropdownOpen = false;
-    console.log("Categorias", this.categorias)
+    this.categorias2 = areaSeleccionada.nivel_categorias?? []; 
+    this.isAreaDropdownOpen2 = false;
+    console.log("Categorias", this.categorias2)
   }
   }
 
