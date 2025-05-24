@@ -9,13 +9,14 @@ import { IDOlimpiadabyArea, NivelCategoria } from '../../interfaces/olimpiadaAre
 import { AreaService } from '../../service/area.service';
 import { CursoService } from '../../service/curso.service';
 import { Curso } from '../../interfaces/curso.interface';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-area-alumno',
   standalone: true,  // Add this for standalone components
   templateUrl: './area-alumno.component.html',
   styleUrls: [],
-  imports: [CommonModule]
+  imports: [CommonModule, FormsModule]
 })
 export class AreaAlumnoComponent implements OnInit {
   @Input() estudiantes: any[] = [];
@@ -30,6 +31,7 @@ export class AreaAlumnoComponent implements OnInit {
   isAreaDropdownOpen = false;
   isAreaDropdownOpen2 = false;
   estudianteActual: any = null;
+  estudiantesSeleccionados: any[] = [];
   successMessage: string | null = null;
   errorMessage: string | null = null;
   areasDisponibles: IDOlimpiadabyArea[] = [];
@@ -51,7 +53,6 @@ export class AreaAlumnoComponent implements OnInit {
   ngOnInit(): void {
     this.cargarOlimpiadaId();
     this.cargarCursos();
-
   }
   private cargarCursos(): void {
     this.cursoService.obtenerCursos()
@@ -124,10 +125,20 @@ export class AreaAlumnoComponent implements OnInit {
   }
 
   seleccionarEstudiante(estudiante: any): void {
-    this.estudianteSeleccionado.emit(estudiante);
-    this.isStudentDropdownOpen = false;
+    estudiante.seleccionado = !estudiante.seleccionado;
+    this.actualizarSeleccionados();
+    this.confirmarSeleccion();
   }
-
+    confirmarSeleccion(): void {
+    if (this.estudianteActual) {
+      this.estudianteSeleccionado.emit(this.estudianteActual);
+      this.isStudentDropdownOpen = false;
+    }
+  }
+  actualizarSeleccionados(): void {
+    this.estudiantesSeleccionados = this.estudiantes.filter(est => est.seleccionado);
+    this.estudianteSeleccionado.emit(this.estudiantesSeleccionados);
+  }
  selectArea1(areaNombre: string) {
   const areaSeleccionada = this.areasDisponibles.find(area => area.nombre_area === areaNombre);
   
