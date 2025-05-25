@@ -61,80 +61,102 @@
     </div>
   </div>
   <!-- Área para inscribirse -->
-  <div class="flex">
-    <!-- Dropdown de Áreas -->
-    <div class="w-1/2">
-      <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">ÁREA PARA INSCRIBIRSE</h4>
+  <div class="flex flex-col gap-2">
+    <div class="grid grid-cols-2 gap-1">
+      <div>
+        <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">ÁREA PARA INSCRIBIRSE</h4>
 
-      <div class="relative mb-4">
-        <button (click)="toggleAreaDropdown()"
-          class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
-          <span>{{ seleccionArea1 }}</span>
-        </button>
+        <div class="relative mb-4">
+          <button (click)="toggleAreaDropdown()"
+            class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+            <span>{{ seleccionArea1 }}</span>
+          </button>
 
-        <div *ngIf="isAreaDropdownOpen"
-          class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-          <div *ngFor="let area of areasDisponibles" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
-            (click)="selectArea1(area.nombre_area)">
-            <p class="font-medium text-gray-800">{{area.nombre_area}}</p>
+          <div *ngIf="isAreaDropdownOpen"
+            class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+            <div *ngFor="let area of areasDisponibles" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+              (click)="selectArea1(area.nombre_area)">
+              <p class="font-medium text-gray-800">{{area.nombre_area}}</p>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Sección de Categorías -->
-      <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">CATEGORÍAS</h4>
-      <div *ngIf="categorias && categorias.length > 0" class="mt-2 p-2 bg-gray-100 rounded">
-        <ul>
-          <li *ngFor="let categoria of categorias" class="text-gray-600">
-            {{ categoria.nombre_nivel }}
-          </li>
-        </ul>
-      </div>
+      <div>
+        <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">CATEGORÍAS</h4>
+        <div class="relative mb-4">
+          <button (click)="toggleCategoriaDropdown()"
+            class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+            <span>{{ seleccionCategoria || "Selecciona una categoría" }}</span>
+          </button>
 
-      <!-- Botón para añadir duplicado -->
-      <button (click)="toggleDuplicado()" *ngIf="!isDuplicated"
-        class="px-3 py-2 bg-green-500 text-white font-medium rounded-md hover:bg-green-600">
-        Añadir otra área
-      </button>
-    </div>
-
-    <!-- Sección duplicada (solo se muestra una vez) -->
-    <div class="w-1/2 ml-4" *ngIf="isDuplicated">
-      <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">ÁREA ADICIONAL</h4>
-
-      <div class="relative mb-4">
-        <button (click)="toggleAreaDropdown2()"
-          class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
-          <span>{{ seleccionArea2 }}</span>
-        </button>
-
-        <div *ngIf="isAreaDropdownOpen2"
-          class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-          <div *ngFor="let area of areasDisponibles" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
-            (click)="selectArea2(area.nombre_area)">
-            <p class="font-medium text-gray-800"> {{area.nombre_area}}</p>
+          <div *ngIf="isCategoriaDropdownOpen"
+            class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+            <div *ngFor="let categoria of categorias" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+              (click)="selectCategoria(categoria.nombre_nivel)">
+              <p class="font-medium text-gray-800">{{ categoria.nombre_nivel }}</p>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+    <div class="flex flex-row gap-1 justify-end items-center pb-2">
+      <button (click)="toggleDuplicado()" *ngIf="!isDuplicated"
+        class="px-3 py-1 bg-sky-950 text-white font-medium rounded-md hover:bg-sky-800">
+        <i class="bi bi-plus-lg text-white text-lg"></i>
+        Añadir otra área
+      </button>
+    </div>
+    <!-- Sección duplicada (solo se muestra una vez) -->
+    <div *ngIf="isDuplicated" class="grid grid-cols-2 gap-1">
+      <div>
+        <h4 class="text-md font-semibold text-gray-700 mb-2 border-b pb-1">ÁREA ADICIONAL</h4>
 
-      <!-- Categorías duplicadas -->
-      <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">CATEGORÍAS ADICIONALES</h4>
-      <div *ngIf="categorias2 && categorias2.length > 0" class="mt-2 p-2 bg-gray-100 rounded">
-        <ul>
-          <li *ngFor="let categoria of categorias2" class="text-gray-600">
-            {{ categoria.nombre_nivel }}
-          </li>
-        </ul>
+        <div class="relative mb-4">
+          <button (click)="toggleAreaDropdown2()"
+            class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+            <span>{{ seleccionArea2 }}</span>
+          </button>
+
+          <div *ngIf="isAreaDropdownOpen2"
+            class="absolute z-20 bottom-full mb-2 w-ful bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+            <div *ngFor="let area of areasDisponibles" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+              (click)="selectArea2(area.nombre_area)">
+              <p class="font-medium text-gray-800">{{area.nombre_area}}</p>
+            </div>
+          </div>
+        </div>
       </div>
+      <!-- Sección de Categorías -->
+      <div>
+        <h4 class="text-md font-semibold text-gray-700 mb-2 border-b pb-1">CATEGORÍAS ADICIONALES</h4>
+        <div class="relative mb-4">
+          <button (click)="toggleCategoriaDropdown2()"
+            class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+            <span>{{ seleccionCategoria2 || "Selecciona una categoría" }}</span>
+          </button>
 
-      <!-- Botón para eliminar sección duplicada -->
+          <div *ngIf="isCategoriaDropdownOpen2"
+            class="absolute z-20 bottom-full mb-2 w-ful bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+            <div *ngFor="let categoria of categorias2" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+              (click)="selectCategoria2(categoria.nombre_nivel)">
+              <p class="font-medium text-gray-800">{{ categoria.nombre_nivel }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="isDuplicated" class="flex flex-row gap-1 justify-end items-center pb-2">
       <button (click)="toggleDuplicado()"
-        class="px-3 py-2 bg-red-500 text-white font-medium rounded-md hover:bg-red-600">
+        class="px-3 py-1 bg-sky-950 text-white font-medium rounded-md hover:bg-sky-800">
+        <i class="bi bi-dash-circle text-lg text-white"></i>
         Eliminar área adicional
       </button>
     </div>
   </div>
   <!-- Botón de inscripción -->
-  <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors">
+  <button class="w-full bg-[#0D1271] hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md transition-colors">
     Inscribir Estudiante
   </button>
+</div>

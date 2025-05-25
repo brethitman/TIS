@@ -30,17 +30,21 @@ export class AreaAlumnoComponent implements OnInit {
   isCursoDropdownOpen = false;
   isAreaDropdownOpen = false;
   isAreaDropdownOpen2 = false;
+  isCategoriaDropdownOpen = false;
+  isCategoriaDropdownOpen2 = false;
   estudianteActual: any = null;
   estudiantesSeleccionados: any[] = [];
   successMessage: string | null = null;
   errorMessage: string | null = null;
   areasDisponibles: IDOlimpiadabyArea[] = [];
   categorias!: NivelCategoria[];
-  categorias2!:NivelCategoria[];
+  categorias2!: NivelCategoria[];
   cursos: Curso[] = [];
   isDuplicated = false;
   seleccionArea1: string = 'Seleccionar área';
   seleccionArea2: string = 'Seleccionar área';
+  seleccionCategoria: string = 'Selecciona una categoría';
+  seleccionCategoria2: string = 'Selecciona una categoría';
   stArea1: IDOlimpiadabyArea | null = null;
   private destroy$ = new Subject<void>();
 
@@ -130,7 +134,7 @@ export class AreaAlumnoComponent implements OnInit {
     this.actualizarSeleccionados();
     this.confirmarSeleccion();
   }
-    confirmarSeleccion(): void {
+  confirmarSeleccion(): void {
     if (this.estudianteActual) {
       this.estudianteSeleccionado.emit(this.estudianteActual);
       this.isStudentDropdownOpen = false;
@@ -140,25 +144,25 @@ export class AreaAlumnoComponent implements OnInit {
     this.estudiantesSeleccionados = this.estudiantes.filter(est => est.seleccionado);
     this.estudianteSeleccionado.emit(this.estudiantesSeleccionados);
   }
- selectArea1(areaNombre: string) {
-  const areaSeleccionada = this.areasDisponibles.find(area => area.nombre_area === areaNombre);
-  
-  if (areaSeleccionada) {
-    this.seleccionArea1 = areaNombre; 
-    this.categorias = areaSeleccionada.nivel_categorias?? []; 
-    this.isAreaDropdownOpen = false;
-    console.log("Categorias", this.categorias)
+  selectArea1(areaNombre: string) {
+    const areaSeleccionada = this.areasDisponibles.find(area => area.nombre_area === areaNombre);
+
+    if (areaSeleccionada) {
+      this.seleccionArea1 = areaNombre;
+      this.categorias = areaSeleccionada.nivel_categorias ?? [];
+      this.isAreaDropdownOpen = false;
+      console.log("Categorias", this.categorias)
+    }
   }
-}
   selectArea2(area2: string) {
     const areaSeleccionada = this.areasDisponibles.find(area => area.nombre_area === area2);
-  
-  if (areaSeleccionada) {
-    this.seleccionArea2 = area2; 
-    this.categorias2 = areaSeleccionada.nivel_categorias?? []; 
-    this.isAreaDropdownOpen2 = false;
-    console.log("Categorias", this.categorias2)
-  }
+
+    if (areaSeleccionada) {
+      this.seleccionArea2 = area2;
+      this.categorias2 = areaSeleccionada.nivel_categorias ?? [];
+      this.isAreaDropdownOpen2 = false;
+      console.log("Categorias", this.categorias2)
+    }
   }
 
   inscribirEstudiante(): void {
@@ -168,6 +172,34 @@ export class AreaAlumnoComponent implements OnInit {
   toggleDuplicado() {
     this.isDuplicated = !this.isDuplicated;
     this.seleccionArea2 = 'Seleccionar área'
+  }
+
+  toggleCategoriaDropdown() {
+    this.isCategoriaDropdownOpen = !this.isCategoriaDropdownOpen;
+    if (this.isCategoriaDropdownOpen) {
+      this.isAreaDropdownOpen = false;
+      this.isAreaDropdownOpen2 = false;
+      this.isCursoDropdownOpen = false;
+    }
+  }
+
+  selectCategoria(categoria1: string) {
+    this.seleccionCategoria = categoria1;
+    this.isCategoriaDropdownOpen = false;
+  }
+
+  toggleCategoriaDropdown2() {
+    this.isCategoriaDropdownOpen2 = !this.isCategoriaDropdownOpen2;
+    if (this.isCategoriaDropdownOpen2) {
+      this.isAreaDropdownOpen = false;
+      this.isAreaDropdownOpen2 = false;
+      this.isCursoDropdownOpen = false;
+    }
+  }
+
+  selectCategoria2(categoria2: string) {
+    this.seleccionCategoria2 = categoria2;
+    this.isCategoriaDropdownOpen2 = false;
   }
 
 }
