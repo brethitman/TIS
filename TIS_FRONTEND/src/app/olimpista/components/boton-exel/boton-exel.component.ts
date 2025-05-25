@@ -31,12 +31,16 @@ export class BotonExelComponent {
   tutor = {
     nombre: '',
     apellido: '',
-    ci: ''
+    ci: '',
+    email: '',
+    telefono: ''
   };
   errors = {
     nombre: '',
     apellido: '',
-    ci: ''
+    ci: '',
+    email: '',
+    telefono: ''
   };
   isStudentDropdownOpen: boolean = false;
   estudiantes: any[] = [];
@@ -152,7 +156,7 @@ export class BotonExelComponent {
 
   validateTutor(): boolean {
     let isValid = true;
-    this.errors = { nombre: '', apellido: '', ci: '' };
+    this.errors = { nombre: '', apellido: '', ci: '',email:'',telefono: ''};
 
     if (!this.tutor.nombre || this.tutor.nombre.trim() === '') {
       this.errors.nombre = 'El nombre es requerido';
@@ -192,8 +196,8 @@ export class BotonExelComponent {
     this.modalError = true;
     console.log('Datos del tutor:', this.tutor);
     this.showModal1 = false;
-    this.tutor = { nombre: '', apellido: '', ci: '' };
-    this.errors = { nombre: '', apellido: '', ci: '' };
+    this.tutor = { nombre: '', apellido: '', ci: '',email:'',telefono: '' };
+    this.errors = { nombre: '', apellido: '', ci: '' ,email:'',telefono: ''};
   }
 
   cancelar1(): void {
@@ -233,8 +237,8 @@ export class BotonExelComponent {
     this.resetUploadData();
   }
   private clearTutorData(): void {
-    this.tutor = { nombre: '', apellido: '', ci: '' };
-    this.errors = { nombre: '', apellido: '', ci: '' };
+    this.tutor = { nombre: '', apellido: '', ci: '',email:'',telefono: ''};
+    this.errors = { nombre: '', apellido: '', ci: '',email:'',telefono: '' };
   }
 
   private resetUploadData(): void {

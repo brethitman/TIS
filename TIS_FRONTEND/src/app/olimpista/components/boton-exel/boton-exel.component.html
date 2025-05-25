@@ -51,6 +51,22 @@
             {{ errors.ci }}
           </div>
         </div>
+        <div class="flex flex-wrap gap-4">
+      <div class="flex-1">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico:</label>
+        <input type="email" [(ngModel)]="tutor.email" name="email"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          [class.border-red-500]="errors.email">
+        <div *ngIf="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</div>
+      </div>
+      <div class="flex-1">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono:</label>
+        <input type="tel" [(ngModel)]="tutor.telefono" name="phone"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          [class.border-red-500]="errors.telefono">
+        <div *ngIf="errors.telefono" class="mt-1 text-sm text-red-600">{{ errors.telefono }}</div>
+      </div>
+    </div>
 
         <!-- Sección de confirmación de archivo -->
         <div *ngIf="nombreArchivo" class="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-4">
