@@ -184,7 +184,27 @@ export class BotonExelComponent {
       this.errors.ci = 'El CI debe tener entre 6 y 10 dígitos';
       isValid = false;
     }
+     // Validación Email 
+    if (!this.tutor.email || this.tutor.email.trim() === '') {
+      this.errors.email = 'El correo electrónico es requerido';
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.tutor.email)) {
+      this.errors.email = 'Formato de correo electrónico inválido';
+      isValid = false;
+    }
 
+    // Validación Teléfono 
+    if (!this.tutor.telefono || this.tutor.telefono.trim() === '') {
+      this.errors.telefono = 'El teléfono es requerido';
+      isValid = false;
+    } else if (!/^\d+$/.test(this.tutor.telefono)) {
+      this.errors.telefono = 'El teléfono solo debe contener números';
+      isValid = false;
+    } else if (this.tutor.telefono.length < 8 || this.tutor.telefono.length > 12) {
+      this.errors.telefono = 'El teléfono debe tener entre 8 y 12 dígitos';
+      isValid = false;
+    }
+  
     return isValid;
   }
 
