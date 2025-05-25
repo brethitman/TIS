@@ -1,79 +1,211 @@
-<form (ngSubmit)="onSubmit()" class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md space-y-6">
-  <!-- Mensajes de estado -->
-  <div *ngIf="successMessage" class="p-4 bg-green-100 text-green-700 rounded-lg">
-    {{ successMessage }}
-  </div>
-  
-  <div *ngIf="errorMessage" class="p-4 bg-red-100 text-red-700 rounded-lg">
-    {{ errorMessage }}
-  </div>
+<div class="mb-8">
+  <!-- Botón principal con efecto de gradiente y animación -->
+  <button 
+    (click)="toggleFormulario()" 
+    class="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 flex items-center space-x-2"
+  >
+    <svg *ngIf="!mostrarFormulario" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+    </svg>
+    <svg *ngIf="mostrarFormulario" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+    <span>{{ mostrarFormulario ? 'Cancelar' : 'Agregar Área Nueva' }}</span>
+  </button>
 
-  <!-- Sección Área -->
-  <div class="space-y-4">
-    <h2 class="text-xl font-semibold text-gray-800">Datos del Área</h2>
-    
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre del Área</label>
-        <input type="text" [(ngModel)]="areaData.nombre_area" name="nombre_area" required
-               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+  <!-- Formulario con animación de entrada -->
+  <div *ngIf="mostrarFormulario" class="mt-6 bg-white p-8 rounded-xl shadow-lg border border-gray-200 animate-fade-in">
+    <!-- Encabezado del formulario más elegante -->
+    <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
+      <div class="p-3 bg-blue-100 rounded-full mr-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
       </div>
-      
+      <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Nueva Área Académica</h2>
+    </div>
+    
+    <!-- Mensajes de estado mejorados -->
+    <div *ngIf="errorMessage" class="mb-6 p-4 bg-red-50 text-red-700 rounded-lg flex items-start">
+      <div class="mr-3 mt-0.5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-        <input type="text" [(ngModel)]="areaData.descripcion" name="descripcion"
-               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+        <p class="font-medium">Error:</p>
+        <p>{{ errorMessage }}</p>
       </div>
     </div>
-  </div>
-
-  <!-- Sección Cursos -->
-  <div class="space-y-4">
-    <h2 class="text-xl font-semibold text-gray-800">Selección de Cursos</h2>
-    <p class="text-sm text-gray-600">Seleccione los cursos para esta área. El sistema detectará automáticamente el grado inicial y final.</p>
     
-    <div class="flex flex-wrap gap-4 p-4 border rounded-lg">
-      <div *ngFor="let curso of cursos" class="flex items-center space-x-2">
-        <input 
-          type="checkbox" 
-          [id]="'curso-' + curso.id_curso"
-          [value]="curso.id_curso"
-          [checked]="selectedCursos.includes(curso.id_curso)"
-          (change)="toggleSelection(curso.id_curso)"
-          class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-        >
-        <label 
-          [for]="'curso-' + curso.id_curso"
-          class="text-sm text-gray-700 cursor-pointer whitespace-nowrap"
-        >
-          {{ curso.nameCurso }}
+    <div *ngIf="successMessage" class="mb-6 p-4 bg-green-50 text-green-700 rounded-lg flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      {{ successMessage }}
+    </div>
+    
+    <form (ngSubmit)="onSubmit()" class="space-y-6">
+      <!-- Campo de nombre de área mejorado -->
+      <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+        <label for="nombre_area" class="flex items-center text-sm font-medium text-gray-700 mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+          </svg>
+          Nombre del área
         </label>
-      </div>
-    </div>
-
-    <!-- Cursos seleccionados -->
-    <div *ngIf="selectedCursos.length > 0" class="mt-4 p-4 bg-gray-50 rounded-lg">
-      <p class="text-sm font-medium text-gray-700 mb-2">Cursos seleccionados:</p>
-      <div class="flex flex-wrap gap-2">
-        <span *ngFor="let id of selectedCursos" 
-              class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-          {{ getCursoName(id) }}
-        </span>
+        <div class="relative">
+          <input 
+            type="text" 
+            id="nombre_area" 
+            [(ngModel)]="areaData.nombre_area" 
+            name="nombre_area" 
+            class="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Ej: Matemáticas, Ciencias Naturales, Literatura"
+            required
+          >
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+        </div>
       </div>
       
-      <!-- Mostrar los grados detectados (opcional) -->
-      <div *ngIf="selectedCursos.length > 0" class="mt-3 text-sm text-gray-700">
-        <p class="font-medium">Rango de grados detectado:</p>
-        <p>{{ determineGrades().gradoInicial }} - {{ determineGrades().gradoFinal }}</p>
+      <!-- Selección de grados mejorada -->
+      <div class="bg-gray-50 p-5 rounded-lg border border-gray-100">
+        <div class="flex items-center mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path d="M12 14l9-5-9-5-9 5 9 5z" />
+            <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+          </svg>
+          <label class="block text-sm font-medium text-gray-700">Selección de grados</label>
+        </div>
+        
+        <div class="flex items-center p-3 bg-blue-50 rounded-lg mb-4 text-sm text-blue-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p>
+            Al seleccionar un grado, automáticamente se seleccionarán todos los grados intermedios.
+            El primer y último grado seleccionado definen el rango del área.
+          </p>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div *ngFor="let grado of grados; let i = index" 
+               class="flex items-center bg-white p-3 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
+            <input 
+              type="checkbox" 
+              [id]="'grado-' + i" 
+              [checked]="gradosSeleccionados[i]" 
+              (change)="onCheckboxChange(i)" 
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+            <label [for]="'grado-' + i" class="ml-2 block text-sm text-gray-700">
+              {{ grado }}
+            </label>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+      
+      <!-- Grados seleccionados con mejor feedback visual -->
+      <div *ngIf="areaData.gradoIniAr && areaData.gradoFinAr" class="p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-100 flex items-center">
+        <div class="mr-3 bg-blue-100 rounded-full p-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-medium text-blue-800">
+            Rango seleccionado:
+          </p>
+          <p class="text-lg font-bold text-blue-900">
+            {{ areaData.gradoIniAr }} 
+            <span *ngIf="areaData.gradoIniAr !== areaData.gradoFinAr">
+              hasta {{ areaData.gradoFinAr }}
+            </span>
+          </p>
+        </div>
+      </div>
 
-  <!-- Botón de envío -->
-  <div class="flex justify-end">
-    <button type="submit" 
-            class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors">
-      Crear Área
-    </button>
+      <!-- Lista de cursos mejorada con contador y mejor presentación -->
+      <div *ngIf="cursosFiltrados.length > 0" class="mt-6 bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div class="bg-gradient-to-r from-green-50 to-blue-50 p-4 border-b border-gray-200">
+          <div class="flex items-center">
+            <div class="h-10 w-10 flex items-center justify-center rounded-full bg-green-100 text-green-500 mr-3">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800">Cursos incluidos en el área</h3>
+              <p class="text-sm text-gray-600">Total: {{ cursosFiltrados.length }} curso(s)</p>
+            </div>
+          </div>
+          
+          <div class="mt-3 p-3 bg-blue-50 rounded-lg text-sm text-blue-700 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p>
+              Los siguientes cursos han sido seleccionados automáticamente según el rango de grados.
+            </p>
+          </div>
+        </div>
+        
+        <div class="p-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div *ngFor="let curso of cursosFiltrados" 
+                 class="flex items-center p-3 bg-white border border-green-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div class="rounded-full bg-green-100 p-2 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <span class="text-gray-800 font-medium">{{ curso.nameCurso }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mensaje cuando no hay cursos en el rango -->
+      <div *ngIf="areaData.gradoIniAr && areaData.gradoFinAr && cursosFiltrados.length === 0" class="mt-4 p-4 bg-yellow-50 rounded-lg flex items-center border border-yellow-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <p class="text-sm text-yellow-700">
+          No se encontraron cursos disponibles dentro del rango de grados seleccionado.
+        </p>
+      </div>
+      
+      <!-- Botones con mejor diseño -->
+      <div class="flex justify-end pt-6">
+        <button 
+          type="button" 
+          (click)="toggleFormulario()" 
+          class="mr-3 px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          [disabled]="enviando || !areaData.nombre_area || !areaData.gradoIniAr || !areaData.gradoFinAr || selectedCursos.length === 0" 
+          class="px-5 py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-500 flex items-center"
+        >
+          <svg *ngIf="enviando" class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <svg *ngIf="!enviando" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+          {{ enviando ? 'Creando...' : 'Crear Área' }}
+        </button>
+      </div>
+    </form>
   </div>
-</form>
+</div>

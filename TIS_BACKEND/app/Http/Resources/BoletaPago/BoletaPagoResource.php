@@ -17,11 +17,13 @@ class BoletaPagoResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+       return [
             'id' => $this->id_boleta,
             'numero_boleta' => $this->numero_boleta,
             'monto' => $this->monto,
             'fecha_generacion' => $this->fecha_generacion,
+            'nombre_olimpiada' => $this->nombre_olimpiada,
+            'areas_niveles' => $this->areas_niveles,
             'inscripcion' => new InscripcionResource($this->whenLoaded('inscripcion')),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,

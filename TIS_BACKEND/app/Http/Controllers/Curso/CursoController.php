@@ -29,7 +29,7 @@ class CursoController extends Controller
         $query->orderBy($sortBy, $sortDir);
 
         // Paginación
-        $perPage = $request->get('per_page', 10); // Puedes enviar ?per_page=5 si quieres
+        $perPage = $request->get('per_page', 12); // Puedes enviar ?per_page=5 si quieres
         $cursos = $query->simplePaginate($perPage);
 
         return new CursoCollection($cursos);

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
@@ -9,15 +9,15 @@ import { InscripcionServicee } from '../../service/iscripcionn.service';
 import { AreaService } from '../../service/area.service';
 import { EmailService } from '../../service/email.service';
 
-// Cambia estos imports
+// Imports para las olimpiadas por área
 import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
 import { IDOlimpiadabyArea, NivelCategoria } from '../../interfaces/olimpiadaAreaCategoria.interface';
-
 
 // Interfaces
 import { AreaInscripcion, InscripcionPayload, Olimpista, Tutor, InscripcionPostSuccessResponse, BoletaPagoResponse } from '../../interfaces/inscripcion.types';
 import { Area, Nivele } from '../../interfaces/area.interface';
 import { BoletaPagoComponent } from "../boleta-pago/boleta-pago.component";
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-inscripcion-todo',
@@ -33,8 +33,8 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
 
   boletaGenerada: BoletaPagoResponse | null = null;
   private destroy$ = new Subject<void>();
-  areasDisponibles: IDOlimpiadabyArea[] = []; // Usa la interfaz correcta
-
+  areasDisponibles: IDOlimpiadabyArea[] = [];
+  olimpiadaId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -52,16 +52,18 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   }
 
   private cargarOlimpiadaId(): void {
-    this.route.params.subscribe(params => {
-      const olimpiadaId = params['id'];
-      if (olimpiadaId) {
-        this.cargarAreas(olimpiadaId);
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe(params => {
+      const id = params['id'];
+      if (id) {
+        this.olimpiadaId = Number(id);
+        this.cargarAreas(this.olimpiadaId);
       } else {
         console.error('No se encontró ID de olimpiada en la URL');
-        // Puedes redirigir a una página de error
+        this.errorMessage = 'No se pudo cargar la olimpiada. Por favor, inténtelo de nuevo.';
       }
     });
   }
+
   private initForm(): void {
     this.inscripcionForm = this.fb.group({
       estado: ['Pendiente', Validators.required],
@@ -75,14 +77,17 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
     this.addArea();
   }
 
-  private cargarAreas(olimpiadaId: string): void {
-    this.olimpiadaByAreaService.getAreasByOlimpiadaId(Number(olimpiadaId))
+  private cargarAreas(olimpiadaId: number): void {
+    this.olimpiadaByAreaService.getAreasByOlimpiadaId(olimpiadaId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (areas) => this.areasDisponibles = areas,
+        next: (areas) => {
+          this.areasDisponibles = areas;
+          console.log('Áreas cargadas:', this.areasDisponibles);
+        },
         error: (error) => {
           console.error('Error cargando áreas:', error);
-          this.errorMessage = 'Error al cargar las áreas disponibles';
+          this.errorMessage = 'Error al cargar las áreas disponibles. Por favor, recargue la página.';
         }
       });
   }
@@ -108,7 +113,13 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   }
 
   addOlimpista(): void { this.olimpistasFormArray.push(this.createOlimpista()); }
-  removeOlimpista(index: number): void { this.olimpistasFormArray.removeAt(index); }
+  removeOlimpista(index: number): void { 
+    if (this.olimpistasFormArray.length > 1) {
+      this.olimpistasFormArray.removeAt(index);
+    } else {
+      alert('Debe haber al menos un olimpista');
+    }
+  }
 
   // Métodos para Tutores
   private createTutor(): FormGroup {
@@ -123,7 +134,13 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   }
 
   addTutor(): void { this.tutorsFormArray.push(this.createTutor()); }
-  removeTutor(index: number): void { this.tutorsFormArray.removeAt(index); }
+  removeTutor(index: number): void { 
+    if (this.tutorsFormArray.length > 1) {
+      this.tutorsFormArray.removeAt(index);
+    } else {
+      alert('Debe haber al menos un tutor');
+    }
+  }
 
   // Métodos para Áreas
   private createArea(): FormGroup {
@@ -154,7 +171,13 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
       });
   }
 
-  removeArea(index: number): void { this.areasFormArray.removeAt(index); }
+  removeArea(index: number): void { 
+    if (this.areasFormArray.length > 1) {
+      this.areasFormArray.removeAt(index);
+    } else {
+      alert('Debe haber al menos un área');
+    }
+  }
 
   getNiveles(areaIndex: number): NivelCategoria[] {
     const areaControl = this.areasFormArray.at(areaIndex).get('area');
@@ -169,30 +192,98 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
     this.boletaGenerada = null;
 
     if (this.inscripcionForm.valid) {
-      const payload = this.preparePayload();
-      this.inscripcionService.crearInscripcion(payload).subscribe({
-        next: (response) => this.handleSuccess(response),
-        error: (error) => this.handleError(error)
-      });
+      console.log('Formulario válido, preparando payload...');
+      try {
+        const payload = this.preparePayload();
+        console.log('Payload preparado:', payload);
+        this.inscripcionService.crearInscripcion(payload).subscribe({
+          next: (response) => this.handleSuccess(response),
+          error: (error) => this.handleError(error)
+        });
+      } catch (error) {
+        console.error('Error al preparar el payload:', error);
+        this.errorMessage = 'Error al preparar los datos de inscripción. Por favor, inténtelo de nuevo.';
+      }
     } else {
+      console.error('Formulario inválido:', this.getFormValidationErrors());
       this.errorMessage = 'Por favor complete todos los campos requeridos.';
     }
   }
 
-  private preparePayload(): InscripcionPayload {
-    const formValue = this.inscripcionForm.value;
-    return {
-      ...formValue,
-      olimpiada_id: Number(this.route.snapshot.params['id']),
-      areas: formValue.areas.map((areaGroup: any) => ({
-        area_id: areaGroup.area.id_area,
-        nivelesCategoria: [areaGroup.nivel]
-      }))
-    };
+  // Método para depuración
+  private getFormValidationErrors(): string[] {
+    const errors: string[] = [];
+    
+    // Verificar olimpistas
+    (this.olimpistasFormArray.controls as FormGroup[]).forEach((control, index) => {
+      Object.keys(control.value).forEach(key => {
+        const controlErrors = control.get(key)?.errors;
+        if (controlErrors) {
+          errors.push(`Olimpista #${index + 1} - ${key}: ${JSON.stringify(controlErrors)}`);
+        }
+      });
+    });
+    
+    // Verificar tutores
+    (this.tutorsFormArray.controls as FormGroup[]).forEach((control, index) => {
+      Object.keys(control.value).forEach(key => {
+        const controlErrors = control.get(key)?.errors;
+        if (controlErrors) {
+          errors.push(`Tutor #${index + 1} - ${key}: ${JSON.stringify(controlErrors)}`);
+        }
+      });
+    });
+    
+    // Verificar áreas
+    (this.areasFormArray.controls as FormGroup[]).forEach((control, index) => {
+      Object.keys(control.value).forEach(key => {
+        const controlErrors = control.get(key)?.errors;
+        if (controlErrors) {
+          errors.push(`Área #${index + 1} - ${key}: ${JSON.stringify(controlErrors)}`);
+        }
+      });
+    });
+    
+    return errors;
   }
 
-  // Método handleSuccess modificado
+  private preparePayload(): InscripcionPayload {
+    if (!this.olimpiadaId) {
+      throw new Error('No se ha cargado el ID de la olimpiada');
+    }
+    
+    // Obtener el valor del formulario
+    const formValue = this.inscripcionForm.getRawValue(); // Usamos getRawValue() para incluir controles deshabilitados
+    
+    // Transformar los datos de las áreas al formato esperado por el backend
+    const areasTransformadas = formValue.areas.map((areaGroup: any) => {
+      if (!areaGroup.area || !areaGroup.nivel) {
+        throw new Error('Área o nivel no seleccionado');
+      }
+      
+      return {
+        area_id: areaGroup.area.id_area,
+        nivelesCategoria: [areaGroup.nivel]
+      };
+    });
+    
+    // Construir el payload final
+    // Asumimos que InscripcionPayload acepta una propiedad olimpiada_id
+    // Si no es así, necesitaremos actualizar la interfaz
+    const payload = {
+      olimpiada_id: this.olimpiadaId,
+      estado: formValue.estado,
+      olimpistas: formValue.olimpistas,
+      tutors: formValue.tutors,
+      areas: areasTransformadas
+    } as InscripcionPayload;
+    
+    return payload;
+  }
+
   private handleSuccess(response: InscripcionPostSuccessResponse): void {
+    console.log('Respuesta exitosa:', response);
+    
     const correoOlimpista = this.olimpistasFormArray.at(0).get('correo')?.value || '';
     this.successMessage = `¡Inscripción completada exitosamente! Se ha enviado un comprobante de pago al correo: ${correoOlimpista}. Por favor revise su bandeja de entrada.`;
     
@@ -216,7 +307,6 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
       }
       
       console.log('Boleta procesada para mostrar:', this.boletaGenerada);
-      console.log('Tipo del monto procesado:', typeof this.boletaGenerada.monto);
       
       // Enviar el correo electrónico con la boleta
       if (correoOlimpista) {
@@ -227,6 +317,7 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
       this.errorMessage = 'Se procesó la inscripción pero no se recibieron datos de la boleta.';
     }
     
+    // Resetear el formulario y reinicializarlo
     this.inscripcionForm.reset();
     this.initForm();
   }
@@ -236,11 +327,9 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           console.log('Boleta enviada por email:', response);
-          // No actualizamos el mensaje de éxito ya que lo hemos configurado previamente
         },
         error: (error) => {
           console.error('Error al enviar boleta por email:', error);
-          // Solo mostramos este mensaje si realmente hay un error
           this.errorMessage = 'La inscripción fue exitosa, pero hubo un problema al enviar la boleta por email. Por favor contacte a soporte.';
         }
       });
@@ -248,7 +337,21 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
 
   private handleError(error: any): void {
     console.error('Error en la inscripción:', error);
-    this.errorMessage = 'Error al procesar la inscripción. Intente nuevamente.';
+    
+    // Mejorar el manejo de errores para proporcionar información más específica
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 0) {
+        this.errorMessage = 'No se pudo conectar con el servidor. Por favor, verifique su conexión.';
+      } else if (error.status === 400) {
+        this.errorMessage = 'Datos de inscripción inválidos. Por favor, verifique la información ingresada.';
+      } else if (error.status === 500) {
+        this.errorMessage = 'Error interno del servidor. Por favor, inténtelo más tarde.';
+      } else {
+        this.errorMessage = `Error ${error.status}: ${error.error?.message || error.statusText || 'Error desconocido'}`;
+      }
+    } else {
+      this.errorMessage = 'Error al procesar la inscripción. Intente nuevamente.';
+    }
   }
 
   ngOnDestroy(): void {

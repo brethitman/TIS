@@ -2,9 +2,16 @@
 
 export interface IDOlimpiadabyArea {
   id_area: number;
+  id_olimpiada:     number;
+  id_inscripcion:   number | null;
   nombre_area: string;
   descripcion: string | null; 
   nivel_categorias: NivelCategoria[] | null;
+  // Añadimos los campos de grados de área
+  gradoIniAr: string;
+  gradoFinAr: string;
+  created_at:       Date;
+  updated_at:       Date;
 }
 
 export interface NivelCategoria {
@@ -14,11 +21,11 @@ export interface NivelCategoria {
   descripcion: string | null;
   gradoIniCat: string;
   gradoFinCat: string;
-  fecha_examen: string;
+  fecha_examen: Date;
   costo: number;
-  habilitacion: number; // Esto debe ser un número (0 o 1), no un booleano
-  created_at?: string;
-  updated_at?: string;
+  habilitacion: boolean; // Esto debe ser un número (0 o 1), no un booleano
+  created_at:   Date;
+  updated_at:   Date;
 }
 
 // post_categoria.interface.ts

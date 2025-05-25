@@ -1,4 +1,4 @@
-import { NgModule, Component } from '@angular/core';
+import { NgModule, Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as XLSX from 'xlsx';
@@ -16,6 +16,7 @@ export class BotonExelComponent {
   @Output() estudianteSeleccionado = new EventEmitter<any>();
   @Output() areaSeleccionada = new EventEmitter<any>();
   @Output() inscribir = new EventEmitter<void>();
+  @ViewChild('excelInput') excelInput!: ElementRef;
 
   showModal1: boolean = false;
   showModal2: boolean = false;
@@ -40,6 +41,7 @@ export class BotonExelComponent {
   isStudentDropdownOpen: boolean = false;
   estudiantes: any[] = [];
 
+
   onFileChange(event: any): void {
     const target: DataTransfer = <DataTransfer>event.target;
 
@@ -63,13 +65,12 @@ export class BotonExelComponent {
       let datos: any[][] = XLSX.utils.sheet_to_json(hoja, { header: 1 });
       const encabezados = datos[0];
       const indiceFechaNacimiento = encabezados.indexOf('Fecha de Nacimiento');
-      if (indiceFechaNacimiento !== -1) { // Si la columna existe
+      if (indiceFechaNacimiento !== -1) {
         datos = datos.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
             if (typeof cell === 'number' && cell > 30000 && colIndex === indiceFechaNacimiento) {
-              // Convertimos solo si está en la columna de Fecha de Nacimiento
               const fechaConvertida = new Date((cell - 25569) * 86400000);
-              return fechaConvertida.toLocaleDateString('es-ES'); // Formato dd/mm/aaaa
+              return fechaConvertida.toLocaleDateString('es-ES');
             }
             return cell;
           })
@@ -78,12 +79,6 @@ export class BotonExelComponent {
       this.datosExcel = datos;
       this.procesarEstudiantes(datos);
 
-      if (this.confirmSubida && fileName === 'Formato_solo_Estudiantes.xlsx') {
-        console.log('Datos subidos:', this.datosExcel);
-      } else if (this.confirmSubida && fileName === 'Formato_Varios_Tutores.xlsx') {
-        console.log('Formato 2 subido correctamente1:', fileName, fileSize);
-      } else {
-      }
       this.procesarDatosExcel(this.datosExcel, file.name);
     };
 
@@ -95,11 +90,37 @@ export class BotonExelComponent {
       this.showModal2 = true;
     } else {
       alert('Archivo no válido, debe tener el mismo nombre que el formato descargado');
+      this.resetFileInput(); // Resetear el input si el archivo no es válido
       return;
     }
     this.nombreArchivo = fileName;
     this.tamanoArchivo = fileSize;
   }
+
+  volverSubir() {
+    // 1. Resetear el input de archivo (manera Angular)
+    if (this.excelInput) {
+      this.excelInput.nativeElement.value = '';
+    }
+
+    // 2. Resetear estados
+    this.resetUploadStates();
+  }
+
+  resetUploadStates() {
+    this.modalError = false;
+    this.mensajeError = [];
+    this.confirmSubida = false;
+    this.datosEstudiantes = [];
+    this.datosTutores = [];
+    this.datosExcel = [];
+    this.tamanoArchivo = '';
+    this.nombreArchivo = '';
+    this.showModal1 = false;
+    this.showModal2 = false;
+  }
+
+
   procesarEstudiantes(datos: any[][]): void {
     if (datos.length < 2) {
       this.estudiantes = [];
@@ -168,7 +189,7 @@ export class BotonExelComponent {
       return;
     }
     this.confirmSubida = true;
-    this.modalError  = true;
+    this.modalError = true;
     console.log('Datos del tutor:', this.tutor);
     this.showModal1 = false;
     this.tutor = { nombre: '', apellido: '', ci: '' };
@@ -176,51 +197,67 @@ export class BotonExelComponent {
   }
 
   cancelar1(): void {
-    this.confirmSubida = false;
-    this.showModal1 = false;
-    console.log('Subida cancelada');
+    this.resetFileInput(); // Limpiar el input file
+    this.clearTutorData(); // Limpiar datos del tutor
+    this.closeAllModals(); // Cerrar todos los modales
+    this.resetUploadData(); // Limpiar datos de subida
+    console.log('Subida cancelada - Modal 1');
+  }
+
+  openModal2(): void {
+    this.resetFileInput();
+    this.confirmSubida = true;
+    this.showModal2 = false;
+    this.modalError = true;
+  }
+
+  cancelar2(): void {
+    this.resetFileInput(); // Limpiar el input file
+    this.closeAllModals(); // Cerrar todos los modales
+    this.resetUploadData(); // Limpiar datos de subida
+    console.log('Subida cancelada - Modal 2');
+  }
+  private resetFileInput(): void {
+    if (this.excelInput?.nativeElement) {
+      this.excelInput.nativeElement.value = '';
+    }
+  }
+  cancelar(modalType: 'modal1' | 'modal2'): void {
+    this.resetFileInput();
+
+    if (modalType === 'modal1') {
+      this.clearTutorData();
+    }
+
+    this.closeAllModals();
+    this.resetUploadData();
+  }
+  private clearTutorData(): void {
     this.tutor = { nombre: '', apellido: '', ci: '' };
     this.errors = { nombre: '', apellido: '', ci: '' };
   }
 
-  openModal2(): void {
-    this.confirmSubida = true;
-    this.showModal2 = false;
-    this.modalError  = true;
-  }
-
-  cancelar2(): void {
-    this.confirmSubida = false;
-    this.showModal2 = false;
+  private resetUploadData(): void {
     this.datosExcel = [];
     this.datosEstudiantes = [];
     this.datosTutores = [];
     this.tamanoArchivo = '';
     this.nombreArchivo = '';
-    console.log('Subida cancelada');
-  }
-
-  volverSubir() {
-    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = '';
-    }
-    this.modalError  = false;
     this.mensajeError = [];
     this.confirmSubida = false;
-    this.datosEstudiantes = [];
-    this.datosTutores = [];
-    this.datosExcel = [];
-    this.tamanoArchivo = '';
-    this.nombreArchivo = '';
   }
 
+  private closeAllModals(): void {
+    this.showModal1 = false;
+    this.showModal2 = false;
+    this.modalError = false;
+  }
   cerrar() {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';
     }
-    this.modalError  = false;
+    this.modalError = false;
   }
 
   procesarDatosExcel(datos: any[][], fileName: string): void {
@@ -270,21 +307,21 @@ export class BotonExelComponent {
         const nombre = fila[0]?.toString().trim();
         const apellido = fila[1]?.toString().trim();
         if (!nombre || !apellido) {
-          this.mensajeError.push(`Error: Nombre y apellido son obligatorios en la fila ${index + 1}.\n`);
+          this.mensajeError.push(`Error: El nombre y apellido del estudiante son obligatorios en la fila ${index + 1}.\n`);
           break;
         }
         const ci = fila[2]?.toString().trim();
-        if (!/^[19]\d{6,7}$/.test(ci)) {
-          this.mensajeError.push(`Error: CI inválido en la fila ${index + 1}.\n`);
+        if (!/^\d{7,8}$/.test(ci)) {
+          this.mensajeError.push(`Error: CI del estudiante inválido en la fila ${index + 1}.\n`);
           break;
         }
         if (!ci) {
-          this.mensajeError.push(`Error: El CI del tutor es obligatorio.\n`);
+          this.mensajeError.push(`Error: El CI ddel estudiante es obligatorio.\n`);
           break;
         }
         const fechaNacimiento = fila[3]?.toString().trim();
         if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(fechaNacimiento)) {
-          this.mensajeError.push(`Error: Fecha de nacimiento inválida en la fila ${index + 1}. Debe cumplir con el formato dd/mm/aa.\n`);
+          this.mensajeError.push(`Error: Fecha de nacimiento del estudiante inválida en la fila ${index + 1}. Debe cumplir con el formato dd/mm/aa.\n`);
           break;
         }
         if (!fechaNacimiento) {
@@ -294,7 +331,7 @@ export class BotonExelComponent {
         const correo = fila[4]?.toString().trim();
         if (!correo.includes("@") || correo.includes(" ") ||
           (!correo.endsWith("@gmail.com") && !correo.endsWith("@Outlook.com"))) {
-          this.mensajeError.push(`Error: Correo electrónico inválido:'${correo}'.\n`);
+          this.mensajeError.push(`Error: Correo electrónico inválido del estudiante:'${correo}'.\n`);
           break;
         }
         const unidadEducativa = fila[5]?.toString().trim();
@@ -326,12 +363,12 @@ export class BotonExelComponent {
         const nombre = fila[0]?.toString().trim();
         const apellido = fila[1]?.toString().trim();
         if (!nombre || !apellido) {
-          this.mensajeError.push(`Error: Nombre y apellido son obligatorios en la fila ${index + 1}.\n`);
+          this.mensajeError.push(`Error: Nombre y apellido del tutor son obligatorios en la fila ${index + 1}.\n`);
           break;
         }
         const ci = fila[2]?.toString().trim();
-        if (!/^[19]\d{6,7}$/.test(ci)) {
-          this.mensajeError.push(`Error: CI inválido en la fila ${index + 1}.\n`);
+        if (!/^\d{7,8}$/.test(ci)) {
+          this.mensajeError.push(`Error: CI del tutor inválido en la fila ${index + 1}.\n`);
           break;
         }
         if (!ci) {
@@ -362,5 +399,6 @@ export class BotonExelComponent {
     console.log("Lista de errores:", this.mensajeError);
 
   }
+
 
 }

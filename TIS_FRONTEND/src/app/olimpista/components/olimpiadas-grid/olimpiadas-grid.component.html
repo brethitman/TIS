@@ -83,11 +83,11 @@
 
     <!-- Indicadores de Paginación -->
     <div class="flex justify-center mb-12 space-x-2">
-    <button *ngFor="let dot of getPaginationDots(); let i = index" (click)="goToPage(i)"
-        class="rounded-full h-3 focus:outline-none transition-all"
-        [ngClass]="isActiveDot(i) ? 'bg-purple-600 w-5' : 'bg-gray-300 w-3'">
-    </button>
-</div>
+        <button *ngFor="let dot of getPaginationDots(); let i = index" (click)="goToPage(i)"
+            class="rounded-full h-3 focus:outline-none transition-all"
+            [ngClass]="isActiveDot(i) ? 'bg-purple-600 w-5' : 'bg-gray-300 w-3'">
+        </button>
+    </div>
 
 
 </div>

@@ -36,4 +36,5 @@ export class AreaService {
   addNivelToArea(areaId: number, nivel: Omit<Nivele, 'id_nivel'|'id_area'|'created_at'|'updated_at'>): Observable<Nivele> {
     return this.http.post<Nivele>(`${this.apiUrl}/${areaId}/niveles`, nivel);
   }
+
 }
