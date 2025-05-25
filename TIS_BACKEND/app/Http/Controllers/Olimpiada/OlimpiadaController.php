@@ -21,20 +21,27 @@ class OlimpiadaController extends Controller
 
     }
 
-
+    
 
     public function store(Request $request)
     {
         // 1. Validación básica
         $validated = $request->validate([
-            'nombre_olimpiada'      => 'required|string|max:100',
-            'descripcion_olimpiada' => 'nullable|string|max:150',
-            'fecha_inicio'          => 'required|date',
-            'fecha_final'           => 'required|date|after_or_equal:fecha_inicio',
-            'areas'                 => 'nullable|array',
-            'areas.*.nombre_area'   => 'required_with:areas|string|max:100',
-            'areas.*.descripcion'   => 'nullable|string|max:150',
+            'nombre_olimpiada'           => 'required|string|max:100',
+            'descripcion_olimpiada'      => 'nullable|string|max:150',
+            'presentacion'               => 'nullable|string',
+            'requisitos'                 => 'nullable|string',
+            'fecha_inscripcion_inicio'   => 'nullable|date',
+            'fecha_inscripcion_final'    => 'nullable|date|after_or_equal:fecha_inscripcion_inicio',
+            'premios'                    => 'nullable|string',
+            'informacion_adicional'      => 'nullable|string',
+            'fecha_inicio'               => 'required|date',
+            'fecha_final'                => 'required|date|after_or_equal:fecha_inicio',
+            'areas'                      => 'nullable|array',
+            'areas.*.nombre_area'        => 'required_with:areas|string|max:100',
+            'areas.*.descripcion'        => 'nullable|string|max:150',
         ]);
+
 
         // 2. Chequeo manual de duplicado
         $existe = Olimpiada::where('nombre_olimpiada', $validated['nombre_olimpiada'])
@@ -64,19 +71,37 @@ class OlimpiadaController extends Controller
 
     public function show(string $id)
     {
-        $olimpiada = Olimpiada::with('areas.nivelCategorias')->findOrFail($id);
-        return new $this->resource($olimpiada);
-    }
+        $olimpiada = Olimpiada::select([
+        'id',
+        'nombre_olimpiada',
+        'descripcion_olimpiada',
+        'presentacion',        // ← Asegúrate de incluir estos
+        'requisitos',          // ← campos en el select
+        'premios',            // ← o usar all()
+        'informacion_adicional',
+        'fecha_inscripcion_inicio',
+        'fecha_inscripcion_final',
+        'fecha_inicio',
+        'fecha_final'
+    ])->findOrFail($id);
+    
+    return response()->json($olimpiada); }
 
     public function update(Request $request, string $id)
 {
     $olimpiada = Olimpiada::findOrFail($id);
 
     $validated = $request->validate([
-        'nombre_olimpiada' => 'sometimes|string|max:100',
-        'descripcion_olimpiada' => 'nullable|string|max:150',
-        'fecha_inicio' => 'sometimes|date',
-        'fecha_final' => 'sometimes|date|after_or_equal:fecha_inicio'
+    'nombre_olimpiada'           => 'sometimes|string|max:100',
+    'descripcion_olimpiada'      => 'nullable|string|max:150',
+    'presentacion'               => 'nullable|string',
+    'requisitos'                 => 'nullable|string',
+    'fecha_inscripcion_inicio'   => 'nullable|date',
+    'fecha_inscripcion_final'    => 'nullable|date|after_or_equal:fecha_inscripcion_inicio',
+    'premios'                    => 'nullable|string',
+    'informacion_adicional'      => 'nullable|string',
+    'fecha_inicio'               => 'sometimes|date',
+    'fecha_final'                => 'sometimes|date|after_or_equal:fecha_inicio'
     ]);
 
     // Verificar si hay cambios en nombre/descripción antes de validar duplicados

@@ -14,10 +14,12 @@ import { VisualizacionListaComponent } from './olimpista/pages/visualizacion-lis
 import { InscripcionTodoComponent } from './olimpista/components/inscripcion-todo/inscripcion-todo.component';
 
 import { PruebaOcrComponent } from './olimpista/components/prueba-ocr/prueba-ocr.component';
+import { BoletaListaComponent } from './olimpista/pages/boleta-lista/boleta-lista.component';
 
 export const routes: Routes = [
 
   { path: 'prueba-ocr', component: PruebaOcrComponent },
+  { path: 'boletaPago', component: BoletaListaComponent  },
   {
     path: 'auth',
     component: AuthLayoutComponent,

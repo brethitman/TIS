@@ -41,6 +41,7 @@ export class AreaAlumnoComponent implements OnInit {
   categorias2!: NivelCategoria[];
   cursos: Curso[] = [];
   isDuplicated = false;
+  cursoSeleccionado: Curso | null = null;
   seleccionArea1: string = 'Seleccionar área';
   seleccionArea2: string = 'Seleccionar área';
   seleccionCategoria: string = 'Selecciona una categoría';
@@ -64,17 +65,17 @@ export class AreaAlumnoComponent implements OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          console.log('Respuesta del servicio:', data); // Verifica en la consola
+          this.cursos = Array.isArray(data) ? data : (data as any).cursos; // Asigna primero
+          console.log('Respuesta del servicio:', this.cursos); 
           console.log('Cantidad de cursos:', this.cursos.length);
           console.log('Lista de cursos:', this.cursos);
-          this.cursos = Array.isArray(data) ? data : (data as any).cursos; // Tipo 'any' para evitar error
         },
         error: (error) => {
           console.error('Error cargando cursos:', error);
           this.errorMessage = 'Error al cargar los cursos';
         }
       });
-  }
+ }
 
   //traer areas y categorias
   private cargarOlimpiadaId(): void {
@@ -144,6 +145,12 @@ export class AreaAlumnoComponent implements OnInit {
     this.estudiantesSeleccionados = this.estudiantes.filter(est => est.seleccionado);
     this.estudianteSeleccionado.emit(this.estudiantesSeleccionados);
   }
+  seleccionarCurso(curso: Curso): void {
+  this.cursoSeleccionado = curso;
+  this.isCursoDropdownOpen = false;
+  console.log('Curso seleccionado:', curso);
+}
+  
   selectArea1(areaNombre: string) {
     const areaSeleccionada = this.areasDisponibles.find(area => area.nombre_area === areaNombre);
 
