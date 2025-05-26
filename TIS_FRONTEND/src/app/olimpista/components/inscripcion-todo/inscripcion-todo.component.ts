@@ -32,6 +32,8 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   errorMessage: string | null = null;
 
   boletaGenerada: BoletaPagoResponse | null = null;
+  addAreaDisabled = false;
+areaWarning: string | null = null;
   private destroy$ = new Subject<void>();
   areasDisponibles: IDOlimpiadabyArea[] = []; // Usa la interfaz correcta
 
@@ -133,11 +135,26 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
     });
   }
 
-  addArea(): void {
+ addArea(selectedArea?: IDOlimpiadabyArea): void {
+  if (selectedArea && selectedArea.permite_multiples_areas !== undefined) {
+  if (!selectedArea.permite_multiples_areas) {
+    this.areasFormArray.clear();
+    this.addAreaDisabled = true;
+    this.areaWarning = `"${selectedArea.nombre_area}" no permite combinación con otras áreas`;
+  } else if (this.areasFormArray.controls.some(c => !c.value.area.permite_multiples_areas)) {
+    return;
+  }
+
+    const areaGroup = this.createArea();
+    areaGroup.patchValue({ area: selectedArea });
+    this.setupAreaListeners(areaGroup);
+    this.areasFormArray.push(areaGroup);
+  } else {
     const areaGroup = this.createArea();
     this.setupAreaListeners(areaGroup);
     this.areasFormArray.push(areaGroup);
   }
+}
 
   private setupAreaListeners(areaGroup: FormGroup): void {
     areaGroup.get('area')?.valueChanges
@@ -154,7 +171,18 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
       });
   }
 
-  removeArea(index: number): void { this.areasFormArray.removeAt(index); }
+ removeArea(index: number): void {
+  const removedArea = this.areasFormArray.at(index).value?.area;
+  this.areasFormArray.removeAt(index);
+
+  if (removedArea && !removedArea.permite_multiples_areas) {
+  this.addAreaDisabled = false;
+  this.areaWarning = null;
+} else if (this.areasFormArray.length === 0) {
+  this.addAreaDisabled = false;
+  this.areaWarning = null;
+}
+}
 
   getNiveles(areaIndex: number): NivelCategoria[] {
     const areaControl = this.areasFormArray.at(areaIndex).get('area');
@@ -168,15 +196,27 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
     this.errorMessage = null;
     this.boletaGenerada = null;
 
-    if (this.inscripcionForm.valid) {
-      const payload = this.preparePayload();
-      this.inscripcionService.crearInscripcion(payload).subscribe({
-        next: (response) => this.handleSuccess(response),
-        error: (error) => this.handleError(error)
-      });
-    } else {
-      this.errorMessage = 'Por favor complete todos los campos requeridos.';
-    }
+    const hasNonCombinable = this.areasFormArray.controls.some(
+  c => c.value?.area && !c.value.area.permite_multiples_areas
+);
+
+if (hasNonCombinable && this.areasFormArray.length > 1) {
+  this.errorMessage = 'No se pueden combinar áreas incompatibles';
+  return;
+}
+
+if (this.inscripcionForm.valid) {
+  const payload = this.preparePayload();
+
+  this.inscripcionService.crearInscripcion(payload)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response) => this.handleSuccess(response),
+      error: (error) => this.handleError(error)
+    });
+} else {
+  this.errorMessage = 'Por favor complete todos los campos requeridos';
+}
   }
 
   private preparePayload(): InscripcionPayload {
@@ -195,18 +235,18 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   private handleSuccess(response: InscripcionPostSuccessResponse): void {
     const correoOlimpista = this.olimpistasFormArray.at(0).get('correo')?.value || '';
     this.successMessage = `¡Inscripción completada exitosamente! Se ha enviado un comprobante de pago al correo: ${correoOlimpista}. Por favor revise su bandeja de entrada.`;
-    
+
     if (response && response.inscripcion && response.inscripcion.boleta_pago) {
       console.log('Boleta recibida:', response.inscripcion.boleta_pago);
-      
+
       // Clonar la boleta para evitar modificar la original
       this.boletaGenerada = { ...response.inscripcion.boleta_pago };
-      
+
       // Asegurar que la fecha sea válida
       if (!this.boletaGenerada.fecha_generacion) {
         this.boletaGenerada.fecha_generacion = new Date().toISOString();
       }
-      
+
       // Asegurar que el monto tenga un valor válido y sea string
       if (this.boletaGenerada.monto === null || this.boletaGenerada.monto === undefined) {
         this.boletaGenerada.monto = '0';
@@ -214,10 +254,10 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
         // Si el monto viene como número, convertirlo a string para consistencia
         this.boletaGenerada.monto = String(this.boletaGenerada.monto);
       }
-      
+
       console.log('Boleta procesada para mostrar:', this.boletaGenerada);
       console.log('Tipo del monto procesado:', typeof this.boletaGenerada.monto);
-      
+
       // Enviar el correo electrónico con la boleta
       if (correoOlimpista) {
         this.enviarBoletaPorEmail(this.boletaGenerada, correoOlimpista);
@@ -226,7 +266,7 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
       console.error('La respuesta no contiene datos de boleta válidos:', response);
       this.errorMessage = 'Se procesó la inscripción pero no se recibieron datos de la boleta.';
     }
-    
+
     this.inscripcionForm.reset();
     this.initForm();
   }
@@ -255,4 +295,40 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  shouldShowAddAreaButton(): boolean {
+  // Si no hay áreas seleccionadas, mostrar el botón
+  if (this.areasFormArray.length === 0) {
+    return true;
+  }
+
+  // Verificar si alguna área seleccionada no permite múltiples áreas
+  const hasNonMultipleArea = this.areasFormArray.controls.some(control => {
+    const area = control.value?.area;
+    return area && !area.permite_multiples_areas;
+  });
+
+  // Si hay un área que no permite múltiples, ocultar el botón
+  return !hasNonMultipleArea;
+}
+
+getAreaSelectionMessage(): string | null {
+  // Si no hay áreas seleccionadas, no mostrar mensaje
+  if (this.areasFormArray.length === 0) {
+    return null;
+  }
+
+  // Buscar si hay un área que no permite múltiples selecciones
+  const nonMultipleArea = this.areasFormArray.controls.find(control => {
+    const area = control.value?.area;
+    return area && !area.permite_multiples_areas;
+  });
+
+  if (nonMultipleArea) {
+    const areaName = nonMultipleArea.value?.area?.nombre_area;
+    return `si eligue esta area "${areaName}" no puede agregar mas areas.`;
+  }
+
+  return null;
+}
 }

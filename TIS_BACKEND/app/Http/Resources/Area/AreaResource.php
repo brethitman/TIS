@@ -27,6 +27,7 @@ public function toArray(Request $request): array
         'updatedAt' => $this->updated_at->toISOString(),
         'olimpiada' => $this->whenLoaded('olimpiada'),
         'niveles' => $this->whenLoaded('nivelCategorias'),
+        'permite_multiples_areas' => $this->permite_multiples_areas,
         'cursos' => CursoResource::collection($this->whenLoaded('cursos')) // Línea añadida
     ];
 }

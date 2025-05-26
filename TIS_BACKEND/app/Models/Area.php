@@ -22,7 +22,8 @@ class Area extends Model
     protected $fillable = [
         'id_olimpiada',
         'nombre_area',
-        'descripcion'
+        'descripcion',
+        'permite_multiples_areas'
     ];
 
     // Campos de timestamp (activados por defecto)

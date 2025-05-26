@@ -202,8 +202,9 @@ public function storeBasic(Request $request)
         'id_olimpiada' => 'required|exists:olimpiadas,id_olimpiada',
         'nombre_area' => 'required|string|max:100|unique:areas,nombre_area',
         'descripcion' => 'nullable|string|max:255',
+        'permite_multiples_areas' => 'required|boolean', // Validación añadida
         'cursos' => 'required|array|min:1',
-        'cursos.*' => 'exists:curso,id_curso' // Validación corregida (tabla: curso)
+        'cursos.*' => 'exists:curso,id_curso'
     ]);
 
     $area = Area::create($validated);

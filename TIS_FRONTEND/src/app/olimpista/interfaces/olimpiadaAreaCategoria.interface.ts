@@ -3,7 +3,8 @@
 export interface IDOlimpiadabyArea {
   id_area: number;
   nombre_area: string;
-  descripcion: string | null; 
+  descripcion: string | null;
+   permite_multiples_areas: boolean;
   nivel_categorias: NivelCategoria[] | null;
 }
 
