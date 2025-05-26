@@ -9,7 +9,7 @@ import { OlimpiadasGridComponent } from '../../components/olimpiadas-grid/olimpi
 @Component({
   selector: 'app-inicio1',
   standalone: true,
-  imports: [CommonModule, DatePipe, OlimpiadasGridComponent], // Añade DatePipe para formatear fechas
+  imports: [CommonModule, OlimpiadasGridComponent], // Eliminado DatePipe ya que no se usa en el template
   templateUrl: './inicio1.component.html',
 })
 export class Inicio1Component implements OnInit {
