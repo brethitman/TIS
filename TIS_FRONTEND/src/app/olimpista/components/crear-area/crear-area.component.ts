@@ -13,15 +13,13 @@ import { CommonModule } from '@angular/common';
 })
 export class CrearAreaComponent implements OnInit {
   @Input() idOlimpiada!: number; // Recibe el ID de la olimpiada desde el componente padre
-  
+
   cursos: Curso[] = [];
   selectedCursos: number[] = [];
   areaData: AreaBasicRequest = {
     id_olimpiada: 0,
     nombre_area: '',
     descripcion: '',
-    gradoIniAr: '',
-    gradoFinAr: '',
     cursos: []
   };
   successMessage: string | null = null;
@@ -40,8 +38,6 @@ export class CrearAreaComponent implements OnInit {
   loadCursos(): void {
     this.cursoService.obtenerTodosLosCursos().subscribe({
       next: (response) => {
-        // Asumiendo que los cursos vienen en un orden lógico (1°, 2°, etc.)
-        // Si no es así, se podría ordenar aquí según algún criterio
         this.cursos = response.data;
       },
       error: (err) => {
@@ -65,44 +61,9 @@ export class CrearAreaComponent implements OnInit {
     return curso ? curso.nameCurso : 'Curso no encontrado';
   }
 
-  // Método para determinar el grado inicial y final basado en los cursos seleccionados
-  determineGrades(): { gradoInicial: string, gradoFinal: string } {
-    if (this.selectedCursos.length === 0) {
-      return { gradoInicial: '', gradoFinal: '' };
-    }
-
-    // Obtener los cursos completos seleccionados
-    const cursosSeleccionados = this.cursos.filter(curso => 
-      this.selectedCursos.includes(curso.id_curso)
-    );
-
-    // Ordenar los cursos por algún criterio (asumiendo que hay un campo para ordenar)
-    // Si no existe tal campo, se podría usar el nombre o algún otro criterio
-    cursosSeleccionados.sort((a, b) => {
-      // Aquí se podría implementar una lógica de ordenamiento específica
-      // Por ejemplo, si los nombres siguen un patrón como "1° Básico", "2° Básico"...
-      return a.nameCurso.localeCompare(b.nameCurso);
-    });
-
-    // El primer curso en la lista ordenada será el grado inicial
-    const gradoInicial = cursosSeleccionados[0].nameCurso;
-    
-    // El último curso en la lista ordenada será el grado final
-    const gradoFinal = cursosSeleccionados[cursosSeleccionados.length - 1].nameCurso;
-
-    return { gradoInicial, gradoFinal };
-  }
-
   onSubmit(): void {
     if (!this.validateForm()) return;
 
-    // Determinar grados inicial y final
-    const { gradoInicial, gradoFinal } = this.determineGrades();
-    
-    // Asignar los grados determinados
-    this.areaData.gradoIniAr = gradoInicial;
-    this.areaData.gradoFinAr = gradoFinal;
-    
     // Asignar los cursos seleccionados
     this.areaData.cursos = this.selectedCursos;
 
@@ -120,13 +81,13 @@ export class CrearAreaComponent implements OnInit {
 
   private validateForm(): boolean {
     this.clearMessages();
-    
+
     // Validación del ID de olimpiada recibido
     if (!this.idOlimpiada || this.idOlimpiada <= 0) {
       this.showError('No se pudo determinar la olimpiada asociada');
       return false;
     }
-    
+
     if (!this.areaData.nombre_area?.trim()) {
       this.showError('El nombre del área es requerido');
       return false;
@@ -146,8 +107,6 @@ export class CrearAreaComponent implements OnInit {
       id_olimpiada: this.idOlimpiada,
       nombre_area: '',
       descripcion: '',
-      gradoIniAr: '',
-      gradoFinAr: '',
       cursos: []
     };
     this.selectedCursos = [];

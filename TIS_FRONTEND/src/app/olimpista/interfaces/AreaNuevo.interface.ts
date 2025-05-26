@@ -2,16 +2,14 @@ export interface Curso {
     id_curso: number;
     nameCurso: string;
   }
-  
+
   export interface AreaBasicRequest {
     id_olimpiada: number;
     nombre_area: string;
     descripcion?: string;
-    gradoIniAr: string;
-    gradoFinAr: string;
     cursos: number[];
   }
-  
+
   export interface AreaBasicResponse {
     message: string;
     data: {
@@ -19,8 +17,6 @@ export interface Curso {
       id_olimpiada: number;
       nombre_area: string;
       descripcion: string;
-      gradoIniAr: string;
-      gradoFinAr: string;
       createdAt: string;
       updatedAt: string;
       olimpiada: {

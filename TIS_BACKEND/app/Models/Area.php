@@ -5,34 +5,31 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Modelo para la tabla 'areas'.
- * Representa un área temática dentro de una olimpiada.
- */
 class Area extends Model
 {
     use HasFactory;
 
-    // Especifica el nombre de la tabla
+    // Nombre de la tabla
     protected $table = 'areas';
 
-    // Especifica la clave primaria
+    // Clave primaria
     protected $primaryKey = 'id_area';
 
-    // Especifica el tipo de dato de la clave primaria
-    protected $keyType = 'int'; // O 'bigint'
+    // Tipo de clave primaria (elimina si no usas auto-incrementing)
+    protected $keyType = 'int';
 
-    // Define los campos que pueden ser asignados masivamente
+    // Campos asignables masivamente (ajustados a tu estructura de tabla)
     protected $fillable = [
         'id_olimpiada',
         'nombre_area',
-        'descripcion',
-        'gradoIniAr',
-        'gradoFinAr',
+        'descripcion'
     ];
 
+    // Campos de timestamp (activados por defecto)
+    public $timestamps = true;
+
     /**
-     * Relación: Un Área pertenece a una Olimpiada.
+     * Relación con Olimpiada
      */
     public function olimpiada()
     {
@@ -40,41 +37,28 @@ class Area extends Model
     }
 
     /**
-     * Relación: Un Área tiene muchas NivelCategorias.
+     * Relación con NivelCategoria (versión simplificada)
      */
     public function nivelCategorias()
     {
-        return $this->hasMany(NivelCategoria::class, 'id_area', 'id_area');
+        return $this->hasMany(NivelCategoria::class, 'id_area');
     }
 
     /**
-     * Relación: Un Área puede estar en muchas Inscripciones a través de la tabla pivote inscripcion_area_nivel.
-     * Nota: Aunque la tabla pivote guarda id_area, la relación belongsToMany
-     * generalmente se define entre Inscripcion y NivelCategoria, y se accede al área
-     * a través del NivelCategoria. Sin embargo, si necesitas acceder directamente
-     * a las áreas seleccionadas para una inscripción, esta relación es útil.
-     * Para este esquema, la relación principal es Inscripcion <-> NivelCategoria
-     * a través de la tabla pivote. La relación con Area es implícita via NivelCategoria.
-     * Mantendremos esta relación si necesitas listar las áreas que contienen
-     * niveles seleccionados en una inscripción.
+     * Relación con Inscripciones a través de tabla pivote (mejorada)
      */
     public function inscripciones()
     {
         return $this->belongsToMany(Inscripcion::class, 'inscripcion_area_nivel', 'id_area', 'id_inscripcion')
-                    ->using(InscripcionAreaNivel::class) // Usar el modelo de la tabla pivote
-                    ->withTimestamps(); // Si la tabla pivote tiene created_at y updated_at
+                    ->using(InscripcionAreaNivel::class)
+                    ->withTimestamps();
     }
 
-
-
+    /**
+     * Relación con Cursos (solo si existe la tabla pivote curso_area)
+     */
     public function cursos()
     {
         return $this->belongsToMany(Curso::class, 'curso_area', 'id_area', 'id_curso');
     }
-
-
-
-public function niveles() {
-    return $this->hasMany(NivelCategoria::class, 'id_area', 'id_area');
-}
 }

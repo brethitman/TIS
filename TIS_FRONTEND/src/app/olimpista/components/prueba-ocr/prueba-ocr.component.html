@@ -178,7 +178,7 @@
                 <div>
                   <dt class="text-sm text-gray-600">Nombre completo</dt>
                   <dd class="font-medium text-gray-900">
-                    {{ inscripcionVerificada.participante.nombres }} 
+                    {{ inscripcionVerificada.participante.nombres }}
                     {{ inscripcionVerificada.participante.apellidos }}
                   </dd>
                 </div>
@@ -213,7 +213,7 @@
                 <div>
                   <dt class="text-sm text-gray-600">Nombre completo</dt>
                   <dd class="font-medium text-gray-900">
-                    {{ inscripcionVerificada.tutor.nombres }} 
+                    {{ inscripcionVerificada.tutor.nombres }}
                     {{ inscripcionVerificada.tutor.apellidos }}
                   </dd>
                 </div>
@@ -243,15 +243,15 @@
           </div>
 
           <!-- Áreas inscritas -->
-          <div class="bg-gray-50 p-4 rounded-lg" 
+          <div class="bg-gray-50 p-4 rounded-lg"
               *ngIf="inscripcionVerificada.detalles_academicos?.areas?.length">
             <h3 class="font-semibold text-lg mb-4 text-gray-800">Áreas Inscritas</h3>
             <div class="space-y-4">
-              <div *ngFor="let area of inscripcionVerificada.detalles_academicos.areas" 
+              <div *ngFor="let area of inscripcionVerificada.detalles_academicos.areas"
                   class="bg-white p-4 rounded-lg shadow-sm">
                 <h4 class="font-medium text-gray-900 mb-3">{{ area.nombre }}</h4>
                 <div class="grid gap-4 md:grid-cols-2">
-                  <div *ngFor="let nivel of area.niveles" 
+                  <div *ngFor="let nivel of area.niveles"
                       class="bg-gray-50 p-3 rounded-md">
                     <dl class="space-y-2">
                       <div>

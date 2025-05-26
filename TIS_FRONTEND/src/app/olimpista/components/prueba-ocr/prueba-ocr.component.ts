@@ -43,7 +43,7 @@ export class PruebaOcrComponent {
   onFileSelected(event: Event): void {
     this.limpiarEstado();
     const input = event.target as HTMLInputElement;
-    
+
     if (input.files?.length) {
       this.procesarImagen(input.files[0]);
     }
@@ -70,7 +70,7 @@ export class PruebaOcrComponent {
 
   private reconocerTexto(imagenBase64: string): void {
     this.cargandoOCR = true;
-    
+
     Tesseract.recognize(imagenBase64, 'spa', {
       logger: info => console.debug('Proceso OCR:', info)
     })
@@ -87,18 +87,18 @@ export class PruebaOcrComponent {
 
   private validarDatosOCR(): void {
     this.numeroBoletaDetectado = this.extraerNumeroBoleta(this.ocrResultado);
-    
+
     if (!this.numeroBoletaDetectado) {
       this.errorMensaje = '❌ No se pudo detectar el número de boleta';
       return;
     }
-    
+
     this.verificarPagoAutomatico();
   }
 
   private extraerNumeroBoleta(texto: string): string {
     const textoLimpio = texto.replace(/[\s_]/g, '');
-    
+
     for (const patron of this.patronesBoleta) {
       const match = textoLimpio.match(patron);
       if (match) {
@@ -114,12 +114,12 @@ export class PruebaOcrComponent {
   private verificarPagoAutomatico(): void {
     this.procesandoPago = true;
     this.errorMensaje = '';
-    
+
     const payload: VerificarPagoPayload = {
       numero_boleta: this.numeroBoletaDetectado,
       estado: 'Pagado'
     };
-    
+
     this.verificarBoletaService.verificarPago(payload)
       .pipe(finalize(() => this.procesandoPago = false))
       .subscribe({
@@ -128,7 +128,7 @@ export class PruebaOcrComponent {
           this.inscripcionVerificada = response.data;
           this.estadoDetectado = response.data.estado;
           this.errorMensaje = '';
-          
+
           // Convertir tipos de datos numéricos
           this.normalizarTiposDatos();
         },
@@ -141,7 +141,7 @@ export class PruebaOcrComponent {
 
     // Convertir montos de string a number si es necesario
     if (typeof this.inscripcionVerificada.detalles_academicos.boleta.monto === 'string') {
-      this.inscripcionVerificada.detalles_academicos.boleta.monto = 
+      this.inscripcionVerificada.detalles_academicos.boleta.monto =
         parseFloat(this.inscripcionVerificada.detalles_academicos.boleta.monto);
     }
 
@@ -165,7 +165,7 @@ export class PruebaOcrComponent {
         this.inscripcionVerificada = error.error.data.datos;
         this.estadoDetectado = error.error.data.estado_actual;
       }
-      
+
       if (error.status === 409) {
         this.errorMensaje += '. La boleta ya tiene un pago registrado anteriormente.';
       }

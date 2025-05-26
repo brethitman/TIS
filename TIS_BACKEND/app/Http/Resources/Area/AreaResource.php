@@ -23,8 +23,6 @@ public function toArray(Request $request): array
         'id_olimpiada' => $this->id_olimpiada,
         'nombre_area' => $this->nombre_area,
         'descripcion' => $this->descripcion,
-        'gradoIniAr' => $this->gradoIniAr, // Asegúrate que estos campos existan
-        'gradoFinAr' => $this->gradoFinAr,
         'createdAt' => $this->created_at->toISOString(),
         'updatedAt' => $this->updated_at->toISOString(),
         'olimpiada' => $this->whenLoaded('olimpiada'),
