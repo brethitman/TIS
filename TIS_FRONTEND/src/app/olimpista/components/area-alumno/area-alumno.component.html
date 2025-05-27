@@ -17,25 +17,17 @@
     </button>
 
     <!-- Lista de estudiantes -->
-    <div *ngIf="isStudentDropdownOpen"
-      class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-      <div class="divide-y divide-gray-100">
-        <div *ngFor="let estudiante of estudiantes" class="flex items-center px-4 py-2 hover:bg-blue-50 cursor-pointer">
-
-          <!-- Radio button para selección única -->
-          <input type="radio" [id]="'estudiante-' + estudiante.id" [value]="estudiante" [(ngModel)]="estudianteActual"
-            (click)="confirmarSeleccion()" name="estudianteSelection"
-            class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 mr-3">
-
-          <!-- Info del estudiante -->
-          <label [for]="'estudiante-' + estudiante.id" class="flex-grow cursor-pointer">
-            <p class="text-sm text-gray-800 font-medium">
-              {{ estudiante.nombre }} {{ estudiante.apellido }}
-            </p>
-          </label>
-        </div>
-      </div>
+    <div *ngIf="isStudentDropdownOpen" class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+  <div class="divide-y divide-gray-100">
+    <div *ngFor="let estudiante of estudiantesDisponibles" 
+          class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+          (click)="seleccionarEstudiante(estudiante)">
+      <p class="text-sm text-gray-800 font-medium">
+        {{ estudiante.nombre }} {{ estudiante.apellido }}
+      </p>
     </div>
+  </div>
+</div>
   </div>
   <!-- Dropdown de Cursos -->
   <div class="relative mb-4">
@@ -88,7 +80,7 @@
       <div>
         <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">CATEGORÍAS</h4>
         <div class="relative mb-4">
-          <button (click)="toggleCategoriaDropdown()"
+          <button [disabled]="!seleccionArea1" (click)="toggleCategoriaDropdown()"
             class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
             <span>{{ seleccionCategoria || "Selecciona una categoría" }}</span>
           </button>
@@ -123,7 +115,7 @@
 
           <div *ngIf="isAreaDropdownOpen2"
             class="absolute z-20 bottom-full mb-2 w-ful bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-            <div *ngFor="let area of areasDisponibles" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+            <div *ngFor="let area of areasFiltradasParaArea2" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
               (click)="selectArea2(area.nombre_area)">
               <p class="font-medium text-gray-800">{{area.nombre_area}}</p>
             </div>
@@ -134,7 +126,7 @@
       <div>
         <h4 class="text-md font-semibold text-gray-700 mb-2 border-b pb-1">CATEGORÍAS ADICIONALES</h4>
         <div class="relative mb-4">
-          <button (click)="toggleCategoriaDropdown2()"
+          <button [disabled]="!seleccionArea2" (click)="toggleCategoriaDropdown2()"
             class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
             <span>{{ seleccionCategoria2 || "Selecciona una categoría" }}</span>
           </button>
@@ -158,7 +150,13 @@
     </div>
   </div>
   <!-- Botón de inscripción -->
-  <button class="w-full bg-[#0D1271] hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md transition-colors">
-    Inscribir Estudiante
-  </button>
+  <button (click)="inscribirEstudiante()"
+        class="w-full bg-[#0D1271] hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md transition-colors">
+  Inscribir estudiante
+</button>
+
+  <button *ngIf="mostrarFinalizar" (click)="reiniciarInscripcion()"         
+  class="mt-4 w-full bg-green-600 text-white font-bold py-2 px-4 rounded-md">
+  Finalizar inscripción
+</button>
 </div>
