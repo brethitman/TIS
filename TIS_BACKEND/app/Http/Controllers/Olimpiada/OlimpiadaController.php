@@ -69,23 +69,22 @@ class OlimpiadaController extends Controller
     }
 
 
-    public function show(string $id)
+    public function show($id)
     {
-        $olimpiada = Olimpiada::select([
-        'id',
-        'nombre_olimpiada',
-        'descripcion_olimpiada',
-        'presentacion',        // ← Asegúrate de incluir estos
-        'requisitos',          // ← campos en el select
-        'premios',            // ← o usar all()
-        'informacion_adicional',
-        'fecha_inscripcion_inicio',
-        'fecha_inscripcion_final',
-        'fecha_inicio',
-        'fecha_final'
-    ])->findOrFail($id);
-    
-    return response()->json($olimpiada); }
+        try {
+            $olimpiada = Olimpiada::with('areas.nivel_categorias')->findOrFail($id);
+            
+            // Debug: Mostrar qué campos tiene la olimpiada
+            \Log::info('Campos de olimpiada:', $olimpiada->toArray());
+            
+            return response()->json([
+                'olimpiada' => $olimpiada
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error obteniendo olimpiada:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Olimpiada no encontrada'], 404);
+        }
+    }
 
     public function update(Request $request, string $id)
 {

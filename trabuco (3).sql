@@ -1049,6 +1049,25 @@ ALTER TABLE `inscripcion_area_nivel`
 ALTER TABLE `nivel_categorias`
   ADD CONSTRAINT `nivel_categorias_ibfk_1` FOREIGN KEY (`id_area`) REFERENCES `areas` (`id_area`);
 
+ALTER TABLE `olimpiadas` 
+  -- Modificar descripción para admitir más caracteres
+  MODIFY COLUMN `descripcion_olimpiada` TEXT,
+  
+  -- Agregar nuevos campos
+  ADD COLUMN `presentacion` TEXT AFTER `descripcion_olimpiada`,
+  ADD COLUMN `fecha_inscripcion_inicial` date AFTER `presentacion`,
+  ADD COLUMN `fecha_inscripcion_final` date AFTER `fecha_inscripcion_inicial`,
+  ADD COLUMN `premios` TEXT AFTER `fecha_inscripcion_final`,
+  ADD COLUMN `requisitos` TEXT AFTER `premios`,
+  ADD COLUMN `informacion_adicional` TEXT AFTER `requisitos`;
+
+ALTER TABLE olimpiadas 
+CHANGE COLUMN `fecha_inscripcion_inicial` `fecha_inscripcion_inicio` DATE;
+
+
+-- Estructura actualizada de la tabla olimpiadas
+-- Para verificar la nueva estructura, puedes ejecutar:
+-- DESCRIBE olimpiadas;
 --
 -- Filtros para la tabla `olimpistas`
 --

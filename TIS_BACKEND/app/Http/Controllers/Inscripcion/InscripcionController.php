@@ -270,7 +270,7 @@ class InscripcionController extends Controller
         return response()->json($areas);
     }
 
-<<<<<<< HEAD
+
     //verificar con el ocr de frontend
 
     public function verificarPago(Request $request)
@@ -336,7 +336,7 @@ class InscripcionController extends Controller
         ], Response::HTTP_INTERNAL_SERVER_ERROR); // 500
     }
 }
-=======
+
     public function storeList(Request $request)
     {
         try {
@@ -422,5 +422,5 @@ class InscripcionController extends Controller
         }
     }
 
->>>>>>> 69d3ce92afd8f467f02ca2bd73ae712efca06634
+
 }
