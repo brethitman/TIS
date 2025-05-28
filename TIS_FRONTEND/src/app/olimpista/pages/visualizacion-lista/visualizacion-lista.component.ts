@@ -37,8 +37,9 @@ export class VisualizacionListaComponent {
 
     // Encabezados
     worksheet.addRow([
-      'Nombres', 'Apellidos', 'CI', 'Fecha de Nacimiento',
-      'Correo Electrónico', 'Colegio', 'Departamento', 'Provincia'
+      'Nombre Estudiante', 'Apellido Estudiante', 'CI',
+      'Fecha de Nacimiento', 'Correo Electrónico', 'Teléfono/Celular',
+      'Colegio', 'Departamento', 'Provincia'
     ]);
 
     // Estilo encabezados (negrita y fondo)
@@ -97,7 +98,7 @@ export class VisualizacionListaComponent {
     // Encabezados estudiantes
     const encabezadosEstudiantes = [
       'Nombre Estudiante', 'Apellido Estudiante', 'CI',
-      'Fecha de Nacimiento', 'Correo Electrónico',
+      'Fecha de Nacimiento', 'Correo Electrónico', 'Teléfono/Celular',
       'Colegio', 'Departamento', 'Provincia'
     ];
     worksheet.addRow(encabezadosEstudiantes);
