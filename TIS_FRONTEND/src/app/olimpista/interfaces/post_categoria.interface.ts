@@ -49,11 +49,16 @@ export interface AreaResponse {
 
 export interface OlimpiadaResponse {
   id_olimpiada: number;
-  nombre: string;
-  descripcion: string | null;
-  anio: number;
+  nombre_olimpiada: string;
+  descripcion_olimpiada: string | null;
+  presentacion: string | null;
+  requisitos: string | null;
+  premios: string | null;
+  informacion_adicional: string | null;
+  fecha_inscripcion_inicio: string | null;
+  fecha_inscripcion_final: string | null;
   fecha_inicio: string;
-  fecha_fin: string;
+  fecha_final: string;
   createdAt?: string;
   updatedAt?: string;
   areas?: AreaResponse[];
@@ -79,5 +84,6 @@ export interface IDOlimpiadabyArea {
   gradoIniAr: string;
   gradoFinAr: string;
   id_olimpiada: number;
+  permite_multiples_areas: boolean;
   nivel_categorias?: IDNivelCategoria[];
 }

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core'; 
 import { HttpClient } from '@angular/common/http'; 
-import { Observable } from 'rxjs'; 
-import { IDOlimpiadabyArea } from '../interfaces/olimpiadaAreaCategoria.interface';
-import { OlimpiadaResponse} from '../interfaces/post_categoria.interface';
+import { Observable, map } from 'rxjs'; 
+import { IDOlimpiadabyArea, OlimpiadaResponse } from '../interfaces/post_categoria.interface';
 
 @Injectable({
   providedIn: 'root' 
@@ -25,10 +24,12 @@ export class OlimpiadaByAreaService {
   /**
    * Obtiene información detallada de una olimpiada por su ID.
    * @param olimpiadaId El ID de la olimpiada.
-   * @returns Un Observable que emite la información de la olimpiada.
+   * @returns Un Observable que emite la información detallada de la olimpiada.
    */
   getOlimpiadaById(olimpiadaId: number): Observable<OlimpiadaResponse> {
     const url = `${this.baseUrl}/olimpiadas/${olimpiadaId}`;
-    return this.http.get<OlimpiadaResponse>(url);
+    return this.http.get<{olimpiada: OlimpiadaResponse}>(url).pipe(
+      map(response => response.olimpiada)
+    );
   }
 }

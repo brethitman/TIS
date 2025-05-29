@@ -1,24 +1,18 @@
+import { IDNivelCategoria } from './post_categoria.interface';
+
 export interface IDOlimpiadabyArea {
   id_area: number;
   nombre_area: string;
   descripcion: string | null;
-   permite_multiples_areas: boolean;
-  nivel_categorias: NivelCategoria[] | null;
+  gradoIniAr: string;
+  gradoFinAr: string;
+  id_olimpiada: number;
+  permite_multiples_areas: boolean;
+  nivel_categorias?: IDNivelCategoria[];
 }
 
-export interface NivelCategoria {
-  id_nivel?: number;
-  id_area?: number;
-  nombre_nivel: string;
-  descripcion: string | null;
-  gradoIniCat: string;
-  gradoFinCat: string;
-  fecha_examen: string;
-  costo: number;
-  habilitacion: number; // Esto debe ser un número (0 o 1), no un booleano
-  created_at?: string;
-  updated_at?: string;
-}
+// Re-export IDNivelCategoria as NivelCategoria
+export type NivelCategoria = IDNivelCategoria;
 
 // post_categoria.interface.ts
 

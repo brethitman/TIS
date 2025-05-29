@@ -72,10 +72,15 @@ class OlimpiadaController extends Controller
     public function show($id)
     {
         try {
-            $olimpiada = Olimpiada::with('areas.nivel_categorias')->findOrFail($id);
+            $olimpiada = Olimpiada::with(['areas' => function($query) {
+                $query->with('nivel_categorias');
+            }])->findOrFail($id);
             
-            // Debug: Mostrar qué campos tiene la olimpiada
-            \Log::info('Campos de olimpiada:', $olimpiada->toArray());
+            // Transformar los datos para incluir permite_multiples_areas
+            $olimpiada->areas->transform(function($area) {
+                $area->permite_multiples_areas = false; // O el valor que corresponda según tu lógica
+                return $area;
+            });
             
             return response()->json([
                 'olimpiada' => $olimpiada
