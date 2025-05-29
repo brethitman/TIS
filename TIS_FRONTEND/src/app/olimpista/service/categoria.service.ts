@@ -5,13 +5,13 @@ import { HttpClient } from '@angular/common/http';
 import { NivelesCategoria } from '../interfaces/categoria.interface';
 import { GetNivelesCategoria } from '../interfaces/get-categoria-response';
 import { NivelCategoria } from "../interfaces/areavisualizacion.interface";
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoriaService {
-
-  private apiUrl = 'http://localhost:8000/api/nivelCategoria'; // Corregido el endpoint
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -21,7 +21,7 @@ export class CategoriaService {
    * @returns Observable con la respuesta del servidor
    */
   crearNivelCategoria(nivelCategoria: Omit<NivelesCategoria, 'id' | 'created_at' | 'updated_at'>): Observable<NivelesCategoria> {
-    return this.http.post<NivelesCategoria>(this.apiUrl, nivelCategoria);
+    return this.http.post<NivelesCategoria>(`${this.apiUrl}/nivelCategoria`, nivelCategoria);
   }
 
   /**
@@ -29,7 +29,7 @@ export class CategoriaService {
    * @returns Observable con la lista paginada de niveles
    */
   obtenerNivelesCategoria(): Observable<GetNivelesCategoria> {
-    return this.http.get<GetNivelesCategoria>(this.apiUrl);
+    return this.http.get<GetNivelesCategoria>(`${this.apiUrl}/nivelCategoria`);
   }
 
   /**
@@ -38,7 +38,7 @@ export class CategoriaService {
    * @returns Observable con los datos del nivel
    */
   obtenerNivelPorId(id: number): Observable<NivelesCategoria> {
-    return this.http.get<NivelesCategoria>(`${this.apiUrl}/${id}`);
+    return this.http.get<NivelesCategoria>(`${this.apiUrl}/nivelCategoria/${id}`);
   }
 
   /**
@@ -48,7 +48,7 @@ export class CategoriaService {
    * @returns Observable con el nivel actualizado
    */
   actualizarNivel(id: number, cambios: Partial<NivelesCategoria>): Observable<NivelesCategoria> {
-    return this.http.put<NivelesCategoria>(`${this.apiUrl}/${id}`, cambios);
+    return this.http.put<NivelesCategoria>(`${this.apiUrl}/nivelCategoria/${id}`, cambios);
   }
 
   /**
@@ -57,7 +57,7 @@ export class CategoriaService {
    * @returns Observable vacío
    */
   eliminarNivel(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/nivelCategoria/${id}`);
   }
 
   /*getNivelesPorArea(areaId: number): Observable<GetNIvelesCategoriaResponse> {
@@ -65,7 +65,7 @@ export class CategoriaService {
   }*/
 
     getNivelesPorArea(areaId: number): Observable<NivelesCategoria[]> {
-      return this.http.get<any>(`${this.apiUrl}/por-area/${areaId}`).pipe(
+      return this.http.get<any>(`${this.apiUrl}/nivelCategoria/por-area/${areaId}`).pipe(
         map(response => {
           // Verifica diferentes estructuras de respuesta
           if (Array.isArray(response)) {
@@ -91,11 +91,11 @@ export class CategoriaService {
 
   habilitarCategoria(id: number, habilitacion: boolean | null): Observable<NivelesCategoria> {
     const body = { habilitacion };
-    return this.http.patch<NivelesCategoria>(`${this.apiUrl}/${id}/habilitacion`, body);
+    return this.http.patch<NivelesCategoria>(`${this.apiUrl}/nivelCategoria/${id}/habilitacion`, body);
   }
 
   getNivelesByArea(areaId: number): Observable<NivelesCategoria[]> {
-    return this.http.get<any>(`${this.apiUrl}/por-area/${areaId}`).pipe(
+    return this.http.get<any>(`${this.apiUrl}/nivelCategoria/por-area/${areaId}`).pipe(
       map(response => {
         // Maneja diferentes formatos de respuesta
         if (Array.isArray(response)) {

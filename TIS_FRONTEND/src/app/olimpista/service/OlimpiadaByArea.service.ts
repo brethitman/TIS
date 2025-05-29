@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'; 
 import { Observable, map } from 'rxjs'; 
 import { IDOlimpiadabyArea, OlimpiadaResponse } from '../interfaces/post_categoria.interface';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root' 
 })
 export class OlimpiadaByAreaService {
-  private baseUrl = 'http://localhost:8000/api';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
@@ -17,8 +18,7 @@ export class OlimpiadaByAreaService {
    * @returns Un Observable que emite un array de IDOlimpiadabyArea.
    */
   getAreasByOlimpiadaId(olimpiadaId: number): Observable<IDOlimpiadabyArea[]> {
-    const url = `${this.baseUrl}/olimpiadas/${olimpiadaId}/areas`;
-    return this.http.get<IDOlimpiadabyArea[]>(url);
+    return this.http.get<IDOlimpiadabyArea[]>(`${this.apiUrl}/olimpiadas/${olimpiadaId}/areas`);
   }
 
   /**
@@ -27,8 +27,7 @@ export class OlimpiadaByAreaService {
    * @returns Un Observable que emite la información detallada de la olimpiada.
    */
   getOlimpiadaById(olimpiadaId: number): Observable<OlimpiadaResponse> {
-    const url = `${this.baseUrl}/olimpiadas/${olimpiadaId}`;
-    return this.http.get<{olimpiada: OlimpiadaResponse}>(url).pipe(
+    return this.http.get<{olimpiada: OlimpiadaResponse}>(`${this.apiUrl}/olimpiadas/${olimpiadaId}`).pipe(
       map(response => response.olimpiada)
     );
   }

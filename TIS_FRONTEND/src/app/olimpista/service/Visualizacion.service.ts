@@ -2,10 +2,11 @@ import { VisualizacionPageResponse } from "../interfaces/olimpiadaVisualizacion.
 import { Observable, tap } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({ providedIn: 'root' })
 export class VisualizacionService {
-    private apiUrl = 'http://localhost:8000/api/olimpiada';
+    private readonly apiUrl = environment.apiUrl;
 
     constructor(private http: HttpClient) { }
 
@@ -32,6 +33,6 @@ export class VisualizacionService {
     }
 
     getAreasXOlimpiada(olimpiadaId: number): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/${olimpiadaId}/areas`);
+        return this.http.get<any[]>(`${this.apiUrl}/olimpiadas/${olimpiadaId}/areas`);
     }
 }
