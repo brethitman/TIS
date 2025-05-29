@@ -219,17 +219,35 @@ if (this.inscripcionForm.valid) {
 }
   }
 
-  private preparePayload(): InscripcionPayload {
-    const formValue = this.inscripcionForm.value;
-    return {
-      ...formValue,
-      olimpiada_id: Number(this.route.snapshot.params['id']),
-      areas: formValue.areas.map((areaGroup: any) => ({
+private preparePayload(): InscripcionPayload {
+  const formValue = this.inscripcionForm.value;
+  console.log('Form Value:', formValue);
+  return {
+    ...formValue,
+    olimpiada_id: Number(this.route.snapshot.params['id']),
+    areas: formValue.areas.map((areaGroup: any) => {
+      // *** Depuración clave aquí ***
+      console.log('areaGroup.area:', areaGroup.area);
+      console.log('areaGroup.nivel (antes de acceder a ID):', areaGroup.nivel);
+
+      // ¡CAMBIO CLAVE AQUÍ: Usar areaGroup.nivel.id_nivel!
+      const nivelId = areaGroup.nivel ? areaGroup.nivel.id_nivel : null;
+
+      if (nivelId === null || nivelId === undefined) {
+        console.error('ERROR: El ID del nivel es nulo o indefinido después de intentar acceder a id_nivel', areaGroup.nivel);
+        // Opcional: Podrías lanzar un error o manejarlo de otra forma si prefieres
+        // throw new Error('El ID del nivel no pudo ser obtenido.');
+      } else {
+        console.log('ID de Nivel a enviar:', nivelId);
+      }
+
+      return {
         area_id: areaGroup.area.id_area,
-        nivelesCategoria: [areaGroup.nivel]
-      }))
-    };
-  }
+        nivelesCategoria: [nivelId] // <-- ¡SOLUCIÓN DEFINITIVA!
+      };
+    })
+  };
+}
 
   // Método handleSuccess modificado
   private handleSuccess(response: InscripcionPostSuccessResponse): void {
