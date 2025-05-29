@@ -151,7 +151,7 @@ export class BotonExelComponent {
       ci: ciIndex >= 0 ? fila[ciIndex] : '',
     })).filter(est => est.nombre && est.nombre !== 'Nombre no disponible');
 
-    console.log('Estudiantes procesados:', this.estudiantes); // Para depuración
+    console.log('Estudiantes procesados:', this.estudiantes); 
   }
 
   validateTutor(): boolean {
@@ -323,7 +323,7 @@ export class BotonExelComponent {
 
   validacionesEst(datosEst: any[][]) {
     const listaEstudiante = datosEst.slice(1);
-
+    this.datosEstudiantes = listaEstudiante;
     for (let index = 0; index < listaEstudiante.length; index++) {
       const fila = listaEstudiante[index];
 
@@ -358,17 +358,30 @@ export class BotonExelComponent {
           this.mensajeError.push(`Error: Correo electrónico inválido del estudiante:'${correo}'.\n`);
           break;
         }
-        const unidadEducativa = fila[5]?.toString().trim();
+        if (!correo) {
+          this.mensajeError.push(`Error: El Correo electrónico del estudiante es obligatorio.\n`);
+          break;
+        }
+        const celular = fila[5]?.toString().trim();
+        if (!/^[67]\d{7}$/.test(celular)) {
+          this.mensajeError.push(`Error: Número de celular inválido: '${celular}'.\n `);
+          break;
+        }
+        if (!celular) {
+          this.mensajeError.push(`Error: El Número de celular del estudiante es obligatorio.\n`);
+          break;
+        }
+        const unidadEducativa = fila[6]?.toString().trim();
         if (!unidadEducativa) {
           this.mensajeError.push(`Error: Unidad educativa es obligatoria en la fila ${index + 1}.\n`);
           break;
         }
-        const departamento = fila[6]?.toString().trim();
+        const departamento = fila[7]?.toString().trim();
         if (!departamento) {
           this.mensajeError.push(`Error: Departamento es obligatorio en la fila ${index + 1}.\n`);
           break;
         }
-        const provincia = fila[7]?.toString().trim();
+        const provincia = fila[8]?.toString().trim();
         if (!provincia) {
           this.mensajeError.push(`Error: Provincia es obligatoria en la fila ${index + 1}.\n`);
           break;
@@ -379,7 +392,7 @@ export class BotonExelComponent {
   }
   validacionesTutor(datosTutor: any[][]) {
     const listaTutor = datosTutor.slice(1);
-
+    this.datosTutores = listaTutor;
     for (let index = 0; index < listaTutor.length; index++) {
       const fila = listaTutor[index];
 
