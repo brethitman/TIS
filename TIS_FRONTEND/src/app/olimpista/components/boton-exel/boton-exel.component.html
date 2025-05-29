@@ -64,6 +64,7 @@
         <input type="tel" [(ngModel)]="tutor.telefono" name="phone"
           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           [class.border-red-500]="errors.telefono">
+          
         <div *ngIf="errors.telefono" class="mt-1 text-sm text-red-600">{{ errors.telefono }}</div>
       </div>
     </div>
