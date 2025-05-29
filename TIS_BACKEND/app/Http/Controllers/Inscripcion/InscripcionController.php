@@ -12,6 +12,7 @@ use App\Models\NivelCategoria;
 use App\Models\Olimpista;
 use App\Models\Tutor;
 use App\Models\BoletaPago;
+use App\Models\Curso;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -419,4 +420,61 @@ private function formatearRespuestaCompleta($inscripcion)
         ]
     ];
 }
+
+public function getCursosConAreas($olimpiadaId)
+{
+    // 1. Obtener cursos asociados a la olimpiada
+    $cursos = Curso::whereHas('areas', function($query) use ($olimpiadaId) {
+        $query->where('id_olimpiada', $olimpiadaId);
+    })->get();
+
+    // 2. Para cada curso, construir respuesta
+    $response = [];
+    foreach ($cursos as $curso) {
+        $cursoData = [
+            'id_curso' => $curso->id_curso,
+            'nombre_curso' => $curso->nameCurso,
+            'areas' => []
+        ];
+
+        // 3. Obtener áreas del curso para esta olimpiada
+        $areas = $curso->areas()->where('id_olimpiada', $olimpiadaId)->get();
+
+        foreach ($areas as $area) {
+            $areaData = [
+                'id_area' => $area->id_area,
+                'nombre_area' => $area->nombre_area,
+                'niveles' => []
+            ];
+
+            // 4. Obtener niveles que aplican a este curso
+            $niveles = $area->niveles()
+                ->where(function($query) use ($curso) {
+                    // Lógica para filtrar por rango de grados
+                    $query->whereRaw("? BETWEEN gradoIniCat AND gradoFinCat", [$curso->grado])
+                          ->orWhereHas('cursos', function($q) use ($curso) {
+                              $q->where('id_curso', $curso->id);
+                          });
+                })
+                ->get();
+
+            foreach ($niveles as $nivel) {
+                $areaData['niveles'][] = [
+                    'id_nivel' => $nivel->id_nivel,
+                    'nombre_nivel' => $nivel->nombre_nivel,
+                    'costo' => $nivel->costo,
+                    'fecha_examen' => $nivel->fecha_examen
+                ];
+            }
+
+            $cursoData['areas'][] = $areaData;
+        }
+
+        $response[] = $cursoData;
+    }
+
+    return response()->json($response);
+}
+
+
 }

@@ -62,4 +62,9 @@ class Area extends Model
     {
         return $this->belongsToMany(Curso::class, 'curso_area', 'id_area', 'id_curso');
     }
+
+    public function niveles() // <-- ¡DEBE SER ESTE NOMBRE!
+    {
+        return $this->hasMany(NivelCategoria::class, 'id_area');
+    }
 }

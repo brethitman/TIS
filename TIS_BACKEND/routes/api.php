@@ -34,6 +34,7 @@ Route::put('/area/{id}', [AreaController::class, 'update']); // Actualizar un á
 Route::delete('/area/{id}', [AreaController::class, 'destroy']); // Eliminar un área
 Route::get('/areas/olimpiada/{id}', [AreaController::class, 'getByOlimpiadaId']);
 Route::get('/area/{id}/niveles', [AreaController::class, 'nivelesPorArea']);
+
 Route::get('/areas', [AreaController::class, 'indexV2']);
 Route::post('/areas/basic', [AreaController::class, 'storeBasic']);
 
@@ -67,6 +68,9 @@ Route::get('/olimpiadasInscripcion/{id}/areas', [AreaController::class, 'getArea
 ///verificar con ocr del frontend
 Route::post('/inscripciones/verificar-pago', [InscripcionController::class, 'verificarPago']);
 
+///
+Route::get('olimpiadas/{id}/cursos-con-areas', [InscripcionController::class, 'getCursosConAreas']);
+///
 
 // categoria ENDPOINTS  ---- GET POST da bien
 //tiene interface
