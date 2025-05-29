@@ -8,13 +8,20 @@ import {
   NivelResponse,
   AreaResponse 
 } from '../interfaces/post_categoria.interface';
+<<<<<<< HEAD
 import { environment } from '../../../environments/environment.development';
+=======
+>>>>>>> cbf6d1198050c038220ef21197136757105a2f12
 
 @Injectable({
   providedIn: 'root'
 })
 export class NivelService {
+<<<<<<< HEAD
   private readonly apiUrl = environment.apiUrl;
+=======
+  private apiUrl = 'http://localhost:8000/api';
+>>>>>>> cbf6d1198050c038220ef21197136757105a2f12
 
   constructor(private http: HttpClient) { }
 
