@@ -370,15 +370,11 @@ resetearFormulario(): void {
       this.areasInscripcion.push(nuevaInscripcion2);
     }
 
-    this.clickCount++;
-
     console.log('Lista de áreas inscritas:', this.areasInscripcion);
-
-    if (this.clickCount >= 3) {
+    
       this.irABoletaList();
-    } else if (!this.seleccionArea1 || !this.seleccionCategoria) {
-      alert('Por favor, selecciona al menos un área y una categoría antes de inscribirte.');
-    }
+      this.reiniciarInscripcion();
+   
   }
   irABoletaList() {
     localStorage.setItem('areasInscripcion', JSON.stringify(this.areasInscripcion));
