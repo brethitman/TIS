@@ -13,6 +13,10 @@ import { BoletaPagoResponse } from '../../interfaces/inscripcion.types';
   templateUrl: './boleta-lista.component.html'
 })
 export class BoletaListaComponent implements OnInit {
+
+  @Input() olimpista: any[][] = [];
+  @Input() tutor: any[][] = [];
+  @Input() areas: any[][] = [];
   students = [
     {
       id: 1,
@@ -33,9 +37,6 @@ export class BoletaListaComponent implements OnInit {
       category2: 'Intermedio'
     }
   ];
-  @Input() olimpista: any[][] = [];
-  @Input() tutor: any[][] = [];
-  @Input() areas: any[][] = [];
 
   boletaPago: BoletaPagoResponse | null = null;
   mensaje: string = "";
@@ -91,13 +92,13 @@ export class BoletaListaComponent implements OnInit {
       response => {
         console.log('Inscripción exitosa:', response);
 
-       if (response?.inscripcion?.boleta_pago) {
-        this.boletaPago = response.inscripcion.boleta_pago;
-        console.log ("Boleta: ", this.boletaPago)
-        alert('Inscripción realizada correctamente');
-      } else {
-        alert('Inscripción exitosa, pero no se generó boleta de pago.');
-      }
+        if (response?.inscripcion?.boleta_pago) {
+          this.boletaPago = response.inscripcion.boleta_pago;
+          console.log("Boleta: ", this.boletaPago)
+          alert('Inscripción realizada correctamente');
+        } else {
+          alert('Inscripción exitosa, pero no se generó boleta de pago.');
+        }
       },
       error => {
         console.error('Error al inscribir:', error);

@@ -266,6 +266,7 @@ export class BotonExelComponent {
     if (fileName === 'Formato_solo_Estudiantes.xlsx') {
       this.datosEstudiantes = filasConDatos;
       this.validacionesEst(filasConDatos);
+      //this.tutor = 
       console.log('Lista de Estudiantes:', this.datosEstudiantes);
     } else if (fileName === 'Formato_Varios_Tutores.xlsx') {
       this.separarEstudiantesTutores(filasConDatos);
