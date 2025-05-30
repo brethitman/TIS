@@ -275,7 +275,7 @@ class InscripcionController extends Controller
             foreach ($validated['tutors'] as $tutorData) {
                 $inscripcion->tutors()->create($tutorData);
             }
-
+            $totalCosto = 0;
             $inscripcionAreaNivelData = [];
 
             foreach ($validated['areas'] as $areaData) {
@@ -294,6 +294,7 @@ class InscripcionController extends Controller
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
+                    $totalCosto += $nivel->costo;
                 }
             }
 
@@ -301,12 +302,20 @@ class InscripcionController extends Controller
                 DB::table('inscripcion_area_nivel')->insert($inscripcionAreaNivelData);
             }
 
+            $numeroBoleta = 'BOL-' . Str::random(8) . '-' . $inscripcion->id_inscripcion;
+            BoletaPago::create([
+                'id_inscripcion' => $inscripcion->id_inscripcion,
+                'numero_boleta' => $numeroBoleta,
+                'monto' => $totalCosto,
+                'fecha_generacion' => now()->toDateString(),
+            ]);
+
             DB::commit();
 
-            $inscripcion->load(['olimpistas', 'tutors', 'nivelCategorias']);
+            $inscripcion->load(['olimpistas', 'tutors', 'nivelCategorias', 'boletaPago']);
 
             return response()->json([
-                'message' => 'Inscripción creada exitosamente',
+                'message' => 'Inscripción creada exitosamente con boleta de pago',
                 'inscripcion' => new InscripcionResource($inscripcion)
             ], 201);
 

@@ -1,40 +1,43 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Input } from '@angular/core';
 import { VisualizacionService } from '../../service/Visualizacion.service';
+import { BoletaPagoResponse } from '../../interfaces/inscripcion.types';
 
 @Component({
   selector: 'app-boleta-lista',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './boleta-lista.component.html'
 })
-export class BoletaListaComponent implements OnInit{
+export class BoletaListaComponent implements OnInit {
   @Input() olimpista: any[][] = [];
   @Input() tutor: any[][] = [];
   @Input() areas: any[][] = [];
 
+  boletaPago: BoletaPagoResponse | null = null;
+  mensaje: string = "";
+
   constructor(private service: VisualizacionService) { }
 
   ngOnInit() {
-  this.areas = JSON.parse(localStorage.getItem('areasInscripcion')|| '[]');
-  this.olimpista = JSON.parse(localStorage.getItem('olimpistas')|| '[]');
-  this.tutor = JSON.parse(localStorage.getItem('tutores') || '[]');
+    this.areas = JSON.parse(localStorage.getItem('areasInscripcion') || '[]');
+    this.olimpista = JSON.parse(localStorage.getItem('olimpistas') || '[]');
+    this.tutor = JSON.parse(localStorage.getItem('tutores') || '[]');
 
-  console.log('Áreas recibidas:', this.areas);
-  console.log('Olimpistas recibidos:', this.olimpista);
-  console.log('Tutores recibidos:', this.tutor);
-}
+    console.log('Áreas recibidas:', this.areas);
+    console.log('Olimpistas recibidos:', this.olimpista);
+    console.log('Tutores recibidos:', this.tutor);
+  }
 
- inscribir() {
+  inscribir() {
     const inscripcionData = {
       estado: 'Pendiente',
       olimpistas: this.olimpista.map(olimpista => {
-        // Transformar fecha de nacimiento si está en formato DD/MM/YYYY
-        const fechaParts = olimpista[3].split('/'); // Divide "10/5/2004" en partes
-        const fechaValida = fechaParts.length === 3 ? 
-          `${fechaParts[2]}-${fechaParts[1].padStart(2, '0')}-${fechaParts[0].padStart(2, '0')}` : 
-          olimpista[3]; // Si ya está bien, la mantiene
+        const fechaParts = olimpista[3].split('/');
+        const fechaValida = fechaParts.length === 3 ?
+          `${fechaParts[2]}-${fechaParts[1].padStart(2, '0')}-${fechaParts[0].padStart(2, '0')}` :
+          olimpista[3];
 
-        // Verificar si la fecha es válida antes de usar new Date()
         const fechaNacimiento = new Date(fechaValida);
         const fechaFinal = isNaN(fechaNacimiento.getTime()) ? null : fechaNacimiento.toISOString().split('T')[0];
 
@@ -42,7 +45,7 @@ export class BoletaListaComponent implements OnInit{
           nombres: olimpista[0],
           apellidos: olimpista[1],
           ci: String(olimpista[2]),
-          fecha_nacimiento: fechaFinal, // Fecha formateada o `null`
+          fecha_nacimiento: fechaFinal,
           correo: olimpista[4],
           telefono: String(olimpista[5]),
           colegio: olimpista[6],
@@ -65,13 +68,21 @@ export class BoletaListaComponent implements OnInit{
     this.service.storeInscripcion(inscripcionData).subscribe(
       response => {
         console.log('Inscripción exitosa:', response);
+
+       if (response?.inscripcion?.boleta_pago) {
+        this.boletaPago = response.inscripcion.boleta_pago;
+        console.log ("Boleta: ", this.boletaPago)
         alert('Inscripción realizada correctamente');
+      } else {
+        alert('Inscripción exitosa, pero no se generó boleta de pago.');
+      }
       },
       error => {
         console.error('Error al inscribir:', error);
-        alert('Hubo un problema con la inscripción');
+        alert(`Error al inscribirse: ${error.message || 'Hubo un problema, intenta nuevamente.'}`);
       }
     );
-}
+  }
+
 
 }
