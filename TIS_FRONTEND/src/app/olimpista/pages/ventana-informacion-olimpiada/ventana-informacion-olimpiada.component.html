@@ -1,84 +1,4 @@
 <ng-template #loading>
-<<<<<<< HEAD
-  <p>Cargando información...</p>
-</ng-template>
-
-<!-- Título -->
-<section class="w-full bg-gradient-to-r from-red-600 to-purple-500 py-2 px-6 animate-gradient">
-  <h1 class="text-white text-3xl font-bold">{{olimpiada?.nombre_olimpiada}}</h1>
-</section>
-
-<!-- Información Principal -->
-<section class="bg-white shadow rounded-lg p-6 mb-6">
-  <h2 class="text-xl font-semibold mb-4 text-gray-800">DESCRIPCIÓN</h2>
-  <p class="text-lg leading-relaxed pl-6 animate_animated animatefadeInUp animate_delay-1s whitespace-pre-line">
-    {{olimpiada?.descripcion_olimpiada}}
-  </p>
-</section>
-
-<!-- Presentación -->
-<section class="bg-white shadow rounded-lg p-6 mb-6" *ngIf="olimpiada?.presentacion">
-  <h2 class="text-xl font-semibold mb-4 text-gray-800">PRESENTACIÓN</h2>
-  <p class="text-lg leading-relaxed pl-6 whitespace-pre-line">
-    {{olimpiada?.presentacion}}
-  </p>
-</section>
-
-<!-- Requisitos -->
-<section class="bg-white shadow rounded-lg p-6 mb-6" *ngIf="olimpiada?.requisitos">
-  <h2 class="text-xl font-semibold mb-4 text-gray-800">REQUISITOS</h2>
-  <p class="text-lg leading-relaxed pl-6 whitespace-pre-line">
-    {{olimpiada?.requisitos}}
-  </p>
-</section>
-
-<!-- Premios -->
-<section class="bg-white shadow rounded-lg p-6 mb-6" *ngIf="olimpiada?.premios">
-  <h2 class="text-xl font-semibold mb-4 text-gray-800">PREMIOS</h2>
-  <p class="text-lg leading-relaxed pl-6 whitespace-pre-line">
-    {{olimpiada?.premios}}
-  </p>
-</section>
-
-<!-- Información Adicional -->
-<section class="bg-white shadow rounded-lg p-6 mb-6" *ngIf="olimpiada?.informacion_adicional">
-  <h2 class="text-xl font-semibold mb-4 text-gray-800">INFORMACIÓN ADICIONAL</h2>
-  <p class="text-lg leading-relaxed pl-6 whitespace-pre-line">
-    {{olimpiada?.informacion_adicional}}
-  </p>
-</section>
-
-<!-- Fechas Importantes -->
-<section class="bg-white shadow rounded-lg p-6 mb-6">
-  <h2 class="text-xl font-semibold mb-4 text-gray-800">FECHAS IMPORTANTES</h2>
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pl-6">
-    <div>
-      <h3 class="font-semibold text-gray-700">Inscripciones:</h3>
-      <p class="text-gray-600">
-        Del {{olimpiada?.fecha_inscripcion_inicio | date:'dd/MM/yyyy'}} 
-        al {{olimpiada?.fecha_inscripcion_final | date:'dd/MM/yyyy'}}
-      </p>
-    </div>
-    <div>
-      <h3 class="font-semibold text-gray-700">Olimpiada:</h3>
-      <p class="text-gray-600">
-        Del {{olimpiada?.fecha_inicio | date:'dd/MM/yyyy'}} 
-        al {{olimpiada?.fecha_final | date:'dd/MM/yyyy'}}
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- Debug Info -->
-<div *ngIf="errorMessage" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-  <strong class="font-bold">Error:</strong>
-  <span class="block sm:inline">{{errorMessage}}</span>
-</div>
-
-<!-- Título de Áreas -->
-<section class="w-full bg-gradient-to-r from-red-600 to-purple-500 py-2 px-4 animate-gradient">
-  <h1 class="text-white text-3xl font-bold">Áreas de la olimpiada</h1>
-=======
   <div class="flex items-center justify-center space-x-3">
     <svg class="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -275,7 +195,6 @@
     </svg>
     <h1 class="text-white text-3xl font-bold">Áreas de la olimpiada</h1>
   </div>
->>>>>>> cbf6d1198050c038220ef21197136757105a2f12
 </section>
 
 <!-- Carrusel de áreas -->
@@ -283,16 +202,11 @@
   <app-areas-carrusel [Area]="areasDisponibles" (areaSelected)="cargarCategoriasPorArea($event.id_area)"></app-areas-carrusel>
 </ng-container>
 <ng-template #noAreas>
-<<<<<<< HEAD
-  <div class="text-center text-gray-500 py-4">
-    No hay áreas disponibles por el momento.
-=======
   <div class="text-center text-gray-500 py-8">
     <svg class="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 20.5a7.962 7.962 0 01-5.207-1.209m0 0L6.5 19a8.014 8.014 0 0011 0L17.5 19l.293-.207z"></path>
     </svg>
     <p>No hay áreas disponibles por el momento.</p>
->>>>>>> cbf6d1198050c038220ef21197136757105a2f12
   </div>
 </ng-template>
 
@@ -307,18 +221,6 @@
 </ng-template>
 
 <!-- Botones de Inscripción -->
-<<<<<<< HEAD
-<div class="flex justify-center space-x-6 mt-6">
-  <button 
-    class="text-white font-semibold py-2 px-6 rounded-lg shadow hover:shadow-md transition duration-300 bg-[#0D1271]"
-    (click)="entrar()">
-    Inscripción a un solo estudiante
-  </button>
-  <button 
-    class="text-white font-semibold py-2 px-6 rounded-lg shadow hover:shadow-md transition duration-300 bg-[#0D1271]"
-    (click)="variosEstudiantes()">
-    Inscripción a un grupo de estudiantes
-=======
 <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6 mt-8 px-4">
   <button 
     class="flex items-center justify-center space-x-3 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition duration-300 bg-[#0D1271] hover:bg-[#0A0F5C] transform hover:scale-105"
@@ -335,6 +237,5 @@
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
     </svg>
     <span>Inscripción a un grupo de estudiantes</span>
->>>>>>> cbf6d1198050c038220ef21197136757105a2f12
   </button>
 </div>

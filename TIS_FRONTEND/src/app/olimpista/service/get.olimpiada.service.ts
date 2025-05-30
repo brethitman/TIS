@@ -37,11 +37,7 @@ export class GetOlimpiadaService {
     }[];
   }): Observable<{ message: string, data: Olimpiada }> {
     return this.http.post<{ message: string, data: Olimpiada }>(
-<<<<<<< HEAD
       `${this.apiUrl}/olimpiadas`,
-=======
-      `${this.apiUrl}/olimpiada`,
->>>>>>> cbf6d1198050c038220ef21197136757105a2f12
       olimpiadaData
     );
   }
