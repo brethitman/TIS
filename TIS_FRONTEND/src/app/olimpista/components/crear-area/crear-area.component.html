@@ -1,28 +1,14 @@
 <div class="mb-8">
-  <!-- Botón principal con efecto de gradiente y animación -->
-  <button 
-    (click)="toggleFormulario()" 
-    class="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 flex items-center space-x-2"
-  >
-    <svg *ngIf="!mostrarFormulario" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-    </svg>
-    <svg *ngIf="mostrarFormulario" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-    <span>{{ mostrarFormulario ? 'Cancelar' : 'Agregar Área Nueva' }}</span>
-  </button>
-
   <!-- Formulario con animación de entrada -->
-  <div *ngIf="mostrarFormulario" class="mt-6 bg-white p-8 rounded-xl shadow-lg border border-gray-200 animate-fade-in">
-    <!-- Encabezado del formulario más elegante -->
+  <div class="mt-6 bg-white p-8 rounded-xl shadow-lg border border-gray-200 animate-fade-in">
+    <!-- Encabezado del formulario -->
     <div class="flex items-center mb-6 pb-4 border-b border-gray-100">
       <div class="p-3 bg-blue-100 rounded-full mr-4">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
       </div>
-      <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Nueva Área Académica</h2>
+      <h2 class="text-2xl font-bold text-gray-800">Nueva Área Académica</h2>
     </div>
     
     <!-- Mensajes de estado mejorados -->
@@ -183,7 +169,7 @@
       <div class="flex justify-end pt-6">
         <button 
           type="button" 
-          (click)="toggleFormulario()" 
+          (click)="onCancelar()" 
           class="mr-3 px-5 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">

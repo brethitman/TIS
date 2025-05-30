@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 export class CrearAreaComponent implements OnInit {
   @Input() idOlimpiada!: number;
   @Output() areaCreadaEvent = new EventEmitter<void>();
+  @Output() cancelar = new EventEmitter<void>();
   
   cursos: Curso[] = [];
   cursosFiltrados: Curso[] = [];
@@ -316,5 +317,10 @@ export class CrearAreaComponent implements OnInit {
   private clearMessages(): void {
     this.successMessage = null;
     this.errorMessage = null;
+  }
+
+  onCancelar(): void {
+    this.resetForm();
+    this.cancelar.emit();
   }
 }
