@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, tap, catchError, throwError } from 'rxjs';
+import { Observable, tap, catchError, throwError, map } from 'rxjs';
 import { Olimpiada } from '../interfaces/olimpiada-interfase';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OlimpiadaService {
-  private apiUrl = 'http://localhost:8000/api/olimpiadas'; // URL base para endpoints de olimpiada
+  private readonly apiUrl = `${environment.apiUrl}/olimpiadas`;
 
   constructor(private http: HttpClient) {}
 
@@ -34,12 +35,26 @@ export class OlimpiadaService {
 
   // Obtener todas las olimpiadas
   getOlimpiadas(): Observable<Olimpiada[]> {
-    return this.http.get<Olimpiada[]>(this.apiUrl)
+    console.log('🔄 Solicitando olimpiadas desde:', this.apiUrl);
+    return this.http.get<{ olimpiadas: Olimpiada[] }>(this.apiUrl)
       .pipe(
-        tap(olimpiadas => {
-          console.log('Olimpiadas obtenidas:', olimpiadas);
+        map(response => {
+          console.log('✅ Respuesta del servidor:', response);
+          return response.olimpiadas;
         }),
-        catchError(this.handleError)
+        tap(olimpiadas => {
+          console.log('✅ Olimpiadas obtenidas:', olimpiadas);
+          if (olimpiadas.length === 0) {
+            console.warn('⚠️ No se encontraron olimpiadas');
+          }
+        }),
+        catchError(error => {
+          console.error('❌ Error al obtener olimpiadas:', error);
+          if (error.error) {
+            console.error('📄 Detalle del error:', error.error);
+          }
+          return throwError(() => new Error(`Error al cargar olimpiadas: ${error.message}`));
+        })
       );
   }
 
@@ -172,7 +187,20 @@ export class OlimpiadaService {
 
   // Obtener áreas de una olimpiada específica
   getAreasByOlimpiada(olimpiadaId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/${olimpiadaId}/areas`);
+    console.log('🔄 Solicitando áreas para olimpiada:', olimpiadaId);
+    return this.http.get<any[]>(`${this.apiUrl}/${olimpiadaId}/areas`)
+      .pipe(
+        tap(areas => {
+          console.log('✅ Áreas obtenidas:', areas);
+          if (areas.length === 0) {
+            console.warn('⚠️ No se encontraron áreas para esta olimpiada');
+          }
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.error('❌ Error al obtener áreas:', error);
+          return throwError(() => new Error(`Error al cargar áreas: ${error.message}`));
+        })
+      );
   }
 
   deleteOlimpiada(id: number): Observable<any> {

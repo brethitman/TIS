@@ -18,7 +18,7 @@ import { CategoriaVisualizacionService } from '../../service/categoriaVisualizac
 })
 export class VentanaInformacionOlimpiadaComponent implements OnInit {
   olimpiada: OlimpiadaResponse | null = null;
-  olimpiadaId: number;
+  olimpiadaId: number = 0;
   confirmacion: boolean = false;
   areasDisponibles: IDOlimpiadabyArea[] = [];
   errorMessage: string | null = null;
@@ -37,10 +37,12 @@ export class VentanaInformacionOlimpiadaComponent implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     const stateData = navigation?.extras.state as { [key: string]: any };
 
-    this.olimpiada = stateData ? stateData['olimpiadaData'] : null;
-    this.olimpiadaId = this.olimpiada?.id_olimpiada || 0;
-    if (!this.olimpiada) {
-      console.error('No se recibió información de la olimpiada');
+    if (stateData && stateData['olimpiadaData']) {
+      this.olimpiada = stateData['olimpiadaData'];
+      this.olimpiadaId = this.olimpiada!.id_olimpiada;
+      console.log('Olimpiada recibida:', this.olimpiada);
+    } else {
+      console.warn('No se recibió información de la olimpiada en el estado');
     }
   }
 
@@ -52,6 +54,7 @@ export class VentanaInformacionOlimpiadaComponent implements OnInit {
     this.route.params.subscribe(params => {
       const olimpiadaId = params['id'];
       if (olimpiadaId) {
+        this.olimpiadaId = Number(olimpiadaId);
         this.cargarDetallesOlimpiada(olimpiadaId);
         this.cargarAreas(olimpiadaId);
       } else {
@@ -67,6 +70,7 @@ export class VentanaInformacionOlimpiadaComponent implements OnInit {
         next: (olimpiada) => {
           console.log('Detalles de la olimpiada cargados:', olimpiada);
           this.olimpiada = olimpiada;
+          this.olimpiadaId = olimpiada.id_olimpiada;
         },
         error: (error) => {
           console.error('Error cargando detalles de la olimpiada:', error);
@@ -103,38 +107,30 @@ export class VentanaInformacionOlimpiadaComponent implements OnInit {
   }
 
   entrar(): void {
-    if (!this.olimpiada?.id_olimpiada) {
+    if (!this.olimpiadaId) {
       console.error('Error: No se puede navegar - Olimpiada sin ID');
       return;
     }
     this.router.navigate(
-      ['inicio/look/inscripcion-todo', this.olimpiada.id_olimpiada],
+      ['inicio/look/inscripcion-todo', this.olimpiadaId],
       {
         state: {
-          olimpiadaData: {
-            nombre: this.olimpiada.nombre_olimpiada,
-            fechaInicio: this.olimpiada.fecha_inicio,
-            fechaFin: this.olimpiada.fecha_final
-          }
+          olimpiadaData: this.olimpiada
         }
       }
     );
   }
 
   variosEstudiantes(): void {
-    if (!this.olimpiada?.id_olimpiada) {
+    if (!this.olimpiadaId) {
       console.error('Error: No se puede navegar - Olimpiada sin ID');
       return;
     }
     this.router.navigate(
-      ['inicio/Olimpiada', this.olimpiada.id_olimpiada, 'Visualizacion'],
+      ['inicio/Olimpiada', this.olimpiadaId, 'Visualizacion'],
       {
         state: {
-          olimpiadaData: {
-            nombre: this.olimpiada.nombre_olimpiada,
-            fechaInicio: this.olimpiada.fecha_inicio,
-            fechaFin: this.olimpiada.fecha_final
-          }
+          olimpiadaData: this.olimpiada
         }
       }
     );

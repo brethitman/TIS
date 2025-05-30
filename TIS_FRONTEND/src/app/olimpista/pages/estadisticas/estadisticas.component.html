@@ -1,0 +1,138 @@
+<div class="container mx-auto px-4 py-8">
+  <!-- Estado de carga -->
+  @if (loading) {
+    <div class="flex justify-center items-center h-32">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+    </div>
+  }
+
+  <!-- Mensaje de error -->
+  @if (error) {
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+      <span class="block sm:inline">{{ error }}</span>
+    </div>
+  }
+
+  <!-- Información de depuración -->
+  @if (olimpiadas.length > 0) {
+    <div class="bg-gray-100 p-4 rounded mb-4">
+      <p>Olimpiadas cargadas: {{ olimpiadas.length }}</p>
+      <p>Primera olimpiada: {{ olimpiadas[0].nombre_olimpiada }}</p>
+    </div>
+  }
+
+  <!-- Selector de Olimpiada -->
+  <div class="mb-6">
+    <label for="olimpiada" class="block text-sm font-medium text-gray-700 mb-2">Seleccione una Olimpiada</label>
+    <select
+      id="olimpiada"
+      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+      (change)="onOlimpiadaSelect($event)"
+    >
+      <option value="">Seleccione una olimpiada</option>
+      @for (olimpiada of olimpiadas; track olimpiada.id) {
+        <option [value]="olimpiada.id">{{ olimpiada.nombre_olimpiada }}</option>
+      }
+    </select>
+  </div>
+
+  <!-- Selector de Área -->
+  @if (selectedOlimpiada) {
+    <div class="mb-6">
+      <label for="area" class="block text-sm font-medium text-gray-700 mb-2">Seleccione un Área</label>
+      <select
+        id="area"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        (change)="onAreaSelect($event)"
+      >
+        <option value="">Seleccione un área</option>
+        @for (area of areas; track area.id_area) {
+          <option [value]="area.id_area">{{ area.nombre_area }}</option>
+        }
+      </select>
+    </div>
+  }
+
+  <!-- Selector de Nivel -->
+  @if (selectedArea) {
+    <div class="mb-6">
+      <label for="nivel" class="block text-sm font-medium text-gray-700 mb-2">Seleccione un Nivel</label>
+      <select
+        id="nivel"
+        class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+        (change)="onNivelSelect($event)"
+      >
+        <option value="">Seleccione un nivel</option>
+        @for (nivel of selectedArea.niveles; track nivel.id_nivel) {
+          <option [value]="nivel.id_nivel">{{ nivel.nombre_nivel }}</option>
+        }
+      </select>
+    </div>
+  }
+
+  <!-- Tabla de Inscripciones -->
+  @if (inscripciones.length > 0) {
+    <div class="mt-8">
+      <h2 class="text-xl font-semibold mb-4">Inscripciones</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estudiante</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Colegio</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tutor</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            @for (inscripcion of inscripciones; track inscripcion.id) {
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">
+                    {{ inscripcion.olimpistas[0].nombres }} {{ inscripcion.olimpistas[0].apellidos }}
+                  </div>
+                  <div class="text-sm text-gray-500">{{ inscripcion.olimpistas[0].ci }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ inscripcion.olimpistas[0].colegio }}</div>
+                  <div class="text-sm text-gray-500">{{ inscripcion.olimpistas[0].curso }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">
+                    {{ inscripcion.tutors[0].nombres }} {{ inscripcion.tutors[0].apellidos }}
+                  </div>
+                  <div class="text-sm text-gray-500">{{ inscripcion.tutors[0].telefono }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                    [ngClass]="{
+                      'bg-green-100 text-green-800': inscripcion.estado === 'Pagado',
+                      'bg-yellow-100 text-yellow-800': inscripcion.estado === 'Pendiente',
+                      'bg-blue-100 text-blue-800': inscripcion.estado === 'Verificado'
+                    }">
+                    {{ inscripcion.estado }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  } @else if (selectedNivel) {
+    <div class="mt-8 text-center text-gray-500">
+      No se encontraron inscripciones para el área y nivel seleccionados.
+    </div>
+  }
+
+  <!-- Información de depuración -->
+  @if (selectedOlimpiada && selectedArea && selectedNivel) {
+    <div class="mt-8 text-center text-gray-500">
+      <p class="text-sm text-gray-400 mt-2">
+        Olimpiada: {{ selectedOlimpiada.nombre_olimpiada }}<br>
+        Área: {{ selectedArea.nombre_area }}<br>
+        Nivel: {{ selectedNivel.nombre_nivel }}
+      </p>
+    </div>
+  }
+</div>
