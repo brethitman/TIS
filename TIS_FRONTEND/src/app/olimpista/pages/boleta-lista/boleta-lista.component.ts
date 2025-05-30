@@ -1,15 +1,38 @@
-import { Component, OnInit, } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { Input } from '@angular/core';
 import { VisualizacionService } from '../../service/Visualizacion.service';
 import { BoletaPagoResponse } from '../../interfaces/inscripcion.types';
 
+
 @Component({
   selector: 'app-boleta-lista',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './boleta-lista.component.html'
 })
 export class BoletaListaComponent implements OnInit {
+  students = [
+    {
+      id: 1,
+      name: 'Colacanuto Cornamenta',
+      course: '6to de Secundaria',
+      area1: 'Quimica',
+      category1: 'Basico',
+      area2: '',
+      category2: ''
+    },
+    {
+      id: 2,
+      name: 'Barbara Sprouse',
+      course: '5to de Secundaria',
+      area1: 'Fisica',
+      category1: 'Avanzado',
+      area2: 'Quimica',
+      category2: 'Intermedio'
+    }
+  ];
   @Input() olimpista: any[][] = [];
   @Input() tutor: any[][] = [];
   @Input() areas: any[][] = [];
@@ -37,7 +60,6 @@ export class BoletaListaComponent implements OnInit {
         const fechaValida = fechaParts.length === 3 ?
           `${fechaParts[2]}-${fechaParts[1].padStart(2, '0')}-${fechaParts[0].padStart(2, '0')}` :
           olimpista[3];
-
         const fechaNacimiento = new Date(fechaValida);
         const fechaFinal = isNaN(fechaNacimiento.getTime()) ? null : fechaNacimiento.toISOString().split('T')[0];
 
@@ -83,6 +105,5 @@ export class BoletaListaComponent implements OnInit {
       }
     );
   }
-
 
 }
