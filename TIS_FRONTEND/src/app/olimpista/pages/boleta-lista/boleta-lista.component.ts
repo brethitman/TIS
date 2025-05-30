@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 import { Input } from '@angular/core';
 import { VisualizacionService } from '../../service/Visualizacion.service';
-
+import { Location } from '@angular/common'; 
 
 @Component({
   selector: 'app-boleta-lista',
@@ -12,6 +12,7 @@ import { VisualizacionService } from '../../service/Visualizacion.service';
   templateUrl: './boleta-lista.component.html'
 })
 export class BoletaListaComponent implements OnInit {
+  
   students = [
     {
       id: 1,
@@ -32,12 +33,15 @@ export class BoletaListaComponent implements OnInit {
       category2: 'Intermedio'
     }
   ];
+   
   @Input() olimpista: any[][] = [];
   @Input() tutor: any[][] = [];
   @Input() areas: any[][] = [];
 
-  constructor(private service: VisualizacionService) { }
-
+  constructor(
+    private service: VisualizacionService,
+    private location: Location,
+  ) { }
   ngOnInit() {
     this.areas = JSON.parse(localStorage.getItem('areasInscripcion') || '[]');
     this.olimpista = JSON.parse(localStorage.getItem('olimpistas') || '[]');
@@ -46,6 +50,8 @@ export class BoletaListaComponent implements OnInit {
     console.log('Áreas recibidas:', this.areas);
     console.log('Olimpistas recibidos:', this.olimpista);
     console.log('Tutores recibidos:', this.tutor);
+    const storedId = localStorage.getItem('selectedOlimpiadaId');
+  
   }
 
   inscribir() {
@@ -96,6 +102,14 @@ export class BoletaListaComponent implements OnInit {
         alert('Hubo un problema con la inscripción');
       }
     );
+  }
+ 
+ volverAVisualizacion() {
+    // Opción 1: Volver a la página anterior (recomendado)
+    this.location.back();
+    
+    // Opción 2: Navegar a una ruta específica (si necesitas ir a una ruta concreta)
+    // this.router.navigate(['/ruta-especifica']);
   }
 
 }

@@ -405,6 +405,7 @@ reiniciarInscripcion(): void {
   this.inscripciones = [];
   this.estudiantesDisponibles = [...this.estudiantes]; // Recupera todos los estudiantes
   this.mostrarFinalizar = false;
+   this.router.navigate(['/boletaPago']);
 }
 
 mostrarResumen: boolean = false;
