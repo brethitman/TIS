@@ -1,0 +1,42 @@
+<div class="min-h-screen px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-2xl font-bold mb-8 text-left">Categorias</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mx-auto">
+
+        <div *ngFor="let categoria of categorias"
+            class="card overflow-hidden transition-all duration-300 justify-center mx-2"
+            style="background-color: #535AA9;border-radius:25px;">
+            <div class="relative flex items-center justify-center bg-[#535AA9]"></div>
+            <div class="flex justify-center items-center w-full translate-y-1/2">
+                <div class="bg-white text-indigo-800 font-bold text-center rounded-full border-2 border-indigo-700 p-3 max-w-4/4"
+                    style="background-color: rgba(217, 217, 235, 0.92); ">
+                    <p>{{categoria.nombre_nivel}}</p>
+                </div>
+            </div>
+
+            <div class="p-6 rounded-b-xl" style="background-color: aliceblue;">
+                <div class="space-y-2 mb-4">
+                    <!-- cuarso -->
+                    <div class="flex items-center mt-2">
+                        <span class="text-gray-700">Abiertos para: {{categoria.gradoIniCat}}</span>
+                    </div>
+                    <!-- Fecha -->
+                    <div class="flex items-center">
+                        <span class="text-gray-700">Fecha: {{categoria.fecha_examen | date:'dd/MM/yyyy' }}</span>
+                    </div>
+                    <!-- Costo -->
+                    <div class="flex items-center">
+                        <span class="text-gray-700 font-medium">Costo: {{categoria.costo}} Bs</span>
+                    </div>
+                    <!-- Ubicación -->
+                    <div class="flex items-center">
+                        <div>
+                            <p class="text-gray-700">Ciudad: Cochabamba</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
