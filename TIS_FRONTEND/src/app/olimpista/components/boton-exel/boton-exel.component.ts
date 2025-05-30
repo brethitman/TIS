@@ -212,13 +212,24 @@ export class BotonExelComponent {
     if (!this.validateTutor()) {
       return;
     }
-    this.confirmSubida = true;
+   // Crear datosTutores con la estructura adecuada
+  this.datosTutores = [
+    ['Nombre', 'Apellido', 'CI', 'Email', 'Teléfono'],
+    [this.tutor.nombre, this.tutor.apellido, this.tutor.ci, this.tutor.email, this.tutor.telefono]
+  ];
+
+  this.confirmSubida = true;
+  this.modalError = true;
+  this.showModal1 = false;
+
+   /* this.confirmSubida = true;
     this.modalError = true;
     console.log('Datos del tutor:', this.tutor);
     this.showModal1 = false;
     this.tutor = { nombre: '', apellido: '', ci: '',email:'',telefono: '' };
     this.errors = { nombre: '', apellido: '', ci: '' ,email:'',telefono: ''};
-  }
+  
+*/    }
 
   cancelar1(): void {
     this.resetFileInput(); // Limpiar el input file

@@ -165,32 +165,79 @@
   <div *ngIf="confirmSubida == false" class="mt-6 text-gray-600 italic">
     No se han cargado datos del archivo Excel.
   </div>
+  
+    <!-- Visualización en dos tablas: estudiantes y tutores en la parte izquierda -->
   <div *ngIf="confirmSubida && datosExcel && datosExcel.length > 0" class="mt-6 overflow-auto">
     <section class="w-full bg-gradient-to-r from-red-600 to-purple-700 py-3 px-2 animate-gradient">
-      <h1 class="text-white text-2xl font-bold ">Visualizacion del documento de excel</h1>
+      <h1 class="text-white text-2xl font-bold">Visualización del documento de Excel</h1>
     </section>
-    <div class="grid grid-cols-2 gap-4 overflow-hidden h-[520]">
-      <div class="flex flex-col p-4 border border-gray-300 rounded-lg shadow-md bg-[#ececf4]">
-        <h3 class="text-lg font-bold text-gray-800 mb-3">Datos cargados</h3>
-        <div class="flex overflow-auto  w-full">
-          <table class="table-auto max-w-full text-sm text-left text-gray-700 border border-gray-900">
-            <thead class="bg-gray-100">
-              <tr>
-                <th *ngFor="let header of datosExcel[0]" class="px-2 py-2 border font-medium text-nolmal">
-                  {{ header }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let row of datosExcel.slice(1)">
-                <td *ngFor="let cell of row" class="px-2 py-2 border text-normal">{{ cell }}</td>
-              </tr>
-            </tbody>
-          </table>
+    
+    <!-- Contenedor principal con tablas a la izquierda -->
+    <div class="flex flex-col lg:flex-row mt-4">
+      <!-- Columna izquierda (tablas) -->
+      <div class="lg:w-1/2">
+        <!-- Tabla de Estudiantes -->
+        <div class="flex flex-col p-4 border border-gray-300 rounded-lg shadow-md bg-[#ececf4] mb-6">
+          <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            Datos de Estudiantes
+          </h3>
+          <div class="overflow-auto max-h-96">
+            <table class="min-w-full text-sm text-left text-gray-700 border border-gray-900">
+              <thead class="bg-blue-50">
+                <tr>
+                  <th *ngFor="let header of datosEstudiantes[0]" class="px-3 py-2 border font-medium text-normal">
+                    {{ header }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of datosEstudiantes.slice(1)" class="bg-white hover:bg-gray-50">
+                  <td *ngFor="let cell of row" class="px-3 py-2 border text-normal">
+                    {{ cell }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tabla de Tutores -->
+        <div class="flex flex-col p-4 border border-gray-300 rounded-lg shadow-md bg-[#ececf4]">
+          <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Datos de Tutores
+          </h3>
+          <div class="overflow-auto max-h-96">
+            <table class="min-w-full text-sm text-left text-gray-700 border border-gray-900">
+              <thead class="bg-green-50">
+                <tr>
+                  <th *ngFor="let header of datosTutores[0]" class="px-3 py-2 border font-medium text-normal">
+                    {{ header }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of datosTutores.slice(1)" class="bg-white hover:bg-gray-50">
+                  <td *ngFor="let cell of row" class="px-3 py-2 border text-normal">
+                    {{ cell }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-      <app-area-alumno [estudiantes]="estudiantes" [estInscripcion]="datosEstudiantes" [tutores]="datosTutores">
+      
+      <!-- Espacio derecho (puedes agregar más contenido aquí) -->
+      <div class="lg:w-1/2 lg:pl-6 mt-6 lg:mt-0">
+         <app-area-alumno [estudiantes]="estudiantes" [estInscripcion]="datosEstudiantes" [tutores]="datosTutores">
       </app-area-alumno>
+      </div>
     </div>
   </div>
 </div>
