@@ -52,6 +52,16 @@ export class AreaAlumnoComponent implements OnInit {
   stArea1: IDOlimpiadabyArea | null = null;
   private destroy$ = new Subject<void>();
 
+  errors = {
+    estudiante: '',
+    curso: '',
+    area1: '',
+    categoria1: '',
+    area2: '',
+    categoria2: ''
+  };
+  hasValidationRun = false;
+
   constructor(
     private route: ActivatedRoute,
     private olimpiadaByAreaService: OlimpiadaByAreaService,
@@ -138,9 +148,12 @@ export class AreaAlumnoComponent implements OnInit {
   }
 
   seleccionarEstudiante(estudiante: any): void {
-  this.estudianteActual = estudiante;
-  this.isStudentDropdownOpen = false; // Cerrar el dropdown después de seleccionar
-}
+    this.estudianteActual = estudiante;
+    this.isStudentDropdownOpen = false; // Cerrar el dropdown después de seleccionar
+    if (this.hasValidationRun) {
+      this.validateAllFields();
+    }
+  }
 
   confirmarSeleccion(): void {
     if (this.estudianteActual) {
@@ -155,6 +168,9 @@ export class AreaAlumnoComponent implements OnInit {
   seleccionarCurso(curso: Curso): void {
   this.cursoSeleccionado = curso;
   this.isCursoDropdownOpen = false;
+  if (this.hasValidationRun) {
+    this.validateAllFields();
+  }
   console.log('Curso seleccionado:', curso);
 }
   
@@ -165,6 +181,9 @@ export class AreaAlumnoComponent implements OnInit {
       this.seleccionArea1 = areaNombre;
       this.categorias = areaSeleccionada.nivel_categorias ?? [];
       this.isAreaDropdownOpen = false;
+      if (this.hasValidationRun) {
+      this.validateAllFields();
+      }
       console.log("Categorias", this.categorias)
     }
   }
@@ -175,6 +194,9 @@ export class AreaAlumnoComponent implements OnInit {
       this.seleccionArea2 = area2;
       this.categorias2 = areaSeleccionada.nivel_categorias ?? [];
       this.isAreaDropdownOpen2 = false;
+      if (this.hasValidationRun) {
+      this.validateAllFields();
+      }
       console.log("Categorias", this.categorias2)
     }
   }
@@ -185,75 +207,60 @@ export class AreaAlumnoComponent implements OnInit {
 
 
   inscribirEstudiante(): void {
-    console.log('Validando inscripción con:');
-console.log('estudianteActual:', this.estudianteActual);
-console.log('cursoSeleccionado:', this.cursoSeleccionado);
-console.log('seleccionArea1:', this.seleccionArea1);
-console.log('seleccionCategoria:', this.seleccionCategoria);
-console.log('isDuplicated:', this.isDuplicated);
-console.log('seleccionArea2:', this.seleccionArea2);
-console.log('seleccionCategoria2:', this.seleccionCategoria2);
-  // Validación básica
-  if (!this.estudianteActual) {
-    this.errorMessage = 'Debe seleccionar un estudiante';
-    return;
-  }
-  if (!this.cursoSeleccionado) {
-    this.errorMessage = 'Debe seleccionar un curso';
-    return;
-  }
-  if (this.seleccionArea1 === 'Seleccionar área') {
-    this.errorMessage = 'Debe seleccionar al menos un área';
-    return;
-  }
-  if (this.seleccionCategoria === 'Selecciona una categoría') {
-    this.errorMessage = 'Debe seleccionar una categoría para el área principal';
-    return;
-  }
-  // Validación para área adicional si está activa
-  if (this.isDuplicated) {
-    if (this.seleccionArea2 === 'Seleccionar área') {
-      this.errorMessage = 'Debe seleccionar un área adicional';
+      console.log('Validando inscripción con:');
+      console.log('estudianteActual:', this.estudianteActual);
+      console.log('cursoSeleccionado:', this.cursoSeleccionado);
+      console.log('seleccionArea1:', this.seleccionArea1);
+      console.log('seleccionCategoria:', this.seleccionCategoria);
+      console.log('isDuplicated:', this.isDuplicated);
+      console.log('seleccionArea2:', this.seleccionArea2);
+      console.log('seleccionCategoria2:', this.seleccionCategoria2);
+
+    // Marcar que se ha intentado validar
+    this.hasValidationRun = true;
+    
+    // Validar todos los campos
+    this.validateAllFields();
+    
+    // Verificar si hay errores
+    const hasErrors = Object.values(this.errors).some(error => error !== '');
+    
+    if (hasErrors) {
+      this.errorMessage = 'Por favor complete todos los campos requeridos';
       return;
     }
-    if (this.seleccionCategoria2 === 'Selecciona una categoría') {
-      this.errorMessage = 'Debe seleccionar una categoría para el área adicional';
+
+    // Crear objeto de inscripción
+    const nuevaInscripcion = {
+      estudiante: this.estudianteActual,
+      curso: this.cursoSeleccionado,
+      area1: this.seleccionArea1,
+      categoria1: this.seleccionCategoria,
+      area2: this.isDuplicated ? this.seleccionArea2 : null,
+      categoria2: this.isDuplicated ? this.seleccionCategoria2 : null,
+      fechaInscripcion: new Date()
+    };
+
+    // Verificar si el estudiante ya está inscrito
+    const yaInscrito = this.inscripciones.some(
+    insc => insc.estudiante.ci === this.estudianteActual.ci
+    );
+
+    if (yaInscrito) {
+      this.errorMessage = 'Este estudiante ya está inscrito';
       return;
     }
-  }
 
-  // Crear objeto de inscripción
-  const nuevaInscripcion = {
-    estudiante: this.estudianteActual,
-    curso: this.cursoSeleccionado,
-    area1: this.seleccionArea1,
-    categoria1: this.seleccionCategoria,
-    area2: this.isDuplicated ? this.seleccionArea2 : null,
-    categoria2: this.isDuplicated ? this.seleccionCategoria2 : null,
-    fechaInscripcion: new Date()
-  };
+    // Agregar a las inscripciones
+    this.inscripciones.push(nuevaInscripcion);
 
-  // Verificar si el estudiante ya está inscrito
-  const yaInscrito = this.inscripciones.some(
-  insc => insc.estudiante.ci === this.estudianteActual.ci
-);
-
-  if (yaInscrito) {
-    this.errorMessage = 'Este estudiante ya está inscrito';
-    return;
-  }
-
-  // Agregar a las inscripciones
-  this.inscripciones.push(nuevaInscripcion);
-
-  // Eliminar estudiante de la lista de disponibles usando NOMBRE Y APELLIDO
-  // Eliminar estudiante del array original de estudiantes y de los disponibles
-this.estudiantes = this.estudiantes.filter(
-  e => e.ci !== this.estudianteActual.ci
-);
-this.estudiantesDisponibles = this.estudiantesDisponibles.filter(
-  e => e.ci !== this.estudianteActual.ci
-);
+    // Eliminar estudiante del array original de estudiantes y de los disponibles
+    this.estudiantes = this.estudiantes.filter(
+      e => e.ci !== this.estudianteActual.ci
+    );
+    this.estudiantesDisponibles = this.estudiantesDisponibles.filter(
+      e => e.ci !== this.estudianteActual.ci
+    );
 
 
   // Mostrar mensaje de éxito
@@ -273,6 +280,9 @@ resetearFormulario(): void {
   this.seleccionArea2 = 'Seleccionar área';
   this.seleccionCategoria2 = 'Selecciona una categoría';
   this.isDuplicated = false;
+  for (const key of Object.keys(this.errors)) {
+      this.errors[key as keyof typeof this.errors] = '';
+    }
 
   // Cerrar todos los dropdowns
   this.isStudentDropdownOpen = false;
@@ -309,6 +319,9 @@ resetearFormulario(): void {
   selectCategoria(categoria1: string) {
     this.seleccionCategoria = categoria1;
     this.isCategoriaDropdownOpen = false;
+    if (this.hasValidationRun) {
+      this.validateAllFields();
+    }
   }
 
   toggleCategoriaDropdown2() {
@@ -323,26 +336,49 @@ resetearFormulario(): void {
   selectCategoria2(categoria2: string) {
     this.seleccionCategoria2 = categoria2;
     this.isCategoriaDropdownOpen2 = false;
+    if (this.hasValidationRun) {
+      this.validateAllFields();
+    }
   }
 
 
-mostrarFinalizar = false;
+  mostrarFinalizar = false;
 
-verificarFinalizacion() {
-  if (this.estudiantes.length === 0) {
-    this.mostrarFinalizar = true;
+  verificarFinalizacion() {
+    if (this.estudiantes.length === 0) {
+      this.mostrarFinalizar = true;
+    }
   }
-}
-reiniciarInscripcion(): void {
-  this.inscripciones = [];
-  this.estudiantesDisponibles = [...this.estudiantes]; // Recupera todos los estudiantes
-  this.mostrarFinalizar = false;
-}
 
-mostrarResumen: boolean = false;
-finalizarInscripciones() {
-  this.mostrarResumen = true;
-}
+  validateAllFields(): void {
+    // Limpiar errores previos
+    for (const key of Object.keys(this.errors)) {
+      this.errors[key as keyof typeof this.errors] = '';
+    }
 
+    // Validar cada campo solo si se ha intentado validar antes
+    if (this.hasValidationRun) {
+      if (!this.estudianteActual) {
+        this.errors.estudiante = 'Debe seleccionar un estudiante';
+      }
+      if (!this.cursoSeleccionado) {
+        this.errors.curso = 'Debe seleccionar un curso';
+      }
+      if (this.seleccionArea1 === 'Seleccionar área') {
+        this.errors.area1 = 'Debe seleccionar al menos un área';
+      }
+      if (this.seleccionCategoria === 'Selecciona una categoría') {
+        this.errors.categoria1 = 'Debe seleccionar una categoría para el área principal';
+      }
+      if (this.isDuplicated) {
+        if (this.seleccionArea2 === 'Seleccionar área') {
+          this.errors.area2 = 'Debe seleccionar un área adicional';
+        }
+        if (this.seleccionCategoria2 === 'Selecciona una categoría') {
+          this.errors.categoria2 = 'Debe seleccionar una categoría para el área adicional';
+        }
+      }
+    }
+  }
 
 }

@@ -18,16 +18,20 @@
 
     <!-- Lista de estudiantes -->
     <div *ngIf="isStudentDropdownOpen" class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-  <div class="divide-y divide-gray-100">
-    <div *ngFor="let estudiante of estudiantesDisponibles" 
-          class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
-          (click)="seleccionarEstudiante(estudiante)">
-      <p class="text-sm text-gray-800 font-medium">
-        {{ estudiante.nombre }} {{ estudiante.apellido }}
-      </p>
-    </div>
-  </div>
-</div>
+      <div class="divide-y divide-gray-100">
+         <div *ngFor="let estudiante of estudiantesDisponibles" 
+            class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+            (click)="seleccionarEstudiante(estudiante)">
+            <p class="text-sm text-gray-800 font-medium">
+              {{ estudiante.nombre }} {{ estudiante.apellido }}
+            </p>
+         </div>
+       </div>
+     </div>
+     <!-- Mensaje de error para estudiante -->
+    <p *ngIf="hasValidationRun && errors.estudiante" class="text-red-500 text-sm mt-1">
+  {{ errors.estudiante }}
+</p>
   </div>
   <!-- Dropdown de Cursos -->
   <div class="relative mb-4">
@@ -53,6 +57,9 @@
         </div>
       </div>
     </div>
+    <p *ngIf="hasValidationRun && errors.curso" class="text-red-500 text-sm mt-1">
+  {{ errors.curso }}
+</p>
   </div>
   <!-- Área para inscribirse -->
   <div class="flex flex-col gap-2">
@@ -74,6 +81,9 @@
             </div>
           </div>
         </div>
+        <p *ngIf="hasValidationRun && errors.area1" class="text-red-500 text-sm mt-1">
+  {{ errors.area1 }}
+</p>
       </div>
 
       <!-- Sección de Categorías -->
@@ -94,6 +104,9 @@
           </div>
         </div>
       </div>
+      <p *ngIf="hasValidationRun && errors.categoria1" class="text-red-500 text-sm mt-1">
+  {{ errors.categoria1 }}
+</p>
     </div>
     <div class="flex flex-row gap-1 justify-end items-center pb-2">
       <button (click)="toggleDuplicado()" *ngIf="!isDuplicated"
@@ -121,6 +134,9 @@
             </div>
           </div>
         </div>
+        <p *ngIf="hasValidationRun && errors.area2" class="text-red-500 text-sm mt-1">
+  {{ errors.area2 }}
+</p>
       </div>
       <!-- Sección de Categorías -->
       <div>
@@ -140,6 +156,9 @@
           </div>
         </div>
       </div>
+      <p *ngIf="hasValidationRun && errors.categoria2" class="text-red-500 text-sm mt-1">
+  {{ errors.categoria2 }}
+</p>
     </div>
     <div *ngIf="isDuplicated" class="flex flex-row gap-1 justify-end items-center pb-2">
       <button (click)="toggleDuplicado()"
@@ -149,13 +168,14 @@
       </button>
     </div>
   </div>
+
   <!-- Botón de inscripción -->
   <button (click)="inscribirEstudiante()"
         class="w-full bg-[#0D1271] hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md transition-colors">
   Inscribir estudiante
 </button>
 
-  <button *ngIf="mostrarFinalizar" (click)="reiniciarInscripcion()"         
+  <button *ngIf="mostrarFinalizar"        
   class="mt-4 w-full bg-green-600 text-white font-bold py-2 px-4 rounded-md">
   Finalizar inscripción
 </button>
