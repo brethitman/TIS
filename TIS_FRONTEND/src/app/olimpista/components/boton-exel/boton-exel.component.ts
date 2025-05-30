@@ -31,12 +31,16 @@ export class BotonExelComponent {
   tutor = {
     nombre: '',
     apellido: '',
-    ci: ''
+    ci: '',
+    email: '',
+    telefono: ''
   };
   errors = {
     nombre: '',
     apellido: '',
-    ci: ''
+    ci: '',
+    email: '',
+    telefono: ''
   };
   isStudentDropdownOpen: boolean = false;
   estudiantes: any[] = [];
@@ -152,7 +156,7 @@ export class BotonExelComponent {
 
   validateTutor(): boolean {
     let isValid = true;
-    this.errors = { nombre: '', apellido: '', ci: '' };
+    this.errors = { nombre: '', apellido: '', ci: '',email:'',telefono: ''};
 
     if (!this.tutor.nombre || this.tutor.nombre.trim() === '') {
       this.errors.nombre = 'El nombre es requerido';
@@ -180,7 +184,27 @@ export class BotonExelComponent {
       this.errors.ci = 'El CI debe tener entre 6 y 10 dígitos';
       isValid = false;
     }
+     // Validación Email 
+    if (!this.tutor.email || this.tutor.email.trim() === '') {
+      this.errors.email = 'El correo electrónico es requerido';
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.tutor.email)) {
+      this.errors.email = 'Formato de correo electrónico inválido';
+      isValid = false;
+    }
 
+    // Validación Teléfono 
+    if (!this.tutor.telefono || this.tutor.telefono.trim() === '') {
+      this.errors.telefono = 'El teléfono es requerido';
+      isValid = false;
+    } else if (!/^\d+$/.test(this.tutor.telefono)) {
+      this.errors.telefono = 'El teléfono solo debe contener números';
+      isValid = false;
+    } else if (this.tutor.telefono.length < 8 || this.tutor.telefono.length > 12) {
+      this.errors.telefono = 'El teléfono debe tener entre 8 y 12 dígitos';
+      isValid = false;
+    }
+  
     return isValid;
   }
 
@@ -188,13 +212,24 @@ export class BotonExelComponent {
     if (!this.validateTutor()) {
       return;
     }
-    this.confirmSubida = true;
+   // Crear datosTutores con la estructura adecuada
+  this.datosTutores = [
+    ['Nombre', 'Apellido', 'CI', 'Email', 'Teléfono'],
+    [this.tutor.nombre, this.tutor.apellido, this.tutor.ci, this.tutor.email, this.tutor.telefono]
+  ];
+
+  this.confirmSubida = true;
+  this.modalError = true;
+  this.showModal1 = false;
+
+   /* this.confirmSubida = true;
     this.modalError = true;
     console.log('Datos del tutor:', this.tutor);
     this.showModal1 = false;
-    this.tutor = { nombre: '', apellido: '', ci: '' };
-    this.errors = { nombre: '', apellido: '', ci: '' };
-  }
+    this.tutor = { nombre: '', apellido: '', ci: '',email:'',telefono: '' };
+    this.errors = { nombre: '', apellido: '', ci: '' ,email:'',telefono: ''};
+  
+*/    }
 
   cancelar1(): void {
     this.resetFileInput(); // Limpiar el input file
@@ -233,8 +268,8 @@ export class BotonExelComponent {
     this.resetUploadData();
   }
   private clearTutorData(): void {
-    this.tutor = { nombre: '', apellido: '', ci: '' };
-    this.errors = { nombre: '', apellido: '', ci: '' };
+    this.tutor = { nombre: '', apellido: '', ci: '',email:'',telefono: ''};
+    this.errors = { nombre: '', apellido: '', ci: '',email:'',telefono: '' };
   }
 
   private resetUploadData(): void {
