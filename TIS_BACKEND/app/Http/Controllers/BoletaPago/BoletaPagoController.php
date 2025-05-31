@@ -89,4 +89,18 @@ class BoletaPagoController extends Controller
             'message' => 'Boleta de pago eliminada exitosamente'
         ]);
     }
+
+   public function getBoletaPago($id)
+{
+    $boleta = BoletaPago::where('id_inscripcion', $id)->first();
+
+    if (!$boleta) {
+        return response()->json(['message' => 'Boleta no encontrada'], 404);
+    }
+
+    return response()->json(['boleta' => $boleta], 200);
+
+
+}
+
 }

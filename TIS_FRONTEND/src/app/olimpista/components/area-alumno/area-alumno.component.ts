@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
@@ -20,6 +20,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class AreaAlumnoComponent implements OnInit {
   @Input() estudiantes: any[] = [];
+  @Input() tutores: any[][] = [];
+  @Input() estInscripcion: any[][] = [];
   @Input() areas: any[] = [];
   inscripciones: any[] = [];
   estudiantesDisponibles: any[] = [];
@@ -50,6 +52,13 @@ export class AreaAlumnoComponent implements OnInit {
   seleccionCategoria: string = 'Selecciona una categoría';
   seleccionCategoria2: string = 'Selecciona una categoría';
   stArea1: IDOlimpiadabyArea | null = null;
+  id_categoria1: any = 0;
+  id_categoria2: any = 0;
+  id_area1: any = 0;
+  id_area2: any = 0;
+  areasInscripcion: any[] = []; //Especificamente para Inscripcion 
+  clickCount = 0;//pueden eliminar es solo una prueba para la inscripcion 
+
   private destroy$ = new Subject<void>();
 
   errors = {
@@ -65,8 +74,8 @@ export class AreaAlumnoComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private olimpiadaByAreaService: OlimpiadaByAreaService,
-    private cursoService: CursoService
-
+    private cursoService: CursoService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -83,7 +92,7 @@ export class AreaAlumnoComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.cursos = Array.isArray(data) ? data : (data as any).cursos; // Asigna primero
-          console.log('Respuesta del servicio:', this.cursos); 
+          console.log('Respuesta del servicio:', this.cursos);
           console.log('Cantidad de cursos:', this.cursos.length);
           console.log('Lista de cursos:', this.cursos);
         },
@@ -92,7 +101,7 @@ export class AreaAlumnoComponent implements OnInit {
           this.errorMessage = 'Error al cargar los cursos';
         }
       });
- }
+  }
 
   //traer areas y categorias
   private cargarOlimpiadaId(): void {
@@ -148,12 +157,12 @@ export class AreaAlumnoComponent implements OnInit {
   }
 
   seleccionarEstudiante(estudiante: any): void {
-    this.estudianteActual = estudiante;
-    this.isStudentDropdownOpen = false; // Cerrar el dropdown después de seleccionar
-    if (this.hasValidationRun) {
+  this.estudianteActual = estudiante;
+  this.isStudentDropdownOpen = false; // Cerrar el dropdown después de seleccionar
+  if (this.hasValidationRun) {
       this.validateAllFields();
     }
-  }
+}
 
   confirmarSeleccion(): void {
     if (this.estudianteActual) {
@@ -166,37 +175,40 @@ export class AreaAlumnoComponent implements OnInit {
     this.estudianteSeleccionado.emit(this.estudiantesSeleccionados);
   }
   seleccionarCurso(curso: Curso): void {
-  this.cursoSeleccionado = curso;
-  this.isCursoDropdownOpen = false;
-  if (this.hasValidationRun) {
+    this.cursoSeleccionado = curso;
+    this.isCursoDropdownOpen = false;
+    if (this.hasValidationRun) {
     this.validateAllFields();
   }
-  console.log('Curso seleccionado:', curso);
-}
-  
+    console.log('Curso seleccionado:', curso);
+  }
+
   selectArea1(areaNombre: string) {
     const areaSeleccionada = this.areasDisponibles.find(area => area.nombre_area === areaNombre);
-
     if (areaSeleccionada) {
+      this.id_area1 = areaSeleccionada.id_area;
       this.seleccionArea1 = areaNombre;
       this.categorias = areaSeleccionada.nivel_categorias ?? [];
       this.isAreaDropdownOpen = false;
       if (this.hasValidationRun) {
       this.validateAllFields();
       }
-      console.log("Categorias", this.categorias)
+      console.log("ID Área seleccionada:", this.id_area1);
+      console.log("Categorias disponibles:", this.categorias);
     }
   }
   selectArea2(area2: string) {
     const areaSeleccionada = this.areasDisponibles.find(area => area.nombre_area === area2);
 
     if (areaSeleccionada) {
+      this.id_area2 = areaSeleccionada.id_area;
       this.seleccionArea2 = area2;
       this.categorias2 = areaSeleccionada.nivel_categorias ?? [];
       this.isAreaDropdownOpen2 = false;
       if (this.hasValidationRun) {
       this.validateAllFields();
       }
+      console.log("ID Área seleccionada:", this.id_area2);
       console.log("Categorias", this.categorias2)
     }
   }
@@ -207,16 +219,15 @@ export class AreaAlumnoComponent implements OnInit {
 
 
   inscribirEstudiante(): void {
-      console.log('Validando inscripción con:');
-      console.log('estudianteActual:', this.estudianteActual);
-      console.log('cursoSeleccionado:', this.cursoSeleccionado);
-      console.log('seleccionArea1:', this.seleccionArea1);
-      console.log('seleccionCategoria:', this.seleccionCategoria);
-      console.log('isDuplicated:', this.isDuplicated);
-      console.log('seleccionArea2:', this.seleccionArea2);
-      console.log('seleccionCategoria2:', this.seleccionCategoria2);
-
-    // Marcar que se ha intentado validar
+    console.log('Validando inscripción con:');
+console.log('estudianteActual:', this.estudianteActual);
+console.log('cursoSeleccionado:', this.cursoSeleccionado);
+console.log('seleccionArea1:', this.seleccionArea1);
+console.log('seleccionCategoria:', this.seleccionCategoria);
+console.log('isDuplicated:', this.isDuplicated);
+console.log('seleccionArea2:', this.seleccionArea2);
+console.log('seleccionCategoria2:', this.seleccionCategoria2);
+  // Marcar que se ha intentado validar
     this.hasValidationRun = true;
     
     // Validar todos los campos
@@ -230,37 +241,38 @@ export class AreaAlumnoComponent implements OnInit {
       return;
     }
 
-    // Crear objeto de inscripción
-    const nuevaInscripcion = {
-      estudiante: this.estudianteActual,
-      curso: this.cursoSeleccionado,
-      area1: this.seleccionArea1,
-      categoria1: this.seleccionCategoria,
-      area2: this.isDuplicated ? this.seleccionArea2 : null,
-      categoria2: this.isDuplicated ? this.seleccionCategoria2 : null,
-      fechaInscripcion: new Date()
-    };
+  // Crear objeto de inscripción
+  const nuevaInscripcion = {
+    estudiante: this.estudianteActual,
+    curso: this.cursoSeleccionado,
+    area1: this.seleccionArea1,
+    categoria1: this.seleccionCategoria,
+    area2: this.isDuplicated ? this.seleccionArea2 : null,
+    categoria2: this.isDuplicated ? this.seleccionCategoria2 : null,
+    fechaInscripcion: new Date()
+  };
 
-    // Verificar si el estudiante ya está inscrito
-    const yaInscrito = this.inscripciones.some(
-    insc => insc.estudiante.ci === this.estudianteActual.ci
-    );
+  // Verificar si el estudiante ya está inscrito
+  const yaInscrito = this.inscripciones.some(
+  insc => insc.estudiante.ci === this.estudianteActual.ci
+);
 
-    if (yaInscrito) {
-      this.errorMessage = 'Este estudiante ya está inscrito';
-      return;
-    }
+  if (yaInscrito) {
+    this.errorMessage = 'Este estudiante ya está inscrito';
+    return;
+  }
 
-    // Agregar a las inscripciones
-    this.inscripciones.push(nuevaInscripcion);
+  // Agregar a las inscripciones
+  this.inscripciones.push(nuevaInscripcion);
 
-    // Eliminar estudiante del array original de estudiantes y de los disponibles
-    this.estudiantes = this.estudiantes.filter(
-      e => e.ci !== this.estudianteActual.ci
-    );
-    this.estudiantesDisponibles = this.estudiantesDisponibles.filter(
-      e => e.ci !== this.estudianteActual.ci
-    );
+  // Eliminar estudiante de la lista de disponibles usando NOMBRE Y APELLIDO
+  // Eliminar estudiante del array original de estudiantes y de los disponibles
+this.estudiantes = this.estudiantes.filter(
+  e => e.ci !== this.estudianteActual.ci
+);
+this.estudiantesDisponibles = this.estudiantesDisponibles.filter(
+  e => e.ci !== this.estudianteActual.ci
+);
 
 
   // Mostrar mensaje de éxito
@@ -280,9 +292,6 @@ resetearFormulario(): void {
   this.seleccionArea2 = 'Seleccionar área';
   this.seleccionCategoria2 = 'Selecciona una categoría';
   this.isDuplicated = false;
-  for (const key of Object.keys(this.errors)) {
-      this.errors[key as keyof typeof this.errors] = '';
-    }
 
   // Cerrar todos los dropdowns
   this.isStudentDropdownOpen = false;
@@ -300,11 +309,15 @@ resetearFormulario(): void {
     this.successMessage = null;
     this.errorMessage = null;
   }, 3000);
+  for (const key of Object.keys(this.errors)) {
+      this.errors[key as keyof typeof this.errors] = '';
+    }
 }
 
   toggleDuplicado() {
     this.isDuplicated = !this.isDuplicated;
     this.seleccionArea2 = 'Seleccionar área'
+    this.seleccionCategoria2 = 'Seleccionar categoria'
   }
 
   toggleCategoriaDropdown() {
@@ -317,10 +330,16 @@ resetearFormulario(): void {
   }
 
   selectCategoria(categoria1: string) {
-    this.seleccionCategoria = categoria1;
-    this.isCategoriaDropdownOpen = false;
-    if (this.hasValidationRun) {
+    const categoriaSeleccionada = this.categorias.find(cat => cat.nombre_nivel === categoria1);
+    if (categoriaSeleccionada) {
+      this.id_categoria1 = categoriaSeleccionada.id_nivel;
+      this.seleccionCategoria = categoriaSeleccionada.nombre_nivel;
+      this.isCategoriaDropdownOpen = false;
+      if (this.hasValidationRun) {
       this.validateAllFields();
+    }
+      console.log("ID Nivel Categoría seleccionado:", this.seleccionCategoria);
+      console.log("ID Nivel Categoría seleccionado:", this.seleccionCategoria);
     }
   }
 
@@ -334,23 +353,78 @@ resetearFormulario(): void {
   }
 
   selectCategoria2(categoria2: string) {
-    this.seleccionCategoria2 = categoria2;
-    this.isCategoriaDropdownOpen2 = false;
-    if (this.hasValidationRun) {
+    const categoriaSeleccionada = this.categorias2.find(cat => cat.nombre_nivel === categoria2);
+    if (categoriaSeleccionada) {
+      this.id_categoria2 = categoriaSeleccionada.id_nivel;
+      this.seleccionCategoria2 = categoriaSeleccionada.nombre_nivel;
+      this.isCategoriaDropdownOpen2 = false;
+      if (this.hasValidationRun) {
       this.validateAllFields();
     }
-  }
-
-
-  mostrarFinalizar = false;
-
-  verificarFinalizacion() {
-    if (this.estudiantes.length === 0) {
-      this.mostrarFinalizar = true;
+      console.log("ID Nivel Categoría seleccionado:", this.id_categoria2);
+      console.log("ID Nivel Categoría seleccionado:", this.seleccionCategoria);
     }
   }
 
-  validateAllFields(): void {
+  //inscripcion
+  inscripcionEstudiante() {
+    if (this.seleccionArea1 && this.seleccionCategoria) {
+      const nuevaInscripcion1 = {
+        area_id: this.id_area1,
+        nivelesCategoria: [this.id_categoria1] 
+      };
+
+      this.areasInscripcion.push(nuevaInscripcion1);
+    }
+
+    if (this.seleccionArea2 !=="Seleccionar área" && this.seleccionCategoria2!== "Selecciona una categoría") {
+      const nuevaInscripcion2 = {
+        area_id: this.id_area2, 
+        nivelesCategoria: [this.id_categoria2] 
+      };
+
+      this.areasInscripcion.push(nuevaInscripcion2);
+    }
+
+    console.log('Lista de áreas inscritas:', this.areasInscripcion);
+    
+      this.irABoletaList();
+      this.reiniciarInscripcion();
+   
+  }
+  irABoletaList() {
+    localStorage.setItem('areasInscripcion', JSON.stringify(this.areasInscripcion));
+    localStorage.setItem('olimpistas', JSON.stringify(this.estInscripcion));
+    localStorage.setItem('tutores', JSON.stringify(this.tutores));
+
+    console.log('Datos guardados en localStorage:', {
+      areasInscripcion: JSON.parse(localStorage.getItem('areasInscripcion') || '[]'),
+      olimpistas: JSON.parse(localStorage.getItem('olimpistas') || '[]'),
+      tutores: JSON.parse(localStorage.getItem('tutores') || '[]')
+    });
+    this.router.navigate(['/boletaPago']);
+  }
+
+
+mostrarFinalizar = false;
+
+verificarFinalizacion() {
+  if (this.estudiantes.length === 0) {
+    this.mostrarFinalizar = true;
+  }
+}
+reiniciarInscripcion(): void {
+  this.inscripciones = [];
+  this.estudiantesDisponibles = [...this.estudiantes]; // Recupera todos los estudiantes
+  this.mostrarFinalizar = false;
+}
+
+mostrarResumen: boolean = false;
+finalizarInscripciones() {
+  this.mostrarResumen = true;
+}
+
+validateAllFields(): void {
     // Limpiar errores previos
     for (const key of Object.keys(this.errors)) {
       this.errors[key as keyof typeof this.errors] = '';
@@ -380,5 +454,6 @@ resetearFormulario(): void {
       }
     }
   }
+
 
 }

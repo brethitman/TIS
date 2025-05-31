@@ -31,12 +31,16 @@ export class BotonExelComponent {
   tutor = {
     nombre: '',
     apellido: '',
-    ci: ''
+    ci: '',
+    email: '',
+    telefono: ''
   };
   errors = {
     nombre: '',
     apellido: '',
-    ci: ''
+    ci: '',
+    email: '',
+    telefono: ''
   };
   isStudentDropdownOpen: boolean = false;
   estudiantes: any[] = [];
@@ -147,12 +151,12 @@ export class BotonExelComponent {
       ci: ciIndex >= 0 ? fila[ciIndex] : '',
     })).filter(est => est.nombre && est.nombre !== 'Nombre no disponible');
 
-    console.log('Estudiantes procesados:', this.estudiantes); // Para depuración
+    console.log('Estudiantes procesados:', this.estudiantes); 
   }
 
   validateTutor(): boolean {
     let isValid = true;
-    this.errors = { nombre: '', apellido: '', ci: '' };
+    this.errors = { nombre: '', apellido: '', ci: '',email:'',telefono: ''};
 
     if (!this.tutor.nombre || this.tutor.nombre.trim() === '') {
       this.errors.nombre = 'El nombre es requerido';
@@ -180,7 +184,27 @@ export class BotonExelComponent {
       this.errors.ci = 'El CI debe tener entre 6 y 10 dígitos';
       isValid = false;
     }
+     // Validación Email 
+    if (!this.tutor.email || this.tutor.email.trim() === '') {
+      this.errors.email = 'El correo electrónico es requerido';
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.tutor.email)) {
+      this.errors.email = 'Formato de correo electrónico inválido';
+      isValid = false;
+    }
 
+    // Validación Teléfono 
+    if (!this.tutor.telefono || this.tutor.telefono.trim() === '') {
+      this.errors.telefono = 'El teléfono es requerido';
+      isValid = false;
+    } else if (!/^\d+$/.test(this.tutor.telefono)) {
+      this.errors.telefono = 'El teléfono solo debe contener números';
+      isValid = false;
+    } else if (this.tutor.telefono.length < 8 || this.tutor.telefono.length > 12) {
+      this.errors.telefono = 'El teléfono debe tener entre 8 y 12 dígitos';
+      isValid = false;
+    }
+  
     return isValid;
   }
 
@@ -188,13 +212,23 @@ export class BotonExelComponent {
     if (!this.validateTutor()) {
       return;
     }
-    this.confirmSubida = true;
+   // Crear datosTutores con la estructura adecuada
+  this.datosTutores = [
+    [this.tutor.nombre, this.tutor.apellido, this.tutor.ci, this.tutor.email, this.tutor.telefono]
+  ];
+
+  this.confirmSubida = true;
+  this.modalError = true;
+  this.showModal1 = false;
+
+   /* this.confirmSubida = true;
     this.modalError = true;
     console.log('Datos del tutor:', this.tutor);
     this.showModal1 = false;
-    this.tutor = { nombre: '', apellido: '', ci: '' };
-    this.errors = { nombre: '', apellido: '', ci: '' };
-  }
+    this.tutor = { nombre: '', apellido: '', ci: '',email:'',telefono: '' };
+    this.errors = { nombre: '', apellido: '', ci: '' ,email:'',telefono: ''};
+  
+*/    }
 
   cancelar1(): void {
     this.resetFileInput(); // Limpiar el input file
@@ -233,8 +267,8 @@ export class BotonExelComponent {
     this.resetUploadData();
   }
   private clearTutorData(): void {
-    this.tutor = { nombre: '', apellido: '', ci: '' };
-    this.errors = { nombre: '', apellido: '', ci: '' };
+    this.tutor = { nombre: '', apellido: '', ci: '',email:'',telefono: ''};
+    this.errors = { nombre: '', apellido: '', ci: '',email:'',telefono: '' };
   }
 
   private resetUploadData(): void {
@@ -266,6 +300,7 @@ export class BotonExelComponent {
     if (fileName === 'Formato_solo_Estudiantes.xlsx') {
       this.datosEstudiantes = filasConDatos;
       this.validacionesEst(filasConDatos);
+      //this.tutor = 
       console.log('Lista de Estudiantes:', this.datosEstudiantes);
     } else if (fileName === 'Formato_Varios_Tutores.xlsx') {
       this.separarEstudiantesTutores(filasConDatos);
@@ -299,7 +334,7 @@ export class BotonExelComponent {
 
   validacionesEst(datosEst: any[][]) {
     const listaEstudiante = datosEst.slice(1);
-
+    this.datosEstudiantes = listaEstudiante;
     for (let index = 0; index < listaEstudiante.length; index++) {
       const fila = listaEstudiante[index];
 
@@ -334,17 +369,30 @@ export class BotonExelComponent {
           this.mensajeError.push(`Error: Correo electrónico inválido del estudiante:'${correo}'.\n`);
           break;
         }
-        const unidadEducativa = fila[5]?.toString().trim();
+        if (!correo) {
+          this.mensajeError.push(`Error: El Correo electrónico del estudiante es obligatorio.\n`);
+          break;
+        }
+        const celular = fila[5]?.toString().trim();
+        if (!/^[67]\d{7}$/.test(celular)) {
+          this.mensajeError.push(`Error: Número de celular inválido: '${celular}'.\n `);
+          break;
+        }
+        if (!celular) {
+          this.mensajeError.push(`Error: El Número de celular del estudiante es obligatorio.\n`);
+          break;
+        }
+        const unidadEducativa = fila[6]?.toString().trim();
         if (!unidadEducativa) {
           this.mensajeError.push(`Error: Unidad educativa es obligatoria en la fila ${index + 1}.\n`);
           break;
         }
-        const departamento = fila[6]?.toString().trim();
+        const departamento = fila[7]?.toString().trim();
         if (!departamento) {
           this.mensajeError.push(`Error: Departamento es obligatorio en la fila ${index + 1}.\n`);
           break;
         }
-        const provincia = fila[7]?.toString().trim();
+        const provincia = fila[8]?.toString().trim();
         if (!provincia) {
           this.mensajeError.push(`Error: Provincia es obligatoria en la fila ${index + 1}.\n`);
           break;
@@ -355,7 +403,7 @@ export class BotonExelComponent {
   }
   validacionesTutor(datosTutor: any[][]) {
     const listaTutor = datosTutor.slice(1);
-
+    this.datosTutores = listaTutor;
     for (let index = 0; index < listaTutor.length; index++) {
       const fila = listaTutor[index];
 
