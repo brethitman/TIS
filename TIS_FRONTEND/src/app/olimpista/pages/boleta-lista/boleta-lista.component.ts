@@ -4,7 +4,8 @@ import { Component, OnInit } from '@angular/core';
 import { Input } from '@angular/core';
 import { VisualizacionService } from '../../service/Visualizacion.service';
 import { BoletaPagoResponse } from '../../interfaces/inscripcion.types';
-
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-boleta-lista',
@@ -17,6 +18,9 @@ export class BoletaListaComponent implements OnInit {
   @Input() olimpista: any[][] = [];
   @Input() tutor: any[][] = [];
   @Input() areas: any[][] = [];
+  boletaTutor: any[] = [];
+
+
   students = [
     {
       id: 1,
@@ -47,10 +51,11 @@ export class BoletaListaComponent implements OnInit {
     this.areas = JSON.parse(localStorage.getItem('areasInscripcion') || '[]');
     this.olimpista = JSON.parse(localStorage.getItem('olimpistas') || '[]');
     this.tutor = JSON.parse(localStorage.getItem('tutores') || '[]');
-
+    this.boletaTutor = this.tutor[0];//OBTIENE SOLO LA INFOEMCION DEL TUTOR RESPONSABLE
     console.log('Áreas recibidas:', this.areas);
     console.log('Olimpistas recibidos:', this.olimpista);
     console.log('Tutores recibidos:', this.tutor);
+    console.log('tutor boleta', this.boletaTutor);
   }
 
   /* Métodos corregidos para contar y listar áreas únicas
@@ -105,97 +110,117 @@ getUniqueSchools(): string[] {
 }*/
 
   inscribir() {
-  // Verifica primero que tengas datos válidos
-  if (!this.olimpista || this.olimpista.length === 0) {
-    console.error('No hay datos de olimpistas');
-    return;
-  }
-
-  // Prepara los datos de forma más segura
-  const olimpistaData = this.olimpista.map(olimpista => {
-    // Verifica que olimpista tenga los elementos esperados
-    if (!olimpista || olimpista.length < 9) {
-      console.error('Datos de olimpista incompletos:', olimpista);
-      return null;
+    // Verifica primero que tengas datos válidos
+    if (!this.olimpista || this.olimpista.length === 0) {
+      console.error('No hay datos de olimpistas');
+      return;
     }
 
-    // Manejo más robusto de la fecha
-    let fechaNacimiento = null;
+    // Prepara los datos de forma más segura
+    const olimpistaData = this.olimpista.map(olimpista => {
+      // Verifica que olimpista tenga los elementos esperados
+      if (!olimpista || olimpista.length < 9) {
+        console.error('Datos de olimpista incompletos:', olimpista);
+        return null;
+      }
+
+      // Manejo más robusto de la fecha
+      let fechaNacimiento = null;
+      try {
+        const fechaParts = olimpista[3]?.split('/');
+        if (fechaParts && fechaParts.length === 3) {
+          const day = fechaParts[0].padStart(2, '0');
+          const month = fechaParts[1].padStart(2, '0');
+          const year = fechaParts[2];
+          fechaNacimiento = `${year}-${month}-${day}`;
+        }
+      } catch (e) {
+        console.error('Error procesando fecha:', e);
+      }
+
+      return {
+        nombres: olimpista[0] || '',
+        apellidos: olimpista[1] || '',
+        ci: String(olimpista[2] || ''),
+        fecha_nacimiento: fechaNacimiento,
+        correo: olimpista[4] || '',
+        telefono: String(olimpista[5] || ''),
+        colegio: olimpista[6] || '',
+        departamento: olimpista[7] || '',
+        provincia: olimpista[8] || ''
+      };
+    }).filter(ol => ol !== null); // Filtra cualquier olimpista inválido
+
+    const tutorData = this.tutor.map(tutor => {
+      if (!tutor || tutor.length < 5) {
+        console.error('Datos de tutor incompletos:', tutor);
+        return null;
+      }
+
+      return {
+        nombres: tutor[0] || '',
+        apellidos: tutor[1] || '',
+        ci: String(tutor[2] || ''),
+        correo: tutor[3] || '',
+        telefono: String(tutor[4] || '')
+      };
+    }).filter(t => t !== null);
+
+    if (!this.areas || this.areas.length === 0) {
+      console.error('No hay áreas seleccionadas');
+      return;
+    }
+
+    const inscripcionData = {
+      estado: 'Pendiente',
+      olimpistas: olimpistaData,
+      tutors: tutorData,
+      areas: this.areas
+    };
+
+    console.log('Datos que se enviarán:', JSON.stringify(inscripcionData, null, 2));
+
+    this.service.storeInscripcion(inscripcionData).subscribe(
+      response => {
+        console.log('Inscripción exitosa:', response);
+        if (response?.inscripcion?.boleta_pago) {
+          this.boletaPago = response.inscripcion.boleta_pago;
+          alert('Inscripción realizada correctamente');
+        } else {
+          alert('Inscripción exitosa, pero no se generó boleta de pago.');
+        }
+      },
+      error => {
+        console.error('Error completo:', error);
+        if (error.error) {
+          console.error('Detalles del error:', error.error);
+          alert(`Error al inscribirse: ${error.error.message || 'Datos inválidos enviados al servidor'}`);
+        } else {
+          alert('Error desconocido al intentar inscribirse');
+        }
+      }
+    );
+
+  }
+
+  descargarBoleta() {
+    const elemento = document.getElementById('boletaPago'); // Capturar el div de la boleta
+    if (!elemento) {
+      console.error('No se encontró el elemento boletaPago');
+      return;
+    }
+
     try {
-      const fechaParts = olimpista[3]?.split('/');
-      if (fechaParts && fechaParts.length === 3) {
-        const day = fechaParts[0].padStart(2, '0');
-        const month = fechaParts[1].padStart(2, '0');
-        const year = fechaParts[2];
-        fechaNacimiento = `${year}-${month}-${day}`;
-      }
-    } catch (e) {
-      console.error('Error procesando fecha:', e);
+      html2canvas(elemento).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        pdf.addImage(imgData, 'PNG', 0, 0, 210, (canvas.height * 210) / canvas.width);
+        pdf.save('boleta_inscripcion.pdf');
+      });
+    } catch (error) {
+      console.error('Error al generar el PDF:', error);
     }
-
-    return {
-      nombres: olimpista[0] || '',
-      apellidos: olimpista[1] || '',
-      ci: String(olimpista[2] || ''),
-      fecha_nacimiento: fechaNacimiento,
-      correo: olimpista[4] || '',
-      telefono: String(olimpista[5] || ''),
-      colegio: olimpista[6] || '',
-      departamento: olimpista[7] || '',
-      provincia: olimpista[8] || ''
-    };
-  }).filter(ol => ol !== null); // Filtra cualquier olimpista inválido
-
-  const tutorData = this.tutor.map(tutor => {
-    if (!tutor || tutor.length < 5) {
-      console.error('Datos de tutor incompletos:', tutor);
-      return null;
-    }
-    
-    return {
-      nombres: tutor[0] || '',
-      apellidos: tutor[1] || '',
-      ci: String(tutor[2] || ''),
-      correo: tutor[3] || '',
-      telefono: String(tutor[4] || '')
-    };
-  }).filter(t => t !== null);
-
-  if (!this.areas || this.areas.length === 0) {
-    console.error('No hay áreas seleccionadas');
-    return;
   }
 
-  const inscripcionData = {
-    estado: 'Pendiente',
-    olimpistas: olimpistaData,
-    tutors: tutorData,
-    areas: this.areas
-  };
-
-  console.log('Datos que se enviarán:', JSON.stringify(inscripcionData, null, 2));
-
-  this.service.storeInscripcion(inscripcionData).subscribe(
-    response => {
-      console.log('Inscripción exitosa:', response);
-      if (response?.inscripcion?.boleta_pago) {
-        this.boletaPago = response.inscripcion.boleta_pago;
-        alert('Inscripción realizada correctamente');
-      } else {
-        alert('Inscripción exitosa, pero no se generó boleta de pago.');
-      }
-    },
-    error => {
-      console.error('Error completo:', error);
-      if (error.error) {
-        console.error('Detalles del error:', error.error);
-        alert(`Error al inscribirse: ${error.error.message || 'Datos inválidos enviados al servidor'}`);
-      } else {
-        alert('Error desconocido al intentar inscribirse');
-      }
-    }
-  );
-  
-}
 
 }
