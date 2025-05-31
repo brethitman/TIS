@@ -3,13 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-
 // Servicios
 import { InscripcionServicee } from '../../service/iscripcionn.service';
 import { AreaService } from '../../service/area.service';
 import { EmailService } from '../../service/email.service';
 import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
-
 // Interfaces
 import { IDOlimpiadabyArea, NivelCategoria } from '../../interfaces/olimpiadaAreaCategoria.interface';
 import { AreaInscripcion, InscripcionPayload, Olimpista, Tutor, InscripcionPostSuccessResponse, BoletaPagoResponse } from '../../interfaces/inscripcion.types';
@@ -208,49 +206,96 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
 
   // Submit
   onSubmit(): void {
-    this.inscripcionForm.markAllAsTouched();
-    this.successMessage = null;
-    this.errorMessage = null;
-    this.boletaGenerada = null;
+  this.inscripcionForm.markAllAsTouched();
+  this.successMessage = null;
+  this.errorMessage = null;
+  this.boletaGenerada = null;
 
-    const hasNonCombinable = this.areasFormArray.controls.some(
-      c => c.value?.area && !c.value.area.permite_multiples_areas
-    );
+  console.log('Estado del formulario:', this.inscripcionForm.valid);
+  console.log('Errores del formulario:', this.getFormErrors());
+  console.log('Valor del formulario:', this.inscripcionForm.value);
 
-    if (hasNonCombinable && this.areasFormArray.length > 1) {
-      this.errorMessage = 'No se pueden combinar áreas incompatibles';
-      return;
-    }
+  // Validar áreas no combinables
+  const hasNonCombinable = this.areasFormArray.controls.some(
+    c => c.value?.area && !c.value.area.permite_multiples_areas
+  );
 
-    if (this.inscripcionForm.valid) {
+  if (hasNonCombinable && this.areasFormArray.length > 1) {
+    this.errorMessage = 'No se pueden combinar áreas incompatibles';
+    return;
+  }
+
+  if (this.inscripcionForm.valid) {
+    try {
       const payload = this.preparePayload();
-      console.log('Payload a enviar:', payload);
+      console.log('Payload preparado:', payload);
+
+      // Validar que el payload esté bien formado
+      if (!payload.olimpiada_id) {
+        this.errorMessage = 'Error: ID de olimpiada no encontrado';
+        return;
+      }
+
+      if (!payload.areas.length) {
+        this.errorMessage = 'Error: Debe seleccionar al menos un área';
+        return;
+      }
 
       this.inscripcionService.crearInscripcion(payload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
-          next: (response) => this.handleSuccess(response),
-          error: (error) => this.handleError(error)
+          next: (response) => {
+            console.log('Respuesta exitosa:', response);
+            this.handleSuccess(response);
+          },
+          error: (error) => {
+            console.error('Error de la API:', error);
+            this.handleError(error);
+          }
         });
-    } else {
-      this.errorMessage = 'Por favor complete todos los campos requeridos';
-      console.log('Errores del formulario:', this.getFormErrors());
+    } catch (error) {
+      console.error('Error preparando payload:', error);
+      this.errorMessage = 'Error al preparar los datos: ' + (error as Error).message;
     }
+  } else {
+    this.errorMessage = 'Por favor complete todos los campos requeridos';
+    console.log('Errores específicos del formulario:', this.getFormErrors());
   }
+}
 
   private preparePayload(): InscripcionPayload {
-    const formValue = this.inscripcionForm.value;
-    const olimpiadaId = this.route.snapshot.params['id'];
+  const formValue = this.inscripcionForm.value;
+  const olimpiadaId = this.route.snapshot.params['id'];
+  
+  // Validar que el olimpiadaId existe
+  if (!olimpiadaId) {
+    throw new Error('ID de olimpiada no encontrado');
+  }
+  
+  // Validar y preparar las áreas
+  const areas = formValue.areas.map((areaGroup: any) => {
+    if (!areaGroup.area || !areaGroup.area.id_area) {
+      throw new Error('Área no seleccionada correctamente');
+    }
+    
+    if (!areaGroup.nivel || !areaGroup.nivel.id_nivel) {
+      throw new Error('Nivel no seleccionado correctamente');
+    }
     
     return {
-      ...formValue,
-      olimpiada_id: Number(olimpiadaId),
-      areas: formValue.areas.map((areaGroup: any) => ({
-        area_id: areaGroup.area?.id_area,
-        nivelesCategoria: areaGroup.nivel ? [areaGroup.nivel] : []
-      }))
+      area_id: areaGroup.area.id_area,
+      nivelesCategoria: [areaGroup.nivel.id_nivel] // Usar id_nivel en lugar del objeto completo
     };
-  }
+  });
+  
+  return {
+    olimpiada_id: Number(olimpiadaId),
+    estado: formValue.estado,
+    olimpistas: formValue.olimpistas,
+    tutors: formValue.tutors,
+    areas: areas
+  };
+}
 
   private handleSuccess(response: InscripcionPostSuccessResponse): void {
     const correoOlimpista = this.olimpistasFormArray.at(0)?.get('correo')?.value || '';
@@ -299,24 +344,40 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   }
 
   private handleError(error: any): void {
-    console.error('Error en la inscripción:', error);
-    
-    // Manejo específico de errores del servidor
-    if (error.status === 500) {
-      this.errorMessage = 'Error interno del servidor. Por favor verifique que todos los datos sean correctos e intente nuevamente.';
-    } else if (error.status === 400) {
-      this.errorMessage = 'Datos inválidos. Por favor revise la información ingresada.';
-    } else if (error.status === 0) {
-      this.errorMessage = 'No se pudo conectar con el servidor. Verifique su conexión a internet.';
+  console.error('Error en la inscripción:', error);
+  
+  if (error.status === 422) {
+    // Errores de validación
+    if (error.error && error.error.errors) {
+      const validationErrors = error.error.errors;
+      let errorMessages: string[] = [];
+      
+      // Procesar errores de validación específicos
+      Object.keys(validationErrors).forEach(key => {
+        if (Array.isArray(validationErrors[key])) {
+          errorMessages = errorMessages.concat(validationErrors[key]);
+        }
+      });
+      
+      this.errorMessage = 'Errores de validación:\n' + errorMessages.join('\n');
     } else {
-      this.errorMessage = 'Error al procesar la inscripción. Intente nuevamente.';
+      this.errorMessage = 'Datos inválidos. Por favor revise la información ingresada.';
     }
-
-    // Log adicional para debugging
-    if (error.error) {
-      console.error('Detalles del error:', error.error);
-    }
+  } else if (error.status === 500) {
+    this.errorMessage = 'Error interno del servidor. Por favor verifique que todos los datos sean correctos e intente nuevamente.';
+  } else if (error.status === 400) {
+    this.errorMessage = 'Datos inválidos. Por favor revise la información ingresada.';
+  } else if (error.status === 0) {
+    this.errorMessage = 'No se pudo conectar con el servidor. Verifique su conexión a internet.';
+  } else {
+    this.errorMessage = 'Error al procesar la inscripción. Intente nuevamente.';
   }
+
+  // Log adicional para debugging
+  if (error.error) {
+    console.error('Detalles del error:', error.error);
+  }
+}
 
   shouldShowAddAreaButton(): boolean {
     if (this.areasFormArray.length === 0) {

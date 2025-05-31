@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, retry, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment.development';
+import { Inscripcione } from '../interfaces/inscripcion.interface';
 
 export interface GETParaInscripcionResponse {
   id_area: number;
@@ -44,7 +45,6 @@ export class InscripcionService {
    * @returns Observable con la lista de áreas y sus niveles
    */
   getAreasParaInscripcion(olimpiadaId: number): Observable<GETParaInscripcionResponse[]> {
-    // Validación básica del ID
     if (!olimpiadaId || isNaN(olimpiadaId)) {
       return throwError(() => new Error('ID de olimpiada inválido'));
     }
@@ -52,11 +52,66 @@ export class InscripcionService {
     return this.http.get<GETParaInscripcionResponse[]>(
       `${this.apiUrl}/olimpiadasInscripcion/${olimpiadaId}/areas`
     ).pipe(
-      retry(3), // Reintentar hasta 3 veces en caso de error
+      retry(3),
       catchError((error) => {
         console.error('Error al obtener áreas para inscripción:', error);
         return throwError(() => new Error('Error al cargar datos de inscripción'));
       })
     );
   }
+
+  /**
+   * Obtiene todas las inscripciones
+   * @returns Observable con la lista de inscripciones
+   */
+  getInscripciones(): Observable<Inscripcione[]> {
+    return this.http.get<Inscripcione[]>(`${this.apiUrl}/inscripciones`).pipe(
+      retry(2),
+      catchError((error) => {
+        console.error('Error al obtener inscripciones:', error);
+        return throwError(() => new Error('Error al cargar inscripciones'));
+      })
+    );
+  }
+
+  /**
+   * Obtiene inscripciones filtradas por olimpiada, área y nivel
+   * @param olimpiadaId ID de la olimpiada
+   * @param areaId ID del área
+   * @param nivelId ID del nivel
+   * @returns Observable con las inscripciones filtradas
+   */
+  getInscripcionesFiltradas(olimpiadaId: number, areaId: number, nivelId: number): Observable<Inscripcione[]> {
+    const params = new URLSearchParams({
+      olimpiada: olimpiadaId.toString(),
+      area: areaId.toString(),
+      nivel: nivelId.toString()
+    });
+
+    return this.http.get<Inscripcione[]>(`${this.apiUrl}/inscripciones/filtradas?${params}`).pipe(
+      retry(2),
+      catchError((error) => {
+        console.error('Error al obtener inscripciones filtradas:', error);
+        return throwError(() => new Error('Error al cargar inscripciones filtradas'));
+      })
+    );
+  }
+  
+
+  /**
+   * Obtiene inscripciones por área y nivel específicos
+   * @param areaId ID del área
+   * @param nivelId ID del nivel
+   * @returns Observable con las inscripciones del área y nivel
+   */
+  getInscripcionesByAreaYNivel(areaId: number, nivelId: number): Observable<Inscripcione[]> {
+    return this.http.get<Inscripcione[]>(`${this.apiUrl}/inscripciones/area/${areaId}/nivel/${nivelId}`).pipe(
+      retry(2),
+      catchError((error) => {
+        console.error('Error al obtener inscripciones por área y nivel:', error);
+        return throwError(() => new Error('Error al cargar inscripciones por área y nivel'));
+      })
+    );
+  }
+  
 }

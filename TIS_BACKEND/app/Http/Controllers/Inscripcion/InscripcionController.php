@@ -45,35 +45,35 @@ class InscripcionController extends Controller
      * Crea una nueva inscripción con olimpistas, tutores y niveles seleccionados.
      */
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'estado' => 'required|in:Pendiente,Pagado,Verificado',
+{
+    $validated = $request->validate([
+        'olimpiada_id' => 'required|integer|exists:olimpiadas,id_olimpiada', // Añadir esta validación
+        'estado' => 'required|in:Pendiente,Pagado,Verificado',
 
-            'olimpistas' => 'required|array|min:1|max:1',
-            'olimpistas.*.nombres' => 'required|string|max:100',
-            'olimpistas.*.apellidos' => 'required|string|max:100',
-            'olimpistas.*.ci' => 'required|string|max:20|unique:olimpistas,ci',
-            'olimpistas.*.fecha_nacimiento' => 'required|date|before:-10 years',
-            'olimpistas.*.correo' => 'required|email|max:100',
-            'olimpistas.*.telefono' => 'required|string|max:20',
-            'olimpistas.*.colegio' => 'required|string|max:100',
-            'olimpistas.*.departamento' => 'required|string|max:50',
-            'olimpistas.*.provincia' => 'required|string|max:50',
+        'olimpistas' => 'required|array|min:1|max:1',
+        'olimpistas.*.nombres' => 'required|string|max:100',
+        'olimpistas.*.apellidos' => 'required|string|max:100',
+        'olimpistas.*.ci' => 'required|string|max:20|unique:olimpistas,ci',
+        'olimpistas.*.fecha_nacimiento' => 'required|date|before:-5 years', // Cambiar a 5 años si es necesario
+        'olimpistas.*.correo' => 'required|email|max:100',
+        'olimpistas.*.telefono' => 'required|string|max:20',
+        'olimpistas.*.colegio' => 'required|string|max:100',
+        'olimpistas.*.departamento' => 'required|string|max:50',
+        'olimpistas.*.provincia' => 'required|string|max:50',
 
-            'tutors' => 'required|array|min:1|max:1',
-            'tutors.*.nombres' => 'required|string|max:100',
-            'tutors.*.apellidos' => 'required|string|max:100',
-            'tutors.*.ci' => 'required|string|max:20|unique:tutors,ci',
-            'tutors.*.correo' => 'required|email|max:100',
-            'tutors.*.telefono' => 'required|string|max:20',
-            'tutors.*.contacto' => 'nullable|string|max:255',
+        'tutors' => 'required|array|min:1|max:1',
+        'tutors.*.nombres' => 'required|string|max:100',
+        'tutors.*.apellidos' => 'required|string|max:100',
+        'tutors.*.ci' => 'required|string|max:20|unique:tutors,ci',
+        'tutors.*.correo' => 'required|email|max:100',
+        'tutors.*.telefono' => 'required|string|max:20',
+        'tutors.*.contacto' => 'nullable|string|max:255',
 
-            'areas' => 'required|array|min:1',
-            'areas.*.area_id' => 'required|integer|exists:areas,id_area',
-            'areas.*.nivelesCategoria' => 'required|array|min:1',
-            'areas.*.nivelesCategoria.*' => 'required|integer|exists:nivel_categorias,id_nivel',
-        ]);
-
+        'areas' => 'required|array|min:1',
+        'areas.*.area_id' => 'required|integer|exists:areas,id_area',
+        'areas.*.nivelesCategoria' => 'required|array|min:1',
+        'areas.*.nivelesCategoria.*' => 'required|integer|exists:nivel_categorias,id_nivel',
+    ]);
         DB::beginTransaction();
 
         try {
