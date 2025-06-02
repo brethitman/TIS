@@ -4,6 +4,9 @@ import { Component, OnInit } from '@angular/core';
 import { Input } from '@angular/core';
 import { VisualizacionService } from '../../service/Visualizacion.service';
 import { BoletaPagoResponse } from '../../interfaces/inscripcion.types';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
+import * as htmlToImage from 'html-to-image';
 
 
 @Component({
@@ -196,6 +199,34 @@ getUniqueSchools(): string[] {
     }
   );
   
+}
+
+async generatePdfWithHtmlToImage() {
+  try {
+    const element = document.getElementById('boleta-container');
+    if (!element) return;
+
+    const dataUrl = await htmlToImage.toPng(element, {
+      quality: 1,
+      pixelRatio: 2
+    });
+
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm'
+    });
+
+    const imgProps = pdf.getImageProperties(dataUrl);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`boleta_${this.boletaPago?.numero_boleta || '0000'}.pdf`);
+    
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error al generar PDF');
+  }
 }
 
 }
