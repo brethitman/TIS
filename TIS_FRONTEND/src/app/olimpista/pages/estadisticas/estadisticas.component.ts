@@ -1,0 +1,244 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { OlimpiadaService } from '../../service/olimpiada.service';
+import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
+import { InscripcionService } from '../../service/inscripcion.service';
+import { Olimpiada } from '../../interfaces/olimpiada-interfase';
+import { Area, Inscripcione, Olimpista, Tutor } from '../../interfaces/inscripcion.interface';
+import { IDOlimpiadabyArea } from '../../interfaces/olimpiadaAreaCategoria.interface';
+
+interface AreaWithNiveles extends Area {
+  id_area: number;
+  niveles: Array<{
+    id_nivel: number;
+    nombre_nivel: string;
+  }>;
+}
+
+@Component({
+  selector: 'app-estadisticas',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './estadisticas.component.html'
+})
+export class EstadisticasComponent implements OnInit {
+  olimpiadas: Olimpiada[] = [];
+  areas: AreaWithNiveles[] = [];
+  inscripciones: Inscripcione[] = [];
+  selectedOlimpiada: Olimpiada | null = null;
+  selectedArea: AreaWithNiveles | null = null;
+  selectedNivel: { id_nivel: number; nombre_nivel: string } | null = null;
+  loading = false;
+  error: string | null = null;
+
+  constructor(
+    private olimpiadaService: OlimpiadaService,
+    private olimpiadaByAreaService: OlimpiadaByAreaService,
+    private inscripcionService: InscripcionService
+  ) {}
+
+  ngOnInit(): void {
+    console.log('🔄 Iniciando componente de estadísticas');
+    this.loadOlimpiadas();
+  }
+
+  loadOlimpiadas(): void {
+    this.loading = true;
+    this.error = null;
+    
+    console.log('🔄 Cargando olimpiadas...');
+    
+    this.olimpiadaService.getOlimpiadas().subscribe({
+      next: (data) => {
+        console.log('✅ Olimpiadas cargadas exitosamente:', data);
+        console.log('📊 Cantidad de olimpiadas:', data.length);
+        
+        if (data.length === 0) {
+          console.warn('⚠️ No se encontraron olimpiadas');
+          this.error = 'No se encontraron olimpiadas disponibles';
+        } else {
+          this.olimpiadas = data;
+          console.log('🔍 Primera olimpiada:', data[0]);
+        }
+        
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('❌ Error al cargar olimpiadas:', error);
+        this.error = 'Error al cargar las olimpiadas: ' + error.message;
+        this.loading = false;
+      }
+    });
+  }
+
+  onOlimpiadaSelect(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const selectedId = target.value;
+    
+    console.log('🎯 ID de olimpiada seleccionada:', selectedId);
+    
+    if (!selectedId) {
+      this.selectedOlimpiada = null;
+      this.selectedArea = null;
+      this.selectedNivel = null;
+      this.areas = [];
+      this.inscripciones = [];
+      return;
+    }
+
+    const olimpiada = this.olimpiadas.find(o => o.id.toString() === selectedId);
+    
+    if (olimpiada) {
+      console.log('✅ Olimpiada encontrada:', olimpiada);
+      this.selectedOlimpiada = olimpiada;
+      this.selectedArea = null;
+      this.selectedNivel = null;
+      this.inscripciones = [];
+      this.loadAreas(olimpiada.id);
+    } else {
+      console.error('❌ No se encontró la olimpiada con ID:', selectedId);
+      this.error = 'No se encontró la olimpiada seleccionada';
+    }
+  }
+
+  loadAreas(olimpiadaId: number): void {
+    this.loading = true;
+    this.error = null;
+    
+    console.log('🔄 Cargando áreas para olimpiada:', olimpiadaId);
+    
+    this.olimpiadaByAreaService.getAreasByOlimpiadaId(olimpiadaId).subscribe({
+      next: (data: IDOlimpiadabyArea[]) => {
+        console.log('✅ Áreas cargadas:', data);
+        this.areas = data.map(area => ({
+          id: area.id_area,
+          id_olimpiada: area.id_olimpiada,
+          id_inscripcion: 0,
+          nombre_area: area.nombre_area,
+          descripcion: area.descripcion || '',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          id_area: area.id_area,
+          niveles: area.nivel_categorias?.map(nivel => ({
+            id_nivel: nivel.id_nivel,
+            nombre_nivel: nivel.nombre_nivel
+          })) || []
+        }));
+        this.loading = false;
+      },
+      error: (error: Error) => {
+        console.error('❌ Error al cargar áreas:', error);
+        this.error = 'Error al cargar las áreas: ' + error.message;
+        this.loading = false;
+      }
+    });
+  }
+
+  onAreaSelect(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const selectedId = target.value;
+    
+    console.log('🎯 ID de área seleccionada:', selectedId);
+    
+    if (!selectedId) {
+      this.selectedArea = null;
+      this.selectedNivel = null;
+      this.inscripciones = [];
+      return;
+    }
+
+    const area = this.areas.find(a => a.id_area?.toString() === selectedId);
+    
+    if (area) {
+      console.log('✅ Área encontrada:', area);
+      this.selectedArea = area;
+      this.selectedNivel = null;
+      this.inscripciones = [];
+    } else {
+      console.error('❌ No se encontró el área con ID:', selectedId);
+      this.error = 'No se encontró el área seleccionada';
+    }
+  }
+
+  onNivelSelect(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    const selectedId = target.value;
+    
+    console.log('🎯 ID de nivel seleccionado:', selectedId);
+    
+    if (!selectedId || !this.selectedArea) {
+      this.selectedNivel = null;
+      this.inscripciones = [];
+      return;
+    }
+
+    const nivel = this.selectedArea.niveles.find(n => n.id_nivel.toString() === selectedId);
+    
+    if (nivel) {
+      console.log('✅ Nivel encontrado:', nivel);
+      this.selectedNivel = nivel;
+      this.loadInscripciones();
+    } else {
+      console.error('❌ No se encontró el nivel con ID:', selectedId);
+      this.error = 'No se encontró el nivel seleccionado';
+    }
+  }
+
+  loadInscripciones(): void {
+    if (!this.selectedArea || !this.selectedNivel) {
+      console.warn('⚠️ No se pueden cargar inscripciones sin área y nivel seleccionados');
+      return;
+    }
+
+    this.loading = true;
+    this.error = null;
+    
+    console.log('🔄 Cargando inscripciones para área:', this.selectedArea.id_area, 'y nivel:', this.selectedNivel.id_nivel);
+    
+    this.inscripcionService.getInscripciones().subscribe({
+      next: (data: Inscripcione[]) => {
+        console.log('✅ Inscripciones cargadas:', data);
+        this.inscripciones = data.filter(inscripcion => 
+          inscripcion.areas.some(area => area.id === this.selectedArea?.id_area)
+        );
+        this.loading = false;
+      },
+      error: (error: Error) => {
+        console.error('❌ Error al cargar inscripciones:', error);
+        this.error = 'Error al cargar las inscripciones: ' + error.message;
+        this.loading = false;
+      }
+    });
+  }
+
+  // Helper methods for safe data access
+  getOlimpistaName(inscripcion: Inscripcione): string {
+    const olimpista = inscripcion.olimpistas?.[0];
+    if (!olimpista) return 'No disponible';
+    return `${olimpista.nombres || ''} ${olimpista.apellidos || ''}`.trim() || 'No disponible';
+  }
+
+  getOlimpistaColegio(inscripcion: Inscripcione): string {
+    return inscripcion.olimpistas?.[0]?.colegio || 'No disponible';
+  }
+
+  getTutorName(inscripcion: Inscripcione): string {
+    const tutor = inscripcion.tutors?.[0];
+    if (!tutor) return 'No disponible';
+    return `${tutor.nombres || ''} ${tutor.apellidos || ''}`.trim() || 'No disponible';
+  }
+
+  getEstadoClass(estado: string): string {
+    switch (estado) {
+      case 'Pagado':
+        return 'bg-green-100 text-green-800';
+      case 'Pendiente':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'Verificado':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  }
+}

@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Raleway, "Helvetica Neue", sans-serif; }
+
+@layer base {
+    h1 {
+        @apply font-semibold text-2xl
+    }
+
+    h2 {
+        @apply font-semibold
+    }
+
+    li {
+        list-style: none;
+    }
+
+    section {
+        @apply pt-[4rem] pb-8
+    }
+}
+
+@layer components {
+    .container {
+        @apply max-w-[90%] mx-auto
+    }
+
+    .btn{
+        @apply hover:scale-[1.02] transition-all active:scale-100 px-5 py-3 text-sm font-semibold rounded-md
+    }
+
+    .search-estudiante-input {
+        background: linear-gradient(66deg, #fecfb8 0%, #ff9898 100%);
+        position: relative;
+        max-height: 100px;
+        height: 100%;
+    }
+
+    .search-estudiante-input-text {
+      @apply bg-white shadow-lg p-4 absolute -bottom-8 m-auto left-0 right-0 rounded-lg max-w-[400px] w-full
+  }
+}
+
+
+@layer utilities {
+    .auth__layout {
+        @apply bg-gradient-to-br from-[#ffc4b9] via-red-400 to-orange-500 min-h-screen
+    }
+
+    .login__form {
+        @apply bg-white w-full max-w-xl mx-auto rounded-lg pt-6 pb-8 px-8 space-y-4 shadow-lg
+    }
+
+    .login__form input {
+        @apply bg-white outline-none rounded-md p-2 px-4 w-full block border-gray-200 border-2 text-sm
+    }
+
+    .nav__menu {
+        @apply flex justify-center items-center text-sm gap-4
+    }
+
+    .nav__link {
+        @apply font-semibold text-gray-500 cursor-pointer transition-all hover:text-red-500
+    }
+
+    .nav__link--active {
+        @apply text-red-500
+    }
+
+    .nav__container {
+        @apply container grid grid-cols-3 items-center justify-between
+    }
+
+    .product__list {
+        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4
+    }
+
+    .product__card {
+        @apply bg-white rounded-sm cursor-pointer hover:bg-slate-500
+    }
+
+    .card {
+        @apply w-full bg-red-300 overflow-hidden rounded-lg shadow-lg
+    }
+
+}
