@@ -178,13 +178,18 @@ export class BotonExelComponent {
   }
 
   submitTutorInfo(): void {
+
     if (!this.validateTutor()) {
       return;
     }
     // Crear datosTutores con la estructura adecuada
-    this.datosTutores = [
-      [this.tutor.nombre, this.tutor.apellido, this.tutor.ci, this.tutor.email, this.tutor.telefono]
-    ];
+    this.datosTutores.push([
+      this.tutor.nombre,
+      this.tutor.apellido,
+      this.tutor.ci,
+      this.tutor.email,
+      this.tutor.telefono
+    ]);
 
     this.confirmSubida = true;
     this.modalError = true;
@@ -414,7 +419,7 @@ export class BotonExelComponent {
         }
       }
     }
-    console.log("Lista de estudiantes", this.datosEstudiantes);
+    console.log("Lista de estudiantes", this.datosTutores);
     console.log("Lista de errores:", this.mensajeError);
 
   }
