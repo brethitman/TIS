@@ -1,57 +1,83 @@
-<div class="container mx-auto p-6 font-roboto">
-  <!-- Encabezado con identidad UMSS -->
-  <div class="flex items-center mb-6 border-b-2 border-[#1A237E] pb-4">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#1A237E] mr-3" fill="none" viewBox="0 0 24 24"
-      stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-    </svg>
-    <div>
-      <h1 class="text-3xl font-bold text-[#1A237E] font-roboto">Estudiantes Registrados</h1>
+<div class="container mx-auto p-4 md:p-6 font-roboto">
+  <!-- Encabezado mejorado -->
+  <div class="flex flex-col md:flex-row items-center justify-between mb-6 pb-4 border-b-2 border-[#1A237E]">
+    <div class="flex items-center mb-4 md:mb-0">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-[#1A237E] mr-3" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+      </svg>
+      <div>
+        <h1 class="text-2xl md:text-3xl font-bold text-[#1A237E]">Estudiantes Registrados</h1>
+      </div>
     </div>
   </div>
 
-  <!-- Tabla con colores institucionales -->
-  <div class="bg-white rounded-lg shadow-md overflow-hidden border border-[#E0E0E0]">
+  <!-- Tabla mejorada -->
+  <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 mb-6">
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-[#E0E0E0] font-roboto">
+      <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-[#1A237E]">
           <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider font-roboto">#</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider font-roboto">
-              Estudiante</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider font-roboto">Curso
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+              #
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider font-roboto">Área 1
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+              Estudiante
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider font-roboto">
-              Categoría 1</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider font-roboto">Área 2
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+              Curso
             </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider font-roboto">
-              Categoría 2</th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+              Área 1
+            </th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+              Categoría 1
+            </th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+              Área 2
+            </th>
+            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
+              Categoría 2
+            </th>
           </tr>
         </thead>
-        <tbody class="bg-white divide-y divide-[#E0E0E0]">
-          <!-- Iterar sobre las inscripciones -->
-          <tr *ngFor="let inscripcion of inscripciones ?? []">
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-              {{ inscripcion}} {{ inscripcion.estudiante.apellidos }}
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let inscripcion of inscripciones; let i = index" class="hover:bg-gray-50 transition-colors">
+            <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+              {{ i + 1 }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-              {{ inscripcion.curso?.nombre || 'N/A' }}
+            <td class="px-4 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">
+                {{ inscripcion.estudiante?.nombre }} {{ inscripcion.estudiante?.apellido }}
+              </div>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+            <td class="px-4 py-4 whitespace-nowrap">
+              <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                {{ inscripcion.curso?.nameCurso || 'N/A' }}
+              </span>
+            </td>
+            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
               {{ inscripcion.area1 || 'N/A' }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-              {{ inscripcion.categoria1 || 'N/A' }}
+            <td class="px-4 py-4 whitespace-nowrap">
+              <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                {{ inscripcion.categoria1 || 'N/A' }}
+              </span>
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-700">
               {{ inscripcion.area2 || 'N/A' }}
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-              {{ inscripcion.categoria2 || 'N/A' }}
+            <td class="px-4 py-4 whitespace-nowrap">
+              <span *ngIf="inscripcion.categoria2" class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
+                {{ inscripcion.categoria2 }}
+              </span>
+              <span *ngIf="!inscripcion.categoria2" class="text-sm text-gray-500">N/A</span>
+            </td>
+          </tr>
+          <tr *ngIf="!inscripciones?.length">
+            <td colspan="7" class="px-4 py-6 text-center text-gray-500">
+              No hay estudiantes inscritos todavía
             </td>
           </tr>
         </tbody>
