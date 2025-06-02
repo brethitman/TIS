@@ -18,6 +18,8 @@ export class BoletaListaComponent implements OnInit {
   @Input() olimpista: any[][] = [];
   @Input() tutor: any[][] = [];
   @Input() areas: any[][] = [];
+   @Input() inscripciones: any[][] = [];
+  
   boletaTutor: any[] = [];
 
 
@@ -51,11 +53,13 @@ export class BoletaListaComponent implements OnInit {
     this.areas = JSON.parse(localStorage.getItem('areasInscripcion') || '[]');
     this.olimpista = JSON.parse(localStorage.getItem('olimpistas') || '[]');
     this.tutor = JSON.parse(localStorage.getItem('tutores') || '[]');
+    this.inscripciones = JSON.parse(localStorage.getItem('inscripciones') || '[]');
     this.boletaTutor = this.tutor[0];//OBTIENE SOLO LA INFOEMCION DEL TUTOR RESPONSABLE
     console.log('Áreas recibidas:', this.areas);
     console.log('Olimpistas recibidos:', this.olimpista);
     console.log('Tutores recibidos:', this.tutor);
     console.log('tutor boleta', this.boletaTutor);
+    console.log('inscripciones', this.inscripciones);
   }
 
   /* Métodos corregidos para contar y listar áreas únicas
@@ -204,22 +208,19 @@ getUniqueSchools(): string[] {
   }
 
   descargarBoleta() {
-    const elemento = document.getElementById('boletaPago'); // Capturar el div de la boleta
-    if (!elemento) {
+    const element = document.getElementById("boletaPago");
+    if (!element) {
       console.error('No se encontró el elemento boletaPago');
       return;
     }
+    element.style.color = "black"; // Evita errores de colores avanzados
+    element.style.backgroundColor = "white"; // Asegura fondo blanco
 
-    try {
-      html2canvas(elemento).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        pdf.addImage(imgData, 'PNG', 0, 0, 210, (canvas.height * 210) / canvas.width);
-        pdf.save('boleta_inscripcion.pdf');
-      });
-    } catch (error) {
-      console.error('Error al generar el PDF:', error);
-    }
+    html2canvas(element, { useCORS: true, ignoreElements: (el) => el.tagName === "STYLE" }).then(canvas => {
+      const pdf = new jsPDF();
+      pdf.addImage(canvas.toDataURL("image/png"), "PNG", 10, 10, 190, (canvas.height * 190) / canvas.width);
+      pdf.save("BoletaInscripcion.pdf");
+    });
   }
 
 
