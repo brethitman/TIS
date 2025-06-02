@@ -4,8 +4,10 @@ import { Component, OnInit } from '@angular/core';
 import { Input } from '@angular/core';
 import { VisualizacionService } from '../../service/Visualizacion.service';
 import { BoletaPagoResponse } from '../../interfaces/inscripcion.types';
+import { jsPDF } from 'jspdf';
+import * as htmlToImage from 'html-to-image';
 import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+
 
 @Component({
   selector: 'app-boleta-lista',
@@ -18,31 +20,9 @@ export class BoletaListaComponent implements OnInit {
   @Input() olimpista: any[][] = [];
   @Input() tutor: any[][] = [];
   @Input() areas: any[][] = [];
-   @Input() inscripciones: any[][] = [];
+   @Input() inscripciones: any[] = [];
   
   boletaTutor: any[] = [];
-
-
-  students = [
-    {
-      id: 1,
-      name: 'Colacanuto Cornamenta',
-      course: '6to de Secundaria',
-      area1: 'Quimica',
-      category1: 'Basico',
-      area2: '',
-      category2: ''
-    },
-    {
-      id: 2,
-      name: 'Barbara Sprouse',
-      course: '5to de Secundaria',
-      area1: 'Fisica',
-      category1: 'Avanzado',
-      area2: 'Quimica',
-      category2: 'Intermedio'
-    }
-  ];
 
   boletaPago: BoletaPagoResponse | null = null;
   mensaje: string = "";
@@ -59,7 +39,7 @@ export class BoletaListaComponent implements OnInit {
     console.log('Olimpistas recibidos:', this.olimpista);
     console.log('Tutores recibidos:', this.tutor);
     console.log('tutor boleta', this.boletaTutor);
-    console.log('inscripciones', this.inscripciones);
+    console.log("Inscripciones en localStorage:", localStorage.getItem("inscripciones"));
   }
 
   /* Métodos corregidos para contar y listar áreas únicas
@@ -223,5 +203,33 @@ getUniqueSchools(): string[] {
     });
   }
 
+
+async generatePdfWithHtmlToImage() {
+  try {
+    const element = document.getElementById('boleta-container');
+    if (!element) return;
+
+    const dataUrl = await htmlToImage.toPng(element, {
+      quality: 1,
+      pixelRatio: 2
+    });
+
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm'
+    });
+
+    const imgProps = pdf.getImageProperties(dataUrl);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`boleta_${this.boletaPago?.numero_boleta || '0000'}.pdf`);
+    
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error al generar PDF');
+  }
+}
 
 }
