@@ -81,7 +81,6 @@ export class BotonExelComponent {
         );
       }
       this.datosExcel = datos;
-      this.procesarEstudiantes(datos);
 
       this.procesarDatosExcel(this.datosExcel, file.name);
     };
@@ -124,39 +123,9 @@ export class BotonExelComponent {
     this.showModal2 = false;
   }
 
-
-  procesarEstudiantes(datos: any[][]): void {
-    if (datos.length < 2) {
-      this.estudiantes = [];
-      return;
-    }
-    const encabezados = datos[0].map(h => h.toString().trim());
-    const filasDatos = datos.slice(1);
-
-    console.log('Encabezados encontrados:', encabezados);
-
-    const nombreIndex = encabezados.findIndex(h =>
-      h.toLowerCase().includes('nombre') || h.toLowerCase().includes('nombres')
-    );
-    const apellidoIndex = encabezados.findIndex(h =>
-      h.toLowerCase().includes('apellido') || h.toLowerCase().includes('apellidos')
-    );
-    const ciIndex = encabezados.findIndex(h =>
-      h.toLowerCase().includes('ci') || h.toLowerCase().includes('cédula') || h.toLowerCase().includes('cedula')
-    );
-
-    this.estudiantes = filasDatos.map(fila => ({
-      nombre: nombreIndex >= 0 ? fila[nombreIndex] : 'Nombre no disponible',
-      apellido: apellidoIndex >= 0 ? fila[apellidoIndex] : '',
-      ci: ciIndex >= 0 ? fila[ciIndex] : '',
-    })).filter(est => est.nombre && est.nombre !== 'Nombre no disponible');
-
-    console.log('Estudiantes procesados:', this.estudiantes); 
-  }
-
   validateTutor(): boolean {
     let isValid = true;
-    this.errors = { nombre: '', apellido: '', ci: '',email:'',telefono: ''};
+    this.errors = { nombre: '', apellido: '', ci: '', email: '', telefono: '' };
 
     if (!this.tutor.nombre || this.tutor.nombre.trim() === '') {
       this.errors.nombre = 'El nombre es requerido';
@@ -184,7 +153,7 @@ export class BotonExelComponent {
       this.errors.ci = 'El CI debe tener entre 6 y 10 dígitos';
       isValid = false;
     }
-     // Validación Email 
+    // Validación Email 
     if (!this.tutor.email || this.tutor.email.trim() === '') {
       this.errors.email = 'El correo electrónico es requerido';
       isValid = false;
@@ -204,7 +173,7 @@ export class BotonExelComponent {
       this.errors.telefono = 'El teléfono debe tener entre 8 y 12 dígitos';
       isValid = false;
     }
-  
+
     return isValid;
   }
 
@@ -212,14 +181,14 @@ export class BotonExelComponent {
     if (!this.validateTutor()) {
       return;
     }
-   // Crear datosTutores con la estructura adecuada
-  this.datosTutores = [
-    [this.tutor.nombre, this.tutor.apellido, this.tutor.ci, this.tutor.email, this.tutor.telefono]
-  ];
+    // Crear datosTutores con la estructura adecuada
+    this.datosTutores = [
+      [this.tutor.nombre, this.tutor.apellido, this.tutor.ci, this.tutor.email, this.tutor.telefono]
+    ];
 
-  this.confirmSubida = true;
-  this.modalError = true;
-  this.showModal1 = false;
+    this.confirmSubida = true;
+    this.modalError = true;
+    this.showModal1 = false;
 
    /* this.confirmSubida = true;
     this.modalError = true;
@@ -267,8 +236,8 @@ export class BotonExelComponent {
     this.resetUploadData();
   }
   private clearTutorData(): void {
-    this.tutor = { nombre: '', apellido: '', ci: '',email:'',telefono: ''};
-    this.errors = { nombre: '', apellido: '', ci: '',email:'',telefono: '' };
+    this.tutor = { nombre: '', apellido: '', ci: '', email: '', telefono: '' };
+    this.errors = { nombre: '', apellido: '', ci: '', email: '', telefono: '' };
   }
 
   private resetUploadData(): void {
@@ -335,6 +304,7 @@ export class BotonExelComponent {
   validacionesEst(datosEst: any[][]) {
     const listaEstudiante = datosEst.slice(1);
     this.datosEstudiantes = listaEstudiante;
+    this.procesarEstudiantes(this.datosEstudiantes);
     for (let index = 0; index < listaEstudiante.length; index++) {
       const fila = listaEstudiante[index];
 
@@ -444,9 +414,21 @@ export class BotonExelComponent {
         }
       }
     }
+    console.log("Lista de estudiantes", this.datosEstudiantes);
     console.log("Lista de errores:", this.mensajeError);
 
   }
 
+
+  procesarEstudiantes(datos: any[][]): void {
+    if (datos.length < 2) {
+      this.estudiantes = [];
+      return;
+    }
+    const filasDatos = datos;
+    this.estudiantes = filasDatos.map(fila => `${fila[0]} ${fila[1]}`.trim());
+
+    console.log('Estudiantes procesados:', this.estudiantes);
+  }
 
 }

@@ -13,7 +13,7 @@ export class GetOlimpiadaService {
   private readonly apiUrl = environment.apiUrl;
 
   findAll(): Observable<Olimpiada[]> {
-    return this.http.get<{ olimpiadas: Olimpiada[] }>(`${this.apiUrl}/olimpiada`)
+    return this.http.get<{ olimpiadas: Olimpiada[] }>(`${this.apiUrl}/olimpiadas`)
       .pipe(
         map(response => response.olimpiadas)
       );
@@ -37,7 +37,7 @@ export class GetOlimpiadaService {
     }[];
   }): Observable<{ message: string, data: Olimpiada }> {
     return this.http.post<{ message: string, data: Olimpiada }>(
-      `${this.apiUrl}/olimpiada`,
+      `${this.apiUrl}/olimpiadas`,
       olimpiadaData
     );
   }

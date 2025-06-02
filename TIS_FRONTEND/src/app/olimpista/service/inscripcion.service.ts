@@ -60,21 +60,16 @@ export class InscripcionService {
       );
   }
 
+  getInscripciones(): Observable<Inscripcione[]> {
+    return this.http.get<{ inscripciones: Inscripcione[] }>(`${this.apiUrl}/inscripcion`)
+      .pipe(
+        map(response => response.inscripciones),
+        catchError(this.handleError)
+      );
+  }
+
   private handleError(error: HttpErrorResponse) {
-    console.error('Error en la petición:', error);
-
-    let errorMessage = 'Error desconocido';
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Error del cliente: ${error.error.message}`;
-    } else {
-      errorMessage = error.error?.message || error.message;
-
-      if (error.status === 422) {
-        const errors = error.error?.errors;
-        errorMessage += ': ' + Object.values(errors).flat().join(', ');
-      }
-    }
-
-    return throwError(() => new Error(errorMessage));
+    console.error('Error en el servicio:', error);
+    return throwError(() => new Error('Error en el servicio de inscripciones'));
   }
 }
