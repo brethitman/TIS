@@ -1,23 +1,38 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-<!-- Encabezado de administrador -->
-<div class="bg-[#E3102C] py-5 mb-8 w-screen shadow-md">
-  <h1 class="text-white font-bold text-2xl flex items-center px-4">
-    ADMINISTRADOR
-  </h1>
-</div>
-
 <div class="space-y-8">
-  <!-- Componente para crear un área nueva -->
-  <app-crear-area 
-    *ngIf="idOlimpiada"
-    [idOlimpiada]="idOlimpiada"
-    class="block mb-4"
-  ></app-crear-area>
+  <!-- Sección creación de áreas -->
+  <div class="p-4 bg-gradient-to-r from-red-500 via-pink-500 to-purple-600 rounded-lg">
+    <h2 class="text-4xl font-bold text-white text-center mb-3">{{ olimpiadaSeleccionada?.nombre_olimpiada || 'Olimpiada' }}</h2>
+  </div>
 
-  <!-- Encabezado de áreas existentes con degradado -->
-  <div class="w-full py-3 px-4 rounded-md text-white font-bold text-xl bg-gradient-to-r from-[#0F0981] to-black shadow-md">
-    ÁREAS DE LA OLIMPIADA
+  <!-- Botón para mostrar/ocultar formulario de creación de área -->
+  <div class="flex justify-end px-6">
+    <button 
+      (click)="toggleCrearArea()" 
+      class="px-4 py-2 bg-[#0F0981] text-white hover:bg-[#0a005f] rounded-md flex items-center gap-2 font-bold"
+    >
+      <i class="fas fa-plus"></i>
+      {{ mostrarCrearArea ? 'Cancelar' : 'Agregar Área Nueva' }}
+    </button>
+  </div>
+
+  <!-- Componente de creación de área (visible/oculto según estado) -->
+  <div *ngIf="mostrarCrearArea" class="transition-all duration-300 ease-in-out">
+    <app-crear-area 
+      *ngIf="idOlimpiada"
+      [idOlimpiada]="idOlimpiada"
+      class="block mb-4"
+      (areaCreada)="onAreaCreada()"
+      (cancelar)="toggleCrearArea()"
+    ></app-crear-area>
+  </div>
+
+  <!-- Listado de áreas existentes -->
+  <div class="bg-gradient-to-l from-black to-[#0e087f] py-2">
+    <div class="container mx-auto px-4">
+      <h1 class="text-2xl font-bold text-white">ÁREAS DE LA OLIMPIADA</h1>
+    </div>
   </div>
     
   <div class="p-6 container mx-auto">
@@ -58,6 +73,7 @@
           {{ area.nombre_area }}
         </button>
       </div>
+      
 
       <!-- Detalles del área -->
       <div class="col-span-4" *ngIf="areaSeleccionada">
@@ -83,7 +99,7 @@
           </div>
 
           <!-- Formulario de nuevo nivel -->
-          <div *ngIf="areaActivaId === areaSeleccionada?.id_area" class="bg-gray-50 p-4 rounded-lg mb-6">
+          <div *ngIf="areaActivaId === areaSeleccionada.id_area" class="bg-gray-50 p-4 rounded-lg mb-6">
             <!-- Errores y advertencias -->
             <div *ngIf="errores.length > 0" class="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">
               <ul class="list-disc pl-4">
@@ -115,7 +131,7 @@
                 <button
                   type="button"
                   (click)="toggleSelectorGrados()"
-                  class="w-full px-3 py-2 border rounded-md bg-white text-left flex justify-between items-center"
+                  class="w-full px-3 py-2 border rounded-md bg-white text-left flex justify-between items-center hover:bg-gray-50 focus:ring-2 focus:ring-blue-500"
                 >
                   <span *ngIf="currentNewLevel.gradoIniCat && currentNewLevel.gradoFinCat">
                     {{ currentNewLevel.gradoIniCat }}
@@ -123,13 +139,13 @@
                       hasta {{ currentNewLevel.gradoFinCat }}
                     </span>
                   </span>
-                  <span *ngIf="!currentNewLevel.gradoIniCat">Seleccionar grado(s)</span>
-                  <i class="fas fa-chevron-down"></i>
+                  <span *ngIf="!currentNewLevel.gradoIniCat" class="text-gray-500">Seleccionar grado(s)</span>
+                  <i class="fas fa-chevron-down transition-transform" [ngClass]="{'rotate-180': mostrarSelectorGrados}"></i>
                 </button>
 
                 <!-- Selector de grados con checkboxes (desplegable) -->
-                <div *ngIf="mostrarSelectorGrados" class="mt-1 p-3 border rounded-md bg-white shadow-lg">
-                  <div class="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-48 overflow-y-auto">
+                <div *ngIf="mostrarSelectorGrados" class="mt-1 p-3 border rounded-md bg-white shadow-lg max-h-64 overflow-y-auto">
+                  <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
                     <div *ngFor="let grado of grados; let i = index" class="flex items-center">
                       <input
                         type="checkbox"
@@ -138,7 +154,7 @@
                         (change)="onNivelCheckboxChange(i)"
                         class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                       >
-                      <label [for]="'nivel-grado-' + i" class="ml-2 block text-sm text-gray-700">
+                      <label [for]="'nivel-grado-' + i" class="ml-2 block text-sm text-gray-700 cursor-pointer">
                         {{ grado }}
                       </label>
                     </div>
@@ -171,6 +187,7 @@
                   name="costo"
                   step="0.01"
                   required
+                  min="0"
                   class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
                 >
               </div>
@@ -187,20 +204,31 @@
                 </select>
               </div>
 
+              <div class="md:col-span-2 space-y-2">
+                <label class="block text-sm font-medium text-gray-700">Descripción</label>
+                <textarea
+                  [(ngModel)]="currentNewLevel.descripcion"
+                  name="descripcion"
+                  class="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 h-24 resize-none"
+                  placeholder="Descripción opcional del nivel..."
+                ></textarea>
+              </div>
+
               <!-- Botones -->
               <div class="md:col-span-2 flex justify-end gap-2">
                 <button
                   type="button"
                   (click)="toggleFormulario(areaSeleccionada.id_area)"
-                  class="px-4 py-2 bg-gray-300 rounded-md hover:bg-gray-400 transition-colors"
+                  class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  [disabled]="enviando || formErrors.length > 0"
-                  class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  [disabled]="enviando"
+                  class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
                 >
+                  <i *ngIf="enviando" class="fas fa-spinner fa-spin mr-2"></i>
                   {{ enviando ? 'Creando...' : 'Crear Nivel' }}
                 </button>
               </div>
@@ -208,63 +236,114 @@
           </div>
 
           <!-- Lista de niveles existentes -->
-          <div *ngIf="!areaSeleccionada?.nivel_categorias?.length" class="text-gray-400 italic py-2">
-            No se han definido niveles para esta área
+          <!-- Mensaje cuando no hay niveles definidos -->
+          <div *ngIf="!areaSeleccionada.nivel_categorias?.length" class="flex items-center justify-center p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="italic font-medium">No se han definido niveles para esta área</span>
           </div>
 
-          <div *ngIf="areaSeleccionada?.nivel_categorias?.length" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Grid de niveles -->
+          <div *ngIf="areaSeleccionada.nivel_categorias?.length" class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div
-              *ngFor="let nivel of areaSeleccionada?.nivel_categorias"
-              class="rounded-2xl overflow-hidden shadow border border-gray-300 bg-[#f6f6fc]"
+              *ngFor="let nivel of areaSeleccionada.nivel_categorias"
+              class="rounded-xl overflow-hidden shadow-lg border border-gray-200 bg-white hover:shadow-xl transition-shadow duration-300"
             >
-              <div class="bg-[#4b4eaa] h-10 flex items-center justify-center relative">
+              <!-- Cabecera -->
+              <div class="bg-indigo-700 h-12 flex items-center justify-center relative">
                 <div
-                  class="absolute top-1/2 -translate-y-1/2 bg-[#e6e6f6] text-[#2b2e83] font-bold text-center rounded-full px-6 py-1 border border-[#4b4eaa]"
+                  class="absolute top-1/2 -translate-y-1/2 bg-white text-indigo-800 font-bold text-center rounded-full px-6 py-1.5 border-2 border-indigo-700 shadow-md"
                 >
                   {{ nivel.nombre_nivel }}
                 </div>
               </div>
 
-              <div class="p-4 pt-8 text-sm text-black space-y-2">
-                <p>
-                  <span class="font-semibold">Grados:</span> 
-                  {{ nivel.gradoIniCat }} 
-                  <span *ngIf="nivel.gradoIniCat !== nivel.gradoFinCat">
-                    hasta {{ nivel.gradoFinCat }}
+              <!-- Contenido -->
+              <div class="p-6 pt-10 text-gray-700 space-y-3">
+                <p class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  <span class="font-medium">Grados:</span> 
+                  <span class="ml-1">
+                    {{ nivel.gradoIniCat }}
+                    <span *ngIf="nivel.gradoIniCat !== nivel.gradoFinCat">
+                      hasta {{ nivel.gradoFinCat }}
+                    </span>
                   </span>
                 </p>
-                <p><span class="font-semibold">Costo:</span> {{ nivel.costo }} USD</p>
-                <p><span class="font-semibold">Fecha:</span> {{ nivel.fecha_examen | date:'d/MM/yyyy' }}</p>
-                <p>
-                  <span class="font-semibold">Estado:</span>
+                
+                <p class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span class="font-medium">Costo:</span> 
+                  <span class="ml-1">{{ nivel.costo }} USD</span>
+                </p>
+                
+                <p class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span class="font-medium">Fecha:</span> 
+                  <span class="ml-1">{{ nivel.fecha_examen | date:'d/MM/yyyy' }}</span>
+                </p>
+                
+                <p *ngIf="nivel.descripcion" class="flex items-start">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 mt-0.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span class="font-medium">Descripción:</span> 
+                  <span class="ml-1">{{ nivel.descripcion }}</span>
+                </p>
+                
+                <p class="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span class="font-medium">Estado:</span>
                   <span
                     [ngClass]="{
-                      'text-green-600': nivel.habilitacion === true,
-                      'text-red-600': nivel.habilitacion === false
+                      'text-green-600': isHabilitado(nivel.habilitacion),
+                      'text-red-600': isDeshabilitado(nivel.habilitacion)
                     }"
-                    class="font-medium"
+                    class="ml-1 font-semibold"
                   >
                     {{ getEstadoTexto(nivel.habilitacion) }}
                   </span>
                 </p>
               </div>
 
-              <div class="border-t border-gray-300"></div>
+              <!-- Separador -->
+              <div class="border-t border-gray-200"></div>
 
+              <!-- Botón -->
               <div class="p-4 flex justify-center bg-[#f6f6fc]">
                 <button 
                   (click)="toggleHabilitacion(nivel)"
                   [class]="nivel.habilitacion ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'"
-                  class="text-white font-bold py-1.5 px-6 rounded transition-colors"
+                  class="text-white font-bold py-1.5 px-6 rounded transition-colors flex items-center"
                 >
+                  <i 
+                    [class]="nivel.habilitacion ? 'fas fa-ban mr-2' : 'fas fa-check mr-2'"
+                  ></i>
                   {{ nivel.habilitacion ? 'DESHABILITAR' : 'HABILITAR' }}
                 </button>
               </div>
             </div>
           </div>
-          
         </div>
       </div>
+    </div>
+
+    <!-- Mensaje cuando no hay áreas -->
+    <div *ngIf="!cargando && !errorCarga && areas.length === 0" class="text-center text-gray-500 py-8">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">No hay áreas disponibles</h3>
+      <p class="text-gray-500">Comience creando un área nueva para esta olimpiada.</p>
     </div>
   </div>
 </div>
@@ -280,7 +359,7 @@
     </div>
     <p class="text-lg text-gray-700 mb-6">{{ modalMensaje }}</p>
     <button (click)="ocultarModal()"
-      class="px-4 py-2 bg-[#0b0069] text-white rounded-md hover:bg-[#0a005f] transition">
+      class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
       Cerrar
     </button>
   </div>
@@ -302,5 +381,19 @@
   .required:after {
     content: ' *';
     color: #e53e3e;
+  }
+
+  /* Transición suave para el dropdown */
+  .rotate-180 {
+    transform: rotate(180deg);
+  }
+
+  /* Mejoras visuales adicionales */
+  .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .hover:shadow-xl:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
 </style>

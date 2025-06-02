@@ -3,38 +3,38 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Area, Nivele } from '../interfaces/area.interface';
 import { GetAreaRespose } from '../interfaces/get-area-response';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AreaService {
-  private apiUrl = 'http://localhost:8000/api/area';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
   // Obtener áreas paginadas
   getAreas(): Observable<GetAreaRespose> {
-    return this.http.get<GetAreaRespose>(this.apiUrl);
+    return this.http.get<GetAreaRespose>(`${this.apiUrl}/area`);
   }
 
   // Obtener una sola área por ID
   getAreaById(id: number): Observable<Area> {
-    return this.http.get<Area>(`${this.apiUrl}/${id}`);
+    return this.http.get<Area>(`${this.apiUrl}/area/${id}`);
   }
 
   // Crear nueva área
   createArea(area: Omit<Area, 'id'|'createdAt'|'updatedAt'|'olimpiada'|'niveles'>): Observable<Area> {
-    return this.http.post<Area>(this.apiUrl, area);
+    return this.http.post<Area>(`${this.apiUrl}/area`, area);
   }
 
   // Actualizar área existente
   updateArea(areaId: number, area: Partial<Area>): Observable<Area> {
-    return this.http.put<Area>(`${this.apiUrl}/${areaId}`, area);
+    return this.http.put<Area>(`${this.apiUrl}/area/${areaId}`, area);
   }
 
   // Agregar nivel a un área
   addNivelToArea(areaId: number, nivel: Omit<Nivele, 'id_nivel'|'id_area'|'created_at'|'updated_at'>): Observable<Nivele> {
-    return this.http.post<Nivele>(`${this.apiUrl}/${areaId}/niveles`, nivel);
+    return this.http.post<Nivele>(`${this.apiUrl}/area/${areaId}/niveles`, nivel);
   }
-
 }

@@ -98,11 +98,11 @@ Route::post('/olimpista', [OlimpistaController::class, 'store']);
 //olimpiada
 // olimpiada ENDPOINTS --------------------------- GET POST da bien
 //tiene interface
-Route::get('/olimpiada', [OlimpiadaController::class, 'index']);
-Route::get('/olimpiada/{id}', [OlimpiadaController::class, 'show']);
-Route::post('/olimpiada', [OlimpiadaController::class, 'store']);
-Route::delete('/olimpiada/{id}', [OlimpiadaController::class, 'destroy']);
-Route::put('/olimpiada/{id}', [OlimpiadaController::class, 'update']);
+Route::get('/olimpiadas', [OlimpiadaController::class, 'index']);
+Route::get('/olimpiadas/{id}', [OlimpiadaController::class, 'show']);
+Route::post('/olimpiadas', [OlimpiadaController::class, 'store']);
+Route::delete('/olimpiadas/{id}', [OlimpiadaController::class, 'destroy']);
+Route::put('/olimpiadas/{id}', [OlimpiadaController::class, 'update']);
 
 /// curso
 Route::get('/curso', [CursoController::class, 'index']);

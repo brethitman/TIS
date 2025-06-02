@@ -92,6 +92,7 @@ export class AreaAlumnoComponent implements OnInit {
     });
 
     this.mostrarFinalizar = this.estudiantesDisponibles.length === 0;
+    console.log("Tutor: ", this.tutores)
   }
   private cargarCursos(): void {
     this.cursoService.obtenerCursos()
