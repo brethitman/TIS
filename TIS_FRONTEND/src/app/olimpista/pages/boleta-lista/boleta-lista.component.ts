@@ -12,15 +12,16 @@ import { VisualizacionService } from '../../service/Visualizacion.service';
   templateUrl: './boleta-lista.component.html'
 })
 export class BoletaListaComponent implements OnInit {
+  @Input() olimpista: any[] = [];
+  @Input() tutor: any[] = [];
+  @Input() areas: any[] = [];
+  @Input() inscripciones: any[] = [];
 
-  inscripciones: any[] = [];
   areasInscripcion: any[] = [];
   olimpistas: any[] = [];
   tutores: any[] = [];
 
-  @Input() olimpista: any[][] = [];
-  @Input() tutor: any[][] = [];
-  @Input() areas: any[][] = [];
+  
 
   constructor(private service: VisualizacionService) { }
 
@@ -28,38 +29,14 @@ export class BoletaListaComponent implements OnInit {
     this.areas = JSON.parse(localStorage.getItem('areasInscripcion') || '[]');
     this.olimpista = JSON.parse(localStorage.getItem('olimpistas') || '[]');
     this.tutor = JSON.parse(localStorage.getItem('tutores') || '[]');
+    this.inscripciones = JSON.parse(localStorage.getItem('inscripciones') || '[]');
 
     console.log('Áreas recibidas:', this.areas);
     console.log('Olimpistas recibidos:', this.olimpista);
     console.log('Tutores recibidos:', this.tutor);
-
-    this.inscripciones = this.olimpistas.map((olimpista, index) => {
-      const areas = this.areasInscripcion[index] || {};
-      return {
-        id: index + 1,
-        name: `${olimpista[0]} ${olimpista[1]}`, // nombres + apellidos
-        course: olimpista[6], // colegio (ajusta según tu estructura real)
-        area1: this.getAreaName(areas[0]?.area_id),
-        category1: this.getCategoryName(areas[0]?.nivelesCategoria?.[0]),
-        area2: areas[1] ? this.getAreaName(areas[1]?.area_id) : '',
-        category2: areas[1] ? this.getCategoryName(areas[1]?.nivelesCategoria?.[0]) : ''
-      };
-    });
-
     console.log('Inscripciones procesadas:', this.inscripciones);
   }
 
-  // Métodos auxiliares para obtener nombres de áreas y categorías
-  private getAreaName(areaId: number): string {
-    // Implementa lógica para mapear ID de área a nombre
-    // Esto depende de cómo tengas almacenadas las áreas
-    return `Área ${areaId}`; // Ejemplo básico
-  }
-
-  private getCategoryName(categoryId: number): string {
-    // Implementa lógica para mapear ID de categoría a nombre
-    return `Categoría ${categoryId}`; // Ejemplo básico
-  }
 
   inscribir() {
     const inscripcionData = {
