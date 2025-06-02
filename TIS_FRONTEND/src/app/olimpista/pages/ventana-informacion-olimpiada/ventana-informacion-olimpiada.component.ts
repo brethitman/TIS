@@ -10,7 +10,6 @@ import { IDOlimpiadabyArea, IDNivelCategoria, OlimpiadaResponse } from '../../in
 import { CategoriasHomeComponent } from '../../components/categorias-home/categorias-home.component';
 import { CategoriaVisualizacionService } from '../../service/categoriaVisualizacion.service'; 
 
-
 @Component({
   selector: 'app-ventana-informacion-olimpiada',
   standalone: true,
@@ -70,12 +69,22 @@ export class VentanaInformacionOlimpiadaComponent implements OnInit {
       .subscribe({
         next: (olimpiada) => {
           console.log('Detalles de la olimpiada cargados:', olimpiada);
-          this.olimpiada = olimpiada;
-          this.olimpiadaId = olimpiada.id_olimpiada;
+          if (olimpiada) {
+            this.olimpiada = olimpiada;
+            this.olimpiadaId = olimpiada.id_olimpiada;
+            this.errorMessage = null;
+          } else {
+            this.errorMessage = 'No se encontraron los detalles de la olimpiada';
+          }
         },
         error: (error) => {
           console.error('Error cargando detalles de la olimpiada:', error);
           this.errorMessage = 'Error al cargar los detalles de la olimpiada';
+          // Si tenemos datos en el estado, los usamos como respaldo
+          if (this.olimpiada) {
+            console.log('Usando datos de respaldo del estado');
+            this.errorMessage = null;
+          }
         }
       });
   }
@@ -87,6 +96,7 @@ export class VentanaInformacionOlimpiadaComponent implements OnInit {
         next: (areas) => {
           console.log('Áreas cargadas:', areas);
           this.areasDisponibles = areas;
+          this.errorMessage = null;
         },
         error: (error) => {
           console.error('Error cargando áreas:', error);

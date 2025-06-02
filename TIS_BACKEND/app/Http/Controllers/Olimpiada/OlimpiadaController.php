@@ -22,7 +22,6 @@ class OlimpiadaController extends Controller
     }
 
 
-
     public function store(Request $request)
     {
         // 1. Validación básica

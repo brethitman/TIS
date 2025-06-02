@@ -20,7 +20,7 @@ export class CrearAreaComponent implements OnInit {
     id_olimpiada: 0,
     nombre_area: '',
     descripcion: '',
-    permite_multiples_areas:true,
+    permite_multiples_areas: true,
     cursos: []
   };
   successMessage: string | null = null;

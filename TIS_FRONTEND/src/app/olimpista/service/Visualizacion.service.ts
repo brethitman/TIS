@@ -13,7 +13,6 @@ export class VisualizacionService {
     getOlimpiadaById(id: number): Observable<VisualizacionPageResponse> {
         console.log(`🔍 Solicitando olimpiada con ID: ${id}`);
         console.log(`📡 URL completa: ${this.apiUrl}/olimpiadas/${id}`);
-
         return this.http.get<VisualizacionPageResponse>(`${this.apiUrl}/olimpiadas/${id}`)
             .pipe(
                 tap(response => {
