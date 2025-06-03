@@ -207,60 +207,77 @@
             </form>
           </div>
 
-          <!-- Lista de niveles existentes -->
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
           <div *ngIf="!areaSeleccionada?.nivel_categorias?.length" class="text-gray-400 italic py-2">
-            No se han definido niveles para esta área
+              No se han definido niveles para esta área
           </div>
 
-          <div *ngIf="areaSeleccionada?.nivel_categorias?.length" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div
-              *ngFor="let nivel of areaSeleccionada?.nivel_categorias"
-              class="rounded-2xl overflow-hidden shadow border border-gray-300 bg-[#f6f6fc]"
-            >
-              <div class="bg-[#4b4eaa] h-10 flex items-center justify-center relative">
-                <div
-                  class="absolute top-1/2 -translate-y-1/2 bg-[#e6e6f6] text-[#2b2e83] font-bold text-center rounded-full px-6 py-1 border border-[#4b4eaa]"
-                >
-                  {{ nivel.nombre_nivel }}
-                </div>
-              </div>
+          <div *ngIf="areaSeleccionada?.nivel_categorias?.length" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div *ngFor="let nivel of areaSeleccionada?.nivel_categorias"
+                  class="relative rounded-xl bg-white p-6 shadow-xl border-t-4 border-purple-600 hover:shadow-3xl hover:border-purple-800 hover:scale-105 transition-transform duration-300 ease-in-out">
+                  <div
+                      class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-purple-600 to-red-600 text-white shadow-lg">
+                      <i class="fas fa-book text-xl"></i> 
+                  </div>
 
-              <div class="p-4 pt-8 text-sm text-black space-y-2">
-                <p>
-                  <span class="font-semibold">Grados:</span> 
-                  {{ nivel.gradoIniCat }} 
-                  <span *ngIf="nivel.gradoIniCat !== nivel.gradoFinCat">
-                    hasta {{ nivel.gradoFinCat }}
-                  </span>
-                </p>
-                <p><span class="font-semibold">Costo:</span> {{ nivel.costo }} USD</p>
-                <p><span class="font-semibold">Fecha:</span> {{ nivel.fecha_examen | date:'d/MM/yyyy' }}</p>
-                <p>
-                  <span class="font-semibold">Estado:</span>
-                  <span
-                    [ngClass]="{
-                      'text-green-600': nivel.habilitacion === true,
-                      'text-red-600': nivel.habilitacion === false
-                    }"
-                    class="font-medium"
-                  >
-                    {{ getEstadoTexto(nivel.habilitacion) }}
-                  </span>
-                </p>
-              </div>
+                  <h2 class="text-center text-xl font-bold mb-4 mt-4 text-gray-800">
+                      {{ nivel.nombre_nivel }}
+                  </h2>
 
-              <div class="border-t border-gray-300"></div>
+                  <div class="space-y-3 text-gray-700">
+                      <div class="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600 mr-2" fill="none"
+                              viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M3 10v11h18V10M3 10a2 2 0 01-2-2V4a2 2 0 012-2h18a2 2 0 012 2v4a2 2 0 01-2 2H3zm12 5h-2.5a.5.5 0 01-.5-.5v-1a.5.5 0 01.5-.5H15a.5.5 0 01.5.5v1a.5.5 0 01-.5.5z" />
+                          </svg>
+                          <span>
+                              <strong>Grados:</strong> {{ nivel.gradoIniCat }}
+                              <span *ngIf="nivel.gradoIniCat !== nivel.gradoFinCat">
+                                  hasta {{ nivel.gradoFinCat }}
+                              </span>
+                          </span>
+                      </div>
+                      <div class="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 mr-2" fill="none"
+                              viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M14.121 14.121L19 19m-7-7h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0zM12 7v.01M12 17v.01M7 12h.01M17 12h.01" />
+                          </svg>
+                          <span><strong>Costo:</strong> {{ nivel.costo }} USD</span>
+                      </div>
+                      <div class="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600 mr-2" fill="none"
+                              viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <span><strong>Fecha:</strong> {{ nivel.fecha_examen | date:'d/MM/yyyy' }}</span>
+                      </div>
+                      <div class="flex items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600 mr-2" fill="none"
+                              viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span [ngClass]="{
+                                  'text-green-600': nivel.habilitacion === true,
+                                  'text-red-600': nivel.habilitacion === false
+                              }" class="font-medium">
+                              <strong>Estado:</strong> {{ getEstadoTexto(nivel.habilitacion) }}
+                          </span>
+                      </div>
+                  </div>
 
-              <div class="p-4 flex justify-center bg-[#f6f6fc]">
-                <button 
-                  (click)="toggleHabilitacion(nivel)"
-                  [class]="nivel.habilitacion ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'"
-                  class="text-white font-bold py-1.5 px-6 rounded transition-colors"
-                >
-                  {{ nivel.habilitacion ? 'DESHABILITAR' : 'HABILITAR' }}
-                </button>
+                  <div class="mt-6 pt-4 border-t border-gray-100">
+                      <button (click)="toggleHabilitacion(nivel)"
+                          [class]="nivel.habilitacion ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'"
+                          class="w-full text-white font-semibold px-6 py-2 rounded-md hover:scale-105 hover:shadow-lg transition-all duration-300 ease-in-out">
+                          {{ nivel.habilitacion ? 'DESHABILITAR' : 'HABILITAR' }}
+                      </button>
+                  </div>
               </div>
-            </div>
           </div>
           
         </div>

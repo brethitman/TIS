@@ -22,6 +22,7 @@ import { CreateNivelRequest, CreateNivelesBulkRequest,
   templateUrl: './vista-areas-categorias.component.html',
 })
 export class VistaAreasCategoriasComponent implements OnInit {
+
   private route = inject(ActivatedRoute);
   private olimpiadaByAreaService = inject(OlimpiadaByAreaService);
   private nivelService = inject(NivelService);
