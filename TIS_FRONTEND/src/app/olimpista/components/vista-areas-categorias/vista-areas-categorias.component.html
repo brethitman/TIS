@@ -41,10 +41,11 @@
     </div>
 
     <!-- Layout dividido -->
-    <div *ngIf="!cargando && !errorCarga && areas.length > 0" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+   <div *ngIf="!cargando && !errorCarga && areas.length > 0" class="grid grid-cols-1 md:grid-cols-4 gap-6">
 
-      <!-- Carrusel de áreas (reemplazo de la lista) -->
-      <div class="relative my-4 p-2 w-full">
+     <!-- Carrusel de áreas (reemplazo de la lista) -->
+    <div class="relative my-4 p-2 w-full col-span-4">
+
         <!-- Flechas de navegación -->
         <div class="flex justify-between absolute inset-y-0 items-center z-10 w-full pointer-events-none px-2">
           <button (click)="prevArea()" [disabled]="currentIndex === 0"
@@ -64,28 +65,30 @@
             </svg>
           </button>
         </div>
-
+     
         <!-- Contenedor del carrusel -->
         <div class="overflow-hidden">
           <div class="flex transition-transform duration-300 ease-in-out"
             [style.transform]="'translateX(-' + (currentIndex * 100) + '%)'">
             <div *ngFor="let areaGroup of getAreaGroups()" class="flex-shrink-0 w-full px-2">
-              <div class="flex justify-center space-x-4">
-                <div *ngFor="let area of areaGroup" [ngClass]="{
-                 'bg-gradient-to-r from-blue-500 to-red-500 p-[3px]': areaSeleccionada?.id_area === area.id_area,
-                 'p-[2px]': true
-               }" class="rounded-2xl flex-shrink-0 transition-all duration-300">
-                  <button (click)="seleccionarArea(area)"
-                    class="w-full h-full px-6 py-3 bg-white rounded-2xl transition-all duration-200 whitespace-nowrap"
+              <div class="flex justify-center flex-wrap gap-4">
+                <div *ngFor="let area of areaGroup"
+                    class="w-1/6 min-w-[140px] flex justify-center"
                     [ngClass]="{
-                'font-semibold text-gray-800': true,
-                'border-transparent hover:border-gray-500': areaSeleccionada?.id_area !== area.id_area,
-                'border-transparent': areaSeleccionada?.id_area === area.id_area
-              }">
+                      'bg-gradient-to-r from-blue-500 to-red-500 p-[3px] rounded-full overflow-hidden': areaSeleccionada?.id_area === area.id_area,
+                      'p-[2px] rounded-2xl overflow-hidden': areaSeleccionada?.id_area !== area.id_area
+                    }">
+                  <button (click)="seleccionarArea(area)"
+                          class="w-full h-full px-4 py-3 bg-white text-base font-semibold text-gray-800 whitespace-nowrap hover:shadow-md transition-all duration-200"
+                          [ngClass]="{
+                            'rounded-full': areaSeleccionada?.id_area === area.id_area,
+                            'rounded-2xl': areaSeleccionada?.id_area !== area.id_area
+                          }">
                     {{ area.nombre_area }}
                   </button>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
