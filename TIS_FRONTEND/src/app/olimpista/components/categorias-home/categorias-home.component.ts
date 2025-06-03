@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NivelCategoria } from '../../interfaces/areavisualizacion.interface';
 import { Router } from '@angular/router';
 import { Olimpiada } from '../../interfaces/olimpiada-interfase';
+import { IDNivelCategoria } from '../../interfaces/post_categoria.interface';
 
 @Component({
   selector: 'app-categorias-home',
@@ -12,8 +13,7 @@ import { Olimpiada } from '../../interfaces/olimpiada-interfase';
 })
 
 export class CategoriasHomeComponent {
-  @Input()
-  categorias!: NivelCategoria[];
+  @Input() categorias!: IDNivelCategoria [];
   idArea: number= 0;
   idCategoria: number= 0;
   nombreCategoria: string='';

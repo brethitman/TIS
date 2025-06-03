@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, input } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit,ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
@@ -25,7 +25,7 @@ export class AreaAlumnoComponent implements OnInit {
   @Input() areas: any[] = [];
   inscripciones: any[] = [];
   estudiantesDisponibles: any[] = [];
-
+  insboleta: any[] = [];
 
   @Output() estudianteSeleccionado = new EventEmitter<any>();
   @Output() areaSeleccionada = new EventEmitter<any>();
@@ -57,24 +57,42 @@ export class AreaAlumnoComponent implements OnInit {
   id_area1: any = 0;
   id_area2: any = 0;
   areasInscripcion: any[] = []; //Especificamente para Inscripcion 
-  clickCount = 0;//pueden eliminar es solo una prueba para la inscripcion 
+  mostrarResumen: boolean = false;
 
   private destroy$ = new Subject<void>();
+
+  errors = {
+    estudiante: '',
+    curso: '',
+    area1: '',
+    categoria1: '',
+    area2: '',
+    categoria2: ''
+  };
+  hasValidationRun = false;
 
   constructor(
     private route: ActivatedRoute,
     private olimpiadaByAreaService: OlimpiadaByAreaService,
     private cursoService: CursoService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     this.cargarOlimpiadaId();
     this.cargarCursos();
     this.estudiantesDisponibles = [...this.estudiantes];
-    // Hacer una copia profunda para evitar problemas de referencia
-  this.estudiantesDisponibles = JSON.parse(JSON.stringify(this.estudiantes));
-  this.mostrarFinalizar = this.estudiantesDisponibles.length === 0;
+    this.estudiantesDisponibles = this.estudiantes.map(est => {
+      const partes = est.split(' ');
+      return {
+        nombre: partes[0],
+        apellido: partes.slice(1).join(' ')
+      };
+    });
+
+    this.mostrarFinalizar = this.estudiantesDisponibles.length === 0;
+    console.log("Tutor: ", this.tutores)
   }
   private cargarCursos(): void {
     this.cursoService.obtenerCursos()
@@ -82,9 +100,6 @@ export class AreaAlumnoComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.cursos = Array.isArray(data) ? data : (data as any).cursos; // Asigna primero
-          console.log('Respuesta del servicio:', this.cursos);
-          console.log('Cantidad de cursos:', this.cursos.length);
-          console.log('Lista de cursos:', this.cursos);
         },
         error: (error) => {
           console.error('Error cargando cursos:', error);
@@ -117,9 +132,6 @@ export class AreaAlumnoComponent implements OnInit {
       });
   }
 
-
-
-
   //seleccion
   toggleStudentDropdown(): void {
     this.isStudentDropdownOpen = !this.isStudentDropdownOpen;
@@ -147,9 +159,12 @@ export class AreaAlumnoComponent implements OnInit {
   }
 
   seleccionarEstudiante(estudiante: any): void {
-  this.estudianteActual = estudiante;
-  this.isStudentDropdownOpen = false; // Cerrar el dropdown después de seleccionar
-}
+    this.estudianteActual = estudiante;
+    this.isStudentDropdownOpen = false; // Cerrar el dropdown después de seleccionar
+    if (this.hasValidationRun) {
+      this.validateAllFields();
+    }
+  }
 
   confirmarSeleccion(): void {
     if (this.estudianteActual) {
@@ -164,7 +179,9 @@ export class AreaAlumnoComponent implements OnInit {
   seleccionarCurso(curso: Curso): void {
     this.cursoSeleccionado = curso;
     this.isCursoDropdownOpen = false;
-    console.log('Curso seleccionado:', curso);
+    if (this.hasValidationRun) {
+      this.validateAllFields();
+    }
   }
 
   selectArea1(areaNombre: string) {
@@ -174,8 +191,9 @@ export class AreaAlumnoComponent implements OnInit {
       this.seleccionArea1 = areaNombre;
       this.categorias = areaSeleccionada.nivel_categorias ?? [];
       this.isAreaDropdownOpen = false;
-      console.log("ID Área seleccionada:", this.id_area1);
-      console.log("Categorias disponibles:", this.categorias);
+      if (this.hasValidationRun) {
+        this.validateAllFields();
+      }
     }
   }
   selectArea2(area2: string) {
@@ -186,123 +204,93 @@ export class AreaAlumnoComponent implements OnInit {
       this.seleccionArea2 = area2;
       this.categorias2 = areaSeleccionada.nivel_categorias ?? [];
       this.isAreaDropdownOpen2 = false;
-      console.log("ID Área seleccionada:", this.id_area2);
-      console.log("Categorias", this.categorias2)
+      if (this.hasValidationRun) {
+        this.validateAllFields();
+      }
     }
   }
 
   get areasFiltradasParaArea2() {
-  return this.areasDisponibles.filter(area => area.nombre_area !== this.seleccionArea1);
-}
-
+    return this.areasDisponibles.filter(area => area.nombre_area !== this.seleccionArea1);
+  }
 
   inscribirEstudiante(): void {
-    console.log('Validando inscripción con:');
-console.log('estudianteActual:', this.estudianteActual);
-console.log('cursoSeleccionado:', this.cursoSeleccionado);
-console.log('seleccionArea1:', this.seleccionArea1);
-console.log('seleccionCategoria:', this.seleccionCategoria);
-console.log('isDuplicated:', this.isDuplicated);
-console.log('seleccionArea2:', this.seleccionArea2);
-console.log('seleccionCategoria2:', this.seleccionCategoria2);
-  // Validación básica
-  if (!this.estudianteActual) {
-    this.errorMessage = 'Debe seleccionar un estudiante';
-    return;
-  }
-  if (!this.cursoSeleccionado) {
-    this.errorMessage = 'Debe seleccionar un curso';
-    return;
-  }
-  if (this.seleccionArea1 === 'Seleccionar área') {
-    this.errorMessage = 'Debe seleccionar al menos un área';
-    return;
-  }
-  if (this.seleccionCategoria === 'Selecciona una categoría') {
-    this.errorMessage = 'Debe seleccionar una categoría para el área principal';
-    return;
-  }
-  // Validación para área adicional si está activa
-  if (this.isDuplicated) {
-    if (this.seleccionArea2 === 'Seleccionar área') {
-      this.errorMessage = 'Debe seleccionar un área adicional';
+    this.hasValidationRun = true;
+
+    this.validateAllFields();
+
+    const hasErrors = Object.values(this.errors).some(error => error !== '');
+
+    if (hasErrors) {
+      this.errorMessage = 'Por favor complete todos los campos requeridos';
       return;
     }
-    if (this.seleccionCategoria2 === 'Selecciona una categoría') {
-      this.errorMessage = 'Debe seleccionar una categoría para el área adicional';
-      return;
-    }
-  }
 
-  // Crear objeto de inscripción
-  const nuevaInscripcion = {
-    estudiante: this.estudianteActual,
-    curso: this.cursoSeleccionado,
-    area1: this.seleccionArea1,
-    categoria1: this.seleccionCategoria,
-    area2: this.isDuplicated ? this.seleccionArea2 : null,
-    categoria2: this.isDuplicated ? this.seleccionCategoria2 : null,
-    fechaInscripcion: new Date()
-  };
+    const nuevaInscripcion = {
+      estudiante: this.estudianteActual,
+      curso: this.cursoSeleccionado,
+      area1: this.seleccionArea1,
+      categoria1: this.seleccionCategoria,
+      area2: this.isDuplicated ? this.seleccionArea2 : null,
+      categoria2: this.isDuplicated ? this.seleccionCategoria2 : null,
+      fechaInscripcion: new Date()
+    };
 
-  // Verificar si el estudiante ya está inscrito
-  const yaInscrito = this.inscripciones.some(
-  insc => insc.estudiante.ci === this.estudianteActual.ci
-);
+    // Agregar a las inscripciones
+    this.inscripciones.push(nuevaInscripcion);
+    this.insboleta.push(nuevaInscripcion);
 
-  if (yaInscrito) {
-    this.errorMessage = 'Este estudiante ya está inscrito';
-    return;
-  }
+    // Eliminar estudiante de la lista de disponibles usando NOMBRE Y APELLIDO
+    // Eliminar estudiante del array original de estudiantes y de los disponibles
+    this.estudiantes = this.estudiantes.filter(
+      e => `${e.nombre} ${e.apellido}` !== `${this.estudianteActual.nombre} ${this.estudianteActual.apellido}`
+    );
 
-  // Agregar a las inscripciones
-  this.inscripciones.push(nuevaInscripcion);
-
-  // Eliminar estudiante de la lista de disponibles usando NOMBRE Y APELLIDO
-  // Eliminar estudiante del array original de estudiantes y de los disponibles
-this.estudiantes = this.estudiantes.filter(
-  e => e.ci !== this.estudianteActual.ci
-);
-this.estudiantesDisponibles = this.estudiantesDisponibles.filter(
-  e => e.ci !== this.estudianteActual.ci
-);
+    this.estudiantesDisponibles = this.estudiantesDisponibles.filter(
+      e => `${e.nombre} ${e.apellido}` !== `${this.estudianteActual.nombre} ${this.estudianteActual.apellido}`
+    );
 
 
-  // Mostrar mensaje de éxito
-  this.successMessage = `Estudiante ${this.estudianteActual.nombre} ${this.estudianteActual.apellido} inscrito correctamente`;
-  this.errorMessage = null;
-
-  // Resetear el formulario
-  this.resetearFormulario();
-}
-
-resetearFormulario(): void {
-  // Resetear campos del formulario
-  this.estudianteActual = null;
-  this.cursoSeleccionado = null;
-  this.seleccionArea1 = 'Seleccionar área';
-  this.seleccionCategoria = 'Selecciona una categoría';
-  this.seleccionArea2 = 'Seleccionar área';
-  this.seleccionCategoria2 = 'Selecciona una categoría';
-  this.isDuplicated = false;
-
-  // Cerrar todos los dropdowns
-  this.isStudentDropdownOpen = false;
-  this.isCursoDropdownOpen = false;
-  this.isAreaDropdownOpen = false;
-  this.isAreaDropdownOpen2 = false;
-  this.isCategoriaDropdownOpen = false;
-  this.isCategoriaDropdownOpen2 = false;
-
-  // Actualizar estado del botón Finalizar
-  this.mostrarFinalizar = this.estudiantesDisponibles.length === 0;
-
-  // Limpiar mensajes después de 3 segundos
-  setTimeout(() => {
-    this.successMessage = null;
+    // Mostrar mensaje de éxito
+    this.successMessage = `Estudiante ${this.estudianteActual.nombre} ${this.estudianteActual.apellido} inscrito correctamente`;
     this.errorMessage = null;
-  }, 3000);
-}
+    console.log('Cantidad de estudiantes restantes:', this.estudiantes.length);
+    console.log('cantid est: ',this.estudiantes)
+    // Resetear el formulario
+    this.resetearFormulario();
+  }
+
+  resetearFormulario(): void {
+    // Resetear campos del formulario
+    this.estudianteActual = null;
+    this.cursoSeleccionado = null;
+    this.seleccionArea1 = 'Seleccionar área';
+    this.seleccionCategoria = 'Selecciona una categoría';
+    this.seleccionArea2 = 'Seleccionar área';
+    this.seleccionCategoria2 = 'Selecciona una categoría';
+    this.isDuplicated = false;
+
+    // Cerrar todos los dropdowns
+    this.isStudentDropdownOpen = false;
+    this.isCursoDropdownOpen = false;
+    this.isAreaDropdownOpen = false;
+    this.isAreaDropdownOpen2 = false;
+    this.isCategoriaDropdownOpen = false;
+    this.isCategoriaDropdownOpen2 = false;
+
+    // Actualizar estado del botón Finalizar
+    this.mostrarFinalizar = this.estudiantesDisponibles.length === 0;
+    this.cdr.detectChanges();
+
+    // Limpiar mensajes después de 3 segundos
+    setTimeout(() => {
+      this.successMessage = null;
+      this.errorMessage = null;
+    }, 3000);
+    for (const key of Object.keys(this.errors)) {
+      this.errors[key as keyof typeof this.errors] = '';
+    }
+  }
 
   toggleDuplicado() {
     this.isDuplicated = !this.isDuplicated;
@@ -325,6 +313,9 @@ resetearFormulario(): void {
       this.id_categoria1 = categoriaSeleccionada.id_nivel;
       this.seleccionCategoria = categoriaSeleccionada.nombre_nivel;
       this.isCategoriaDropdownOpen = false;
+      if (this.hasValidationRun) {
+        this.validateAllFields();
+      }
       console.log("ID Nivel Categoría seleccionado:", this.seleccionCategoria);
       console.log("ID Nivel Categoría seleccionado:", this.seleccionCategoria);
     }
@@ -345,6 +336,9 @@ resetearFormulario(): void {
       this.id_categoria2 = categoriaSeleccionada.id_nivel;
       this.seleccionCategoria2 = categoriaSeleccionada.nombre_nivel;
       this.isCategoriaDropdownOpen2 = false;
+      if (this.hasValidationRun) {
+        this.validateAllFields();
+      }
       console.log("ID Nivel Categoría seleccionado:", this.id_categoria2);
       console.log("ID Nivel Categoría seleccionado:", this.seleccionCategoria);
     }
@@ -355,63 +349,90 @@ resetearFormulario(): void {
     if (this.seleccionArea1 && this.seleccionCategoria) {
       const nuevaInscripcion1 = {
         area_id: this.id_area1,
-        nivelesCategoria: [this.id_categoria1] 
+        nivelesCategoria: [this.id_categoria1]
       };
 
       this.areasInscripcion.push(nuevaInscripcion1);
+      this.categorias = [];
     }
 
-    if (this.seleccionArea2 !=="Seleccionar área" && this.seleccionCategoria2!== "Selecciona una categoría") {
+    if (this.seleccionArea2 !== "Seleccionar área" && this.seleccionCategoria2 !== "Selecciona una categoría") {
       const nuevaInscripcion2 = {
-        area_id: this.id_area2, 
-        nivelesCategoria: [this.id_categoria2] 
+        area_id: this.id_area2,
+        nivelesCategoria: [this.id_categoria2]
       };
 
       this.areasInscripcion.push(nuevaInscripcion2);
+      this.categorias2 = [];
     }
-
-    this.clickCount++;
 
     console.log('Lista de áreas inscritas:', this.areasInscripcion);
 
-    if (this.clickCount >= 3) {
-      this.irABoletaList();
-    } else if (!this.seleccionArea1 || !this.seleccionCategoria) {
-      alert('Por favor, selecciona al menos un área y una categoría antes de inscribirte.');
-    }
+    this.irABoletaList();
   }
   irABoletaList() {
     localStorage.setItem('areasInscripcion', JSON.stringify(this.areasInscripcion));
     localStorage.setItem('olimpistas', JSON.stringify(this.estInscripcion));
     localStorage.setItem('tutores', JSON.stringify(this.tutores));
+    localStorage.setItem('inscripciones', JSON.stringify(this.insboleta));
 
     console.log('Datos guardados en localStorage:', {
       areasInscripcion: JSON.parse(localStorage.getItem('areasInscripcion') || '[]'),
       olimpistas: JSON.parse(localStorage.getItem('olimpistas') || '[]'),
-      tutores: JSON.parse(localStorage.getItem('tutores') || '[]')
+      tutores: JSON.parse(localStorage.getItem('tutores') || '[]'),
+      inscripciones: JSON.parse(localStorage.getItem('inscripciones')||'[]'),
     });
     this.router.navigate(['/boletaPago']);
   }
 
-
-mostrarFinalizar = false;
-
-verificarFinalizacion() {
-  if (this.estudiantes.length === 0) {
-    this.mostrarFinalizar = true;
+  
+  mostrarFinalizar = false;
+  verificarFinalizacion() {
+    if (this.estudiantesDisponibles.length === 0) {
+      this.mostrarFinalizar = true;
+    }
   }
-}
-reiniciarInscripcion(): void {
-  this.inscripciones = [];
-  this.estudiantesDisponibles = [...this.estudiantes]; // Recupera todos los estudiantes
-  this.mostrarFinalizar = false;
+  reiniciarInscripcion(): void {
+    //this.inscripciones = [];
+    this.estudiantesDisponibles = [...this.estudiantes];
+    this.mostrarFinalizar = false;
    this.router.navigate(['/boletaPago']);
-}
+  }
 
-mostrarResumen: boolean = false;
-finalizarInscripciones() {
-  this.mostrarResumen = true;
-}
+  finalizarInscripciones() {
+    this.mostrarResumen = true;
+  }
+
+  validateAllFields(): void {
+    // Limpiar errores previos
+    for (const key of Object.keys(this.errors)) {
+      this.errors[key as keyof typeof this.errors] = '';
+    }
+
+    // Validar cada campo solo si se ha intentado validar antes
+    if (this.hasValidationRun) {
+      if (!this.estudianteActual) {
+        this.errors.estudiante = 'Debe seleccionar un estudiante';
+      }
+      if (!this.cursoSeleccionado) {
+        this.errors.curso = 'Debe seleccionar un curso';
+      }
+      if (this.seleccionArea1 === 'Seleccionar área') {
+        this.errors.area1 = 'Debe seleccionar al menos un área';
+      }
+      if (this.seleccionCategoria === 'Selecciona una categoría') {
+        this.errors.categoria1 = 'Debe seleccionar una categoría para el área principal';
+      }
+      if (this.isDuplicated) {
+        if (this.seleccionArea2 === 'Seleccionar área') {
+          this.errors.area2 = 'Debe seleccionar un área adicional';
+        }
+        if (this.seleccionCategoria2 === 'Selecciona una categoría') {
+          this.errors.categoria2 = 'Debe seleccionar una categoría para el área adicional';
+        }
+      }
+    }
+  }
 
 
 }

@@ -66,5 +66,5 @@ class CursoNivelController extends Controller
             'message' => 'Curso-Nivel eliminado exitosamente'
         ]);
     }
-    
+
 }

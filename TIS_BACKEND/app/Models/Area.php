@@ -29,7 +29,34 @@ class Area extends Model
         'descripcion',
         'gradoIniAr',
         'gradoFinAr',
+        'permite_multiples_areas'
     ];
+
+    /**
+     * Los atributos que deben ser convertidos a tipos nativos.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'permite_multiples_areas' => 'boolean'
+    ];
+
+    /**
+     * Los atributos que deben ser agregados al array.
+     *
+     * @var array
+     */
+    protected $appends = ['permite_multiples_areas'];
+
+    /**
+     * Obtiene el valor de permite_multiples_areas.
+     *
+     * @return bool
+     */
+    public function getPermiteMultiplesAreasAttribute()
+    {
+        return $this->attributes['permite_multiples_areas'] ?? false;
+    }
 
     /**
      * Relación: Un Área pertenece a una Olimpiada.

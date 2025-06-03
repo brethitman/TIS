@@ -1,13 +1,19 @@
 import { Component, inject, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Necesario para ngModel
+import { FormsModule } from '@angular/forms';
 import { IDOlimpiadabyArea, NivelCategoria } from '../../interfaces/olimpiadaAreaCategoria.interface';
 import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
 import { CrearAreaComponent } from '../crear-area/crear-area.component';
 import { NivelService } from '../../service/post_Categoria.service';
-import { CreateNivelRequest, CreateNivelesBulkRequest,
-  CreateNivelesBulkResponse, NivelResponse, AreaResponse  } from '../../interfaces/post_categoria.interface';
+import {
+  CreateNivelRequest,
+  CreateNivelesBulkRequest,
+  CreateNivelesBulkResponse,
+  NivelResponse,
+  AreaResponse,
+  OlimpiadaResponse,
+} from '../../interfaces/post_categoria.interface';
 
 @Component({
   selector: 'app-vista-areas-categorias',
@@ -15,7 +21,6 @@ import { CreateNivelRequest, CreateNivelesBulkRequest,
   imports: [
     CommonModule,
     DatePipe,
-    //CurrencyPipe,
     CrearAreaComponent,
     FormsModule
   ],
@@ -27,44 +32,77 @@ export class VistaAreasCategoriasComponent implements OnInit {
   private olimpiadaByAreaService = inject(OlimpiadaByAreaService);
   private nivelService = inject(NivelService);
 
-  @Input() olimpiadaSeleccionada: IDOlimpiadabyArea | null = null;
-  @Input() idOlimpiada: number | null = null;
+  // Propiedades principales
+  public olimpiadaSeleccionada: OlimpiadaResponse | null = null;
+  public areaSeleccionada: IDOlimpiadabyArea | null = null;
+  public areas: IDOlimpiadabyArea[] = [];
+  public idOlimpiada: number | null = null;
 
-  areas: IDOlimpiadabyArea[] = [];
-  areaSeleccionada: IDOlimpiadabyArea | null = null;
-  areaActiva: number | null = null;
-
+  // Estados de UI
   public cargando: boolean = true;
   public errorCarga: string | null = null;
+  public mostrarCrearArea: boolean = false;
+  public areaActivaId: number | null = null;
+  // Variables para el carrusel
+  currentIndex = 0;
+  itemsPerPage = 4;
 
-  // Propiedades para la gestión de niveles por área
-  public areaActivaId: number | null = null; // ID del área cuyo formulario de niveles está activo
-  public currentNewLevel: CreateNivelRequest = this.initializeNewLevel(); // Datos del nivel actual en el formulario
-
+  // Formulario de nivel
+  public currentNewLevel: CreateNivelRequest = this.initializeNewLevel();
   public enviando: boolean = false;
   public errores: string[] = [];
   public formErrors: string[] = [];
   public successMessage: string | null = null;
 
-  // Lista de grados disponibles
+  // Selector de grados
   public grados: string[] = [
-    '1° Primaria', '2° Primaria', '3° Primaria', '4° Primaria', '5° Primaria', '6° Primaria',
-    '1° Secundaria', '2° Secundaria', '3° Secundaria', '4° Secundaria', '5° Secundaria', '6° Secundaria'
+    '1ro Primaria', '2do Primaria', '3ro Primaria', '4to Primaria', '5to Primaria', '6to Primaria',
+    '1ro Secundaria', '2do Secundaria', '3ro Secundaria', '4to Secundaria', '5to Secundaria', '6to Secundaria'
   ];
-
-  // Control para selección de grados en niveles
   public mostrarSelectorGrados: boolean = false;
   public gradosSeleccionadosNivel: boolean[] = [];
   public advertenciaMultiplesGrados: boolean = false;
 
   // Modal
-  mostrarModal: boolean = false;
-  modalTipo: 'exito' | 'error' = 'exito';
-  modalMensaje: string = '';
+  public mostrarModal: boolean = false;
+  public modalTipo: 'exito' | 'error' = 'exito';
+  public modalMensaje: string = '';
+
+  // Métodos para el carrusel
+  getAreaGroups() {
+    const groups = [];
+    for (let i = 0; i < this.areas.length; i += this.itemsPerPage) {
+      groups.push(this.areas.slice(i, i + this.itemsPerPage));
+    }
+    return groups;
+  }
+
+  getTotalPages() {
+    return Math.ceil(this.areas.length / this.itemsPerPage);
+  }
+
+  getPaginationDots() {
+    return Array(this.getTotalPages()).fill(0);
+  }
+
+  prevArea() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+    }
+  }
+
+  nextArea() {
+    if (this.currentIndex < this.getTotalPages() - 1) {
+      this.currentIndex++;
+    }
+  }
+
+  goToArea(index: number) {
+    this.currentIndex = index;
+  }
 
   ngOnInit(): void {
     this.obtenerIdOlimpiada();
-    // Inicializar array para los checkboxes de grados de nivel
     this.gradosSeleccionadosNivel = this.grados.map(() => false);
   }
 
@@ -73,7 +111,7 @@ export class VistaAreasCategoriasComponent implements OnInit {
       nombre_nivel: '',
       gradoIniCat: '',
       gradoFinCat: '',
-      descripcion: '', // Se mantiene para evitar errores en el backend, pero se ocultará en el UI
+      descripcion: '',
       fecha_examen: '',
       costo: 0,
       habilitacion: true
@@ -90,19 +128,40 @@ export class VistaAreasCategoriasComponent implements OnInit {
       return;
     }
     this.cargarAreas();
+    this.cargarOlimpiada();
+  }
+
+  private cargarOlimpiada(): void {
+    if (!this.idOlimpiada) return;
+
+    this.olimpiadaByAreaService.getOlimpiadaById(this.idOlimpiada)
+      .subscribe({
+        next: (data: OlimpiadaResponse) => {
+          this.olimpiadaSeleccionada = data;
+        },
+        error: (err: any) => {
+          console.error('Error al cargar datos de la olimpiada:', err);
+        }
+      });
   }
 
   public cargarAreas(): void {
     this.cargando = true;
-    const timestamp = new Date().getTime();
     this.olimpiadaByAreaService.getAreasByOlimpiadaId(this.idOlimpiada!)
       .subscribe({
-        next: (data) => {
+        next: (data: IDOlimpiadabyArea[]) => {
           this.areas = data;
           this.cargando = false;
-          this.errorCarga = null; 
+          this.errorCarga = null;
+
+          if (this.areaSeleccionada) {
+            const updatedArea = this.areas.find(a => a.id_area === this.areaSeleccionada?.id_area);
+            if (updatedArea) {
+              this.areaSeleccionada = updatedArea;
+            }
+          }
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Error al cargar áreas:', err);
           this.errorCarga = 'Error al cargar áreas';
           this.cargando = false;
@@ -111,45 +170,54 @@ export class VistaAreasCategoriasComponent implements OnInit {
       });
   }
 
-  toggleFormulario(areaId: number): void {
-    this.areaActivaId = this.areaActivaId === areaId ? null : areaId;
-    this.currentNewLevel = this.initializeNewLevel();
-    this.errores = [];
-    this.formErrors = [];
-    this.successMessage = null;
-    this.mostrarSelectorGrados = false;
-    this.gradosSeleccionadosNivel = this.grados.map(() => false);
-    this.advertenciaMultiplesGrados = false;
+  // Métodos de UI
+  toggleCrearArea(): void {
+    this.mostrarCrearArea = !this.mostrarCrearArea;
+  }
+
+  onAreaCreada(): void {
+    this.mostrarCrearArea = false;
+    this.cargarAreas();
   }
 
   seleccionarArea(area: IDOlimpiadabyArea): void {
     this.areaSeleccionada = area;
     this.areaActivaId = null;
+    this.resetForm();
   }
 
-  // Método para manejar el click en el botón para seleccionar grados de nivel
+  toggleFormulario(areaId: number): void {
+    this.areaActivaId = this.areaActivaId === areaId ? null : areaId;
+    this.resetForm();
+  }
+
+  private resetForm(): void {
+    this.currentNewLevel = this.initializeNewLevel();
+    this.gradosSeleccionadosNivel = this.grados.map(() => false);
+    this.advertenciaMultiplesGrados = false;
+    this.mostrarSelectorGrados = false;
+    this.formErrors = [];
+    this.errores = [];
+    this.successMessage = null;
+  }
+
+  // Métodos del selector de grados
   toggleSelectorGrados(): void {
     this.mostrarSelectorGrados = !this.mostrarSelectorGrados;
   }
 
-  // Gestión de la selección de grados para niveles
   onNivelCheckboxChange(index: number): void {
     this.gradosSeleccionadosNivel[index] = !this.gradosSeleccionadosNivel[index];
     this.actualizarGradosNivel();
-    
-    // Verificar si hay más de un grado seleccionado para mostrar advertencia
+
     const gradosSeleccionados = this.gradosSeleccionadosNivel.filter(selected => selected).length;
     this.advertenciaMultiplesGrados = gradosSeleccionados > 1;
   }
 
-  // Actualiza los campos gradoIniCat y gradoFinCat del nivel según los grados seleccionados
   actualizarGradosNivel(): void {
-    // Encontrar el primer grado seleccionado
     const primerIndice = this.gradosSeleccionadosNivel.findIndex(selected => selected);
-    
-    // Encontrar el último grado seleccionado
     const ultimoIndice = this.gradosSeleccionadosNivel.lastIndexOf(true);
-    
+
     if (primerIndice !== -1 && ultimoIndice !== -1) {
       this.currentNewLevel.gradoIniCat = this.grados[primerIndice];
       this.currentNewLevel.gradoFinCat = this.grados[ultimoIndice];
@@ -159,31 +227,27 @@ export class VistaAreasCategoriasComponent implements OnInit {
     }
   }
 
-  // Verificar si los grados seleccionados están dentro del rango del área
-  verificarRangoArea(): boolean {
+  // Validaciones
+  private verificarRangoArea(): boolean {
     if (!this.areaSeleccionada) return false;
-    
-    // Encontrar índices de grados del área
+
     const areaIniIndex = this.grados.indexOf(this.areaSeleccionada.gradoIniAr || '');
     const areaFinIndex = this.grados.indexOf(this.areaSeleccionada.gradoFinAr || '');
-    
-    // Encontrar índices de grados del nivel
     const nivelIniIndex = this.grados.indexOf(this.currentNewLevel.gradoIniCat);
     const nivelFinIndex = this.grados.indexOf(this.currentNewLevel.gradoFinCat);
-    
-    // El nivel debe estar dentro del rango del área
-    if (areaIniIndex !== -1 && areaFinIndex !== -1 && 
-        nivelIniIndex !== -1 && nivelFinIndex !== -1) {
+
+    if (areaIniIndex !== -1 && areaFinIndex !== -1 &&
+      nivelIniIndex !== -1 && nivelFinIndex !== -1) {
       if (nivelIniIndex < areaIniIndex || nivelFinIndex > areaFinIndex) {
         this.formErrors.push('Los grados del nivel deben estar dentro del rango del área.');
         return false;
       }
     }
-    
+
     return true;
   }
 
-  validarCurrentNewLevel(): boolean {
+  private validarFormulario(): boolean {
     this.formErrors = [];
     const nivel = this.currentNewLevel;
     const hoy = new Date();
@@ -192,14 +256,11 @@ export class VistaAreasCategoriasComponent implements OnInit {
     if (!nivel.nombre_nivel.trim()) {
       this.formErrors.push('El nombre del nivel es obligatorio.');
     }
-    if (!nivel.gradoIniCat || !nivel.gradoIniCat.trim()) {
-      this.formErrors.push('Debe seleccionar al menos un grado para el nivel.');
-    }
-    if (!nivel.gradoFinCat || !nivel.gradoFinCat.trim()) {
+
+    if (!nivel.gradoIniCat || !nivel.gradoFinCat) {
       this.formErrors.push('Debe seleccionar al menos un grado para el nivel.');
     }
 
-    // Verificar que los grados están dentro del rango del área
     if (!this.verificarRangoArea()) {
       // El mensaje ya se agrega en verificarRangoArea()
     }
@@ -219,91 +280,70 @@ export class VistaAreasCategoriasComponent implements OnInit {
       this.formErrors.push('El costo debe ser un número válido y no negativo.');
     }
 
+    this.errores = [...this.formErrors];
     return this.formErrors.length === 0;
   }
 
-  mostrarModalMensaje(tipo: 'exito' | 'error', mensaje: string) {
-    this.modalTipo = tipo;
-    this.modalMensaje = mensaje;
-    this.mostrarModal = true;
-  }
-
-  ocultarModal() {
-    this.mostrarModal = false;
-  }
-
-  private validateForm(): boolean {
-    if (!this.currentNewLevel.nombre_nivel) {
-      this.formErrors.push('El nombre del nivel es requerido');
-      return false;
-    }
-    if (!this.currentNewLevel.gradoIniCat || !this.currentNewLevel.gradoFinCat) {
-      this.formErrors.push('Debe seleccionar al menos un grado');
-      return false;
-    }
-    if (!this.currentNewLevel.fecha_examen) {
-      this.formErrors.push('La fecha del examen es requerida');
-      return false;
-    }
-    if (!this.currentNewLevel.costo) {
-      this.formErrors.push('El costo es requerido');
-      return false;
-    }
-    return true;
-  }
-
-  private resetForm(): void {
-    this.currentNewLevel = this.initializeNewLevel();
-    this.gradosSeleccionadosNivel = this.grados.map(() => false);
-    this.advertenciaMultiplesGrados = false;
-    this.formErrors = [];
-  }
-
-  private mostrarModalExito(mensaje: string): void {
-    this.modalTipo = 'exito';
-    this.modalMensaje = mensaje;
-    this.mostrarModal = true;
-  }
-
+  // Envío de datos
   enviarNiveles(): void {
-    if (!this.validateForm()) {
+    if (!this.validarFormulario()) {
+      return;
+    }
+
+    if (!this.areaActivaId) {
+      this.errores = ['No se ha seleccionado un área válida para agregar niveles.'];
       return;
     }
 
     this.enviando = true;
-    this.formErrors = [];
+    this.errores = [];
+    this.successMessage = null;
 
-    const nivelData = {
-      ...this.currentNewLevel,
-      id_area: this.areaActivaId
+    const bulkRequest: CreateNivelesBulkRequest = {
+      niveles: [this.currentNewLevel]
     };
 
-    const bulkRequest = {
-      niveles: [nivelData]
-    };
-
-    this.nivelService.crearNivelesEnArea(this.areaActivaId!, bulkRequest).subscribe({
-      next: (response: any) => {
-        this.mostrarModalExito('Nivel creado exitosamente');
-        this.resetForm();
-        this.toggleFormulario(this.areaActivaId!);
-        // Recargar los datos del área actual
-        this.cargarAreas();
-      },
-      error: (error: any) => {
-        console.error('Error al crear nivel:', error);
-        this.enviando = false;
-        if (error.error?.message) {
-          this.formErrors.push(error.error.message);
-        } else {
-          this.formErrors.push('Error al crear el nivel. Por favor, intente nuevamente.');
+    this.nivelService.crearNivelesEnArea(this.areaActivaId, bulkRequest)
+      .subscribe({
+        next: (response: CreateNivelesBulkResponse) => {
+          this.mostrarModalExito('Nivel creado exitosamente');
+          this.resetForm();
+          this.areaActivaId = null;
+          this.cargarAreas();
+        },
+        error: (err: any) => {
+          console.error('Error al crear nivel:', err);
+          if (err.error && err.error.message) {
+            this.errores = [`Error al crear nivel: ${err.error.message}`];
+          } else if (err.message) {
+            this.errores = [`Error al crear nivel: ${err.message}`];
+          } else {
+            this.errores = ['Error desconocido al crear el nivel.'];
+          }
+        },
+        complete: () => {
+          this.enviando = false;
         }
-      }
-    });
+      });
   }
 
-  getEstadoTexto(habilitacion: boolean): string {
-    return habilitacion ? 'Habilitado' : 'Deshabilitado';
+  // Métodos de utilidad
+  isHabilitado(habilitacion: boolean | number | null | undefined): boolean {
+    if (habilitacion === null || habilitacion === undefined) {
+      return false;
+    }
+    return habilitacion === true || habilitacion === 1;
+  }
+
+  isDeshabilitado(habilitacion: boolean | number | null | undefined): boolean {
+    if (habilitacion === null || habilitacion === undefined) {
+      return true;
+    }
+    return habilitacion === false || habilitacion === 0;
+  }
+
+  getEstadoTexto(habilitacion: boolean | number | null | undefined): string {
+    return this.isHabilitado(habilitacion) ? 'Habilitado' : 'Deshabilitado';
   }
 
   toggleHabilitacion(nivel: NivelCategoria): void {
@@ -313,10 +353,9 @@ export class VistaAreasCategoriasComponent implements OnInit {
     }
 
     const nuevoEstado = !nivel.habilitacion;
-    
+
     this.nivelService.updateHabilitacion(nivel.id_nivel, nuevoEstado).subscribe({
       next: (response: any) => {
-        // Actualizar el estado localmente
         nivel.habilitacion = nuevoEstado;
         this.mostrarModalExito(`Nivel ${nuevoEstado ? 'habilitado' : 'deshabilitado'} exitosamente`);
       },
@@ -325,5 +364,20 @@ export class VistaAreasCategoriasComponent implements OnInit {
         this.mostrarModalMensaje('error', 'Error al actualizar el estado del nivel');
       }
     });
+  }
+
+  // Métodos del modal
+  mostrarModalMensaje(tipo: 'exito' | 'error', mensaje: string): void {
+    this.modalTipo = tipo;
+    this.modalMensaje = mensaje;
+    this.mostrarModal = true;
+  }
+
+  private mostrarModalExito(mensaje: string): void {
+    this.mostrarModalMensaje('exito', mensaje);
+  }
+
+  ocultarModal(): void {
+    this.mostrarModal = false;
   }
 }

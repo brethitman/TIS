@@ -5,6 +5,7 @@ export interface olimpiadabyArea {
   }
   
   export interface NivelCategoria {
+[x: string]: any;
     id_nivel?: number;
     id_area?: number;
     nombre_nivel: string;

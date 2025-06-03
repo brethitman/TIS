@@ -18,7 +18,7 @@ class BoletaPagoController extends Controller
      */
     public function index()
     {
-        $boletas = BoletaPago::with('inscripcion')->orderBy("created_at", "desc")->simplePaginate (10);
+        $boletas = BoletaPago::with('inscripcion')->orderBy("created_at", "desc")->simplePaginate(10);
         return new BoletaPagoCollection($boletas);
     }
 
@@ -63,7 +63,7 @@ class BoletaPagoController extends Controller
         // Validar los datos recibidos
         $request->validate([
             'id_inscripcion' => 'required|exists:inscripcions,id_inscripcion',
-            'numero_boleta' => 'required|string|max:50|unique:boleta_pagos,numero_boleta,'.$id.',id_boleta',
+            'numero_boleta' => 'required|string|max:50|unique:boleta_pagos,numero_boleta,' . $id . ',id_boleta',
             'monto' => 'required|numeric|min:0',
             'fecha_generacion' => 'required|date',
         ]);
@@ -89,4 +89,18 @@ class BoletaPagoController extends Controller
             'message' => 'Boleta de pago eliminada exitosamente'
         ]);
     }
+
+    public function getBoletaPago($id)
+    {
+        $boleta = BoletaPago::where('id_inscripcion', $id)->first();
+
+        if (!$boleta) {
+            return response()->json(['message' => 'Boleta no encontrada'], 404);
+        }
+
+        return response()->json(['boleta' => $boleta], 200);
+
+
+    }
+
 }
