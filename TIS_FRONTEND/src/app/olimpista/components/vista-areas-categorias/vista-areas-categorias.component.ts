@@ -6,11 +6,11 @@ import { IDOlimpiadabyArea, NivelCategoria } from '../../interfaces/olimpiadaAre
 import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
 import { CrearAreaComponent } from '../crear-area/crear-area.component';
 import { NivelService } from '../../service/post_Categoria.service';
-import { 
-  CreateNivelRequest, 
+import {
+  CreateNivelRequest,
   CreateNivelesBulkRequest,
-  CreateNivelesBulkResponse, 
-  NivelResponse, 
+  CreateNivelesBulkResponse,
+  NivelResponse,
   AreaResponse,
   OlimpiadaResponse,
 } from '../../interfaces/post_categoria.interface';
@@ -42,6 +42,9 @@ export class VistaAreasCategoriasComponent implements OnInit {
   public errorCarga: string | null = null;
   public mostrarCrearArea: boolean = false;
   public areaActivaId: number | null = null;
+  // Variables para el carrusel
+  currentIndex = 0;
+  itemsPerPage = 4;
 
   // Formulario de nivel
   public currentNewLevel: CreateNivelRequest = this.initializeNewLevel();
@@ -63,6 +66,39 @@ export class VistaAreasCategoriasComponent implements OnInit {
   public mostrarModal: boolean = false;
   public modalTipo: 'exito' | 'error' = 'exito';
   public modalMensaje: string = '';
+
+  // Métodos para el carrusel
+  getAreaGroups() {
+    const groups = [];
+    for (let i = 0; i < this.areas.length; i += this.itemsPerPage) {
+      groups.push(this.areas.slice(i, i + this.itemsPerPage));
+    }
+    return groups;
+  }
+
+  getTotalPages() {
+    return Math.ceil(this.areas.length / this.itemsPerPage);
+  }
+
+  getPaginationDots() {
+    return Array(this.getTotalPages()).fill(0);
+  }
+
+  prevArea() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+    }
+  }
+
+  nextArea() {
+    if (this.currentIndex < this.getTotalPages() - 1) {
+      this.currentIndex++;
+    }
+  }
+
+  goToArea(index: number) {
+    this.currentIndex = index;
+  }
 
   ngOnInit(): void {
     this.obtenerIdOlimpiada();
@@ -96,7 +132,7 @@ export class VistaAreasCategoriasComponent implements OnInit {
 
   private cargarOlimpiada(): void {
     if (!this.idOlimpiada) return;
-    
+
     this.olimpiadaByAreaService.getOlimpiadaById(this.idOlimpiada)
       .subscribe({
         next: (data: OlimpiadaResponse) => {
@@ -116,7 +152,7 @@ export class VistaAreasCategoriasComponent implements OnInit {
           this.areas = data;
           this.cargando = false;
           this.errorCarga = null;
-          
+
           if (this.areaSeleccionada) {
             const updatedArea = this.areas.find(a => a.id_area === this.areaSeleccionada?.id_area);
             if (updatedArea) {
@@ -172,7 +208,7 @@ export class VistaAreasCategoriasComponent implements OnInit {
   onNivelCheckboxChange(index: number): void {
     this.gradosSeleccionadosNivel[index] = !this.gradosSeleccionadosNivel[index];
     this.actualizarGradosNivel();
-    
+
     const gradosSeleccionados = this.gradosSeleccionadosNivel.filter(selected => selected).length;
     this.advertenciaMultiplesGrados = gradosSeleccionados > 1;
   }
@@ -180,7 +216,7 @@ export class VistaAreasCategoriasComponent implements OnInit {
   actualizarGradosNivel(): void {
     const primerIndice = this.gradosSeleccionadosNivel.findIndex(selected => selected);
     const ultimoIndice = this.gradosSeleccionadosNivel.lastIndexOf(true);
-    
+
     if (primerIndice !== -1 && ultimoIndice !== -1) {
       this.currentNewLevel.gradoIniCat = this.grados[primerIndice];
       this.currentNewLevel.gradoFinCat = this.grados[ultimoIndice];
@@ -193,20 +229,20 @@ export class VistaAreasCategoriasComponent implements OnInit {
   // Validaciones
   private verificarRangoArea(): boolean {
     if (!this.areaSeleccionada) return false;
-    
+
     const areaIniIndex = this.grados.indexOf(this.areaSeleccionada.gradoIniAr || '');
     const areaFinIndex = this.grados.indexOf(this.areaSeleccionada.gradoFinAr || '');
     const nivelIniIndex = this.grados.indexOf(this.currentNewLevel.gradoIniCat);
     const nivelFinIndex = this.grados.indexOf(this.currentNewLevel.gradoFinCat);
-    
-    if (areaIniIndex !== -1 && areaFinIndex !== -1 && 
-        nivelIniIndex !== -1 && nivelFinIndex !== -1) {
+
+    if (areaIniIndex !== -1 && areaFinIndex !== -1 &&
+      nivelIniIndex !== -1 && nivelFinIndex !== -1) {
       if (nivelIniIndex < areaIniIndex || nivelFinIndex > areaFinIndex) {
         this.formErrors.push('Los grados del nivel deben estar dentro del rango del área.');
         return false;
       }
     }
-    
+
     return true;
   }
 
@@ -219,7 +255,7 @@ export class VistaAreasCategoriasComponent implements OnInit {
     if (!nivel.nombre_nivel.trim()) {
       this.formErrors.push('El nombre del nivel es obligatorio.');
     }
-    
+
     if (!nivel.gradoIniCat || !nivel.gradoFinCat) {
       this.formErrors.push('Debe seleccionar al menos un grado para el nivel.');
     }
@@ -297,14 +333,14 @@ export class VistaAreasCategoriasComponent implements OnInit {
     }
     return habilitacion === true || habilitacion === 1;
   }
-  
+
   isDeshabilitado(habilitacion: boolean | number | null | undefined): boolean {
     if (habilitacion === null || habilitacion === undefined) {
       return true;
     }
     return habilitacion === false || habilitacion === 0;
   }
-  
+
   getEstadoTexto(habilitacion: boolean | number | null | undefined): string {
     return this.isHabilitado(habilitacion) ? 'Habilitado' : 'Deshabilitado';
   }
@@ -316,7 +352,7 @@ export class VistaAreasCategoriasComponent implements OnInit {
     }
 
     const nuevoEstado = !nivel.habilitacion;
-    
+
     this.nivelService.updateHabilitacion(nivel.id_nivel, nuevoEstado).subscribe({
       next: (response: any) => {
         nivel.habilitacion = nuevoEstado;

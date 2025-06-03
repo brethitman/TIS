@@ -43,25 +43,62 @@
     <!-- Layout dividido -->
     <div *ngIf="!cargando && !errorCarga && areas.length > 0" class="grid grid-cols-1 md:grid-cols-4 gap-6">
 
-      <!-- Lista de áreas -->
-      <div class="col-span-4 flex flex-wrap gap-4 justify-start">
-        <button *ngFor="let area of areas" (click)="seleccionarArea(area)"
-          class="relative px-6 py-3 rounded-xl font-semibold text-gray-800 transition-all duration-300 shadow-md"
-          [ngClass]="{
-            'bg-white': true,
-            'border-4 border-transparent bg-gradient-to-r from-blue-500 to-red-500 bg-origin-border':
-              areaSeleccionada?.id_area === area.id_area
-          }" [ngStyle]="
-            areaSeleccionada?.id_area === area.id_area
-              ? {
-                  'background-image':
-                    'linear-gradient(white, white), linear-gradient(to right, #3b82f6, #ef4444)',
-                  'background-clip': 'padding-box, border-box'
-                }
-              : {}
-          ">
-          {{ area.nombre_area }}
-        </button>
+      <!-- Carrusel de áreas (reemplazo de la lista) -->
+      <div class="relative my-4 p-2 w-full">
+        <!-- Flechas de navegación -->
+        <div class="flex justify-between absolute inset-y-0 items-center z-10 w-full pointer-events-none px-2">
+          <button (click)="prevArea()" [disabled]="currentIndex === 0"
+            class="bg-white p-3 rounded-full shadow-lg text-gray-800 pointer-events-auto focus:outline-none hover:bg-gray-50 transition hover:shadow-xl disabled:opacity-50 disabled:pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+          <button (click)="nextArea()" [disabled]="currentIndex >= getTotalPages() - 1"
+            class="bg-white p-3 rounded-full shadow-lg text-gray-800 pointer-events-auto focus:outline-none hover:bg-gray-50 transition hover:shadow-xl disabled:opacity-50 disabled:pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Contenedor del carrusel -->
+        <div class="overflow-hidden">
+          <div class="flex transition-transform duration-300 ease-in-out"
+            [style.transform]="'translateX(-' + (currentIndex * 100) + '%)'">
+            <div *ngFor="let areaGroup of getAreaGroups()" class="flex-shrink-0 w-full px-2">
+              <div class="flex justify-center space-x-4">
+                <div *ngFor="let area of areaGroup" [ngClass]="{
+                 'bg-gradient-to-r from-blue-500 to-red-500 p-[3px]': areaSeleccionada?.id_area === area.id_area,
+                 'p-[2px]': true
+               }" class="rounded-2xl flex-shrink-0 transition-all duration-300">
+                  <button (click)="seleccionarArea(area)"
+                    class="w-full h-full px-6 py-3 bg-white rounded-2xl transition-all duration-200 whitespace-nowrap"
+                    [ngClass]="{
+                'font-semibold text-gray-800': true,
+                'border-transparent hover:border-gray-500': areaSeleccionada?.id_area !== area.id_area,
+                'border-transparent': areaSeleccionada?.id_area === area.id_area
+              }">
+                    {{ area.nombre_area }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Puntos de paginación -->
+        <div class="flex justify-center mt-4 space-x-2">
+          <button *ngFor="let dot of getPaginationDots(); let i = index" (click)="goToArea(i)"
+            class="rounded-full h-3 focus:outline-none transition-all" [ngClass]="{
+              'bg-gradient-to-r from-blue-500 to-red-500 w-5': currentIndex === i,
+              'bg-gray-300 w-3': currentIndex !== i
+            }">
+          </button>
+        </div>
       </div>
 
 
@@ -203,73 +240,94 @@
             <span class="italic font-medium">No se han definido niveles para esta área</span>
           </div>
 
-          <!-- Grid de niveles con nuevo diseño y descripción -->
-          <div *ngIf="areaSeleccionada.nivel_categorias?.length" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div *ngFor="let nivel of areaSeleccionada.nivel_categorias" class="flex-shrink-0 w-80 mx-2">
-              <div class="relative rounded-xl bg-white p-6 shadow-xl border-t-4 border-purple-600 
-        hover:shadow-3xl hover:border-purple-800 hover:scale-105 transition-transform duration-300 ease-in-out">
+          <!-- Grid de niveles con diseño mejorado (sin cambios funcionales) -->
+          <div *ngIf="areaSeleccionada.nivel_categorias?.length" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div *ngFor="let nivel of areaSeleccionada.nivel_categorias" class="flex justify-center">
+              <div class="relative w-full max-w-sm rounded-xl bg-white p-6 shadow-lg border-l-4 border-purple-600 
+        hover:shadow-xl hover:border-purple-700 hover:scale-[1.02] transition-all duration-300 ease-in-out">
 
-                <!-- Icono superior -->
-                <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 flex items-center justify-center 
-            rounded-full bg-gradient-to-r from-purple-600 to-red-600 text-white shadow-lg">
+                <!-- Icono superior mejorado -->
+                <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 flex items-center justify-center 
+          rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 text-white shadow-md">
                   <i class="fas fa-graduation-cap text-xl"></i>
                 </div>
 
-                <!-- Nombre del nivel -->
-                <h2 class="text-center text-xl font-bold mb-4 mt-4 text-gray-800">
-                  {{ nivel.nombre_nivel }}
-                </h2>
+                <!-- Contenido principal -->
+                <div class="pt-4">
+                  <!-- Nombre del nivel con mejor jerarquía visual -->
+                  <h2 class="text-center text-xl font-bold mb-5 text-gray-800">
+                    {{ nivel.nombre_nivel }}
+                  </h2>
 
-                <!-- Detalles del nivel -->
-                <div class="space-y-3 text-gray-700">
-                  <div class="flex items-center">
-                    <i class="fas fa-users text-purple-600 mr-2"></i>
-                    <span class="font-medium">Grados:</span>
-                    <span class="ml-1">
-                      {{ nivel.gradoIniCat }}
-                      <span *ngIf="nivel.gradoIniCat !== nivel.gradoFinCat">
-                        hasta {{ nivel.gradoFinCat }}
-                      </span>
-                    </span>
+                  <!-- Detalles del nivel - diseño más limpio -->
+                  <div class="space-y-3 text-gray-700">
+                    <!-- Items con mejor espaciado y alineación -->
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                        <i class="fas fa-users text-sm"></i>
+                      </div>
+                      <div>
+                        <span class="font-medium text-gray-800">Grados:</span>
+                        <span class="ml-1 text-gray-600">
+                          {{ nivel.gradoIniCat }}
+                          <span *ngIf="nivel.gradoIniCat !== nivel.gradoFinCat">- {{ nivel.gradoFinCat }}</span>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                        <i class="fas fa-dollar-sign text-sm"></i>
+                      </div>
+                      <div>
+                        <span class="font-medium text-gray-800">Costo:</span>
+                        <span class="ml-1 text-gray-600">{{ nivel.costo }} USD</span>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                        <i class="fas fa-calendar-alt text-sm"></i>
+                      </div>
+                      <div>
+                        <span class="font-medium text-gray-800">Fecha:</span>
+                        <span class="ml-1 text-gray-600">{{ nivel.fecha_examen | date:'d/MM/yyyy' }}</span>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                        <i class="fas fa-check-circle text-sm"></i>
+                      </div>
+                      <div>
+                        <span class="font-medium text-gray-800">Estado:</span>
+                        <span [ngClass]="{
+                'text-green-600': isHabilitado(nivel.habilitacion),
+                'text-red-600': isDeshabilitado(nivel.habilitacion)
+              }" class="ml-1 font-semibold">
+                          {{ getEstadoTexto(nivel.habilitacion) }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Descripción con diseño mejorado -->
+                    <div *ngIf="nivel.descripcion"
+                      class="mt-4 p-3 bg-gray-50 rounded-lg text-gray-700 border border-gray-200">
+                      <h3 class="text-purple-600 font-semibold mb-1 text-sm">DESCRIPCIÓN</h3>
+                      <p class="text-sm">{{ nivel.descripcion }}</p>
+                    </div>
                   </div>
 
-                  <div class="flex items-center">
-                    <i class="fas fa-dollar-sign text-purple-600 mr-2"></i>
-                    <span class="font-medium">Costo:</span>
-                    <span class="ml-1">{{ nivel.costo }} USD</span>
+                  <!-- Botón de acción con diseño mejorado -->
+                  <div class="mt-6 pt-4 border-t border-gray-100">
+                    <button (click)="toggleHabilitacion(nivel)" [class]="nivel.habilitacion ? 
+              'bg-red-600 hover:bg-red-700' : 
+              'bg-green-600 hover:bg-green-700'" class="w-full text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 ease-in-out 
+                  flex items-center justify-center space-x-2">
+                      <i [class]="nivel.habilitacion ? 'fas fa-ban' : 'fas fa-check'"></i>
+                      <span>{{ nivel.habilitacion ? 'DESHABILITAR' : 'HABILITAR' }}</span>
+                    </button>
                   </div>
-
-                  <div class="flex items-center">
-                    <i class="fas fa-calendar-alt text-purple-600 mr-2"></i>
-                    <span class="font-medium">Fecha:</span>
-                    <span class="ml-1">{{ nivel.fecha_examen | date:'d/MM/yyyy' }}</span>
-                  </div>
-
-                  <div class="flex items-center">
-                    <i class="fas fa-check-circle text-purple-600 mr-2"></i>
-                    <span class="font-medium">Estado:</span>
-                    <span [ngClass]="{
-                        'text-green-600': isHabilitado(nivel.habilitacion),
-                        'text-red-600': isDeshabilitado(nivel.habilitacion)
-                    }" class="ml-1 font-semibold">
-                      {{ getEstadoTexto(nivel.habilitacion) }}
-                    </span>
-                  </div>
-                  <!-- Descripción -->
-                  <div *ngIf="nivel.descripcion" class="mt-4 p-4 bg-gray-50 rounded-lg shadow-inner text-gray-700">
-                    <h3 class="text-purple-600 font-bold mb-2">Descripción:</h3>
-                    <p class="text-sm leading-relaxed">{{ nivel.descripcion }}</p>
-                  </div>
-                </div>
-
-                <!-- Botón de acción -->
-                <div class="mt-6 pt-4 border-t border-gray-100">
-                  <button (click)="toggleHabilitacion(nivel)"
-                    [class]="nivel.habilitacion ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'"
-                    class="w-full text-white font-semibold px-6 py-2 rounded-md hover:scale-105 hover:shadow-lg transition-all duration-300 ease-in-out">
-                    <i [class]="nivel.habilitacion ? 'fas fa-ban mr-2' : 'fas fa-check mr-2'"></i>
-                    {{ nivel.habilitacion ? 'DESHABILITAR' : 'HABILITAR' }}
-                  </button>
                 </div>
               </div>
             </div>
