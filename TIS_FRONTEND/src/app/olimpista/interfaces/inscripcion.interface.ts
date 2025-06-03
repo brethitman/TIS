@@ -64,6 +64,7 @@ export interface Inscripcione {
   olimpistas:        Olimpista[];
   tutors:            Tutor[];
   areas:             Area[];
+  niveles_seleccionados: NivelSeleccionado[];
   createdAt:         Date;
   updatedAt:         Date;
 }
@@ -111,5 +112,13 @@ export interface Tutor {
   telefono:       string;
   createdAt:      Date;
   updatedAt:      Date;
+}
 
+export interface NivelSeleccionado {
+  id_nivel: number;
+  nombre_nivel: string;
+  descripcion?: string;
+  fecha_examen?: Date;
+  costo: number;
+  habilitacion: boolean | number;
 }

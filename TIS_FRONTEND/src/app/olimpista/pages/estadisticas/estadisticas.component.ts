@@ -9,7 +9,7 @@ import { Area, Inscripcione, Olimpista, Tutor } from '../../interfaces/inscripci
 import { IDOlimpiadabyArea } from '../../interfaces/olimpiadaAreaCategoria.interface';
 
 interface AreaWithNiveles extends Area {
-  id_area?: number;
+  id_area: number;
   niveles: Array<{
     id_nivel: number;
     nombre_nivel: string;

@@ -118,3 +118,6 @@ Route::post('/cursoNivel', [CursoNivelController::class, 'store']);
 
 // Ruta para el envío de email - Corregida
 Route::post('/email', [EmailController::class, 'enviarEmail']);
+
+
+Route::get('/olimpiadas/{id}/cursos-areas', [CursoController::class, 'getCursosConAreasPorOlimpiada']);

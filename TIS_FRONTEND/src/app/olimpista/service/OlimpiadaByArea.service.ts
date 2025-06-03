@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'; 
 import { HttpClient } from '@angular/common/http'; 
-import { Observable, map } from 'rxjs'; 
+import { Observable, map, catchError, throwError } from 'rxjs'; 
 import { IDOlimpiadabyArea, OlimpiadaResponse } from '../interfaces/post_categoria.interface';
 import { environment } from '../../../environments/environment.development';
 
@@ -28,7 +28,16 @@ export class OlimpiadaByAreaService {
    */
   getOlimpiadaById(olimpiadaId: number): Observable<OlimpiadaResponse> {
     return this.http.get<{olimpiada: OlimpiadaResponse}>(`${this.apiUrl}/olimpiadas/${olimpiadaId}`).pipe(
-      map(response => response.olimpiada)
+      map(response => {
+        if (!response.olimpiada) {
+          throw new Error('No se encontró la olimpiada');
+        }
+        return response.olimpiada;
+      }),
+      catchError(error => {
+        console.error('Error al obtener olimpiada:', error);
+        return throwError(() => new Error('Error al cargar los detalles de la olimpiada'));
+      })
     );
   }
 }
