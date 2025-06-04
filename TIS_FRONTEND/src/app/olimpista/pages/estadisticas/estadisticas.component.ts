@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OlimpiadaService } from '../../service/olimpiada.service';
@@ -7,6 +7,7 @@ import { VisualizacionService } from '../../service/Visualizacion.service';
 import { Olimpiada } from '../../interfaces/olimpiada-interfase';
 import { Area, Inscripcione, Olimpista, Tutor } from '../../interfaces/inscripcion.interface';
 import { IDOlimpiadabyArea } from '../../interfaces/olimpiadaAreaCategoria.interface';
+import Chart from 'chart.js/auto';
 
 interface AreaWithNiveles extends Area {
   id_area: number;
@@ -23,6 +24,14 @@ interface AreaWithNiveles extends Area {
   templateUrl: './estadisticas.component.html'
 })
 export class EstadisticasComponent implements OnInit {
+  @ViewChild('donutChart') donutChartRef!: ElementRef;
+  private donutChart: Chart | null = null;
+  showChart = false;
+  tipoEstadistica: string = 'estado';
+  tiposEstadistica = [
+    { id: 'estado', nombre: 'Estado de Inscripción', icono: 'fa-check-circle' },
+    { id: 'colegio', nombre: 'Distribución por Colegio', icono: 'fa-school' }
+  ];
   olimpiadas: Olimpiada[] = [];
   areas: AreaWithNiveles[] = [];
   inscripciones: Inscripcione[] = [];
@@ -319,4 +328,133 @@ export class EstadisticasComponent implements OnInit {
   getOlimpistaCI(inscripcion: Inscripcione): string {
     return inscripcion.olimpistas?.[0]?.ci || 'No disponible';
   }
+
+  generarEstadisticas(): void {
+    if (!this.inscripcionesFiltradas.length) return;
+
+    this.showChart = true;
+
+    setTimeout(() => {
+      if (!this.donutChartRef?.nativeElement) {
+        console.error('El elemento del canvas no está disponible');
+        return;
+      }
+
+      // Destruir gráfico anterior si existe
+      if (this.donutChart) {
+        this.donutChart.destroy();
+      }
+
+      const ctx = this.donutChartRef.nativeElement.getContext('2d');
+      
+      switch(this.tipoEstadistica) {
+        case 'estado':
+          this.generarGraficoEstados(ctx);
+          break;
+        case 'colegio':
+          this.generarGraficoColegios(ctx);
+          break;
+      }
+    });
+  }
+
+  private generarGraficoEstados(ctx: CanvasRenderingContext2D): void {
+    const estados = this.estadosUnicos;
+    const conteoEstados = estados.map(estado => 
+      this.inscripcionesFiltradas.filter(ins => ins.estado === estado).length
+    );
+
+    const colores = {
+      'Pagado': '#10B981',
+      'Pendiente': '#F59E0B',
+      'Verificado': '#3B82F6',
+      'default': '#6B7280'
+    };
+
+    const backgroundColors = estados.map(estado => 
+      colores[estado as keyof typeof colores] || colores.default
+    );
+
+    this.donutChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: estados,
+        datasets: [{
+          data: conteoEstados,
+          backgroundColor: backgroundColors,
+          borderWidth: 2,
+          borderColor: '#ffffff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { padding: 20, font: { size: 14 } }
+          },
+          title: {
+            display: true,
+            text: 'Distribución de Estados de Inscripción',
+            font: { size: 18, weight: 'bold' },
+            padding: 20
+          }
+        },
+        cutout: '60%',
+        animation: { animateScale: true, animateRotate: true }
+      }
+    });
+  }
+
+  private generarGraficoColegios(ctx: CanvasRenderingContext2D): void {
+    const colegios = [...new Set(this.inscripcionesFiltradas
+      .map(ins => ins.olimpistas?.[0]?.colegio)
+      .filter(colegio => colegio))];
+    
+    const conteoColegios = colegios.map(colegio => 
+      this.inscripcionesFiltradas.filter(ins => 
+        ins.olimpistas?.[0]?.colegio === colegio
+      ).length
+    );
+
+    this.donutChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: colegios,
+        datasets: [{
+          label: 'Número de Estudiantes',
+          data: conteoColegios,
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          borderColor: 'rgb(59, 130, 246)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { padding: 20, font: { size: 14 } }
+          },
+          title: {
+            display: true,
+            text: 'Distribución de Estudiantes por Colegio',
+            font: { size: 18, weight: 'bold' },
+            padding: 20
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
+            }
+          }
+        }
+      }
+    });
+  }
+
 }

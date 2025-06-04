@@ -25,7 +25,7 @@ export class NavMenuComponent {
     { name: "REGISTRAR OLIMPIADA", path: "/admin/olimpiada" },
   ];
 
-  // Opciones Home (siempre visibles en el centro)
+  // Opciones Home (solo visibles cuando no está autenticado)
   private homeOptions: MenuOption[] = [
     { name: "Home", path: "/inicio/waba" },
   ];
@@ -37,7 +37,7 @@ export class NavMenuComponent {
 
   // Getter para opciones de Home
   getHomeOptions(): MenuOption[] {
-    return this.homeOptions;
+    return this.authService.isLoggedIn() ? [] : this.homeOptions;
   }
 
   // Getter para opciones de Login
@@ -52,15 +52,11 @@ export class NavMenuComponent {
 
   // Propiedad que devuelve todas las opciones para menú móvil
   get menuOptions(): MenuOption[] {
-    const options = [...this.homeOptions];
-    
     if (this.authService.isLoggedIn()) {
-      options.push(...this.authMenuOptions);
+      return [...this.authMenuOptions];
     } else {
-      options.push(...this.loginOptions);
+      return [...this.homeOptions, ...this.loginOptions];
     }
-    
-    return options;
   }
 
   // Método para cerrar sesión

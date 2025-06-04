@@ -311,7 +311,9 @@ nivelesDelArea: NivelCategoria[] = [];
         },
         error: (error) => {
           console.error('Error al enviar boleta por email:', error);
-          this.errorMessage = 'La inscripción fue exitosa, pero hubo un problema al enviar la boleta por email. Por favor contacte a soporte.';
+          if (error.status !== 200) {
+            this.errorMessage = 'La inscripción fue exitosa, pero hubo un problema al enviar la boleta por email. Por favor contacte a soporte.';
+          }
         }
       });
   }

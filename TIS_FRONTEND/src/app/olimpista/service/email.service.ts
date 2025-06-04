@@ -15,49 +15,28 @@ export class EmailService {
     console.log('URL del API de correo:', this.apiUrl);
   }
 
-  enviarBoletaPorEmail(boleta: BoletaPagoResponse, destinatario: string): Observable<any> {
-    // Crear un objeto limpio para evitar problemas de serialización
-    const boletaData = {
-      numero_boleta: boleta.numero_boleta || 'Sin número',
-      monto: typeof boleta.monto === 'number' ? String(boleta.monto) : boleta.monto || '0',
-      fecha_generacion: boleta.fecha_generacion || new Date().toISOString()
-    };
-
+  enviarBoletaPorEmail(boletaData: BoletaPagoResponse, correo: string): Observable<any> {
     const payload = {
-      destinatario: destinatario,
-      asunto: `Boleta de Pago #${boletaData.numero_boleta}`,
+      destinatario: correo,
+      asunto: 'Comprobante de Inscripción - Boleta de Pago',
       boleta: boletaData
     };
-    
-    console.log('Enviando solicitud a:', this.apiUrl);
-    console.log('Payload:', JSON.stringify(payload, null, 2));
-    
-    return this.http.post<{success: boolean, message: string}>(this.apiUrl, payload)
-      .pipe(
-        tap(response => console.log('Respuesta del servidor:', response)),
-        catchError(this.handleError)
-      );
-  }
-  
-  private handleError(error: HttpErrorResponse) {
-    console.error('Error completo:', error);
-    
-    let errorMessage = 'Ha ocurrido un error desconocido';
-    
-    if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      // Error del lado del servidor
-      errorMessage = `Código: ${error.status}, ` + 
-                     `Mensaje: ${error.error?.message || error.statusText}`;
-                     
-      // Si hay un mensaje detallado en la respuesta
-      if (error.error && typeof error.error === 'object') {
-        console.log('Detalles del error del servidor:', error.error);
-      }
-    }
-    
-    return throwError(() => new Error(errorMessage));
+
+    return this.http.post(`${this.apiUrl}/enviar`, payload).pipe(
+      tap(response => {
+        console.log('Respuesta del servidor de correo:', response);
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error en el servicio de correo:', error);
+        // Si el correo se envió pero hay un error en la respuesta, no lo tratamos como error
+        if (error.status === 200) {
+          return new Observable(subscriber => {
+            subscriber.next({ success: true, message: 'Correo enviado exitosamente' });
+            subscriber.complete();
+          });
+        }
+        return throwError(() => error);
+      })
+    );
   }
 }
