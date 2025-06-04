@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../auth/services/auth.service';
 import { CommonModule } from '@angular/common';
+import { Olimpiada } from '../../../olimpista/interfaces/olimpiada-interfase';
 
 interface MenuOption {
-  path: string;
   name: string;
+  path: string;
+  children?: MenuOption[];
 }
 
 @Component({
@@ -63,7 +65,6 @@ export class NavMenuComponent {
     return options;
   }
 
-  // Método para cerrar sesión
   logout(): void {
     this.authService.logout();
     this.closeMobileMenu();

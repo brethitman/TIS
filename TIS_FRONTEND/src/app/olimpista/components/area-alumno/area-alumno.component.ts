@@ -396,6 +396,7 @@ export class AreaAlumnoComponent implements OnInit {
     //this.inscripciones = [];
     this.estudiantesDisponibles = [...this.estudiantes];
     this.mostrarFinalizar = false;
+   this.router.navigate(['/boletaPago']);
   }
 
   finalizarInscripciones() {

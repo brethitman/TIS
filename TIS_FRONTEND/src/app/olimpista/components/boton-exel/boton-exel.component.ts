@@ -195,14 +195,7 @@ export class BotonExelComponent {
     this.modalError = true;
     this.showModal1 = false;
 
-   /* this.confirmSubida = true;
-    this.modalError = true;
-    console.log('Datos del tutor:', this.tutor);
-    this.showModal1 = false;
-    this.tutor = { nombre: '', apellido: '', ci: '',email:'',telefono: '' };
-    this.errors = { nombre: '', apellido: '', ci: '' ,email:'',telefono: ''};
-  
-*/    }
+  }
 
   cancelar1(): void {
     this.resetFileInput(); // Limpiar el input file
@@ -275,36 +268,62 @@ export class BotonExelComponent {
       this.datosEstudiantes = filasConDatos;
       this.validacionesEst(filasConDatos);
       //this.tutor = 
-      console.log('Lista de Estudiantes:', this.datosEstudiantes);
+    
     } else if (fileName === 'Formato_Varios_Tutores.xlsx') {
       this.separarEstudiantesTutores(filasConDatos);
     }
   }
 
-  separarEstudiantesTutores(filasConDatos: any[][]): void {
-    const estudiantes: any[] = [];
-    const tutores: any[] = [];
-    let leyendoEstudiantes = true;
+ // En tu componente
+tutorPrincipal: any[] = [];  // Nueva propiedad para el tutor principal
 
-    filasConDatos.forEach((fila) => {
-      const contieneNombreTutor = fila.some(cell =>
-        typeof cell === 'string' && cell.trim().toLowerCase() === "nombre tutor"
-      );
+separarEstudiantesTutores(filasConDatos: any[][]): void {
+  const estudiantes: any[] = [];
+  const tutores: any[] = [];
+  let leyendoEstudiantes = true;
+  let separadorDetectado = false;
+  
+  // Resetear tutor principal
+  this.tutorPrincipal = [];
 
-      if (contieneNombreTutor) {
-        leyendoEstudiantes = false;
-      }
-      if (leyendoEstudiantes) {
-        estudiantes.push(fila);
-      } else {
-        tutores.push(fila);
-      }
+  filasConDatos.forEach((fila, index) => {
+    // Detectar texto "nombre tutor"
+    const contieneNombreTutor = fila.some(cell => {
+      const esString = typeof cell === 'string';
+      const esSeparador = esString && cell.trim().toLowerCase() === "nombre tutor";
+      return esSeparador;
     });
-    this.datosEstudiantes = estudiantes;
-    this.datosTutores = tutores;
-    this.validacionesEst(this.datosEstudiantes)
-    this.validacionesTutor(this.datosTutores)
-  }
+
+    // Cambiar estado si se detecta separador
+    if (contieneNombreTutor && !separadorDetectado) {
+      leyendoEstudiantes = false;
+      separadorDetectado = true;
+    }
+
+    // Clasificar fila
+    if (leyendoEstudiantes) {
+      estudiantes.push(fila);
+    } else {
+      tutores.push(fila);
+      
+      // Guardar la primera fila después del separador como tutor principal
+      if (tutores.length === 2 && separadorDetectado) {
+        this.tutorPrincipal = [...fila];  // Hacemos copia del array
+        console.log('Tutor principal guardado:', this.tutorPrincipal);
+      }
+    }
+  });
+
+  // Asignar a propiedades
+  this.datosEstudiantes = estudiantes;
+  this.datosTutores = tutores;
+  
+  // Validaciones
+  this.validacionesEst(this.datosEstudiantes);
+  this.validacionesTutor(this.datosTutores);
+  
+  console.log('Tutor principal final:', this.tutorPrincipal);
+}
 
   validacionesEst(datosEst: any[][]) {
     const listaEstudiante = datosEst.slice(1);
@@ -376,6 +395,7 @@ export class BotonExelComponent {
     }
 
   }
+  
   validacionesTutor(datosTutor: any[][]) {
     const listaTutor = datosTutor.slice(1);
     this.datosTutores = listaTutor;
