@@ -6,12 +6,12 @@
     </div>
 
     <div class="border-t border-gray-200 my-6"></div>
-    
+
     <!-- Sección de carga de archivo -->
     <div class="flex flex-col items-center">
       <!-- Input oculto para archivo -->
       <input type="file" accept="image/*" (change)="onFileSelected($event)" id="fileInput" class="hidden" />
-      
+
       <!-- Botón para seleccionar archivo -->
       <button
         class="bg-indigo-700 hover:bg-indigo-800 text-white px-6 py-3 rounded-lg shadow-md transition duration-300 flex items-center gap-2 font-medium"
@@ -22,9 +22,7 @@
         </svg>
         Seleccionar Imagen
       </button>
-      
-      <!-- Mensaje informativo -->
-     
+    </div>
 
     <!-- Vista previa de imagen -->
     <div *ngIf="imagenCargada" class="mt-6">
@@ -37,44 +35,32 @@
         />
       </div>
     </div>
-  </div>
 
-  <!-- Sección de resultados -->
-  <div *ngIf="ocrResultado" class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6">
-    <!-- Indicadores de estado -->
-    <div class="grid grid-cols-2 gap-4 mb-6">
+    <!-- Resultados -->
+    <div *ngIf="numeroBoletaDetectado" class="mt-6">
       <div class="bg-blue-50 p-4 rounded-lg">
         <p class="text-sm font-medium text-blue-600">N° Boleta detectado</p>
-        <p class="text-xl font-semibold text-blue-800">{{ numeroBoletaDetectado || 'No encontrado' }}</p>
-      </div>
-
-      <div class="bg-yellow-50 p-4 rounded-lg">
-        <p class="text-sm font-medium text-yellow-600">Estado detectado</p>
-        <p class="text-xl font-semibold text-yellow-800">{{ estadoDetectado || 'No identificado' }}</p>
+        <p class="text-xl font-semibold text-blue-800">{{ numeroBoletaDetectado }}</p>
       </div>
     </div>
 
     <!-- Progreso -->
-    <div *ngIf="cargandoOCR || procesandoPago" class="mb-6">
+    <div *ngIf="cargandoOCR || procesandoPago" class="mt-6">
       <div class="flex items-center justify-center space-x-2 text-blue-600">
-        <i class="fas fa-spinner fa-spin"></i>
+        <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
         <span>{{ cargandoOCR ? 'Procesando imagen...' : 'Verificando pago...' }}</span>
       </div>
     </div>
 
-    <!-- Alerta de confirmación -->
-    <div *ngIf="imagenConfirmada" class="bg-green-50 border-l-4 border-green-500 p-4 rounded-md shadow-sm transition-all duration-300 animate-fade-in">
-      <div class="flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <!-- Resultado exitoso -->
+    <div *ngIf="inscripcionVerificada" class="bg-green-50 p-6 rounded-lg mt-6">
+      <div class="flex items-center mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
         </svg>
-        <p class="text-green-700 font-medium">Imagen subida correctamente</p>
-      </div>
-
-    <!-- Resultado exitoso -->
-    <div *ngIf="inscripcionVerificada" class="bg-green-50 p-6 rounded-lg">
-      <div class="flex items-center mb-4">
-        <i class="fas fa-check-circle text-2xl text-green-600 mr-2"></i>
         <h2 class="text-xl font-bold text-green-800">¡Pago Verificado Correctamente!</h2>
       </div>
 
@@ -106,62 +92,19 @@
       </div>
     </div>
 
-    <!-- Sección de imagen y resultados -->
-    <div *ngIf="imagenCargada" class="flex flex-col md:flex-row gap-6 mt-4">
-      <!-- Imagen cargada -->
-      <div class="md:w-1/2">
-        <div class="bg-gray-50 p-2 rounded-lg border border-gray-200">
-          <p class="text-sm text-gray-500 mb-2 font-medium">Vista previa:</p>
-          <img [src]="imagenCargada" alt="Imagen subida" class="w-full h-auto rounded shadow-sm object-contain max-h-64" />
-        </div>
-      </div>
-
-      <!-- Resultado OCR -->
-      <div class="md:w-1/2">
-        <!-- Estado de carga -->
-        <div *ngIf="cargandoOCR" class="bg-blue-50 p-4 rounded-lg flex items-center justify-center shadow-sm border border-blue-100 h-full">
-          <div class="flex flex-col items-center">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-700 mb-2"></div>
-            <p class="text-indigo-700 font-medium">Procesando OCR...</p>
-          </div>
-        </div>
-
-        <!-- Resultado final -->
-        <div *ngIf="ocrResultado && !cargandoOCR" class="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm h-full">
-          <div class="flex items-center mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <h3 class="font-semibold text-gray-800">Texto reconocido:</h3>
-          </div>
-          <div class="bg-white p-3 rounded border border-gray-200 max-h-60 overflow-auto">
-            <pre class="text-sm text-gray-800 whitespace-pre-wrap font-mono">{{ ocrResultado }}</pre>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
     <!-- Mensajes de error -->
     <div *ngIf="errorMensaje" class="bg-red-50 p-4 rounded-lg mt-6">
       <div class="flex items-center mb-2">
-        <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
         <h3 class="font-semibold text-red-800">Error en la verificación</h3>
       </div>
       <p class="text-red-700">{{ errorMensaje }}</p>
-
-      <div *ngIf="estadoDetectado !== 'Pendiente'" class="mt-4 text-sm text-red-600">
-        <p class="font-medium">Requisitos no cumplidos:</p>
-        <ul class="list-disc pl-5">
-          <li>El comprobante debe mostrar claramente "Estado: Pendiente"</li>
-          <li>El número de boleta debe ser visible y legible</li>
-        </ul>
-      </div>
     </div>
 
     <!-- Texto OCR procesado -->
-    <div class="mt-6 border-t pt-6">
+    <div *ngIf="ocrResultado" class="mt-6 border-t pt-6">
       <h3 class="text-lg font-semibold mb-3">Texto reconocido:</h3>
       <div class="bg-gray-50 p-4 rounded-lg">
         <pre class="whitespace-pre-wrap break-words text-sm">{{ ocrResultado }}</pre>

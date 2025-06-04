@@ -65,37 +65,67 @@
         <span class="block text-sm font-medium text-gray-500">Ubicación</span>
         <span class="text-lg">{{ boletaData.olimpista.departamento }} - {{ boletaData.olimpista.provincia }}</span>
       </div>
+      <div>
+  <span class="block text-sm font-medium text-gray-500">Curso</span>
+  <span class="text-lg">{{ boletaData.curso.nombre || 'N/A' }}</span>
+</div>
     </div>
   </div>
+<!-- Reemplaza toda la sección de "Datos del Tutor" con este código: -->
+<div class="mb-8 p-5 bg-gray-50 rounded-lg border border-gray-200">
+  <h3 class="text-xl font-bold mb-4 text-blue-800 border-b border-blue-200 pb-2 flex items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+    </svg>
+    Datos del Tutor{{ (boletaData.tutores_adicionales.length || 0) > 0 ? 'es' : '' }}
+  </h3>
 
-  <!-- Sección Tutor -->
-  <div class="mb-8 p-5 bg-gray-50 rounded-lg border border-gray-200">
-    <h3 class="text-xl font-bold mb-4 text-blue-800 border-b border-blue-200 pb-2 flex items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-      </svg>
-      Datos del Tutor
-    </h3>
+  <!-- Tutor Principal -->
+  <div class="mb-6 last:mb-0 p-4 bg-white rounded border border-gray-300">
+    <h4 class="font-semibold text-blue-700 mb-3">Tutor Principal</h4>
     <div class="grid grid-cols-2 gap-4">
       <div>
         <span class="block text-sm font-medium text-gray-500">Nombre Completo</span>
-        <span class="text-lg">{{ boletaData.tutor.nombres }} {{ boletaData.tutor.apellidos }}</span>
+        <span class="text-lg">{{ boletaData.tutor_principal.nombres }} {{ boletaData.tutor_principal.apellidos }}</span>
       </div>
       <div>
         <span class="block text-sm font-medium text-gray-500">Teléfono</span>
-        <span class="text-lg">{{ boletaData.tutor.telefono }}</span>
+        <span class="text-lg">{{ boletaData.tutor_principal.telefono }}</span>
       </div>
       <div>
         <span class="block text-sm font-medium text-gray-500">Correo Electrónico</span>
-        <span class="text-lg">{{ boletaData.tutor.correo }}</span>
+        <span class="text-lg">{{ boletaData.tutor_principal.correo }}</span>
       </div>
       <div>
         <span class="block text-sm font-medium text-gray-500">Contacto/parentesco</span>
-        <span class="text-lg">{{ boletaData.tutor.contacto || 'N/A' }}</span>
+        <span class="text-lg">{{ boletaData.tutor_principal.contacto || 'N/A' }}</span>
       </div>
     </div>
   </div>
 
+  <!-- Tutores Adicionales -->
+  <div *ngFor="let tutor of boletaData.tutores_adicionales; let i = index" class="mb-6 last:mb-0 p-4 bg-white rounded border border-gray-300">
+    <h4 class="font-semibold text-blue-700 mb-3">Tutor Adicional {{i + 1}}</h4>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <span class="block text-sm font-medium text-gray-500">Nombre Completo</span>
+        <span class="text-lg">{{ tutor.nombres }} {{ tutor.apellidos }}</span>
+      </div>
+      <div>
+        <span class="block text-sm font-medium text-gray-500">Teléfono</span>
+        <span class="text-lg">{{ tutor.telefono }}</span>
+      </div>
+      <div>
+        <span class="block text-sm font-medium text-gray-500">Correo Electrónico</span>
+        <span class="text-lg">{{ tutor.correo }}</span>
+      </div>
+      <div>
+        <span class="block text-sm font-medium text-gray-500">Contacto/parentesco</span>
+        <span class="text-lg">{{ tutor.contacto || 'N/A' }}</span>
+      </div>
+    </div>
+  </div>
+</div>
   <!-- Sección Niveles -->
   <div *ngIf="boletaData?.areas_niveles?.length" class="mb-8 p-5 bg-gray-50 rounded-lg border border-gray-200">
     <h3 class="text-xl font-bold mb-4 text-blue-800 border-b border-blue-200 pb-2 flex items-center">

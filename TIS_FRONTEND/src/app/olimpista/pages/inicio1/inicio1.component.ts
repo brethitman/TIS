@@ -9,7 +9,7 @@ import { OlimpiadasGridComponent } from '../../components/olimpiadas-grid/olimpi
 @Component({
   selector: 'app-inicio1',
   standalone: true,
-  imports: [CommonModule, DatePipe, OlimpiadasGridComponent],
+  imports: [CommonModule, OlimpiadasGridComponent],
   templateUrl: './inicio1.component.html',
 })
 export class Inicio1Component implements OnInit {

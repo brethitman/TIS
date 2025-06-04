@@ -21,14 +21,15 @@ class BoletaPago extends Model
         'monto',
         'fecha_generacion',
         'areas_niveles',
-        'nombre_olimpiada'
+        'nombre_olimpiada',
+        'id_curso' // 👈 ¡Agregado aquí!
     ];
 
     protected $casts = [
         'fecha_generacion' => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'areas_niveles' => 'array', // Esto es CRUCIAL para el JSON
+        'areas_niveles' => 'array',
     ];
 
     public function inscripcion()
@@ -44,5 +45,10 @@ class BoletaPago extends Model
     public function tutor()
     {
         return $this->belongsTo(Tutor::class, 'id_tutor');
+    }
+
+    public function curso()
+    {
+        return $this->belongsTo(Curso::class, 'id_curso'); // 👈 Relación con el modelo Curso
     }
 }

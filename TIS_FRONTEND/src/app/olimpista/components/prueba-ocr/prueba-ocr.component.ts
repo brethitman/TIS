@@ -9,7 +9,6 @@ import * as Tesseract from 'tesseract.js';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './prueba-ocr.component.html',
-  //styleUrls: ['./prueba-ocr.component.css'] // opcional
 })
 export class PruebaOcrComponent {
   ocrResultado: string = '';
@@ -18,12 +17,11 @@ export class PruebaOcrComponent {
   procesandoPago: boolean = false;
   inscripcionVerificada?: Inscripcion;
   errorMensaje: string = '';
-  estadoDetectado: string = '';
   numeroBoletaDetectado: string = '';
-  imagenConfirmada: boolean = false; // Propiedad agregada que faltaba
 
   constructor(private verificarBoletaService: VerificarBoletaService) {}
 
+  // Método para activar el input de archivo
   triggerFileInput(): void {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     fileInput?.click();
@@ -44,9 +42,7 @@ export class PruebaOcrComponent {
     this.imagenCargada = null;
     this.inscripcionVerificada = undefined;
     this.errorMensaje = '';
-    this.estadoDetectado = '';
     this.numeroBoletaDetectado = '';
-    this.imagenConfirmada = false; // Resetear también esta propiedad
   }
 
   private procesarImagen(file: File): void {
@@ -54,7 +50,6 @@ export class PruebaOcrComponent {
 
     reader.onload = () => {
       this.imagenCargada = reader.result as string;
-      this.imagenConfirmada = true; // Confirmar que la imagen fue cargada
       this.reconocerTexto(this.imagenCargada);
     };
 
@@ -64,11 +59,9 @@ export class PruebaOcrComponent {
   private reconocerTexto(imagenBase64: string): void {
     this.cargandoOCR = true;
 
-    Tesseract.recognize(imagenBase64, 'spa', {
-      logger: m => console.log(m)
-    }).then(({ data: { text } }) => {
+    Tesseract.recognize(imagenBase64, 'spa').then(({ data: { text } }) => {
       this.ocrResultado = text;
-      this.validarDatosOCR();
+      this.extraerDatosBoleta();
       this.cargandoOCR = false;
     }).catch(error => {
       console.error('Error OCR:', error);
@@ -77,49 +70,41 @@ export class PruebaOcrComponent {
     });
   }
 
-  private validarDatosOCR(): void {
+  private extraerDatosBoleta(): void {
+    // Extraer número de boleta
     this.numeroBoletaDetectado = this.extraerNumeroBoleta(this.ocrResultado);
-    this.estadoDetectado = this.extraerEstado(this.ocrResultado);
 
+    // Verificar si se encontró un número de boleta válido
     if (!this.numeroBoletaDetectado) {
-      this.errorMensaje = 'No se detectó número de boleta válido';
+      this.errorMensaje = 'No se detectó un número de boleta válido';
       return;
     }
 
-    if (this.estadoDetectado !== 'Pendiente') {
-      this.errorMensaje = 'El estado detectado no es "Pendiente"';
+    // Verificar si la boleta muestra estado "Pagado"
+    if (!this.verificarEstadoPagado(this.ocrResultado)) {
+      this.errorMensaje = 'La boleta no muestra estado "Pagado"';
       return;
     }
 
-    this.verificarPagoAutomatico();
+    // Si todo está bien, proceder con la verificación
+    this.verificarPago();
   }
 
   private extraerNumeroBoleta(texto: string): string {
-    const patrones = [
-      /BOL-[A-Z0-9]{6,}-\d+/i,
-      /BOLETA\s*N°?\s*\d+/i,
-      /COD:\s*\d{6,}/i,
-      /No\.?\s*[\w-]+/i
-    ];
-
-    for (const patron of patrones) {
-      const match = texto.match(patron);
-      if (match) {
-        return match[0].toUpperCase().replace(/\s/g, '');
-      }
-    }
-    return '';
-  }
-
-  private extraerEstado(texto: string): string {
-    const regex = /(Estado|Status|Situación):\s*([A-Za-záéíóú]+)/i;
+    // Patrón para identificar formato BOL-XXXXXX-XX
+    const regex = /BOL-[A-Z0-9]{6,}-\d+/i;
     const match = texto.match(regex);
-    return match ? match[2].trim() : '';
+    return match ? match[0] : '';
   }
 
-  private verificarPagoAutomatico(): void {
+  private verificarEstadoPagado(texto: string): boolean {
+    // Buscar variantes de la palabra "Pagado"
+    const regex = /(pagado|pago completado|aprobado)/i;
+    return regex.test(texto);
+  }
+
+  private verificarPago(): void {
     this.procesandoPago = true;
-    this.errorMensaje = '';
 
     const payload: VerificarPagoPayload = {
       numero_boleta: this.numeroBoletaDetectado,
@@ -134,7 +119,6 @@ export class PruebaOcrComponent {
       error: (error) => {
         this.procesandoPago = false;
         this.errorMensaje = error.error?.message || 'Error al verificar el pago';
-        console.error('Error:', error);
       }
     });
   }
