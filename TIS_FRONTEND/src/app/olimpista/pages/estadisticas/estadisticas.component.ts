@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OlimpiadaService } from '../../service/olimpiada.service';
 import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
-import { InscripcionService } from '../../service/inscripcion.service';
+import { VisualizacionService } from '../../service/Visualizacion.service';
 import { Olimpiada } from '../../interfaces/olimpiada-interfase';
 import { Area, Inscripcione, Olimpista, Tutor } from '../../interfaces/inscripcion.interface';
 import { IDOlimpiadabyArea } from '../../interfaces/olimpiadaAreaCategoria.interface';
@@ -31,12 +31,12 @@ export class EstadisticasComponent implements OnInit {
   selectedNivel: { id_nivel: number; nombre_nivel: string } | null = null;
   loading = false;
   error: string | null = null;
-
+  miArray: any[] = [];
   constructor(
     private olimpiadaService: OlimpiadaService,
     private olimpiadaByAreaService: OlimpiadaByAreaService,
-    private inscripcionService: InscripcionService
-  ) {}
+    private servicio: VisualizacionService,
+  ) { }
 
   ngOnInit(): void {
     console.log('🔄 Iniciando componente de estadísticas');
@@ -46,14 +46,14 @@ export class EstadisticasComponent implements OnInit {
   loadOlimpiadas(): void {
     this.loading = true;
     this.error = null;
-    
+
     console.log('🔄 Cargando olimpiadas...');
-    
+
     this.olimpiadaService.getOlimpiadas().subscribe({
       next: (data) => {
         console.log('✅ Olimpiadas cargadas exitosamente:', data);
         console.log('📊 Cantidad de olimpiadas:', data.length);
-        
+
         if (data.length === 0) {
           console.warn('⚠️ No se encontraron olimpiadas');
           this.error = 'No se encontraron olimpiadas disponibles';
@@ -61,7 +61,7 @@ export class EstadisticasComponent implements OnInit {
           this.olimpiadas = data;
           console.log('🔍 Primera olimpiada:', data[0]);
         }
-        
+
         this.loading = false;
       },
       error: (error) => {
@@ -75,9 +75,9 @@ export class EstadisticasComponent implements OnInit {
   onOlimpiadaSelect(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const selectedId = target.value;
-    
+
     console.log('🎯 ID de olimpiada seleccionada:', selectedId);
-    
+
     if (!selectedId) {
       this.selectedOlimpiada = null;
       this.selectedArea = null;
@@ -88,7 +88,7 @@ export class EstadisticasComponent implements OnInit {
     }
 
     const olimpiada = this.olimpiadas.find(o => o.id.toString() === selectedId);
-    
+
     if (olimpiada) {
       console.log('✅ Olimpiada encontrada:', olimpiada);
       this.selectedOlimpiada = olimpiada;
@@ -105,9 +105,9 @@ export class EstadisticasComponent implements OnInit {
   loadAreas(olimpiadaId: number): void {
     this.loading = true;
     this.error = null;
-    
+
     console.log('🔄 Cargando áreas para olimpiada:', olimpiadaId);
-    
+
     this.olimpiadaByAreaService.getAreasByOlimpiadaId(olimpiadaId).subscribe({
       next: (data: IDOlimpiadabyArea[]) => {
         console.log('✅ Áreas cargadas:', data);
@@ -138,9 +138,9 @@ export class EstadisticasComponent implements OnInit {
   onAreaSelect(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const selectedId = target.value;
-    
+
     console.log('🎯 ID de área seleccionada:', selectedId);
-    
+
     if (!selectedId) {
       this.selectedArea = null;
       this.selectedNivel = null;
@@ -149,7 +149,7 @@ export class EstadisticasComponent implements OnInit {
     }
 
     const area = this.areas.find(a => a.id_area?.toString() === selectedId);
-    
+
     if (area) {
       console.log('✅ Área encontrada:', area);
       this.selectedArea = area;
@@ -164,9 +164,9 @@ export class EstadisticasComponent implements OnInit {
   onNivelSelect(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const selectedId = target.value;
-    
+
     console.log('🎯 ID de nivel seleccionado:', selectedId);
-    
+
     if (!selectedId || !this.selectedArea) {
       this.selectedNivel = null;
       this.inscripciones = [];
@@ -174,7 +174,7 @@ export class EstadisticasComponent implements OnInit {
     }
 
     const nivel = this.selectedArea.niveles.find(n => n.id_nivel.toString() === selectedId);
-    
+
     if (nivel) {
       console.log('✅ Nivel encontrado:', nivel);
       this.selectedNivel = nivel;
@@ -187,32 +187,30 @@ export class EstadisticasComponent implements OnInit {
 
   loadInscripciones(): void {
     if (!this.selectedArea || !this.selectedNivel) {
-      console.warn('⚠️ No se pueden cargar inscripciones sin área y nivel seleccionados');
-      return;
+        console.warn('⚠️ No se pueden cargar inscripciones sin área y nivel seleccionados');
+        return;
     }
 
     this.loading = true;
     this.error = null;
-    
-    console.log('🔄 Cargando inscripciones para área:', this.selectedArea.id_area, 'y nivel:', this.selectedNivel.id_nivel);
-    
-    this.inscripcionService.getInscripciones().subscribe({
-      next: (data: Inscripcione[]) => {
-        console.log('✅ Inscripciones cargadas:', data);
-        this.inscripciones = data.filter(inscripcion => 
-          inscripcion.areas.some(area => area.id === this.selectedArea?.id_area)
-        );
-        this.loading = false;
-      },
-      error: (error: Error) => {
-        console.error('❌ Error al cargar inscripciones:', error);
-        this.error = 'Error al cargar las inscripciones: ' + error.message;
-        this.loading = false;
-      }
-    });
-  }
 
-  // Helper methods for safe data access
+    console.log('🔄 Cargando inscripciones para nivel:', this.selectedNivel.id_nivel);
+
+    this.servicio.getInscripcionPorNivel(this.selectedNivel.id_nivel).subscribe({
+        next: (data: Inscripcione[]) => {
+            console.log('✅ Inscripciones cargadas:', data);
+            this.inscripciones = data;
+            this.loading = false;
+        },
+        error: (error: Error) => {
+            console.error('Error al cargar inscripciones:', error);
+            this.error = 'Error al cargar las inscripciones: ' + error.message;
+            this.loading = false;
+        }
+    });
+}
+
+
   getOlimpistaName(inscripcion: Inscripcione): string {
     const olimpista = inscripcion.olimpistas?.[0];
     if (!olimpista) return 'No disponible';

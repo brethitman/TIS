@@ -52,8 +52,4 @@ class Inscripcion extends Model
             ->withTimestamps();
     }
 
-
-
-
-
 }

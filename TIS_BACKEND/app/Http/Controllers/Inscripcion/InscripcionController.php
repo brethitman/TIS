@@ -302,68 +302,68 @@ class InscripcionController extends Controller
     //verificar con el ocr de frontend
 
     public function verificarPago(Request $request)
-{
-    $request->validate([
-        'numero_boleta' => 'required|string|max:50',
-        'estado' => 'required|in:Pagado' // Solo permite cambiar a Pagado
-    ]);
-
-    DB::beginTransaction();
-
-    try {
-        // Buscar boleta con relaciones
-        $boleta = BoletaPago::with('inscripcion')
-            ->where('numero_boleta', $request->numero_boleta)
-            ->firstOrFail();
-
-        // Validar transición de estado válida
-        if ($boleta->inscripcion->estado === 'Pagado') {
-            return response()->json([
-                'message' => 'La boleta ya tiene estado Pagado',
-                'estado_actual' => $boleta->inscripcion->estado
-            ], Response::HTTP_CONFLICT); // 409 Conflict
-        }
-
-        // Validar que solo se pueda cambiar desde Pendiente
-        if ($boleta->inscripcion->estado !== 'Pendiente') {
-            return response()->json([
-                'message' => 'Solo se puede pagar inscripciones en estado Pendiente',
-                'estado_actual' => $boleta->inscripcion->estado
-            ], Response::HTTP_UNPROCESSABLE_ENTITY); // 422
-        }
-
-        // Actualizar estado
-        $boleta->inscripcion->update(['estado' => $request->estado]);
-
-        // Cargar relaciones para la respuesta
-        $inscripcionActualizada = $boleta->inscripcion->load([
-            'olimpistas',
-            'tutors',
-            'boletaPago',
-            'nivelCategorias'
+    {
+        $request->validate([
+            'numero_boleta' => 'required|string|max:50',
+            'estado' => 'required|in:Pagado' // Solo permite cambiar a Pagado
         ]);
 
-        DB::commit();
+        DB::beginTransaction();
 
-        return response()->json([
-            'message' => 'Estado actualizado exitosamente',
-            'data' => new InscripcionResource($inscripcionActualizada)
-        ]);
+        try {
+            // Buscar boleta con relaciones
+            $boleta = BoletaPago::with('inscripcion')
+                ->where('numero_boleta', $request->numero_boleta)
+                ->firstOrFail();
 
-    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-        DB::rollBack();
-        return response()->json([
-            'message' => 'Boleta no encontrada'
-        ], Response::HTTP_NOT_FOUND); // 404
+            // Validar transición de estado válida
+            if ($boleta->inscripcion->estado === 'Pagado') {
+                return response()->json([
+                    'message' => 'La boleta ya tiene estado Pagado',
+                    'estado_actual' => $boleta->inscripcion->estado
+                ], Response::HTTP_CONFLICT); // 409 Conflict
+            }
 
-    } catch (\Throwable $e) {
-        DB::rollBack();
-        return response()->json([
-            'message' => 'Error al procesar la solicitud',
-            'error' => $e->getMessage()
-        ], Response::HTTP_INTERNAL_SERVER_ERROR); // 500
+            // Validar que solo se pueda cambiar desde Pendiente
+            if ($boleta->inscripcion->estado !== 'Pendiente') {
+                return response()->json([
+                    'message' => 'Solo se puede pagar inscripciones en estado Pendiente',
+                    'estado_actual' => $boleta->inscripcion->estado
+                ], Response::HTTP_UNPROCESSABLE_ENTITY); // 422
+            }
+
+            // Actualizar estado
+            $boleta->inscripcion->update(['estado' => $request->estado]);
+
+            // Cargar relaciones para la respuesta
+            $inscripcionActualizada = $boleta->inscripcion->load([
+                'olimpistas',
+                'tutors',
+                'boletaPago',
+                'nivelCategorias'
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Estado actualizado exitosamente',
+                'data' => new InscripcionResource($inscripcionActualizada)
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Boleta no encontrada'
+            ], Response::HTTP_NOT_FOUND); // 404
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error al procesar la solicitud',
+                'error' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR); // 500
+        }
     }
-}
 
     public function storeList(Request $request)
     {
@@ -459,5 +459,20 @@ class InscripcionController extends Controller
             ], 500);
         }
     }
+    //obtiene todas las incripcion por el id_nivel
+    public function obtenerInscripcionesPorNivel($idNivel)
+    {
+        $inscripciones = Inscripcion::with([
+            'nivelCategorias.area.olimpiada',
+            'olimpistas',
+            'tutors',
+            'boletaPago'
+        ])->whereHas('nivelCategorias', function ($query) use ($idNivel) {
+            $query->where('nivel_categorias.id_nivel', $idNivel); // Especificando la tabla nivel_categorias
+        })->get();
+
+        return response()->json($inscripciones);
+    }
+
 
 }

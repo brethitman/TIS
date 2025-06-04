@@ -1,5 +1,6 @@
 import { VisualizacionPageResponse } from "../interfaces/olimpiadaVisualizacion.interface";
-import { Observable, tap } from "rxjs";
+import { throwError } from "rxjs";
+import { Observable, tap,catchError  } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
@@ -37,5 +38,15 @@ export class VisualizacionService {
 
     storeInscripcion(inscripcionData: any): Observable<any> {
         return this.http.post(`${this.apiUrl}/inscripcionList`, inscripcionData);
+    }
+
+    //servicio para los reportes
+    getInscripcionPorNivel(nivelId: number): Observable<any[]> {
+        return this.http.get<any[]>(`${this.apiUrl}/inscripciones/nivel/${nivelId}`).pipe(
+            catchError(error => {
+                console.error('Error al obtener inscripciones:', error);
+                return throwError(() => new Error('Ocurrió un error al obtener inscripciones'));
+            })
+        )
     }
 }

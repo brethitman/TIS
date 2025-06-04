@@ -71,6 +71,10 @@ Route::post('/inscripciones/verificar-pago', [InscripcionController::class, 'ver
 //ENPOINSTS PARA LA LISTA
 Route::post('/inscripcionList', [InscripcionController::class, 'storeList']);
 
+//enpoint para el reporte
+Route::get('/inscripciones/nivel/{idNivel}', [InscripcionController::class, 'obtenerInscripcionesPorNivel']);
+
+
 
 // categoria ENDPOINTS  ---- GET POST da bien
 //tiene interface
