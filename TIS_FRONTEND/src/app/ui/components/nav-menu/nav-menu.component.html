@@ -41,8 +41,8 @@
           <!-- Botón Login -->
           @for (option of getLoginOptions(); track option.path) {
             <a 
-              class="group inline-flex items-center px-5 py-2.5 rounded-md text-gray-700 font-medium text-sm bg-white border border-gray-300 transition-all duration-200 ease-in-out shadow-sm hover:bg-gray-50 hover:border-gray-400 hover:shadow-md hover:-translate-y-0.5"
-              routerLinkActive="bg-gray-800 text-white border-gray-800" 
+              class="group inline-flex items-center px-5 py-2.5 rounded-md text-gray-700 font-medium text-sm bg-white border border-gray-300 transition-all duration-200 ease-in-out shadow-sm hover:bg-gray-100 hover:text-gray-800 hover:border-gray-400 hover:shadow-md hover:-translate-y-0.5"
+              routerLinkActive="bg-gray-100 text-gray-800 border-gray-400 font-semibold hover:bg-gray-100 hover:text-gray-800" 
               [routerLink]="option.path"
             >
               <svg class="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
