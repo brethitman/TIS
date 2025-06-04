@@ -28,6 +28,7 @@ export class BoletaListaComponent implements OnInit {
   boletaPago: BoletaPagoResponse | null = null;
   mensaje: string = "";
   errorMessage: string | null = null;
+  boletaGenerada = false;
 
   constructor(private service: VisualizacionService, private emailService: EmailService,) { }
 
@@ -171,7 +172,8 @@ getUniqueSchools(): string[] {
         console.log('Inscripción exitosa:', response);
         if (response?.inscripcion?.boleta_pago) {
           this.boletaPago = response.inscripcion.boleta_pago;
-          alert('Inscripción realizada correctamente');
+           this.boletaGenerada = true;
+          alert('Inscripción realizada correctamente y Boleta generada con éxito');
           const correoTutor = this.tutor[0]?.[3]; // Accede al correo del tutor
           if (this.boletaPago) {
             console.log('Enviando boleta por correo a:', correoTutor);

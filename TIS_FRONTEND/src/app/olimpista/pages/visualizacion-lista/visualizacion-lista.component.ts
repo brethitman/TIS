@@ -4,12 +4,12 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { BotonExelComponent } from '../../components/boton-exel/boton-exel.component';
 import { Workbook } from 'exceljs';
-
+import { PiePaginaComponent } from '../../../ui/components/pie-pagina/pie-pagina.component';
 
 @Component({
   selector: 'app-visualizacion-lista',
   standalone: true,
-  imports: [CommonModule, BotonExelComponent],
+  imports: [CommonModule, BotonExelComponent, PiePaginaComponent],
   templateUrl: './visualizacion-lista.component.html',
 })
 export class VisualizacionListaComponent {
