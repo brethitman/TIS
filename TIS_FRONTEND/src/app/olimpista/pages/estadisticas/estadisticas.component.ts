@@ -8,6 +8,8 @@ import { Olimpiada } from '../../interfaces/olimpiada-interfase';
 import { Area, Inscripcione, Olimpista, Tutor } from '../../interfaces/inscripcion.interface';
 import { IDOlimpiadabyArea } from '../../interfaces/olimpiadaAreaCategoria.interface';
 import Chart from 'chart.js/auto';
+import * as htmlToImage from 'html-to-image';
+import { jsPDF } from 'jspdf';
 
 interface AreaWithNiveles extends Area {
   id_area: number;
@@ -455,6 +457,360 @@ export class EstadisticasComponent implements OnInit {
         }
       }
     });
+  }
+
+  async exportarPDF() {
+    try {
+      // Crear un nuevo documento PDF
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      let yOffset = 30;
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const margin = 25;
+      const contentWidth = pageWidth - (2 * margin);
+
+      // HEADER PRINCIPAL - Diseño corporativo
+      // Fondo del header con gradiente simulado
+      pdf.setFillColor(15, 23, 42); // bg-slate-900
+      pdf.rect(0, 0, pageWidth, 45, 'F');
+      
+      // Línea decorativa dorada
+      pdf.setFillColor(251, 191, 36); // bg-amber-400
+      pdf.rect(0, 43, pageWidth, 2, 'F');
+
+      // Título principal
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(28);
+      pdf.setTextColor(255, 255, 255); // text-white
+      pdf.text('REPORTE DE ESTADÍSTICAS', pageWidth / 2, 28, { align: 'center' });
+      
+      // Subtítulo
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(12);
+      pdf.setTextColor(203, 213, 225); // text-slate-300
+      const fechaActual = new Date().toLocaleDateString('es-ES', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      pdf.text(`Generado el ${fechaActual}`, pageWidth / 2, 38, { align: 'center' });
+
+      yOffset = 65;
+
+      // SECCIÓN DE FILTROS - Card profesional
+      if (this.selectedOlimpiada && this.selectedArea && this.selectedNivel) {
+        // Título de sección
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(16);
+        pdf.setTextColor(30, 41, 59); // text-slate-800
+        pdf.text('FILTROS APLICADOS', margin, yOffset);
+        yOffset += 15;
+
+        // Card con sombra simulada
+        const cardHeight = 45;
+        
+        // Sombra
+        pdf.setFillColor(148, 163, 184, 0.3); // shadow-lg
+        pdf.roundedRect(margin + 2, yOffset + 2, contentWidth, cardHeight, 8, 8, 'F');
+        
+        // Card principal
+        pdf.setFillColor(248, 250, 252); // bg-slate-50
+        pdf.roundedRect(margin, yOffset, contentWidth, cardHeight, 8, 8, 'F');
+        
+        // Borde sutil
+        pdf.setDrawColor(226, 232, 240); // border-slate-200
+        pdf.setLineWidth(0.5);
+        pdf.roundedRect(margin, yOffset, contentWidth, cardHeight, 8, 8, 'S');
+
+        // Contenido de filtros en columnas
+        const colWidth = contentWidth / 3;
+        
+        // Olimpiada
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(10);
+        pdf.setTextColor(100, 116, 139); // text-slate-500
+        pdf.text('OLIMPIADA', margin + 15, yOffset + 15);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(12);
+        pdf.setTextColor(30, 41, 59); // text-slate-800
+        pdf.text(this.selectedOlimpiada.nombre_olimpiada, margin + 15, yOffset + 25);
+        
+        // Área
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(10);
+        pdf.setTextColor(100, 116, 139);
+        pdf.text('ÁREA', margin + 15 + colWidth, yOffset + 15);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(12);
+        pdf.setTextColor(30, 41, 59);
+        pdf.text(this.selectedArea.nombre_area, margin + 15 + colWidth, yOffset + 25);
+        
+        // Nivel
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(10);
+        pdf.setTextColor(100, 116, 139);
+        pdf.text('NIVEL', margin + 15 + (colWidth * 2), yOffset + 15);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(12);
+        pdf.setTextColor(30, 41, 59);
+        pdf.text(this.selectedNivel.nombre_nivel, margin + 15 + (colWidth * 2), yOffset + 25);
+        
+        yOffset += cardHeight + 25;
+      }
+
+      // TABLA DE INSCRIPCIONES - Diseño moderno
+      if (this.inscripcionesFiltradas.length > 0) {
+        // Título de sección
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(18);
+        pdf.setTextColor(30, 41, 59); // text-slate-800
+        pdf.text('LISTA DE INSCRIPCIONES', margin, yOffset);
+        yOffset += 20;
+
+        // Configuración de tabla
+        const headers = ['Estudiante', 'Institución', 'Tutor', 'Estado'];
+        const columnWidths = [70, 60, 50, 30];
+        const rowHeight = 12;
+        
+        // Header de tabla
+        pdf.setFillColor(51, 65, 85); // bg-slate-700
+        pdf.rect(margin, yOffset - 3, contentWidth, rowHeight, 'F');
+        
+        let xOffset = margin + 5;
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(11);
+        pdf.setTextColor(255, 255, 255);
+        
+        headers.forEach((header, index) => {
+          pdf.text(header.toUpperCase(), xOffset, yOffset + 5);
+          xOffset += columnWidths[index];
+        });
+        yOffset += rowHeight + 2;
+
+        // Filas de datos
+        pdf.setFont('helvetica', 'normal');
+        pdf.setFontSize(10);
+        
+        this.inscripcionesFiltradas.forEach((inscripcion, index) => {
+          // Verificar nueva página
+          if (yOffset + rowHeight > pageHeight - 40) {
+            pdf.addPage();
+            yOffset = margin + 20;
+            
+            // Repetir header en nueva página
+            pdf.setFillColor(51, 65, 85);
+            pdf.rect(margin, yOffset - 3, contentWidth, rowHeight, 'F');
+            
+            let headerXOffset = margin + 5;
+            pdf.setFont('helvetica', 'bold');
+            pdf.setFontSize(11);
+            pdf.setTextColor(255, 255, 255);
+            
+            headers.forEach((header, headerIndex) => {
+              pdf.text(header.toUpperCase(), headerXOffset, yOffset + 5);
+              headerXOffset += columnWidths[headerIndex];
+            });
+            yOffset += rowHeight + 2;
+            pdf.setFont('helvetica', 'normal');
+            pdf.setFontSize(10);
+          }
+
+          // Fondo alternado más sutil
+          if (index % 2 === 0) {
+            pdf.setFillColor(248, 250, 252); // bg-slate-50
+            pdf.rect(margin, yOffset - 2, contentWidth, rowHeight, 'F');
+          }
+
+          xOffset = margin + 5;
+          pdf.setTextColor(30, 41, 59); // text-slate-800
+
+          // Nombre del estudiante
+          const nombreEstudiante = this.getOlimpistaName(inscripcion);
+          pdf.text(nombreEstudiante.length > 30 ? nombreEstudiante.substring(0, 27) + '...' : nombreEstudiante, xOffset, yOffset + 6);
+          xOffset += columnWidths[0];
+          
+          // Institución
+          const institucion = this.getOlimpistaColegio(inscripcion);
+          pdf.text(institucion.length > 25 ? institucion.substring(0, 22) + '...' : institucion, xOffset, yOffset + 6);
+          xOffset += columnWidths[1];
+          
+          // Tutor
+          const tutor = this.getTutorName(inscripcion);
+          pdf.text(tutor.length > 20 ? tutor.substring(0, 17) + '...' : tutor, xOffset, yOffset + 6);
+          xOffset += columnWidths[2];
+          
+          // Badge de estado moderno
+          const estado = inscripcion.estado;
+          const estadoColors = this.getEstadoColorsProfessional(estado);
+          
+          // Background del badge
+          pdf.setFillColor(
+            estadoColors.bg[0],
+            estadoColors.bg[1],
+            estadoColors.bg[2]
+          );
+          pdf.roundedRect(xOffset, yOffset + 1, 25, 8, 3, 3, 'F');
+          
+          // Texto del badge
+          pdf.setFont('helvetica', 'bold');
+          pdf.setFontSize(8);
+          pdf.setTextColor(
+            estadoColors.text[0],
+            estadoColors.text[1],
+            estadoColors.text.length > 2 ? estadoColors.text[2] : 0
+          );
+          pdf.text(estado.toUpperCase(), xOffset + 12.5, yOffset + 6, { align: 'center' });
+          pdf.setFont('helvetica', 'normal');
+          
+          yOffset += rowHeight;
+        });
+
+        yOffset += 30;
+      }
+
+      // GRÁFICAS - Sección profesional
+      const tiposEstadisticaOriginal = this.tipoEstadistica;
+      
+      // Primera gráfica (Estado)
+      this.tipoEstadistica = 'estado';
+      this.generarEstadisticas();
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      if (this.donutChartRef) {
+        // Verificar nueva página
+        if (yOffset + 120 > pageHeight - 40) {
+          pdf.addPage();
+          yOffset = margin + 20;
+        }
+
+        // Título de sección con línea decorativa
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(16);
+        pdf.setTextColor(30, 41, 59);
+        pdf.text('ANÁLISIS ESTADÍSTICO', margin, yOffset);
+        
+        // Línea decorativa
+        pdf.setDrawColor(251, 191, 36); // border-amber-400
+        pdf.setLineWidth(2);
+        pdf.line(margin, yOffset + 5, margin + 60, yOffset + 5);
+        yOffset += 20;
+
+        const chartElement = this.donutChartRef.nativeElement;
+        const chartImage = await htmlToImage.toPng(chartElement);
+        
+        // Card para la gráfica
+        pdf.setFillColor(255, 255, 255);
+        pdf.roundedRect(margin, yOffset, contentWidth, 90, 5, 5, 'F');
+        pdf.setDrawColor(226, 232, 240);
+        pdf.setLineWidth(0.5);
+        pdf.roundedRect(margin, yOffset, contentWidth, 90, 5, 5, 'S');
+        
+        // Subtítulo de gráfica
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(14);
+        pdf.setTextColor(51, 65, 85);
+        pdf.text('Distribución de Estados de Inscripción', margin + 10, yOffset + 15);
+        
+        // Imagen de la gráfica
+        const imgWidth = contentWidth - 20;
+        const imgHeight = 70;
+        pdf.addImage(chartImage, 'PNG', margin + 10, yOffset + 20, imgWidth, imgHeight);
+        yOffset += 100;
+      }
+
+      // Segunda gráfica (Colegio)
+      this.tipoEstadistica = 'colegio';
+      this.generarEstadisticas();
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      if (this.donutChartRef) {
+        // Verificar nueva página
+        if (yOffset + 100 > pageHeight - 40) {
+          pdf.addPage();
+          yOffset = margin + 20;
+        }
+
+        const chartElement = this.donutChartRef.nativeElement;
+        const chartImage = await htmlToImage.toPng(chartElement);
+        
+        // Card para la segunda gráfica
+        pdf.setFillColor(255, 255, 255);
+        pdf.roundedRect(margin, yOffset, contentWidth, 90, 5, 5, 'F');
+        pdf.setDrawColor(226, 232, 240);
+        pdf.setLineWidth(0.5);
+        pdf.roundedRect(margin, yOffset, contentWidth, 90, 5, 5, 'S');
+        
+        // Subtítulo
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(14);
+        pdf.setTextColor(51, 65, 85);
+        pdf.text('Distribución de Estudiantes por Institución', margin + 10, yOffset + 15);
+        
+        // Imagen
+        const imgWidth = contentWidth - 20;
+        const imgHeight = 70;
+        pdf.addImage(chartImage, 'PNG', margin + 10, yOffset + 20, imgWidth, imgHeight);
+        yOffset += 100;
+      }
+
+      // FOOTER PROFESIONAL
+      const footerY = pageHeight - 20;
+      pdf.setFillColor(248, 250, 252); // bg-slate-50
+      pdf.rect(0, footerY - 10, pageWidth, 30, 'F');
+      
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(9);
+      pdf.setTextColor(100, 116, 139); // text-slate-500
+      pdf.text('Documento generado automáticamente', margin, footerY);
+      pdf.text(`Página ${pdf.getNumberOfPages()}`, pageWidth - margin, footerY, { align: 'right' });
+
+      // Restaurar estado original
+      this.tipoEstadistica = tiposEstadisticaOriginal;
+      this.generarEstadisticas();
+
+      // Guardar el PDF
+      pdf.save(`reporte_estadisticas_${new Date().toISOString().split('T')[0]}.pdf`);
+      
+    } catch (error) {
+      console.error('Error al generar el PDF:', error);
+    }
+  }
+
+  // Método auxiliar mejorado para colores de estado
+  private getEstadoColorsProfessional(estado: string): { bg: number[], text: number[] } {
+    switch (estado) {
+      case 'Pagado':
+        return { 
+          bg: [34, 197, 94],    // bg-green-500
+          text: [255, 255, 255]  // text-white
+        };
+      case 'Pendiente':
+        return { 
+          bg: [245, 158, 11],    // bg-amber-500
+          text: [255, 255, 255]  // text-white
+        };
+      case 'Verificado':
+        return { 
+          bg: [59, 130, 246],    // bg-blue-500
+          text: [255, 255, 255]  // text-white
+        };
+      case 'Rechazado':
+        return { 
+          bg: [239, 68, 68],     // bg-red-500
+          text: [255, 255, 255]  // text-white
+        };
+      default:
+        return { 
+          bg: [107, 114, 128],   // bg-gray-500
+          text: [255, 255, 255]  // text-white
+        };
+    }
+  }
+
+  // Método auxiliar para obtener color simple (mantener compatibilidad)
+  private getEstadoColor(estado: string): string {
+    const colors = this.getEstadoColorsProfessional(estado);
+    return `rgb(${colors.bg.join(',')})`;
   }
 
 }
