@@ -368,8 +368,8 @@ export class AreaAlumnoComponent implements OnInit {
 
     console.log('Lista de áreas inscritas:', this.areasInscripcion);
 
-    this.irABoletaList();
   }
+  
   irABoletaList() {
     localStorage.setItem('areasInscripcion', JSON.stringify(this.areasInscripcion));
     localStorage.setItem('olimpistas', JSON.stringify(this.estInscripcion));

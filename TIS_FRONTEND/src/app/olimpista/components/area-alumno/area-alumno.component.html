@@ -169,12 +169,12 @@
   </div>
 
   <!-- Botón de inscripción -->
-  <button (click)="inscribirEstudiante()"
+  <button (click)="inscribirEstudiante(); inscripcionEstudiante()"
     class="w-full bg-[#0D1271] hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md transition-colors">
     Inscribir estudiante
   </button>
 
-  <button *ngIf="mostrarFinalizar" (click)="inscripcionEstudiante()"
+  <button *ngIf="mostrarFinalizar" (click)="irABoletaList()"
       class="mt-4 w-full bg-green-600 text-white font-bold py-2 px-4 rounded-md">
       Finalizar inscripción
     </button>

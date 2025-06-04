@@ -7,7 +7,7 @@ import { BoletaPagoResponse } from '../../interfaces/inscripcion.types';
 import { jsPDF } from 'jspdf';
 import * as htmlToImage from 'html-to-image';
 import html2canvas from 'html2canvas';
-
+import { EmailService } from '../../service/email.service';
 
 @Component({
   selector: 'app-boleta-lista',
@@ -20,14 +20,16 @@ export class BoletaListaComponent implements OnInit {
   @Input() olimpista: any[][] = [];
   @Input() tutor: any[][] = [];
   @Input() areas: any[][] = [];
-   @Input() inscripciones: any[] = [];
-  
+  @Input() inscripciones: any[] = [];
+
   boletaTutor: any[] = [];
+  colegios: any[] = [];
 
   boletaPago: BoletaPagoResponse | null = null;
   mensaje: string = "";
+  errorMessage: string | null = null;
 
-  constructor(private service: VisualizacionService) { }
+  constructor(private service: VisualizacionService, private emailService: EmailService,) { }
 
   ngOnInit() {
     this.areas = JSON.parse(localStorage.getItem('areasInscripcion') || '[]');
@@ -170,6 +172,13 @@ getUniqueSchools(): string[] {
         if (response?.inscripcion?.boleta_pago) {
           this.boletaPago = response.inscripcion.boleta_pago;
           alert('Inscripción realizada correctamente');
+          const correoTutor = this.tutor[0]?.[3]; // Accede al correo del tutor
+          if (this.boletaPago) {
+            console.log('Enviando boleta por correo a:', correoTutor);
+            this.enviarBoletaPorEmail(this.boletaPago, correoTutor);
+          } else {
+            console.warn('No se pudo enviar la boleta, ya que no se generó correctamente.');
+          }
         } else {
           alert('Inscripción exitosa, pero no se generó boleta de pago.');
         }
@@ -204,32 +213,46 @@ getUniqueSchools(): string[] {
   }
 
 
-async generatePdfWithHtmlToImage() {
-  try {
-    const element = document.getElementById('boleta-container');
-    if (!element) return;
+  async generatePdfWithHtmlToImage() {
+    try {
+      const element = document.getElementById('boleta-container');
+      if (!element) return;
 
-    const dataUrl = await htmlToImage.toPng(element, {
-      quality: 1,
-      pixelRatio: 2
-    });
+      const dataUrl = await htmlToImage.toPng(element, {
+        quality: 1,
+        pixelRatio: 2
+      });
 
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm'
-    });
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm'
+      });
 
-    const imgProps = pdf.getImageProperties(dataUrl);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      const imgProps = pdf.getImageProperties(dataUrl);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-    pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`boleta_${this.boletaPago?.numero_boleta || '0000'}.pdf`);
-    
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Error al generar PDF');
+      pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`boleta_${this.boletaPago?.numero_boleta || '0000'}.pdf`);
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al generar PDF');
+    }
   }
-}
+
+  // envio de correo
+  private enviarBoletaPorEmail(boletaData: BoletaPagoResponse, correo: string): void {
+    this.emailService.enviarBoletaPorEmail(boletaData, correo)
+      .subscribe({
+        next: (response) => {
+          console.log('Boleta enviada por email:', response);
+        },
+        error: (error) => {
+          console.error('Error al enviar boleta por email:', error);
+          this.errorMessage = 'La inscripción fue exitosa, pero hubo un problema al enviar la boleta por email. Por favor contacte a soporte.';
+        }
+      });
+  }
 
 }

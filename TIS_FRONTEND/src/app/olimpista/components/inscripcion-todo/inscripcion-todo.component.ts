@@ -38,9 +38,9 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   areasDisponibles: AreaWithNiveles[] = [];
 
   cursoSeleccionadoId: number | null = null;
-areasDelCurso: AreaWithNiveles[] = [];
-areaSeleccionada: AreaWithNiveles | null = null;
-nivelesDelArea: NivelCategoria[] = [];
+  areasDelCurso: AreaWithNiveles[] = [];
+  areaSeleccionada: AreaWithNiveles | null = null;
+  nivelesDelArea: NivelCategoria[] = [];
 
 
 
@@ -52,7 +52,7 @@ nivelesDelArea: NivelCategoria[] = [];
     private route: ActivatedRoute,
     private router: Router,
     private cursoAreaService: CursoAreaService,
-    private emailService: EmailService
+    private emailService: EmailService,
   ) { }
 
   ngOnInit(): void {
@@ -358,38 +358,38 @@ nivelesDelArea: NivelCategoria[] = [];
   }
 
   onCursoSeleccionado(event: any): void {
-  this.cursoSeleccionadoId = Number(event.target.value);
-  const curso = this.cursosConAreas.find(c => c.id_curso === this.cursoSeleccionadoId);
-  this.areasDelCurso = curso ? curso.areas : [];
-  this.areaSeleccionada = null;
-  this.nivelesDelArea = [];
-}
-
-// Método cuando se selecciona un área
-onAreaSeleccionada(event: any): void {
-  const areaId = Number(event.target.value);
-  this.areaSeleccionada = this.areasDelCurso.find(a => a.id_area === areaId) || null;
-  this.nivelesDelArea = this.areaSeleccionada?.nivel_categorias || [];
-}
-
-// Método para agregar el área seleccionada
-agregarAreaSeleccionada(): void {
-  if (!this.areaSeleccionada) return;
-
-  if (!this.areaSeleccionada.permite_multiples_areas) {
-    this.areasFormArray.clear();
-    this.addAreaDisabled = true;
-    this.areaWarning = `"${this.areaSeleccionada.nombre_area}" no permite combinación con otras áreas`;
+    this.cursoSeleccionadoId = Number(event.target.value);
+    const curso = this.cursosConAreas.find(c => c.id_curso === this.cursoSeleccionadoId);
+    this.areasDelCurso = curso ? curso.areas : [];
+    this.areaSeleccionada = null;
+    this.nivelesDelArea = [];
   }
 
-  const areaGroup = this.fb.group({
-    area: [this.areaSeleccionada, Validators.required],
-    nivel: [null, Validators.required]
-  });
+  // Método cuando se selecciona un área
+  onAreaSeleccionada(event: any): void {
+    const areaId = Number(event.target.value);
+    this.areaSeleccionada = this.areasDelCurso.find(a => a.id_area === areaId) || null;
+    this.nivelesDelArea = this.areaSeleccionada?.nivel_categorias || [];
+  }
 
-  this.areasFormArray.push(areaGroup);
-  this.areaSeleccionada = null;
-  this.nivelesDelArea = [];
-}
+  // Método para agregar el área seleccionada
+  agregarAreaSeleccionada(): void {
+    if (!this.areaSeleccionada) return;
+
+    if (!this.areaSeleccionada.permite_multiples_areas) {
+      this.areasFormArray.clear();
+      this.addAreaDisabled = true;
+      this.areaWarning = `"${this.areaSeleccionada.nombre_area}" no permite combinación con otras áreas`;
+    }
+
+    const areaGroup = this.fb.group({
+      area: [this.areaSeleccionada, Validators.required],
+      nivel: [null, Validators.required]
+    });
+
+    this.areasFormArray.push(areaGroup);
+    this.areaSeleccionada = null;
+    this.nivelesDelArea = [];
+  }
 
 }
