@@ -38,11 +38,12 @@ export class BoletaListaComponent implements OnInit {
     this.tutor = JSON.parse(localStorage.getItem('tutores') || '[]');
     this.inscripciones = JSON.parse(localStorage.getItem('inscripciones') || '[]');
     this.boletaTutor = this.tutor[0];//OBTIENE SOLO LA INFOEMCION DEL TUTOR RESPONSABLE
+    this.colegios = [...new Set(this.olimpista.map(olimpista => olimpista[6]))];
     console.log('Áreas recibidas:', this.areas);
     console.log('Olimpistas recibidos:', this.olimpista);
     console.log('Tutores recibidos:', this.tutor);
     console.log('tutor boleta', this.boletaTutor);
-    console.log("Inscripciones en localStorage:", localStorage.getItem("inscripciones"));
+    console.log('colegios', this.colegios);
   }
 
   /* Métodos corregidos para contar y listar áreas únicas
