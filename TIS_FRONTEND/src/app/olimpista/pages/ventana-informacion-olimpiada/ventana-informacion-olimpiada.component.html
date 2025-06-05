@@ -11,7 +11,7 @@
 </ng-template>
 
 <!-- Título con gradiente mejorado -->
- <!-- Título de Áreas -->
+<!-- Título de Áreas -->
 <section class="w-full bg-gradient-to-r from-red-600 to-purple-500 py-4 px-4 animate-gradient">
   <div class="flex items-center space-x-4">
     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -27,7 +27,6 @@
 <!-- Contenedor principal con disposición de grid -->
 <div class="max-w-6xl mx-auto px-6 py-8">
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
     <!-- Sección izquierda (Descripción y Presentación) -->
     <div class="space-y-8">
       <!-- Descripción -->
@@ -48,30 +47,6 @@
           </p>
         </div>
       </div>
-
-      <!-- Presentación -->
-      <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 transition-all hover:shadow-xl"
-        *ngIf="olimpiada?.presentacion">
-        <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-100 flex items-center">
-          <div class="w-2 h-8 bg-green-500 rounded-full mr-4"></div>
-          <h2 class="text-xl font-bold text-gray-800 flex items-center">
-            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2M7 4h10l2 13H5l2-13zM7 4l-2 13M17 4l2 13M9 9h6M10 13h4"></path>
-            </svg>
-            PRESENTACIÓN
-          </h2>
-        </div>
-        <div class="p-6">
-          <p class="text-gray-700 leading-relaxed whitespace-pre-line">
-            {{olimpiada?.presentacion}}
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sección derecha (Fechas y Requisitos) -->
-    <div class="space-y-8">
       <!-- Fechas Importantes -->
       <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 transition-all hover:shadow-xl">
         <div class="bg-gradient-to-r from-red-50 to-pink-50 px-6 py-4 border-b border-gray-100 flex items-center">
@@ -112,6 +87,28 @@
               </p>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <!-- Sección derecha (Fechas y Requisitos) -->
+    <div class="space-y-8">
+      <!-- Presentación -->
+      <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 transition-all hover:shadow-xl"
+        *ngIf="olimpiada?.presentacion">
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-100 flex items-center">
+          <div class="w-2 h-8 bg-green-500 rounded-full mr-4"></div>
+          <h2 class="text-xl font-bold text-gray-800 flex items-center">
+            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2M7 4h10l2 13H5l2-13zM7 4l-2 13M17 4l2 13M9 9h6M10 13h4"></path>
+            </svg>
+            PRESENTACIÓN
+          </h2>
+        </div>
+        <div class="p-6">
+          <p class="text-gray-700 leading-relaxed whitespace-pre-line">
+            {{olimpiada?.presentacion}}
+          </p>
         </div>
       </div>
 
@@ -245,7 +242,7 @@
 <!-- Categorías -->
 <div *ngIf="categorias.length > 0; else noCategorias" class="flex flex-col m-2 p-2 mx-auto">
   <app-categorias-home [categorias]="categorias"></app-categorias-home>
-</div >
+</div>
 <ng-template #noCategorias>
   <!--<div class="text-center text-gray-500 py-4">
     Aún no hay categorías disponibles para esta área.
