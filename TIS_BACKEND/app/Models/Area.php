@@ -29,7 +29,34 @@ class Area extends Model
         'descripcion',
         'gradoIniAr',
         'gradoFinAr',
+        'permite_multiples_areas'
     ];
+
+    /**
+     * Los atributos que deben ser convertidos a tipos nativos.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'permite_multiples_areas' => 'boolean'
+    ];
+
+    /**
+     * Los atributos que deben ser agregados al array.
+     *
+     * @var array
+     */
+    protected $appends = ['permite_multiples_areas'];
+
+    /**
+     * Obtiene el valor de permite_multiples_areas.
+     *
+     * @return bool
+     */
+    public function getPermiteMultiplesAreasAttribute()
+    {
+        return $this->attributes['permite_multiples_areas'] ?? false;
+    }
 
     /**
      * Relación: Un Área pertenece a una Olimpiada.
@@ -61,13 +88,10 @@ class Area extends Model
     public function inscripciones()
     {
         return $this->belongsToMany(Inscripcion::class, 'inscripcion_area_nivel', 'id_area', 'id_inscripcion')
-                    ->using(InscripcionAreaNivel::class) // Usar el modelo de la tabla pivote
-                    ->withTimestamps(); // Si la tabla pivote tiene created_at y updated_at
+            ->using(InscripcionAreaNivel::class) // Usar el modelo de la tabla pivote
+            ->withTimestamps(); // Si la tabla pivote tiene created_at y updated_at
     }
-    public function niveles()
-    {
-        return $this->hasMany(NivelCategoria::class, 'id_area', 'id_area');
-    }
+
 
 
     public function cursos()
@@ -76,5 +100,9 @@ class Area extends Model
     }
 
 
-    
+
+    public function niveles()
+    {
+        return $this->hasMany(NivelCategoria::class, 'id_area', 'id_area');
+    }
 }

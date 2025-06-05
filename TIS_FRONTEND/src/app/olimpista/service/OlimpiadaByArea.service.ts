@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core'; 
 import { HttpClient } from '@angular/common/http'; 
-import { Observable } from 'rxjs'; 
-import { IDOlimpiadabyArea } from '../interfaces/olimpiadaAreaCategoria.interface';
-import { OlimpiadaResponse} from '../interfaces/post_categoria.interface';
+import { Observable, map, catchError, throwError } from 'rxjs'; 
+import { IDOlimpiadabyArea, OlimpiadaResponse } from '../interfaces/post_categoria.interface';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root' 
 })
 export class OlimpiadaByAreaService {
-  private baseUrl = 'http://localhost:8000/api';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
@@ -18,17 +18,26 @@ export class OlimpiadaByAreaService {
    * @returns Un Observable que emite un array de IDOlimpiadabyArea.
    */
   getAreasByOlimpiadaId(olimpiadaId: number): Observable<IDOlimpiadabyArea[]> {
-    const url = `${this.baseUrl}/olimpiadas/${olimpiadaId}/areas`;
-    return this.http.get<IDOlimpiadabyArea[]>(url);
+    return this.http.get<IDOlimpiadabyArea[]>(`${this.apiUrl}/olimpiadas/${olimpiadaId}/areas`);
   }
 
   /**
    * Obtiene información detallada de una olimpiada por su ID.
    * @param olimpiadaId El ID de la olimpiada.
-   * @returns Un Observable que emite la información de la olimpiada.
+   * @returns Un Observable que emite la información detallada de la olimpiada.
    */
   getOlimpiadaById(olimpiadaId: number): Observable<OlimpiadaResponse> {
-    const url = `${this.baseUrl}/olimpiadas/${olimpiadaId}`;
-    return this.http.get<OlimpiadaResponse>(url);
+    return this.http.get<{olimpiada: OlimpiadaResponse}>(`${this.apiUrl}/olimpiadas/${olimpiadaId}`).pipe(
+      map(response => {
+        if (!response.olimpiada) {
+          throw new Error('No se encontró la olimpiada');
+        }
+        return response.olimpiada;
+      }),
+      catchError(error => {
+        console.error('Error al obtener olimpiada:', error);
+        return throwError(() => new Error('Error al cargar los detalles de la olimpiada'));
+      })
+    );
   }
 }

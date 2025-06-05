@@ -5,179 +5,203 @@ import { EmailService } from '../../service/email.service';
 import { HttpClientModule } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
-// Importación y configuración correcta de pdfMake
-declare const pdfMake: any;
-
-// Importamos las fuentes en forma separada
-import 'pdfmake/build/pdfmake';
-import 'pdfmake/build/vfs_fonts';
+// Declarar pdfMake como variable global
+declare var pdfMake: any;
 
 @Component({
   selector: 'app-boleta-pago',
   standalone: true,
   imports: [CommonModule, HttpClientModule],
-  templateUrl: './boleta-pago.component.html',
+  templateUrl:'./boleta-pago.component.html',
   providers: [DatePipe, CurrencyPipe, EmailService]
 })
 export class BoletaPagoComponent implements OnChanges {
   @Input() boletaData!: BoletaPagoResponse;
   apiBaseUrl: string = environment.apiUrl;
-  
-  // Variables para mensajes
+
   envioExitoso: boolean | null = null;
   mensajeEnvio: string = '';
 
   constructor(
-    // Inyecta los pipes para formatear la fecha y la moneda
     private datePipe: DatePipe,
     private currencyPipe: CurrencyPipe,
     private emailService: EmailService
-  ) {
-    console.log('API Base URL:', this.apiBaseUrl);
-  }
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['boletaData'] && changes['boletaData'].currentValue) {
-      console.log('boletaData recibido:', this.boletaData);
-      
-      // Asegurar que el monto sea una cadena válida y nunca sea null
-      if (this.boletaData && this.boletaData.monto === null) {
-        this.boletaData.monto = '0';
-      }
-      
-      // Si el monto es un número, convertirlo a string
-      if (this.boletaData && typeof this.boletaData.monto === 'number') {
-        this.boletaData.monto = String(this.boletaData.monto);
-      }
-      
-      console.log('Monto procesado:', this.boletaData.monto, 'Tipo:', typeof this.boletaData.monto);
+    if (changes['boletaData']?.currentValue) {
+      console.log('Datos de boleta actualizados:', this.boletaData);
     }
   }
 
-  // Método para formatear la fecha
-  formatDate(date: string | Date | null): string {
-    if (!date) return 'N/A';
+  formatDate(date: string): string {
+    return this.datePipe.transform(date, 'dd/MM/yyyy HH:mm') || 'N/A';
+  }
+
+  formatCurrency(amount: string): string {
     try {
-      return this.datePipe.transform(date, 'dd/MM/yyyy HH:mm') || 'N/A';
+      const numericAmount = parseFloat(amount);
+      return `Bs. ${numericAmount.toFixed(2)}`;
     } catch (error) {
-      console.error('Error formateando fecha:', error);
+      console.error('Error formateando moneda:', amount);
       return 'N/A';
     }
   }
 
-  // Método para formatear la moneda
-  formatCurrency(amount: string | number | null): string {
-    console.log('formatCurrency llamado con:', amount, 'Tipo:', typeof amount);
-    
-    if (amount === null || amount === undefined || amount === '') {
-      console.log('Monto nulo o indefinido, retornando N/A');
-      return 'N/A';
-    }
-    
-    try {
-      // Convertir a número si es un string
-      let numericAmount: number;
-      
-      if (typeof amount === 'string') {
-        // Eliminar cualquier caracter no numérico excepto punto decimal
-        const cleanAmount = amount.replace(/[^\d.]/g, '');
-        numericAmount = parseFloat(cleanAmount);
-      } else {
-        numericAmount = amount;
-      }
-      
-      // Verificar si es un número válido
-      if (isNaN(numericAmount)) {
-        console.error('El monto no es un número válido:', amount);
-        return 'N/A';
-      }
-      
-      console.log('Monto numérico a formatear:', numericAmount);
-      
-      // Usar directamente toFixed para evitar problemas con el pipe
-      const formatted = numericAmount.toFixed(2);
-      // Aplicar formato de moneda boliviana
-      return `Bs. ${formatted}`;
-    } catch (error) {
-      console.error('Error formateando moneda:', error, 'Valor recibido:', amount, 'Tipo:', typeof amount);
-      return 'N/A';
-    }
-  }
 
-  // Método para generar el PDF
+
   generatePdfBoleta(): void {
-    console.log('generatePdfBoleta() llamado. Intentando generar PDF...');
-
-    if (!this.boletaData) {
-      console.error('ERROR: boletaData es nulo o indefinido. No se puede generar PDF.');
-      this.mensajeEnvio = 'No hay datos disponibles para generar la boleta';
-      this.envioExitoso = false;
-      return;
-    }
-
-    console.log('Datos de la boleta a usar:', this.boletaData);
-    console.log('Monto para PDF:', this.boletaData.monto, 'Tipo:', typeof this.boletaData.monto);
-
     try {
-      // Formatear el monto para el PDF
-      let montoFormateado = 'N/A';
-      if (this.boletaData.monto !== null && this.boletaData.monto !== undefined) {
-        montoFormateado = this.formatCurrency(this.boletaData.monto);
-      }
-      
-      console.log('Monto formateado para PDF:', montoFormateado);
+      console.log('Iniciando generación de PDF...', this.boletaData);
 
-      const pdfDefinition: any = {
+      // Verificar que tengamos los datos necesarios
+      if (!this.boletaData) {
+        throw new Error('No hay datos de boleta disponibles');
+      }
+
+      // Verificar que pdfMake esté disponible
+      if (typeof pdfMake === 'undefined') {
+        throw new Error('pdfMake no está cargado. Verifica que esté incluido en angular.json');
+      }
+
+      // Crear contenido del PDF de forma más simple
+
+
+      const docDefinition = {
+
         content: [
+
           {
-            text: 'Boleta de Pago',
-            style: 'header'
+            text: this.boletaData.nombre_olimpiada || 'Olimpiada Nacional Universitaria',
+            style: 'header',
+            alignment: 'center'
           },
           {
-            text: [
-              { text: 'Número de Boleta: ', bold: true },
-              { text: this.boletaData.numero_boleta ? this.boletaData.numero_boleta.toString() : 'N/A' }
-            ],
-            margin: [0, 10, 0, 5]
+            text: 'Universidad Mayor de San Simon',
+            style: 'subheader',
+            alignment: 'center',
+            margin: [0, 0, 0, 20]
           },
           {
-            text: [
-              { text: 'Monto: ', bold: true },
-              { text: montoFormateado }
-            ],
-            margin: [0, 0, 0, 5]
+            text: `Número de Boleta: ${this.boletaData.numero_boleta || 'N/A'}`,
+            style: 'title',
+            alignment: 'center',
+            margin: [0, 0, 0, 20]
           },
           {
-            text: [
-              { text: 'Fecha de Generación: ', bold: true },
-              { text: this.boletaData.fecha_generacion ? 
-                  this.formatDate(this.boletaData.fecha_generacion) : 'N/A' }
-            ],
-            margin: [0, 0, 0, 10]
-          }
+            text: 'INFORMACIÓN DE PAGO',
+            style: 'sectionHeader'
+          },
+          {
+            table: {
+              widths: ['*', '*'],
+              body: [
+                ['Fecha de Emisión:', this.formatDate(this.boletaData.fecha_generacion)],
+                ['Estado:', 'Pendiente'],
+                ['Monto Total:', this.formatCurrency(this.boletaData.monto)]
+              ]
+            },
+            margin: [0, 0, 0, 20]
+          },
+          {
+            text: 'DATOS DEL PARTICIPANTE',
+            style: 'sectionHeader'
+          },
+          {
+            table: {
+              widths: ['*', '*'],
+              body: [
+                ['Nombre:', `${this.boletaData.olimpista?.nombres || ''} ${this.boletaData.olimpista?.apellidos || ''}`],
+                ['CI:', this.boletaData.olimpista?.ci || 'N/A'],
+                ['Colegio:', this.boletaData.olimpista?.colegio || 'N/A'],
+                ['Ubicación:', `${this.boletaData.olimpista?.departamento || ''} - ${this.boletaData.olimpista?.provincia || ''}`]
+              ]
+            },
+            margin: [0, 0, 0, 20]
+          },
+          {
+            text: 'DATOS DEL TUTOR PRINCIPAL',
+            style: 'sectionHeader'
+          },
+          {
+            table: {
+              widths: ['*', '*'],
+              body: [
+                ['Nombre:', `${this.boletaData.tutor_principal?.nombres || ''} ${this.boletaData.tutor_principal?.apellidos || ''}`],
+                ['Teléfono:', this.boletaData.tutor_principal?.telefono || 'N/A'],
+                ['Email:', this.boletaData.tutor_principal?.correo || 'N/A'],
+                ['Parentesco:', this.boletaData.tutor_principal?.contacto || 'N/A']
+              ]
+            },
+            margin: [0, 0, 0, 20]
+          },
+        {
+          text: 'ÁREAS Y NIVELES INSCRITOS',
+          style: 'sectionHeader'
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['*', '*'],
+            body: [
+
+              ['Área', 'Niveles'],
+
+              ...(this.boletaData.areas_niveles?.length
+                ? this.boletaData.areas_niveles.map(area => [
+                    area.area_nombre,
+                    area.niveles.map(nivel => nivel.nivel_nombre).join(', ')
+                  ])
+                : [['No hay áreas registradas', '']]
+            )
+          ]
+          },
+          margin: [0, 0, 0, 20]
+        },
+
+
         ],
         styles: {
           header: {
             fontSize: 18,
             bold: true,
-            margin: [0, 0, 0, 20],
-            alignment: 'center'
+            color: '#1e3a8a'
+          },
+          subheader: {
+            fontSize: 14,
+            italics: true,
+            color: '#dc2626'
+          },
+          title: {
+            fontSize: 16,
+            bold: true,
+            color: '#1e40af'
+          },
+          sectionHeader: {
+            fontSize: 14,
+            bold: true,
+            color: '#1e40af',
+            margin: [0, 10, 0, 5]
           }
-        }
+        },
+        pageMargins: [40, 60, 40, 60]
       };
 
-      console.log('Definición del PDF creada. Llamando a pdfMake.createPdf()...');
-      const pdf = pdfMake.createPdf(pdfDefinition);
+      // Generar el PDF
+      console.log('Generando PDF...');
+      const pdf = pdfMake.createPdf(docDefinition);
 
-      console.log('Objeto PDF creado. Llamando a pdf.download()...');
-      pdf.download(`boleta_pago_${this.boletaData.numero_boleta || 'sin_numero'}.pdf`);
-      
-      this.mensajeEnvio = 'PDF generado exitosamente.';
+      pdf.download(`Boleta_${this.boletaData.numero_boleta || 'SinNumero'}.pdf`);
+
+      // Mostrar mensaje de éxito
+      this.mensajeEnvio = 'Boleta generada y descargada exitosamente';
       this.envioExitoso = true;
-      
+
+      console.log('PDF generado exitosamente');
+
     } catch (error) {
-      console.error('OCURRIÓ UN ERROR DURANTE LA GENERACIÓN DEL PDF:', error);
-      this.mensajeEnvio = 'Ocurrió un error al generar el PDF. Por favor, intente de nuevo.';
+      console.error('Error completo:', error);
+      this.mensajeEnvio = `Error: ${error instanceof Error ? error.message : 'Error desconocido al generar la boleta'}`;
       this.envioExitoso = false;
     }
   }

@@ -7,7 +7,7 @@ use App\Http\Resources\Curso\CursoCollection;
 use App\Models\Curso;
 use Illuminate\Http\Request;
 use App\Http\Resources\Curso\CursoResource;
-
+use Illuminate\Support\Facades\DB;
 class CursoController extends Controller
 {
     protected $resource = CursoResource::class;
@@ -47,7 +47,6 @@ class CursoController extends Controller
             return [
                 'id_curso' => $curso->id_curso,
                 'nameCurso' => $curso->nameCurso,
-                
             ];
         })
     ]);
@@ -97,4 +96,49 @@ class CursoController extends Controller
             'message' => 'Curso eliminado exitosamente',
         ]);
     }
+    public function getCursosConAreasPorOlimpiada($id_olimpiada)
+{
+    // Obtener los cursos que tienen áreas relacionadas con la olimpiada especificada
+    $cursos = DB::table('curso')
+        ->join('curso_area', 'curso.id_curso', '=', 'curso_area.id_curso')
+        ->join('areas', function ($join) use ($id_olimpiada) {
+            $join->on('curso_area.id_area', '=', 'areas.id_area')
+                 ->where('areas.id_olimpiada', '=', $id_olimpiada);
+        })
+        ->select('curso.id_curso', 'curso.nameCurso')
+        ->distinct()
+        ->get();
+
+    $resultado = [];
+
+    foreach ($cursos as $curso) {
+        // Obtener las áreas de este curso y olimpiada
+        $areas = DB::table('areas')
+            ->join('curso_area', 'areas.id_area', '=', 'curso_area.id_area')
+            ->where('curso_area.id_curso', $curso->id_curso)
+            ->where('areas.id_olimpiada', $id_olimpiada)
+            ->select('areas.*')
+            ->get();
+
+        $areas_con_niveles = [];
+
+        foreach ($areas as $area) {
+            // Obtener niveles de esta área
+            $niveles = DB::table('nivel_categorias')
+                ->where('id_area', $area->id_area)
+                ->get();
+
+            $area->nivel_categorias = $niveles;
+            $areas_con_niveles[] = $area;
+        }
+
+        $resultado[] = [
+            'id_curso' => $curso->id_curso,
+            'nameCurso' => $curso->nameCurso,
+            'areas' => $areas_con_niveles,
+        ];
+    }
+
+    return response()->json($resultado);
+}
 }

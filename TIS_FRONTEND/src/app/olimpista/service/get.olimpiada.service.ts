@@ -13,7 +13,7 @@ export class GetOlimpiadaService {
   private readonly apiUrl = environment.apiUrl;
 
   findAll(): Observable<Olimpiada[]> {
-    return this.http.get<{ olimpiadas: Olimpiada[] }>(`${this.apiUrl}/olimpiada`)
+    return this.http.get<{ olimpiadas: Olimpiada[] }>(`${this.apiUrl}/olimpiadas`)
       .pipe(
         map(response => response.olimpiadas)
       );
@@ -23,6 +23,12 @@ export class GetOlimpiadaService {
   crearOlimpiada(olimpiadaData: {
     nombre_olimpiada: string;
     descripcion_olimpiada: string;
+    presentacion?: string;
+    requisitos?: string;
+    fecha_inscripcion_inicio?: string;
+    fecha_inscripcion_final?: string;
+    premios?: string;
+    informacion_adicional?: string;
     fecha_inicio: string;
     fecha_final: string;
     areas: {
@@ -31,8 +37,9 @@ export class GetOlimpiadaService {
     }[];
   }): Observable<{ message: string, data: Olimpiada }> {
     return this.http.post<{ message: string, data: Olimpiada }>(
-      `${this.apiUrl}/olimpiada`,
+      `${this.apiUrl}/olimpiadas`,
       olimpiadaData
     );
   }
+
 }

@@ -5,7 +5,6 @@ import { HttpClient } from '@angular/common/http';
 import { BotonExelComponent } from '../../components/boton-exel/boton-exel.component';
 import { Workbook } from 'exceljs';
 
-
 @Component({
   selector: 'app-visualizacion-lista',
   standalone: true,
@@ -37,8 +36,9 @@ export class VisualizacionListaComponent {
 
     // Encabezados
     worksheet.addRow([
-      'Nombres', 'Apellidos', 'CI', 'Fecha de Nacimiento',
-      'Correo Electrónico', 'Colegio', 'Departamento', 'Provincia'
+      'Nombre Estudiante', 'Apellido Estudiante', 'CI',
+      'Fecha de Nacimiento', 'Correo Electrónico', 'Teléfono/Celular',
+      'Colegio', 'Departamento', 'Provincia'
     ]);
 
     // Estilo encabezados (negrita y fondo)
@@ -97,7 +97,7 @@ export class VisualizacionListaComponent {
     // Encabezados estudiantes
     const encabezadosEstudiantes = [
       'Nombre Estudiante', 'Apellido Estudiante', 'CI',
-      'Fecha de Nacimiento', 'Correo Electrónico',
+      'Fecha de Nacimiento', 'Correo Electrónico', 'Teléfono/Celular',
       'Colegio', 'Departamento', 'Provincia'
     ];
     worksheet.addRow(encabezadosEstudiantes);

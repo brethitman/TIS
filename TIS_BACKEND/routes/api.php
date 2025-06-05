@@ -64,9 +64,16 @@ Route::post('/inscripcion', [InscripcionController::class, 'store']);
 
 Route::get('/olimpiadas/{id}/areas', [AreaController::class, 'getAreasByOlimpiada']);
 Route::get('/olimpiadasInscripcion/{id}/areas', [AreaController::class, 'getAreasByOlimpiadaParaInscripcion']);
+///verificar con ocr del frontend
+Route::post('/inscripciones/verificar-pago', [InscripcionController::class, 'verificarPago']);
+
 
 //ENPOINSTS PARA LA LISTA
 Route::post('/inscripcionList', [InscripcionController::class, 'storeList']);
+
+//enpoint para el reporte
+Route::get('/inscripciones/nivel/{idNivel}', [InscripcionController::class, 'obtenerInscripcionesPorNivel']);
+
 
 
 // categoria ENDPOINTS  ---- GET POST da bien
@@ -95,11 +102,11 @@ Route::post('/olimpista', [OlimpistaController::class, 'store']);
 //olimpiada
 // olimpiada ENDPOINTS --------------------------- GET POST da bien
 //tiene interface
-Route::get('/olimpiada', [OlimpiadaController::class, 'index']);
-Route::get('/olimpiada/{id}', [OlimpiadaController::class, 'show']);
-Route::post('/olimpiada', [OlimpiadaController::class, 'store']);
-Route::delete('/olimpiada/{id}', [OlimpiadaController::class, 'destroy']);
-Route::put('/olimpiada/{id}', [OlimpiadaController::class, 'update']);
+Route::get('/olimpiadas', [OlimpiadaController::class, 'index']);
+Route::get('/olimpiadas/{id}', [OlimpiadaController::class, 'show']);
+Route::post('/olimpiadas', [OlimpiadaController::class, 'store']);
+Route::delete('/olimpiadas/{id}', [OlimpiadaController::class, 'destroy']);
+Route::put('/olimpiadas/{id}', [OlimpiadaController::class, 'update']);
 
 /// curso
 Route::get('/curso', [CursoController::class, 'index']);
@@ -115,3 +122,6 @@ Route::post('/cursoNivel', [CursoNivelController::class, 'store']);
 
 // Ruta para el envío de email - Corregida
 Route::post('/email', [EmailController::class, 'enviarEmail']);
+
+
+Route::get('/olimpiadas/{id}/cursos-areas', [CursoController::class, 'getCursosConAreasPorOlimpiada']);

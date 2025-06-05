@@ -102,9 +102,9 @@ class AreaController extends Controller
     public function getByOlimpiadaId($id)
     {
         $areas = Area::with(['olimpiada', 'nivelCategorias'])
-                     ->where('id_olimpiada', $id)
-                     ->orderBy("created_at", "desc")
-                     ->get();
+            ->where('id_olimpiada', $id)
+            ->orderBy("created_at", "desc")
+            ->get();
 
         return new AreaCollection($areas);
     }
@@ -197,33 +197,24 @@ public function indexV2(Request $request)
 }
 
 
+
 public function storeBasic(Request $request)
 {
     $validated = $request->validate([
         'id_olimpiada' => 'required|exists:olimpiadas,id_olimpiada',
         'nombre_area' => 'required|string|max:100|unique:areas,nombre_area',
         'descripcion' => 'nullable|string|max:255',
-        'gradoIniAr' => 'required|string|max:50',
-        'gradoFinAr' => 'required|string|max:50',
+        'permite_multiples_areas' => 'required|boolean', // Validación añadida
         'cursos' => 'required|array|min:1',
-        'cursos.*' => 'exists:curso,id_curso' // Corregido a nombre de tabla singular
+        'cursos.*' => 'exists:curso,id_curso'
     ]);
 
-    // Crear el área con todos los campos validados
-    $area = Area::create([
-        'id_olimpiada' => $validated['id_olimpiada'],
-        'nombre_area' => $validated['nombre_area'],
-        'descripcion' => $validated['descripcion'],
-        'gradoIniAr' => $validated['gradoIniAr'],
-        'gradoFinAr' => $validated['gradoFinAr']
-    ]);
-
-    // Sincronizar cursos con la tabla pivote
+    $area = Area::create($validated);
     $area->cursos()->sync($validated['cursos']);
 
     return response()->json([
-        'message' => 'Área creada con cursos asociados exitosamente',
-        'data' => new AreaResource($area->load(['olimpiada', 'cursos']))
+        'message' => 'Área creada exitosamente',
+        'data' => new AreaResource($area->load('cursos'))
     ], 201);
 }
 

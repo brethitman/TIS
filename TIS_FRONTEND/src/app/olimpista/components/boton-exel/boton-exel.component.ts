@@ -1,4 +1,4 @@
-import { NgModule, Component } from '@angular/core';
+import { NgModule, Component, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as XLSX from 'xlsx';
@@ -16,6 +16,7 @@ export class BotonExelComponent {
   @Output() estudianteSeleccionado = new EventEmitter<any>();
   @Output() areaSeleccionada = new EventEmitter<any>();
   @Output() inscribir = new EventEmitter<void>();
+  @ViewChild('excelInput') excelInput!: ElementRef;
 
   showModal1: boolean = false;
   showModal2: boolean = false;
@@ -30,15 +31,20 @@ export class BotonExelComponent {
   tutor = {
     nombre: '',
     apellido: '',
-    ci: ''
+    ci: '',
+    email: '',
+    telefono: ''
   };
   errors = {
     nombre: '',
     apellido: '',
-    ci: ''
+    ci: '',
+    email: '',
+    telefono: ''
   };
   isStudentDropdownOpen: boolean = false;
   estudiantes: any[] = [];
+
 
   onFileChange(event: any): void {
     const target: DataTransfer = <DataTransfer>event.target;
@@ -63,27 +69,19 @@ export class BotonExelComponent {
       let datos: any[][] = XLSX.utils.sheet_to_json(hoja, { header: 1 });
       const encabezados = datos[0];
       const indiceFechaNacimiento = encabezados.indexOf('Fecha de Nacimiento');
-      if (indiceFechaNacimiento !== -1) { // Si la columna existe
+      if (indiceFechaNacimiento !== -1) {
         datos = datos.map((row, rowIndex) =>
           row.map((cell, colIndex) => {
             if (typeof cell === 'number' && cell > 30000 && colIndex === indiceFechaNacimiento) {
-              // Convertimos solo si está en la columna de Fecha de Nacimiento
               const fechaConvertida = new Date((cell - 25569) * 86400000);
-              return fechaConvertida.toLocaleDateString('es-ES'); // Formato dd/mm/aaaa
+              return fechaConvertida.toLocaleDateString('es-ES');
             }
             return cell;
           })
         );
       }
       this.datosExcel = datos;
-      this.procesarEstudiantes(datos);
 
-      if (this.confirmSubida && fileName === 'Formato_solo_Estudiantes.xlsx') {
-        console.log('Datos subidos:', this.datosExcel);
-      } else if (this.confirmSubida && fileName === 'Formato_Varios_Tutores.xlsx') {
-        console.log('Formato 2 subido correctamente1:', fileName, fileSize);
-      } else {
-      }
       this.procesarDatosExcel(this.datosExcel, file.name);
     };
 
@@ -95,43 +93,39 @@ export class BotonExelComponent {
       this.showModal2 = true;
     } else {
       alert('Archivo no válido, debe tener el mismo nombre que el formato descargado');
+      this.resetFileInput(); // Resetear el input si el archivo no es válido
       return;
     }
     this.nombreArchivo = fileName;
     this.tamanoArchivo = fileSize;
   }
-  procesarEstudiantes(datos: any[][]): void {
-    if (datos.length < 2) {
-      this.estudiantes = [];
-      return;
+
+  volverSubir() {
+    // 1. Resetear el input de archivo (manera Angular)
+    if (this.excelInput) {
+      this.excelInput.nativeElement.value = '';
     }
-    const encabezados = datos[0].map(h => h.toString().trim());
-    const filasDatos = datos.slice(1);
 
-    console.log('Encabezados encontrados:', encabezados);
+    // 2. Resetear estados
+    this.resetUploadStates();
+  }
 
-    const nombreIndex = encabezados.findIndex(h =>
-      h.toLowerCase().includes('nombre') || h.toLowerCase().includes('nombres')
-    );
-    const apellidoIndex = encabezados.findIndex(h =>
-      h.toLowerCase().includes('apellido') || h.toLowerCase().includes('apellidos')
-    );
-    const ciIndex = encabezados.findIndex(h =>
-      h.toLowerCase().includes('ci') || h.toLowerCase().includes('cédula') || h.toLowerCase().includes('cedula')
-    );
-
-    this.estudiantes = filasDatos.map(fila => ({
-      nombre: nombreIndex >= 0 ? fila[nombreIndex] : 'Nombre no disponible',
-      apellido: apellidoIndex >= 0 ? fila[apellidoIndex] : '',
-      ci: ciIndex >= 0 ? fila[ciIndex] : '',
-    })).filter(est => est.nombre && est.nombre !== 'Nombre no disponible');
-
-    console.log('Estudiantes procesados:', this.estudiantes); // Para depuración
+  resetUploadStates() {
+    this.modalError = false;
+    this.mensajeError = [];
+    this.confirmSubida = false;
+    this.datosEstudiantes = [];
+    this.datosTutores = [];
+    this.datosExcel = [];
+    this.tamanoArchivo = '';
+    this.nombreArchivo = '';
+    this.showModal1 = false;
+    this.showModal2 = false;
   }
 
   validateTutor(): boolean {
     let isValid = true;
-    this.errors = { nombre: '', apellido: '', ci: '' };
+    this.errors = { nombre: '', apellido: '', ci: '', email: '', telefono: '' };
 
     if (!this.tutor.nombre || this.tutor.nombre.trim() === '') {
       this.errors.nombre = 'El nombre es requerido';
@@ -159,68 +153,112 @@ export class BotonExelComponent {
       this.errors.ci = 'El CI debe tener entre 6 y 10 dígitos';
       isValid = false;
     }
+    // Validación Email 
+    if (!this.tutor.email || this.tutor.email.trim() === '') {
+      this.errors.email = 'El correo electrónico es requerido';
+      isValid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.tutor.email)) {
+      this.errors.email = 'Formato de correo electrónico inválido';
+      isValid = false;
+    }
+
+    // Validación Teléfono 
+    if (!this.tutor.telefono || this.tutor.telefono.trim() === '') {
+      this.errors.telefono = 'El teléfono es requerido';
+      isValid = false;
+    } else if (!/^\d+$/.test(this.tutor.telefono)) {
+      this.errors.telefono = 'El teléfono solo debe contener números';
+      isValid = false;
+    } else if (this.tutor.telefono.length < 8 || this.tutor.telefono.length > 12) {
+      this.errors.telefono = 'El teléfono debe tener entre 8 y 12 dígitos';
+      isValid = false;
+    }
 
     return isValid;
   }
 
   submitTutorInfo(): void {
+
     if (!this.validateTutor()) {
       return;
     }
+    // Crear datosTutores con la estructura adecuada
+    this.datosTutores.push([
+      this.tutor.nombre,
+      this.tutor.apellido,
+      this.tutor.ci,
+      this.tutor.email,
+      this.tutor.telefono
+    ]);
+
     this.confirmSubida = true;
-    this.modalError  = true;
-    console.log('Datos del tutor:', this.tutor);
+    this.modalError = true;
     this.showModal1 = false;
-    this.tutor = { nombre: '', apellido: '', ci: '' };
-    this.errors = { nombre: '', apellido: '', ci: '' };
+
   }
 
   cancelar1(): void {
-    this.confirmSubida = false;
-    this.showModal1 = false;
-    console.log('Subida cancelada');
-    this.tutor = { nombre: '', apellido: '', ci: '' };
-    this.errors = { nombre: '', apellido: '', ci: '' };
+    this.resetFileInput(); // Limpiar el input file
+    this.clearTutorData(); // Limpiar datos del tutor
+    this.closeAllModals(); // Cerrar todos los modales
+    this.resetUploadData(); // Limpiar datos de subida
+    console.log('Subida cancelada - Modal 1');
   }
 
   openModal2(): void {
+    this.resetFileInput();
     this.confirmSubida = true;
     this.showModal2 = false;
-    this.modalError  = true;
+    this.modalError = true;
   }
 
   cancelar2(): void {
-    this.confirmSubida = false;
-    this.showModal2 = false;
+    this.resetFileInput(); // Limpiar el input file
+    this.closeAllModals(); // Cerrar todos los modales
+    this.resetUploadData(); // Limpiar datos de subida
+    console.log('Subida cancelada - Modal 2');
+  }
+  private resetFileInput(): void {
+    if (this.excelInput?.nativeElement) {
+      this.excelInput.nativeElement.value = '';
+    }
+  }
+  cancelar(modalType: 'modal1' | 'modal2'): void {
+    this.resetFileInput();
+
+    if (modalType === 'modal1') {
+      this.clearTutorData();
+    }
+
+    this.closeAllModals();
+    this.resetUploadData();
+  }
+  private clearTutorData(): void {
+    this.tutor = { nombre: '', apellido: '', ci: '', email: '', telefono: '' };
+    this.errors = { nombre: '', apellido: '', ci: '', email: '', telefono: '' };
+  }
+
+  private resetUploadData(): void {
     this.datosExcel = [];
     this.datosEstudiantes = [];
     this.datosTutores = [];
     this.tamanoArchivo = '';
     this.nombreArchivo = '';
-    console.log('Subida cancelada');
-  }
-
-  volverSubir() {
-    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = '';
-    }
-    this.modalError  = false;
     this.mensajeError = [];
     this.confirmSubida = false;
-    this.datosEstudiantes = [];
-    this.datosTutores = [];
-    this.datosExcel = [];
-    this.tamanoArchivo = '';
-    this.nombreArchivo = '';
   }
 
+  private closeAllModals(): void {
+    this.showModal1 = false;
+    this.showModal2 = false;
+    this.modalError = false;
+  }
   cerrar() {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = '';
     }
-    this.modalError  = false;
+    this.modalError = false;
   }
 
   procesarDatosExcel(datos: any[][], fileName: string): void {
@@ -229,40 +267,68 @@ export class BotonExelComponent {
     if (fileName === 'Formato_solo_Estudiantes.xlsx') {
       this.datosEstudiantes = filasConDatos;
       this.validacionesEst(filasConDatos);
-      console.log('Lista de Estudiantes:', this.datosEstudiantes);
+      //this.tutor = 
+    
     } else if (fileName === 'Formato_Varios_Tutores.xlsx') {
       this.separarEstudiantesTutores(filasConDatos);
     }
   }
 
-  separarEstudiantesTutores(filasConDatos: any[][]): void {
-    const estudiantes: any[] = [];
-    const tutores: any[] = [];
-    let leyendoEstudiantes = true;
+ // En tu componente
+tutorPrincipal: any[] = [];  // Nueva propiedad para el tutor principal
 
-    filasConDatos.forEach((fila) => {
-      const contieneNombreTutor = fila.some(cell =>
-        typeof cell === 'string' && cell.trim().toLowerCase() === "nombre tutor"
-      );
+separarEstudiantesTutores(filasConDatos: any[][]): void {
+  const estudiantes: any[] = [];
+  const tutores: any[] = [];
+  let leyendoEstudiantes = true;
+  let separadorDetectado = false;
+  
+  // Resetear tutor principal
+  this.tutorPrincipal = [];
 
-      if (contieneNombreTutor) {
-        leyendoEstudiantes = false;
-      }
-      if (leyendoEstudiantes) {
-        estudiantes.push(fila);
-      } else {
-        tutores.push(fila);
-      }
+  filasConDatos.forEach((fila, index) => {
+    // Detectar texto "nombre tutor"
+    const contieneNombreTutor = fila.some(cell => {
+      const esString = typeof cell === 'string';
+      const esSeparador = esString && cell.trim().toLowerCase() === "nombre tutor";
+      return esSeparador;
     });
-    this.datosEstudiantes = estudiantes;
-    this.datosTutores = tutores;
-    this.validacionesEst(this.datosEstudiantes)
-    this.validacionesTutor(this.datosTutores)
-  }
+
+    // Cambiar estado si se detecta separador
+    if (contieneNombreTutor && !separadorDetectado) {
+      leyendoEstudiantes = false;
+      separadorDetectado = true;
+    }
+
+    // Clasificar fila
+    if (leyendoEstudiantes) {
+      estudiantes.push(fila);
+    } else {
+      tutores.push(fila);
+      
+      // Guardar la primera fila después del separador como tutor principal
+      if (tutores.length === 2 && separadorDetectado) {
+        this.tutorPrincipal = [...fila];  // Hacemos copia del array
+        console.log('Tutor principal guardado:', this.tutorPrincipal);
+      }
+    }
+  });
+
+  // Asignar a propiedades
+  this.datosEstudiantes = estudiantes;
+  this.datosTutores = tutores;
+  
+  // Validaciones
+  this.validacionesEst(this.datosEstudiantes);
+  this.validacionesTutor(this.datosTutores);
+  
+  console.log('Tutor principal final:', this.tutorPrincipal);
+}
 
   validacionesEst(datosEst: any[][]) {
     const listaEstudiante = datosEst.slice(1);
-
+    this.datosEstudiantes = listaEstudiante;
+    this.procesarEstudiantes(this.datosEstudiantes);
     for (let index = 0; index < listaEstudiante.length; index++) {
       const fila = listaEstudiante[index];
 
@@ -270,21 +336,21 @@ export class BotonExelComponent {
         const nombre = fila[0]?.toString().trim();
         const apellido = fila[1]?.toString().trim();
         if (!nombre || !apellido) {
-          this.mensajeError.push(`Error: Nombre y apellido son obligatorios en la fila ${index + 1}.\n`);
+          this.mensajeError.push(`Error: El nombre y apellido del estudiante son obligatorios en la fila ${index + 1}.\n`);
           break;
         }
         const ci = fila[2]?.toString().trim();
-        if (!/^[19]\d{6,7}$/.test(ci)) {
-          this.mensajeError.push(`Error: CI inválido en la fila ${index + 1}.\n`);
+        if (!/^\d{7,8}$/.test(ci)) {
+          this.mensajeError.push(`Error: CI del estudiante inválido en la fila ${index + 1}.\n`);
           break;
         }
         if (!ci) {
-          this.mensajeError.push(`Error: El CI del tutor es obligatorio.\n`);
+          this.mensajeError.push(`Error: El CI ddel estudiante es obligatorio.\n`);
           break;
         }
         const fechaNacimiento = fila[3]?.toString().trim();
         if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(fechaNacimiento)) {
-          this.mensajeError.push(`Error: Fecha de nacimiento inválida en la fila ${index + 1}. Debe cumplir con el formato dd/mm/aa.\n`);
+          this.mensajeError.push(`Error: Fecha de nacimiento del estudiante inválida en la fila ${index + 1}. Debe cumplir con el formato dd/mm/aa.\n`);
           break;
         }
         if (!fechaNacimiento) {
@@ -294,20 +360,33 @@ export class BotonExelComponent {
         const correo = fila[4]?.toString().trim();
         if (!correo.includes("@") || correo.includes(" ") ||
           (!correo.endsWith("@gmail.com") && !correo.endsWith("@Outlook.com"))) {
-          this.mensajeError.push(`Error: Correo electrónico inválido:'${correo}'.\n`);
+          this.mensajeError.push(`Error: Correo electrónico inválido del estudiante:'${correo}'.\n`);
           break;
         }
-        const unidadEducativa = fila[5]?.toString().trim();
+        if (!correo) {
+          this.mensajeError.push(`Error: El Correo electrónico del estudiante es obligatorio.\n`);
+          break;
+        }
+        const celular = fila[5]?.toString().trim();
+        if (!/^[67]\d{7}$/.test(celular)) {
+          this.mensajeError.push(`Error: Número de celular inválido: '${celular}'.\n `);
+          break;
+        }
+        if (!celular) {
+          this.mensajeError.push(`Error: El Número de celular del estudiante es obligatorio.\n`);
+          break;
+        }
+        const unidadEducativa = fila[6]?.toString().trim();
         if (!unidadEducativa) {
           this.mensajeError.push(`Error: Unidad educativa es obligatoria en la fila ${index + 1}.\n`);
           break;
         }
-        const departamento = fila[6]?.toString().trim();
+        const departamento = fila[7]?.toString().trim();
         if (!departamento) {
           this.mensajeError.push(`Error: Departamento es obligatorio en la fila ${index + 1}.\n`);
           break;
         }
-        const provincia = fila[7]?.toString().trim();
+        const provincia = fila[8]?.toString().trim();
         if (!provincia) {
           this.mensajeError.push(`Error: Provincia es obligatoria en la fila ${index + 1}.\n`);
           break;
@@ -316,9 +395,10 @@ export class BotonExelComponent {
     }
 
   }
+  
   validacionesTutor(datosTutor: any[][]) {
     const listaTutor = datosTutor.slice(1);
-
+    this.datosTutores = listaTutor;
     for (let index = 0; index < listaTutor.length; index++) {
       const fila = listaTutor[index];
 
@@ -326,12 +406,12 @@ export class BotonExelComponent {
         const nombre = fila[0]?.toString().trim();
         const apellido = fila[1]?.toString().trim();
         if (!nombre || !apellido) {
-          this.mensajeError.push(`Error: Nombre y apellido son obligatorios en la fila ${index + 1}.\n`);
+          this.mensajeError.push(`Error: Nombre y apellido del tutor son obligatorios en la fila ${index + 1}.\n`);
           break;
         }
         const ci = fila[2]?.toString().trim();
-        if (!/^[19]\d{6,7}$/.test(ci)) {
-          this.mensajeError.push(`Error: CI inválido en la fila ${index + 1}.\n`);
+        if (!/^\d{7,8}$/.test(ci)) {
+          this.mensajeError.push(`Error: CI del tutor inválido en la fila ${index + 1}.\n`);
           break;
         }
         if (!ci) {
@@ -359,8 +439,21 @@ export class BotonExelComponent {
         }
       }
     }
+    console.log("Lista de estudiantes", this.datosTutores);
     console.log("Lista de errores:", this.mensajeError);
 
+  }
+
+
+  procesarEstudiantes(datos: any[][]): void {
+    if (datos.length < 2) {
+      this.estudiantes = [];
+      return;
+    }
+    const filasDatos = datos;
+    this.estudiantes = filasDatos.map(fila => `${fila[0]} ${fila[1]}`.trim());
+
+    console.log('Estudiantes procesados:', this.estudiantes);
   }
 
 }

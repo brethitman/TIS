@@ -8,12 +8,13 @@ import {
   NivelResponse,
   AreaResponse 
 } from '../interfaces/post_categoria.interface';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NivelService {
-  private apiUrl = 'http://localhost:8000/api';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
@@ -29,6 +30,10 @@ export class NivelService {
       request
     );
   }
+  updateHabilitacion(idNivel: number, habilitacion: boolean): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/niveles/${idNivel}/habilitacion`, { habilitacion });
+  }
+
 
   /**
    * Crea un solo nivel para un área específica.

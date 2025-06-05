@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AreaBasicRequest } from '../interfaces/AreaNuevo.interface';
 import { AreaBasicResponse } from '../interfaces/AreaNuevo.interface';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AreaNuevoService {
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 

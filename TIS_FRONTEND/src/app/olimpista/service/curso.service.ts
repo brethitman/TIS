@@ -3,16 +3,17 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Curso } from '../interfaces/curso.interface';
+import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CursoService {
-  private apiUrl = 'http://127.0.0.1:8000/api/curso'; // Cambia esto por tu endpoint real
+  private readonly apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
   obtenerCursos(): Observable<Curso[]> {
-    return this.http.get<Curso[]>(this.apiUrl);
+    return this.http.get<Curso[]>(`${this.apiUrl}/curso`);
   }
 }

@@ -1,15 +1,15 @@
-// src/app/interfaces/inscripcion.types.ts (o donde tengas tus tipos)
+// src/app/interfaces/inscripcion.types.ts
 
+// --- Interfaces para el Payload (Request) ---
 
 export interface Olimpista {
   nombres: string;
   apellidos: string;
   ci: string;
-  fecha_nacimiento: string; // o Date si manejas objetos de fecha
+  fecha_nacimiento: string;
   correo: string;
   telefono: string;
   colegio: string;
-  curso: string;
   departamento: string;
   provincia: string;
 }
@@ -20,6 +20,7 @@ export interface Tutor {
   ci: string;
   correo: string;
   telefono: string;
+  contacto: string;
 }
 
 export interface AreaInscripcion {
@@ -28,76 +29,79 @@ export interface AreaInscripcion {
 }
 
 export interface InscripcionPayload {
-  fecha_inscripcion: string; // o Date
   estado: string;
+  curso_id: number;
   olimpistas: Olimpista[];
   tutors: Tutor[];
   areas: AreaInscripcion[];
 }
-// --- Fin Interfaces para el Payload ---
 
+// --- Interfaces para la Respuesta (Response) ---
 
-// --- Interfaces para la Respuesta (lo que recibes) - ¡Añadir estas! ---
-
-// Estructura de Olimpista y Tutor en la respuesta (pueden incluir IDs, fechas de creación, etc.)
-// Puedes reutilizar las interfaces de arriba si la estructura es la misma,
-// pero es más robusto definir nuevas interfaces si el backend añade campos.
-// Basado en tu respuesta de ejemplo:
-export interface OlimpistaResponse extends Olimpista { // Hereda del payload si quieres
-  id: number;
+export interface OlimpistaResponse extends Olimpista {
+  id_curso: number;
   id_inscripcion: number;
-  createdAt: string;
-  updatedAt: string;
+  id_olimpista: number;
+  created_at: string;
+  updated_at: string;
 }
 
-export interface TutorResponse extends Tutor { // Hereda del payload si quieres
-  id: number;
+export interface TutorResponse extends Tutor {
   id_inscripcion: number;
-  createdAt: string;
-  updatedAt: string;
+  id_tutor: number;
+  created_at: string;
+  updated_at: string;
 }
 
+export interface Nivel {
+  nivel_id: number;
+  nivel_nombre: string;
+}
 
-// Estructura de la Boleta de Pago recibida en la respuesta
+export interface AreaNivel {
+  area_id: number;
+  area_nombre: string;
+  niveles: Nivel[];
+}
+
+export interface Curso {
+  id: number;
+  nombre: string;
+}
+
 export interface BoletaPagoResponse {
-    id: number;
-    numero_boleta: string;
-    monto: string | number; // O number si lo conviertes
-    fecha_generacion: string; // O Date
-    createdAt: string;
-    updatedAt: string;
+  id: number;
+  numero_boleta: string;
+  monto: string;
+  fecha_generacion: string;
+  areas_niveles: AreaNivel[];
+  nombre_olimpiada: string;
+  curso: Curso;
+  olimpista: OlimpistaResponse;
+  tutor_principal: TutorResponse;
+  tutores_adicionales: TutorResponse[];
 }
 
-// Estructura de Nivel Seleccionado recibida en la respuesta
 export interface NivelSeleccionadoResponse {
-    id: number;
-    nombre_nivel: string;
-    descripcion: string;
-    fecha_examen: string; // O Date
-    costo: string; // O number
-    habilitacion: number; // O boolean
-    createdAt: string;
-    updatedAt: string;
+  id: number;
+  nombre_nivel: string;
+  costo: string;
+  fecha_examen: string | null;
 }
 
-// Estructura de la Inscripción completa recibida DENTRO del objeto 'inscripcion' de la respuesta POST
 export interface InscripcionResponse {
-    id: number; // ID de la inscripción creada
-    fecha_inscripcion: string; // O Date
-    estado: string;
-    olimpistas: OlimpistaResponse[]; // Ahora son los tipos Response
-    tutors: TutorResponse[]; // Ahora son los tipos Response
-    boleta_pago: BoletaPagoResponse; // Detalles de la boleta generada
-    niveles_seleccionados: NivelSeleccionadoResponse[]; // Detalles de los niveles
-    createdAt: string;
-    updatedAt: string;
+  id: number;
+  estado: string;
+  fecha_inscripcion: string;
+  olimpistas: OlimpistaResponse[];
+  tutors: TutorResponse[];
+  boleta_pago: BoletaPagoResponse;
+  niveles_seleccionados: NivelSeleccionadoResponse[];
+  created_at: string;
+  updated_at: string;
 }
 
-// Estructura COMPLETA de la respuesta exitosa del POST al endpoint /api/inscripcion
 export interface InscripcionPostSuccessResponse {
-    message: string; // El mensaje "Inscripción creada exitosamente"
-    inscripcion: InscripcionResponse; // El objeto con todos los detalles de la inscripción creada
-    boleta_pago: BoletaPagoResponse;
-  }
-
-// --- Fin Interfaces para la Respuesta ---
+  message: string;
+  inscripcion: InscripcionResponse;
+}
