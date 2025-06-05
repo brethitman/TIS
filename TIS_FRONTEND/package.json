@@ -24,6 +24,7 @@
     "@heroicons/react": "^2.2.0",
     "@tailwindcss/postcss": "^4.0.11",
     "@types/exceljs": "^0.5.3",
+    "chart.js": "^4.4.9",
     "dom-to-image": "^2.6.0",
     "exceljs": "^4.4.0",
     "html-to-image": "^1.11.13",
@@ -37,8 +38,7 @@
     "tslib": "^2.3.0",
     "xlsx": "^0.18.5",
     "xlsx-style": "^0.8.13",
-    "zone.js": "~0.15.0",
-    "chart.js": "^4.4.1"
+    "zone.js": "~0.15.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.2.9",
