@@ -88,8 +88,8 @@ class Area extends Model
     public function inscripciones()
     {
         return $this->belongsToMany(Inscripcion::class, 'inscripcion_area_nivel', 'id_area', 'id_inscripcion')
-                    ->using(InscripcionAreaNivel::class) // Usar el modelo de la tabla pivote
-                    ->withTimestamps(); // Si la tabla pivote tiene created_at y updated_at
+            ->using(InscripcionAreaNivel::class) // Usar el modelo de la tabla pivote
+            ->withTimestamps(); // Si la tabla pivote tiene created_at y updated_at
     }
 
 
@@ -101,7 +101,8 @@ class Area extends Model
 
 
 
-public function niveles() {
-    return $this->hasMany(NivelCategoria::class, 'id_area', 'id_area');
-}
+    public function niveles()
+    {
+        return $this->hasMany(NivelCategoria::class, 'id_area', 'id_area');
+    }
 }

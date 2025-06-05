@@ -28,6 +28,7 @@ export class BoletaListaComponent implements OnInit {
   boletaPago: BoletaPagoResponse | null = null;
   mensaje: string = "";
   errorMessage: string | null = null;
+  boletaGenerada = false;
 
   constructor(private service: VisualizacionService, private emailService: EmailService,) { }
 
@@ -37,11 +38,12 @@ export class BoletaListaComponent implements OnInit {
     this.tutor = JSON.parse(localStorage.getItem('tutores') || '[]');
     this.inscripciones = JSON.parse(localStorage.getItem('inscripciones') || '[]');
     this.boletaTutor = this.tutor[0];//OBTIENE SOLO LA INFOEMCION DEL TUTOR RESPONSABLE
+    this.colegios = [...new Set(this.olimpista.map(olimpista => olimpista[6]))];
     console.log('Áreas recibidas:', this.areas);
     console.log('Olimpistas recibidos:', this.olimpista);
     console.log('Tutores recibidos:', this.tutor);
     console.log('tutor boleta', this.boletaTutor);
-    console.log("Inscripciones en localStorage:", localStorage.getItem("inscripciones"));
+    console.log('colegios', this.colegios);
   }
 
   /* Métodos corregidos para contar y listar áreas únicas
@@ -171,7 +173,8 @@ getUniqueSchools(): string[] {
         console.log('Inscripción exitosa:', response);
         if (response?.inscripcion?.boleta_pago) {
           this.boletaPago = response.inscripcion.boleta_pago;
-          alert('Inscripción realizada correctamente');
+           this.boletaGenerada = true;
+          alert('Inscripción realizada correctamente y Boleta generada con éxito');
           const correoTutor = this.tutor[0]?.[3]; // Accede al correo del tutor
           if (this.boletaPago) {
             console.log('Enviando boleta por correo a:', correoTutor);

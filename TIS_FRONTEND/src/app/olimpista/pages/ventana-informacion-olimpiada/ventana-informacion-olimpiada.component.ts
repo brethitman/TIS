@@ -9,11 +9,12 @@ import { OlimpiadaByAreaService } from '../../service/OlimpiadaByArea.service';
 import { IDOlimpiadabyArea, IDNivelCategoria, OlimpiadaResponse } from '../../interfaces/post_categoria.interface';
 import { CategoriasHomeComponent } from '../../components/categorias-home/categorias-home.component';
 import { CategoriaVisualizacionService } from '../../service/categoriaVisualizacion.service'; 
+import { PiePaginaComponent } from '../../../ui/components/pie-pagina/pie-pagina.component';
 
 @Component({
   selector: 'app-ventana-informacion-olimpiada',
   standalone: true,
-  imports: [CommonModule, AreasCarruselComponent, CategoriasHomeComponent],
+  imports: [CommonModule, AreasCarruselComponent, CategoriasHomeComponent, PiePaginaComponent],
   templateUrl: './ventana-informacion-olimpiada.component.html',
 })
 export class VentanaInformacionOlimpiadaComponent implements OnInit {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inscripcion;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Inscripcion\InscripcionCollection;
 use App\Http\Resources\Inscripcion\InscripcionResource;
+use App\Models\Curso;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Area;
 use App\Models\Inscripcion;
@@ -48,6 +49,7 @@ class InscripcionController extends Controller
     {
         $validated = $request->validate([
             'estado' => 'required|in:Pendiente,Pagado,Verificado',
+            'curso_id' => 'required|integer|exists:curso,id_curso',  // <-- corregido: tabla 'curso', columna 'id_curso'
 
             'olimpistas' => 'required|array|min:1|max:1',
             'olimpistas.*.nombres' => 'required|string|max:100',
@@ -60,7 +62,6 @@ class InscripcionController extends Controller
             'olimpistas.*.departamento' => 'required|string|max:50',
             'olimpistas.*.provincia' => 'required|string|max:50',
 
-            // Cambiado a min:1 y max:2 para permitir 1 o 2 tutores
             'tutors' => 'required|array|min:1|max:2',
             'tutors.*.nombres' => 'required|string|max:100',
             'tutors.*.apellidos' => 'required|string|max:100',
@@ -68,9 +69,7 @@ class InscripcionController extends Controller
                 'required',
                 'string',
                 'max:20',
-                // Validación única condicional para evitar conflictos entre tutores en la misma solicitud
                 Rule::unique('tutors', 'ci')->where(function ($query) use ($request) {
-                    // Verificar si el CI ya existe en otros tutores (no en esta solicitud)
                     return $query->whereNotIn(
                         'id_tutor',
                         collect($request->tutors)->pluck('id_tutor')->filter()->toArray()
@@ -90,22 +89,21 @@ class InscripcionController extends Controller
         DB::beginTransaction();
 
         try {
-            // Crear inscripción
             $inscripcion = Inscripcion::create([
                 'estado' => $validated['estado']
             ]);
 
-            // Crear olimpista
-            $olimpista = $inscripcion->olimpistas()->create($validated['olimpistas'][0]);
+            $olimpistaData = $validated['olimpistas'][0];
+            $olimpistaData['id_curso'] = $validated['curso_id'];
+            $olimpista = $inscripcion->olimpistas()->create($olimpistaData);
 
-            // Crear tutores (hasta 2)
             $tutors = [];
             foreach ($validated['tutors'] as $tutorData) {
-                $tutor = $inscripcion->tutors()->create($tutorData);
-                $tutors[] = $tutor;
+                $tutors[] = $inscripcion->tutors()->create($tutorData);
             }
 
-            // Procesar áreas y niveles
+            $curso = Curso::findOrFail($validated['curso_id']);
+
             $totalCosto = 0;
             $areasNiveles = [];
             $nivelesSeleccionados = [];
@@ -130,14 +128,12 @@ class InscripcionController extends Controller
                         'nivel_nombre' => $nivel->nombre_nivel
                     ];
 
-                    // Vincular nivel a la inscripción
                     $inscripcion->nivelCategorias()->attach($nivel->id_nivel, [
                         'id_area' => $area->id_area,
                         'created_at' => now(),
                         'updated_at' => now()
                     ]);
 
-                    // Agregar a niveles seleccionados
                     $nivelesSeleccionados[] = [
                         'id' => $nivel->id_nivel,
                         'nombre_nivel' => $nivel->nombre_nivel,
@@ -155,23 +151,20 @@ class InscripcionController extends Controller
                 ];
             }
 
-            // Crear boleta de pago (asociamos el primer tutor)
             $boleta = BoletaPago::create([
                 'id_inscripcion' => $inscripcion->id_inscripcion,
                 'id_olimpista' => $olimpista->id_olimpista,
-                'id_tutor' => $tutors[0]->id_tutor, // Primer tutor
-                'numero_boleta' => 'BOL-' . Str::upper(Str::random(8)) . '-' . $inscripcion->id_inscripcion,
+                'id_tutor' => $tutors[0]->id_tutor,
+                'numero_boleta' => 'BOL-' . strtoupper(Str::random(8)) . '-' . $inscripcion->id_inscripcion,
                 'monto' => number_format($totalCosto, 2, '.', ''),
                 'fecha_generacion' => now()->toDateString(),
                 'areas_niveles' => $areasNiveles,
                 'nombre_olimpiada' => $nombreOlimpiada,
-                // Agregamos ambos tutores en un campo adicional
-                'tutores_adicionales' => array_slice($tutors, 1) // Todos los tutores después del primero
+                'id_curso' => $validated['curso_id']
             ]);
 
             DB::commit();
 
-            // Construir respuesta
             return response()->json([
                 'message' => 'Inscripción creada exitosamente',
                 'inscripcion' => [
@@ -179,9 +172,7 @@ class InscripcionController extends Controller
                     'estado' => $inscripcion->estado,
                     'fecha_inscripcion' => $inscripcion->created_at->format('Y-m-d H:i:s'),
                     'olimpistas' => [$olimpista->toArray()],
-                    'tutors' => array_map(function ($t) {
-                        return $t->toArray();
-                    }, $tutors),
+                    'tutors' => array_map(fn($t) => $t->toArray(), $tutors),
                     'boleta_pago' => [
                         'id' => $boleta->id_boleta,
                         'numero_boleta' => $boleta->numero_boleta,
@@ -189,11 +180,13 @@ class InscripcionController extends Controller
                         'fecha_generacion' => $boleta->fecha_generacion,
                         'areas_niveles' => $boleta->areas_niveles,
                         'nombre_olimpiada' => $boleta->nombre_olimpiada,
+                        'curso' => [
+                            'id' => $curso->id_curso,
+                            'nombre' => $curso->nameCurso // <-- correcto, según tu modelo
+                        ],
                         'olimpista' => $olimpista->toArray(),
                         'tutor_principal' => $tutors[0]->toArray(),
-                        'tutores_adicionales' => array_map(function ($t) {
-                            return $t->toArray();
-                        }, array_slice($tutors, 1))
+                        'tutores_adicionales' => array_map(fn($t) => $t->toArray(), array_slice($tutors, 1))
                     ],
                     'niveles_seleccionados' => $nivelesSeleccionados
                 ]
@@ -204,7 +197,7 @@ class InscripcionController extends Controller
             return response()->json([
                 'message' => 'Error al procesar la inscripción',
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString() // Solo para desarrollo
+                'trace' => $e->getTraceAsString()
             ], 500);
         }
     }
