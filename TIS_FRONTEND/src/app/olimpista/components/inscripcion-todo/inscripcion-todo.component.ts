@@ -1,27 +1,26 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 
 // Servicios
 import { InscripcionServicee } from '../../service/iscripcionn.service';
-import { AreaService } from '../../service/area.service';
 import { EmailService } from '../../service/email.service';
 import { CursoAreaService } from '../../service/cursoAreaNivel.service';
 
 // Interfaces
 import { CursoWithAreas, AreaWithNiveles, NivelCategoria } from '../../interfaces/cursoAreaNiveles.interface';
-import { AreaInscripcion, InscripcionPayload, Olimpista, Tutor, InscripcionPostSuccessResponse, BoletaPagoResponse } from '../../interfaces/inscripcion.types';
-import { Area, Nivele } from '../../interfaces/area.interface';
+import { InscripcionPayload, InscripcionPostSuccessResponse, BoletaPagoResponse } from '../../interfaces/inscripcion.types';
+
 import { BoletaPagoComponent } from "../boleta-pago/boleta-pago.component";
 
 @Component({
   selector: 'app-inscripcion-todo',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, BoletaPagoComponent],
-  templateUrl: './inscripcion-todo.component.html',
+  templateUrl:'./inscripcion-todo.component.html',
 })
 export class InscripcionTodoComponent implements OnInit, OnDestroy {
 
@@ -35,24 +34,19 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   cursosConAreas: CursoWithAreas[] = [];
-  areasDisponibles: AreaWithNiveles[] = [];
 
-  cursoSeleccionadoId: number | null = null;
-  areasDelCurso: AreaWithNiveles[] = [];
-  areaSeleccionada: AreaWithNiveles | null = null;
-  nivelesDelArea: NivelCategoria[] = [];
-
-
-
+  // Propiedades para la selección de curso y áreas filtradas
+  cursoSeleccionado: CursoWithAreas | null = null;
+  areasFiltradasPorCurso: AreaWithNiveles[] = [];
+  olimpiadaId: number | null = null;
 
   constructor(
     private fb: FormBuilder,
     private inscripcionService: InscripcionServicee,
-    private areaService: AreaService,
     private route: ActivatedRoute,
     private router: Router,
     private cursoAreaService: CursoAreaService,
-    private emailService: EmailService,
+    private emailService: EmailService
   ) { }
 
   ngOnInit(): void {
@@ -64,9 +58,11 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
     this.route.params.subscribe(params => {
       const olimpiadaId = params['id'];
       if (olimpiadaId) {
+        this.olimpiadaId = Number(olimpiadaId);
         this.cargarCursosConAreas(olimpiadaId);
       } else {
         console.error('No se encontró ID de olimpiada en la URL');
+        this.errorMessage = 'No se encontró ID de olimpiada en la URL';
       }
     });
   }
@@ -74,6 +70,7 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   private initForm(): void {
     this.inscripcionForm = this.fb.group({
       estado: ['Pendiente', Validators.required],
+      curso_id: [null, Validators.required], // Agregado el campo curso_id
       olimpistas: this.fb.array([], Validators.required),
       tutors: this.fb.array([], Validators.required),
       areas: this.fb.array([], Validators.required)
@@ -81,7 +78,7 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
 
     this.addOlimpista();
     this.addTutor();
-    this.addArea();
+    // No agregamos área automáticamente hasta que se seleccione un curso
   }
 
   private cargarCursosConAreas(olimpiadaId: string): void {
@@ -90,20 +87,27 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (cursos) => {
           this.cursosConAreas = cursos;
-          // Extraer todas las áreas disponibles de todos los cursos
-          this.areasDisponibles = this.cursosConAreas.flatMap(curso => curso.areas);
+          console.log('Cursos cargados:', cursos);
         },
         error: (error) => {
           console.error('Error cargando cursos con áreas:', error);
-          this.errorMessage = 'Error al cargar las áreas disponibles';
+          this.errorMessage = 'Error al cargar los cursos y áreas disponibles';
         }
       });
   }
 
   // Getters para FormArrays
-  get olimpistasFormArray(): FormArray { return this.inscripcionForm.get('olimpistas') as FormArray; }
-  get tutorsFormArray(): FormArray { return this.inscripcionForm.get('tutors') as FormArray; }
-  get areasFormArray(): FormArray { return this.inscripcionForm.get('areas') as FormArray; }
+  get olimpistasFormArray(): FormArray {
+    return this.inscripcionForm.get('olimpistas') as FormArray;
+  }
+
+  get tutorsFormArray(): FormArray {
+    return this.inscripcionForm.get('tutors') as FormArray;
+  }
+
+  get areasFormArray(): FormArray {
+    return this.inscripcionForm.get('areas') as FormArray;
+  }
 
   // Métodos para Olimpistas
   private createOlimpista(): FormGroup {
@@ -120,8 +124,18 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
     });
   }
 
-  addOlimpista(): void { this.olimpistasFormArray.push(this.createOlimpista()); }
-  removeOlimpista(index: number): void { this.olimpistasFormArray.removeAt(index); }
+  addOlimpista(): void {
+    this.olimpistasFormArray.push(this.createOlimpista());
+  }
+
+  removeOlimpista(index: number): void {
+    if (this.olimpistasFormArray.length > 1) {
+      this.olimpistasFormArray.removeAt(index);
+    } else {
+      this.errorMessage = 'Debe haber al menos un olimpista';
+      setTimeout(() => this.errorMessage = null, 3000);
+    }
+  }
 
   // Métodos para Tutores
   private createTutor(): FormGroup {
@@ -144,43 +158,29 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
       setTimeout(() => this.errorMessage = null, 5000);
     }
   }
-  removeTutor(index: number): void { this.tutorsFormArray.removeAt(index); }
 
-  // Métodos para Áreas
-  private createArea(): FormGroup {
-    return this.fb.group({
-      area: [null, Validators.required],
-      nivel: [{ value: null, disabled: true }, Validators.required]
-    });
-  }
-
-  addArea(selectedArea?: AreaWithNiveles): void {
-    if (selectedArea && selectedArea.permite_multiples_areas !== undefined) {
-      if (!selectedArea.permite_multiples_areas) {
-        this.areasFormArray.clear();
-        this.addAreaDisabled = true;
-        this.areaWarning = `"${selectedArea.nombre_area}" no permite combinación con otras áreas`;
-      } else if (this.areasFormArray.controls.some(c => !c.value.area.permite_multiples_areas)) {
-        return;
-      }
-
-      const areaGroup = this.createArea();
-      areaGroup.patchValue({ area: selectedArea });
-      this.setupAreaListeners(areaGroup);
-      this.areasFormArray.push(areaGroup);
+  removeTutor(index: number): void {
+    if (this.tutorsFormArray.length > 1) {
+      this.tutorsFormArray.removeAt(index);
     } else {
-      const areaGroup = this.createArea();
-      this.setupAreaListeners(areaGroup);
-      this.areasFormArray.push(areaGroup);
+      this.errorMessage = 'Debe haber al menos un tutor';
+      setTimeout(() => this.errorMessage = null, 3000);
     }
   }
 
-  private setupAreaListeners(areaGroup: FormGroup): void {
+  // Métodos para Áreas
+  private createAreaFormGroup(): FormGroup {
+    const areaGroup = this.fb.group({
+      area: [null, Validators.required],
+      nivel: [{ value: null, disabled: true }, Validators.required]
+    });
+
+    // Suscribirse a los cambios del área seleccionada
     areaGroup.get('area')?.valueChanges
       .pipe(takeUntil(this.destroy$))
-      .subscribe((selectedArea: AreaWithNiveles) => {
+      .subscribe((selectedArea: AreaWithNiveles | null) => {
         const nivelControl = areaGroup.get('nivel');
-        if (selectedArea?.nivel_categorias?.length) {
+        if (selectedArea && selectedArea.nivel_categorias && selectedArea.nivel_categorias.length > 0) {
           nivelControl?.enable();
           nivelControl?.setValue(null);
         } else {
@@ -188,38 +188,93 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
           nivelControl?.setValue(null);
         }
       });
+
+    return areaGroup;
+  }
+
+  addAreaToFormArray(): void {
+    // Verificar si ya existe un área que no permite múltiples
+    if (this.areasFormArray.controls.some(c => c.value.area && !c.value.area.permite_multiples_areas)) {
+      this.areaWarning = `Ya tienes un área seleccionada que no permite combinación con otras.`;
+      setTimeout(() => this.areaWarning = null, 5000);
+      return;
+    }
+
+    // Verificar límite máximo de áreas
+    if (this.areasFormArray.length >= 2) {
+      this.errorMessage = 'Máximo 2 áreas permitidas.';
+      setTimeout(() => this.errorMessage = null, 5000);
+      return;
+    }
+
+    this.areasFormArray.push(this.createAreaFormGroup());
   }
 
   removeArea(index: number): void {
-    const removedArea = this.areasFormArray.at(index).value?.area;
     this.areasFormArray.removeAt(index);
+    this.areaWarning = null;
+  }
 
-    if (removedArea && !removedArea.permite_multiples_areas) {
-      this.addAreaDisabled = false;
-      this.areaWarning = null;
-    } else if (this.areasFormArray.length === 0) {
-      this.addAreaDisabled = false;
-      this.areaWarning = null;
+  // Evento al seleccionar un curso
+  onCursoSeleccionado(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const cursoId = Number(selectElement.value);
+
+    this.cursoSeleccionado = this.cursosConAreas.find(c => c.id_curso === cursoId) || null;
+    this.areasFiltradasPorCurso = this.cursoSeleccionado ? this.cursoSeleccionado.areas : [];
+
+    // Actualizar el valor del curso_id en el formulario
+    this.inscripcionForm.patchValue({ curso_id: cursoId });
+
+    // Limpiar las áreas seleccionadas
+    this.areasFormArray.clear();
+    this.addAreaDisabled = false;
+    this.areaWarning = null;
+
+    // Agregar la primera área si hay un curso seleccionado
+    if (this.cursoSeleccionado) {
+      this.addAreaToFormArray();
     }
   }
 
-  getNiveles(areaIndex: number): NivelCategoria[] {
-    const areaControl = this.areasFormArray.at(areaIndex).get('area');
-    return areaControl?.value?.nivel_categorias || [];
+  // Obtener los niveles disponibles para un área específica
+  getNivelesParaAreaEnFormArray(areaControl: AbstractControl): NivelCategoria[] {
+    if (areaControl instanceof FormGroup) {
+      const area = areaControl.get('area')?.value;
+      return area?.nivel_categorias || [];
+    }
+    return [];
   }
 
-  // Submit
+  // Validación del formulario y envío
   onSubmit(): void {
     this.inscripcionForm.markAllAsTouched();
     this.successMessage = null;
     this.errorMessage = null;
     this.boletaGenerada = null;
 
+    // Validaciones específicas
+    if (this.olimpistasFormArray.length === 0) {
+      this.errorMessage = 'Debe registrar al menos un olimpista';
+      return;
+    }
+
     if (this.tutorsFormArray.length === 0 || this.tutorsFormArray.length > 2) {
       this.errorMessage = 'Debe registrar entre 1 y 2 tutores';
       return;
     }
 
+    if (this.areasFormArray.length === 0) {
+      this.errorMessage = 'Debe seleccionar al menos un área y su nivel.';
+      return;
+    }
+
+    if (!this.cursoSeleccionado) {
+      this.errorMessage = 'Debe seleccionar un curso';
+      return;
+    }
+
+    // Validar áreas incompatibles
     const hasNonCombinable = this.areasFormArray.controls.some(
       c => c.value?.area && !c.value.area.permite_multiples_areas
     );
@@ -229,8 +284,19 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Validar que todas las áreas tengan nivel seleccionado
+    const hasIncompleteAreas = this.areasFormArray.controls.some(
+      c => !c.value?.area || !c.value?.nivel
+    );
+
+    if (hasIncompleteAreas) {
+      this.errorMessage = 'Todas las áreas deben tener un nivel seleccionado';
+      return;
+    }
+
     if (this.inscripcionForm.valid) {
       const payload = this.preparePayload();
+      console.log('Payload a enviar:', payload);
 
       this.inscripcionService.crearInscripcion(payload)
         .pipe(takeUntil(this.destroy$))
@@ -239,34 +305,44 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
           error: (error) => this.handleError(error)
         });
     } else {
-      this.errorMessage = 'Por favor complete todos los campos requeridos';
+      this.errorMessage = 'Por favor complete todos los campos requeridos y corrija los errores.';
+      console.error('Formulario inválido:', this.inscripcionForm.errors);
+      this.logFormErrors();
     }
   }
 
   private preparePayload(): InscripcionPayload {
     const formValue = this.inscripcionForm.value;
-    console.log('Form Value:', formValue);
-    return {
-      ...formValue,
-      olimpiada_id: Number(this.route.snapshot.params['id']),
-      areas: formValue.areas.map((areaGroup: any) => {
-        console.log('areaGroup.area:', areaGroup.area);
-        console.log('areaGroup.nivel (antes de acceder a ID):', areaGroup.nivel);
+    console.log('Form Value antes de preparar payload:', formValue);
 
+    const payload: InscripcionPayload = {
+      estado: formValue.estado,
+      curso_id: formValue.curso_id, // Incluir curso_id en el payload
+      olimpistas: formValue.olimpistas,
+      tutors: formValue.tutors,
+      areas: formValue.areas.map((areaGroup: any) => {
+        const areaId = areaGroup.area ? areaGroup.area.id_area : null;
         const nivelId = areaGroup.nivel ? areaGroup.nivel.id_nivel : null;
 
+        if (areaId === null || areaId === undefined) {
+          console.error('ERROR: El ID del área es nulo o indefinido', areaGroup.area);
+          throw new Error('El ID del área no pudo ser obtenido.');
+        }
+
         if (nivelId === null || nivelId === undefined) {
-          console.error('ERROR: El ID del nivel es nulo o indefinido después de intentar acceder a id_nivel', areaGroup.nivel);
-        } else {
-          console.log('ID de Nivel a enviar:', nivelId);
+          console.error('ERROR: El ID del nivel es nulo o indefinido', areaGroup.nivel);
+          throw new Error('El ID del nivel no pudo ser obtenido.');
         }
 
         return {
-          area_id: areaGroup.area.id_area,
+          area_id: areaId,
           nivelesCategoria: [nivelId]
         };
       })
     };
+
+    console.log('Payload preparado:', payload);
+    return payload;
   }
 
   private handleSuccess(response: InscripcionPostSuccessResponse): void {
@@ -278,6 +354,7 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
 
       this.boletaGenerada = { ...response.inscripcion.boleta_pago };
 
+      // Procesar la boleta para mostrar
       if (!this.boletaGenerada.fecha_generacion) {
         this.boletaGenerada.fecha_generacion = new Date().toISOString();
       }
@@ -289,8 +366,8 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
       }
 
       console.log('Boleta procesada para mostrar:', this.boletaGenerada);
-      console.log('Tipo del monto procesado:', typeof this.boletaGenerada.monto);
 
+      // Enviar boleta por email
       if (correoOlimpista) {
         this.enviarBoletaPorEmail(this.boletaGenerada, correoOlimpista);
       }
@@ -299,8 +376,8 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
       this.errorMessage = 'Se procesó la inscripción pero no se recibieron datos de la boleta.';
     }
 
-    this.inscripcionForm.reset();
-    this.initForm();
+    // Resetear el formulario
+    this.resetForm();
   }
 
   private enviarBoletaPorEmail(boletaData: BoletaPagoResponse, correo: string): void {
@@ -318,25 +395,67 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
 
   private handleError(error: any): void {
     console.error('Error en la inscripción:', error);
-    this.errorMessage = 'Error al procesar la inscripción. Intente nuevamente.';
+
+    if (error.status === 400 && error.error) {
+      // Manejar errores de validación del backend
+      if (typeof error.error === 'string') {
+        this.errorMessage = `Error de validación: ${error.error}`;
+      } else if (error.error.message) {
+        this.errorMessage = `Error de validación: ${error.error.message}`;
+      } else {
+        this.errorMessage = 'Error de validación en los datos enviados';
+      }
+    } else if (error.error && typeof error.error === 'string') {
+      this.errorMessage = `Error al procesar la inscripción: ${error.error}`;
+    } else if (error.message) {
+      this.errorMessage = `Error al procesar la inscripción: ${error.message}`;
+    } else {
+      this.errorMessage = 'Error al procesar la inscripción. Intente nuevamente.';
+    }
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  private resetForm(): void {
+    this.inscripcionForm.reset();
+    this.initForm();
+    this.addAreaDisabled = false;
+    this.areaWarning = null;
+    this.cursoSeleccionado = null;
+    this.areasFiltradasPorCurso = [];
   }
 
+  private logFormErrors(): void {
+    Object.keys(this.inscripcionForm.controls).forEach(key => {
+      const control = this.inscripcionForm.get(key);
+      if (control && control.errors) {
+        console.error(`Error en ${key}:`, control.errors);
+      }
+    });
+  }
+
+  // Lógica para mostrar/ocultar el botón "Añadir Área"
   shouldShowAddAreaButton(): boolean {
-    if (this.areasFormArray.length === 0) {
-      return true;
+    if (!this.cursoSeleccionado) {
+      return false;
     }
 
-    const hasNonMultipleArea = this.areasFormArray.controls.some(control => {
-      const area = control.value?.area;
-      return area && !area.permite_multiples_areas;
-    });
+    // Verificar si hay áreas no combinables seleccionadas
+    const hasNonCombinableAreaSelected = this.areasFormArray.controls.some(
+      c => {
+        const areaValue = c.get('area')?.value;
+        return areaValue && areaValue.permite_multiples_areas === 0;
+      }
+    );
 
-    return !hasNonMultipleArea;
+    if (hasNonCombinableAreaSelected) {
+      return false;
+    }
+
+    // Verificar límite máximo
+    if (this.areasFormArray.length >= 2) {
+      return false;
+    }
+
+    return true;
   }
 
   getAreaSelectionMessage(): string | null {
@@ -351,45 +470,14 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
 
     if (nonMultipleArea) {
       const areaName = nonMultipleArea.value?.area?.nombre_area;
-      return `si eligue esta area "${areaName}" no puede agregar mas areas.`;
+      return `Si eliges esta área "${areaName}", no puedes agregar más áreas.`;
     }
 
     return null;
   }
 
-  onCursoSeleccionado(event: any): void {
-    this.cursoSeleccionadoId = Number(event.target.value);
-    const curso = this.cursosConAreas.find(c => c.id_curso === this.cursoSeleccionadoId);
-    this.areasDelCurso = curso ? curso.areas : [];
-    this.areaSeleccionada = null;
-    this.nivelesDelArea = [];
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
-
-  // Método cuando se selecciona un área
-  onAreaSeleccionada(event: any): void {
-    const areaId = Number(event.target.value);
-    this.areaSeleccionada = this.areasDelCurso.find(a => a.id_area === areaId) || null;
-    this.nivelesDelArea = this.areaSeleccionada?.nivel_categorias || [];
-  }
-
-  // Método para agregar el área seleccionada
-  agregarAreaSeleccionada(): void {
-    if (!this.areaSeleccionada) return;
-
-    if (!this.areaSeleccionada.permite_multiples_areas) {
-      this.areasFormArray.clear();
-      this.addAreaDisabled = true;
-      this.areaWarning = `"${this.areaSeleccionada.nombre_area}" no permite combinación con otras áreas`;
-    }
-
-    const areaGroup = this.fb.group({
-      area: [this.areaSeleccionada, Validators.required],
-      nivel: [null, Validators.required]
-    });
-
-    this.areasFormArray.push(areaGroup);
-    this.areaSeleccionada = null;
-    this.nivelesDelArea = [];
-  }
-
 }

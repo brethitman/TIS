@@ -4,12 +4,12 @@ import { GetOlimpiadaService } from '../../service/get.olimpiada.service';
 import { Olimpiada } from '../../interfaces/olimpiada-interfase';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { OlimpiadasGridComponent } from '../../components/olimpiadas-grid/olimpiadas-grid.component'; 
+import { OlimpiadasGridComponent } from '../../components/olimpiadas-grid/olimpiadas-grid.component';
 
 @Component({
   selector: 'app-inicio1',
   standalone: true,
-  imports: [CommonModule, DatePipe, OlimpiadasGridComponent], // Añade DatePipe para formatear fechas
+  imports: [CommonModule, OlimpiadasGridComponent],
   templateUrl: './inicio1.component.html',
 })
 export class Inicio1Component implements OnInit {
@@ -25,7 +25,7 @@ export class Inicio1Component implements OnInit {
     this.getOlimpiadaService.findAll().subscribe({
       next: (response: any) => {
         // Ajusta según la estructura real de tu API
-        const data = Array.isArray(response) ? response : 
+        const data = Array.isArray(response) ? response :
                     response?.olimpiadas || response?.data || [];
         this.olimpiadas.set(data);
       },

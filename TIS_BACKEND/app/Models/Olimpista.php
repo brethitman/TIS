@@ -25,6 +25,7 @@ class Olimpista extends Model
     // Define los campos que pueden ser asignados masivamente
     protected $fillable = [
         'id_inscripcion',
+        'id_curso', // <-- ¡AGREGADO AQUÍ!
         'nombres',
         'apellidos',
         'ci',
@@ -50,5 +51,13 @@ class Olimpista extends Model
     public function inscripcion()
     {
         return $this->belongsTo(Inscripcion::class, 'id_inscripcion', 'id_inscripcion');
+    }
+
+    /**
+     * Relación: Un Olimpista pertenece a un Curso.
+     */
+    public function curso()
+    {
+        return $this->belongsTo(Curso::class, 'id_curso', 'id_curso');
     }
 }

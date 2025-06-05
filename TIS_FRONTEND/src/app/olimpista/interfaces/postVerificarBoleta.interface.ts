@@ -1,4 +1,22 @@
-// Interfaz para la respuesta completa de la API
+// Nuevas interfaces auxiliares
+export interface Curso {
+  id_curso: number;
+  nameCurso: string;
+  id_inscripcion: number | null;
+}
+
+export interface AreaNivel {
+  area_id: number;
+  area_nombre: string;
+  niveles: NivelBasico[];
+}
+
+export interface NivelBasico {
+  nivel_id: number;
+  nivel_nombre: string;
+}
+
+// Interfaces principales
 export interface Inscripcion {
   id: number;
   fecha_inscripcion: string | null;
@@ -21,7 +39,7 @@ export interface Olimpista {
   correo: string;
   telefono: string;
   colegio: string;
-  curso: string | null;
+  curso: Curso | null;  // Corregido
   departamento: string;
   provincia: string;
   createdAt: string;
@@ -47,7 +65,7 @@ export interface BoletaPago {
   monto: string;
   fecha_generacion: string;
   nombre_olimpiada: string | null;
-  areas_niveles: any[] | null;  // Puedes crear una interfaz más específica si lo necesitas
+  areas_niveles: AreaNivel[] | null;  // Corregido
   createdAt: string;
   updatedAt: string;
 }
@@ -63,7 +81,7 @@ export interface NivelCategoria {
   updatedAt: string;
 }
 
-// Interfaz para el payload de verificación
+// Payload
 export interface VerificarPagoPayload {
   numero_boleta: string;
   estado: 'Pagado';

@@ -96,6 +96,7 @@ class CursoController extends Controller
             'message' => 'Curso eliminado exitosamente',
         ]);
     }
+
     public function getCursosConAreasPorOlimpiada($id_olimpiada)
 {
     // Obtener los cursos que tienen áreas relacionadas con la olimpiada especificada

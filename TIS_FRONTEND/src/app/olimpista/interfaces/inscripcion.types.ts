@@ -1,5 +1,6 @@
 // src/app/interfaces/inscripcion.types.ts
 
+// --- Interfaces para el Payload (Request) ---
 
 export interface Olimpista {
   nombres: string;
@@ -19,7 +20,7 @@ export interface Tutor {
   ci: string;
   correo: string;
   telefono: string;
-  contacto?: string;
+  contacto: string;
 }
 
 export interface AreaInscripcion {
@@ -28,29 +29,44 @@ export interface AreaInscripcion {
 }
 
 export interface InscripcionPayload {
-  olimpiada_id: number; // Añadido este campo que faltaba
   estado: string;
+  curso_id: number;
   olimpistas: Olimpista[];
   tutors: Tutor[];
   areas: AreaInscripcion[];
 }
 
-// --- Fin Interfaces para el Payload ---
+// --- Interfaces para la Respuesta (Response) ---
 
-
-// --- Interfaces para la Respuesta (Datos recibidos del backend) ---
 export interface OlimpistaResponse extends Olimpista {
-  id_olimpista: number;
+  id_curso: number;
   id_inscripcion: number;
+  id_olimpista: number;
   created_at: string;
   updated_at: string;
 }
 
 export interface TutorResponse extends Tutor {
-  id_tutor: number;
   id_inscripcion: number;
+  id_tutor: number;
   created_at: string;
   updated_at: string;
+}
+
+export interface Nivel {
+  nivel_id: number;
+  nivel_nombre: string;
+}
+
+export interface AreaNivel {
+  area_id: number;
+  area_nombre: string;
+  niveles: Nivel[];
+}
+
+export interface Curso {
+  id: number;
+  nombre: string;
 }
 
 export interface BoletaPagoResponse {
@@ -58,21 +74,12 @@ export interface BoletaPagoResponse {
   numero_boleta: string;
   monto: string;
   fecha_generacion: string;
-  id_olimpista: number;
-  id_tutor: number;
-  areas_niveles: Array<{
-    area_id: number;
-    area_nombre: string;
-    niveles: Array<{
-      nivel_id: number;
-      nivel_nombre: string;
-    }>;
-  }>;
+  areas_niveles: AreaNivel[];
   nombre_olimpiada: string;
+  curso: Curso;
   olimpista: OlimpistaResponse;
-  tutor: TutorResponse;
-  created_at: string;
-  updated_at: string;
+  tutor_principal: TutorResponse;
+  tutores_adicionales: TutorResponse[];
 }
 
 export interface NivelSeleccionadoResponse {
@@ -98,4 +105,3 @@ export interface InscripcionPostSuccessResponse {
   message: string;
   inscripcion: InscripcionResponse;
 }
-// --- Fin Interfaces para la Respuesta ---
