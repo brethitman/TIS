@@ -47,48 +47,48 @@ class InscripcionController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'estado' => 'required|in:Pendiente,Pagado,Verificado',
-            'curso_id' => 'required|integer|exists:curso,id_curso',  // <-- corregido: tabla 'curso', columna 'id_curso'
-
-            'olimpistas' => 'required|array|min:1|max:1',
-            'olimpistas.*.nombres' => 'required|string|max:100',
-            'olimpistas.*.apellidos' => 'required|string|max:100',
-            'olimpistas.*.ci' => 'required|string|max:20|unique:olimpistas,ci',
-            'olimpistas.*.fecha_nacimiento' => 'required|date|before:-10 years',
-            'olimpistas.*.correo' => 'required|email|max:100',
-            'olimpistas.*.telefono' => 'required|string|max:20',
-            'olimpistas.*.colegio' => 'required|string|max:100',
-            'olimpistas.*.departamento' => 'required|string|max:50',
-            'olimpistas.*.provincia' => 'required|string|max:50',
-
-            'tutors' => 'required|array|min:1|max:2',
-            'tutors.*.nombres' => 'required|string|max:100',
-            'tutors.*.apellidos' => 'required|string|max:100',
-            'tutors.*.ci' => [
-                'required',
-                'string',
-                'max:20',
-                Rule::unique('tutors', 'ci')->where(function ($query) use ($request) {
-                    return $query->whereNotIn(
-                        'id_tutor',
-                        collect($request->tutors)->pluck('id_tutor')->filter()->toArray()
-                    );
-                })
-            ],
-            'tutors.*.correo' => 'required|email|max:100',
-            'tutors.*.telefono' => 'required|string|max:20',
-            'tutors.*.contacto' => 'nullable|string|max:255',
-
-            'areas' => 'required|array|min:1',
-            'areas.*.area_id' => 'required|integer|exists:areas,id_area',
-            'areas.*.nivelesCategoria' => 'required|array|min:1',
-            'areas.*.nivelesCategoria.*' => 'required|integer|exists:nivel_categorias,id_nivel',
-        ]);
-
-        DB::beginTransaction();
-
         try {
+            $validated = $request->validate([
+                'estado' => 'required|in:Pendiente,Pagado,Verificado',
+                'curso_id' => 'required|integer|exists:curso,id_curso',
+
+                'olimpistas' => 'required|array|min:1|max:1',
+                'olimpistas.*.nombres' => 'required|string|max:100',
+                'olimpistas.*.apellidos' => 'required|string|max:100',
+                'olimpistas.*.ci' => 'required|string|max:20|unique:olimpistas,ci',
+                'olimpistas.*.fecha_nacimiento' => 'required|date|before:-10 years',
+                'olimpistas.*.correo' => 'required|email|max:100',
+                'olimpistas.*.telefono' => 'required|string|max:20',
+                'olimpistas.*.colegio' => 'required|string|max:100',
+                'olimpistas.*.departamento' => 'required|string|max:50',
+                'olimpistas.*.provincia' => 'required|string|max:50',
+
+                'tutors' => 'required|array|min:1|max:2',
+                'tutors.*.nombres' => 'required|string|max:100',
+                'tutors.*.apellidos' => 'required|string|max:100',
+                'tutors.*.ci' => [
+                    'required',
+                    'string',
+                    'max:20',
+                    Rule::unique('tutors', 'ci')->where(function ($query) use ($request) {
+                        return $query->whereNotIn(
+                            'id_tutor',
+                            collect($request->tutors)->pluck('id_tutor')->filter()->toArray()
+                        );
+                    })
+                ],
+                'tutors.*.correo' => 'required|email|max:100',
+                'tutors.*.telefono' => 'required|string|max:20',
+                'tutors.*.contacto' => 'nullable|string|max:255',
+
+                'areas' => 'required|array|min:1',
+                'areas.*.area_id' => 'required|integer|exists:areas,id_area',
+                'areas.*.nivelesCategoria' => 'required|array|min:1',
+                'areas.*.nivelesCategoria.*' => 'required|integer|exists:nivel_categorias,id_nivel',
+            ]);
+
+            DB::beginTransaction();
+
             $inscripcion = Inscripcion::create([
                 'estado' => $validated['estado']
             ]);

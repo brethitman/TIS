@@ -247,6 +247,11 @@ export class EstadisticasComponent implements OnInit {
   }
 
   aplicarFiltros(): void {
+    if (!this.inscripciones || this.inscripciones.length === 0) {
+      this.inscripcionesFiltradas = [];
+      return;
+    }
+
     this.inscripcionesFiltradas = this.inscripciones.filter(inscripcion => {
       const cumpleFiltroColegio = !this.filtroColegio || 
         inscripcion.olimpistas?.[0]?.colegio === this.filtroColegio;
@@ -459,23 +464,23 @@ export class EstadisticasComponent implements OnInit {
     });
   }
 
-  async exportarPDF() {
+ async exportarPDF() {
     try {
       // Crear un nuevo documento PDF
       const pdf = new jsPDF('p', 'mm', 'a4');
       let yOffset = 30;
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 25;
+      const margin = 20;
       const contentWidth = pageWidth - (2 * margin);
 
-      // HEADER PRINCIPAL - Diseño corporativo
-      // Fondo del header con gradiente simulado
-      pdf.setFillColor(15, 23, 42); // bg-slate-900
+      // HEADER PRINCIPAL - Diseño corporativo con paleta azul
+      // Fondo del header con gradiente azul
+      pdf.setFillColor(15, 23, 42); // bg-slate-900 (azul muy oscuro)
       pdf.rect(0, 0, pageWidth, 45, 'F');
       
-      // Línea decorativa dorada
-      pdf.setFillColor(251, 191, 36); // bg-amber-400
+      // Línea decorativa azul brillante
+      pdf.setFillColor(59, 130, 246); // bg-blue-500
       pdf.rect(0, 43, pageWidth, 2, 'F');
 
       // Título principal
@@ -487,7 +492,7 @@ export class EstadisticasComponent implements OnInit {
       // Subtítulo
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(12);
-      pdf.setTextColor(203, 213, 225); // text-slate-300
+      pdf.setTextColor(191, 219, 254); // text-blue-200
       const fechaActual = new Date().toLocaleDateString('es-ES', { 
         year: 'numeric', 
         month: 'long', 
@@ -497,28 +502,28 @@ export class EstadisticasComponent implements OnInit {
 
       yOffset = 65;
 
-      // SECCIÓN DE FILTROS - Card profesional
+      // SECCIÓN DE FILTROS - Card profesional con paleta azul
       if (this.selectedOlimpiada && this.selectedArea && this.selectedNivel) {
         // Título de sección
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(16);
-        pdf.setTextColor(30, 41, 59); // text-slate-800
+        pdf.setTextColor(30, 58, 138); // text-blue-900
         pdf.text('FILTROS APLICADOS', margin, yOffset);
         yOffset += 15;
 
         // Card con sombra simulada
         const cardHeight = 45;
         
-        // Sombra
-        pdf.setFillColor(148, 163, 184, 0.3); // shadow-lg
+        // Sombra azul sutil
+        pdf.setFillColor(59, 130, 246, 0.2); // shadow con azul
         pdf.roundedRect(margin + 2, yOffset + 2, contentWidth, cardHeight, 8, 8, 'F');
         
-        // Card principal
-        pdf.setFillColor(248, 250, 252); // bg-slate-50
+        // Card principal con fondo azul muy claro
+        pdf.setFillColor(239, 246, 255); // bg-blue-50
         pdf.roundedRect(margin, yOffset, contentWidth, cardHeight, 8, 8, 'F');
         
-        // Borde sutil
-        pdf.setDrawColor(226, 232, 240); // border-slate-200
+        // Borde azul sutil
+        pdf.setDrawColor(147, 197, 253); // border-blue-300
         pdf.setLineWidth(0.5);
         pdf.roundedRect(margin, yOffset, contentWidth, cardHeight, 8, 8, 'S');
 
@@ -528,119 +533,143 @@ export class EstadisticasComponent implements OnInit {
         // Olimpiada
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(10);
-        pdf.setTextColor(100, 116, 139); // text-slate-500
+        pdf.setTextColor(75, 85, 99); // text-blue-600
         pdf.text('OLIMPIADA', margin + 15, yOffset + 15);
         pdf.setFont('helvetica', 'normal');
         pdf.setFontSize(12);
-        pdf.setTextColor(30, 41, 59); // text-slate-800
+        pdf.setTextColor(30, 58, 138); // text-blue-900
         pdf.text(this.selectedOlimpiada.nombre_olimpiada, margin + 15, yOffset + 25);
         
         // Área
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(10);
-        pdf.setTextColor(100, 116, 139);
+        pdf.setTextColor(75, 85, 99);
         pdf.text('ÁREA', margin + 15 + colWidth, yOffset + 15);
         pdf.setFont('helvetica', 'normal');
         pdf.setFontSize(12);
-        pdf.setTextColor(30, 41, 59);
+        pdf.setTextColor(30, 58, 138);
         pdf.text(this.selectedArea.nombre_area, margin + 15 + colWidth, yOffset + 25);
         
         // Nivel
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(10);
-        pdf.setTextColor(100, 116, 139);
+        pdf.setTextColor(75, 85, 99);
         pdf.text('NIVEL', margin + 15 + (colWidth * 2), yOffset + 15);
         pdf.setFont('helvetica', 'normal');
         pdf.setFontSize(12);
-        pdf.setTextColor(30, 41, 59);
+        pdf.setTextColor(30, 58, 138);
         pdf.text(this.selectedNivel.nombre_nivel, margin + 15 + (colWidth * 2), yOffset + 25);
         
         yOffset += cardHeight + 25;
       }
 
-      // TABLA DE INSCRIPCIONES - Diseño moderno
+      // TABLA DE INSCRIPCIONES - Diseño moderno con paleta azul y contenido adaptativo
       if (this.inscripcionesFiltradas.length > 0) {
         // Título de sección
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(18);
-        pdf.setTextColor(30, 41, 59); // text-slate-800
+        pdf.setTextColor(30, 58, 138); // text-blue-900
         pdf.text('LISTA DE INSCRIPCIONES', margin, yOffset);
         yOffset += 20;
 
-        // Configuración de tabla
+        // Configuración de tabla mejorada
         const headers = ['Estudiante', 'Institución', 'Tutor', 'Estado'];
-        const columnWidths = [70, 60, 50, 30];
-        const rowHeight = 12;
+        const columnWidths = [55, 45, 45, 25]; // Más equilibrado
+        const baseRowHeight = 8;
         
-        // Header de tabla
-        pdf.setFillColor(51, 65, 85); // bg-slate-700
-        pdf.rect(margin, yOffset - 3, contentWidth, rowHeight, 'F');
+        // Header de tabla con gradiente azul
+        pdf.setFillColor(30, 58, 138); // bg-blue-900
+        pdf.rect(margin, yOffset - 3, contentWidth, 15, 'F');
         
-        let xOffset = margin + 5;
+        let xOffset = margin + 3;
         pdf.setFont('helvetica', 'bold');
-        pdf.setFontSize(11);
+        pdf.setFontSize(10);
         pdf.setTextColor(255, 255, 255);
         
         headers.forEach((header, index) => {
-          pdf.text(header.toUpperCase(), xOffset, yOffset + 5);
+          pdf.text(header.toUpperCase(), xOffset, yOffset + 6);
           xOffset += columnWidths[index];
         });
-        yOffset += rowHeight + 2;
+        yOffset += 15;
 
-        // Filas de datos
+        // Filas de datos con contenido adaptativo
         pdf.setFont('helvetica', 'normal');
-        pdf.setFontSize(10);
+        pdf.setFontSize(9);
         
         this.inscripcionesFiltradas.forEach((inscripcion, index) => {
+          // Preparar contenido de cada celda
+          const nombreEstudiante = this.getOlimpistaName(inscripcion);
+          const institucion = this.getOlimpistaColegio(inscripcion);
+          const tutor = this.getTutorName(inscripcion);
+          const estado = inscripcion.estado;
+
+          // Dividir texto largo en múltiples líneas
+          const estudianteLines = this.splitTextToFit(pdf, nombreEstudiante, columnWidths[0] - 4);
+          const institucionLines = this.splitTextToFit(pdf, institucion, columnWidths[1] - 4);
+          const tutorLines = this.splitTextToFit(pdf, tutor, columnWidths[2] - 4);
+          
+          // Calcular altura necesaria para esta fila
+          const maxLines = Math.max(estudianteLines.length, institucionLines.length, tutorLines.length, 1);
+          const dynamicRowHeight = Math.max(baseRowHeight, maxLines * 4 + 4);
+
           // Verificar nueva página
-          if (yOffset + rowHeight > pageHeight - 40) {
+          if (yOffset + dynamicRowHeight > pageHeight - 40) {
             pdf.addPage();
             yOffset = margin + 20;
             
             // Repetir header en nueva página
-            pdf.setFillColor(51, 65, 85);
-            pdf.rect(margin, yOffset - 3, contentWidth, rowHeight, 'F');
+            pdf.setFillColor(30, 58, 138);
+            pdf.rect(margin, yOffset - 3, contentWidth, 15, 'F');
             
-            let headerXOffset = margin + 5;
+            let headerXOffset = margin + 3;
             pdf.setFont('helvetica', 'bold');
-            pdf.setFontSize(11);
+            pdf.setFontSize(10);
             pdf.setTextColor(255, 255, 255);
             
             headers.forEach((header, headerIndex) => {
-              pdf.text(header.toUpperCase(), headerXOffset, yOffset + 5);
+              pdf.text(header.toUpperCase(), headerXOffset, yOffset + 6);
               headerXOffset += columnWidths[headerIndex];
             });
-            yOffset += rowHeight + 2;
+            yOffset += 15;
             pdf.setFont('helvetica', 'normal');
-            pdf.setFontSize(10);
+            pdf.setFontSize(9);
           }
 
-          // Fondo alternado más sutil
+          // Fondo alternado con colores azules suaves
           if (index % 2 === 0) {
-            pdf.setFillColor(248, 250, 252); // bg-slate-50
-            pdf.rect(margin, yOffset - 2, contentWidth, rowHeight, 'F');
+            pdf.setFillColor(239, 246, 255); // bg-blue-50
+          } else {
+            pdf.setFillColor(219, 234, 254); // bg-blue-100
           }
+          pdf.rect(margin, yOffset, contentWidth, dynamicRowHeight, 'F');
 
-          xOffset = margin + 5;
-          pdf.setTextColor(30, 41, 59); // text-slate-800
+          // Líneas divisorias sutiles
+          pdf.setDrawColor(147, 197, 253); // border-blue-300
+          pdf.setLineWidth(0.2);
+          pdf.line(margin, yOffset + dynamicRowHeight, margin + contentWidth, yOffset + dynamicRowHeight);
 
-          // Nombre del estudiante
-          const nombreEstudiante = this.getOlimpistaName(inscripcion);
-          pdf.text(nombreEstudiante.length > 30 ? nombreEstudiante.substring(0, 27) + '...' : nombreEstudiante, xOffset, yOffset + 6);
+          xOffset = margin + 3;
+          pdf.setTextColor(30, 58, 138); // text-blue-900
+
+          // Nombre del estudiante (múltiples líneas si es necesario)
+          estudianteLines.forEach((line, lineIndex) => {
+            pdf.text(line, xOffset, yOffset + 6 + (lineIndex * 4));
+          });
           xOffset += columnWidths[0];
           
-          // Institución
-          const institucion = this.getOlimpistaColegio(inscripcion);
-          pdf.text(institucion.length > 25 ? institucion.substring(0, 22) + '...' : institucion, xOffset, yOffset + 6);
+          // Institución (múltiples líneas si es necesario)
+          institucionLines.forEach((line, lineIndex) => {
+            pdf.text(line, xOffset, yOffset + 6 + (lineIndex * 4));
+          });
           xOffset += columnWidths[1];
           
-          // Tutor
-          const tutor = this.getTutorName(inscripcion);
-          pdf.text(tutor.length > 20 ? tutor.substring(0, 17) + '...' : tutor, xOffset, yOffset + 6);
+          // Tutor (múltiples líneas si es necesario)
+          tutorLines.forEach((line, lineIndex) => {
+            pdf.text(line, xOffset, yOffset + 6 + (lineIndex * 4));
+          });
           xOffset += columnWidths[2];
           
-          // Badge de estado moderno
-          const estado = inscripcion.estado;
+          // Badge de estado con colores azules mejorados
           const estadoColors = this.getEstadoColorsProfessional(estado);
           
           // Background del badge
@@ -649,26 +678,28 @@ export class EstadisticasComponent implements OnInit {
             estadoColors.bg[1],
             estadoColors.bg[2]
           );
-          pdf.roundedRect(xOffset, yOffset + 1, 25, 8, 3, 3, 'F');
+          const badgeY = yOffset + (dynamicRowHeight / 2) - 4;
+          pdf.roundedRect(xOffset, badgeY, 22, 8, 3, 3, 'F');
           
           // Texto del badge
           pdf.setFont('helvetica', 'bold');
-          pdf.setFontSize(8);
+          pdf.setFontSize(7);
           pdf.setTextColor(
             estadoColors.text[0],
             estadoColors.text[1],
-            estadoColors.text.length > 2 ? estadoColors.text[2] : 0
+            estadoColors.text[2] || 255
           );
-          pdf.text(estado.toUpperCase(), xOffset + 12.5, yOffset + 6, { align: 'center' });
+          pdf.text(estado.toUpperCase(), xOffset + 11, badgeY + 5, { align: 'center' });
           pdf.setFont('helvetica', 'normal');
+          pdf.setFontSize(9);
           
-          yOffset += rowHeight;
+          yOffset += dynamicRowHeight;
         });
 
         yOffset += 30;
       }
 
-      // GRÁFICAS - Sección profesional
+      // GRÁFICAS - Sección profesional con colores azules
       const tiposEstadisticaOriginal = this.tipoEstadistica;
       
       // Primera gráfica (Estado)
@@ -683,14 +714,14 @@ export class EstadisticasComponent implements OnInit {
           yOffset = margin + 20;
         }
 
-        // Título de sección con línea decorativa
+        // Título de sección con línea decorativa azul
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(16);
-        pdf.setTextColor(30, 41, 59);
+        pdf.setTextColor(30, 58, 138);
         pdf.text('ANÁLISIS ESTADÍSTICO', margin, yOffset);
         
-        // Línea decorativa
-        pdf.setDrawColor(251, 191, 36); // border-amber-400
+        // Línea decorativa azul
+        pdf.setDrawColor(59, 130, 246); // border-blue-500
         pdf.setLineWidth(2);
         pdf.line(margin, yOffset + 5, margin + 60, yOffset + 5);
         yOffset += 20;
@@ -698,17 +729,17 @@ export class EstadisticasComponent implements OnInit {
         const chartElement = this.donutChartRef.nativeElement;
         const chartImage = await htmlToImage.toPng(chartElement);
         
-        // Card para la gráfica
+        // Card para la gráfica con bordes azules
         pdf.setFillColor(255, 255, 255);
         pdf.roundedRect(margin, yOffset, contentWidth, 90, 5, 5, 'F');
-        pdf.setDrawColor(226, 232, 240);
-        pdf.setLineWidth(0.5);
+        pdf.setDrawColor(147, 197, 253); // border-blue-300
+        pdf.setLineWidth(1);
         pdf.roundedRect(margin, yOffset, contentWidth, 90, 5, 5, 'S');
         
         // Subtítulo de gráfica
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(14);
-        pdf.setTextColor(51, 65, 85);
+        pdf.setTextColor(30, 64, 175); // text-blue-800
         pdf.text('Distribución de Estados de Inscripción', margin + 10, yOffset + 15);
         
         // Imagen de la gráfica
@@ -736,14 +767,14 @@ export class EstadisticasComponent implements OnInit {
         // Card para la segunda gráfica
         pdf.setFillColor(255, 255, 255);
         pdf.roundedRect(margin, yOffset, contentWidth, 90, 5, 5, 'F');
-        pdf.setDrawColor(226, 232, 240);
-        pdf.setLineWidth(0.5);
+        pdf.setDrawColor(147, 197, 253);
+        pdf.setLineWidth(1);
         pdf.roundedRect(margin, yOffset, contentWidth, 90, 5, 5, 'S');
         
         // Subtítulo
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(14);
-        pdf.setTextColor(51, 65, 85);
+        pdf.setTextColor(30, 64, 175);
         pdf.text('Distribución de Estudiantes por Institución', margin + 10, yOffset + 15);
         
         // Imagen
@@ -753,14 +784,14 @@ export class EstadisticasComponent implements OnInit {
         yOffset += 100;
       }
 
-      // FOOTER PROFESIONAL
+      // FOOTER PROFESIONAL con colores azules
       const footerY = pageHeight - 20;
-      pdf.setFillColor(248, 250, 252); // bg-slate-50
+      pdf.setFillColor(239, 246, 255); // bg-blue-50
       pdf.rect(0, footerY - 10, pageWidth, 30, 'F');
       
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(9);
-      pdf.setTextColor(100, 116, 139); // text-slate-500
+      pdf.setTextColor(75, 85, 99); // text-blue-600
       pdf.text('Documento generado automáticamente', margin, footerY);
       pdf.text(`Página ${pdf.getNumberOfPages()}`, pageWidth - margin, footerY, { align: 'right' });
 
@@ -776,32 +807,61 @@ export class EstadisticasComponent implements OnInit {
     }
   }
 
-  // Método auxiliar mejorado para colores de estado
+ 
+  private splitTextToFit(pdf: any, text: string, maxWidth: number): string[] {
+    const words = text.split(' ');
+    const lines: string[] = [];
+    let currentLine = '';
+
+    for (const word of words) {
+      const testLine = currentLine ? `${currentLine} ${word}` : word;
+      const textWidth = pdf.getTextWidth(testLine);
+      
+      if (textWidth <= maxWidth) {
+        currentLine = testLine;
+      } else {
+        if (currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          lines.push(word.substring(0, Math.floor(maxWidth / pdf.getTextWidth('M')) - 1) + '...');
+          currentLine = '';
+        }
+      }
+    }
+    
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+    
+    return lines.length > 0 ? lines : [text];
+  }
+
   private getEstadoColorsProfessional(estado: string): { bg: number[], text: number[] } {
     switch (estado) {
       case 'Pagado':
         return { 
-          bg: [34, 197, 94],    // bg-green-500
+          bg: [34, 197, 94],    // bg-green-500 (mantener verde para pagado)
           text: [255, 255, 255]  // text-white
         };
       case 'Pendiente':
         return { 
-          bg: [245, 158, 11],    // bg-amber-500
+          bg: [245, 158, 11],    // bg-amber-500 (mantener ámbar para pendiente)
           text: [255, 255, 255]  // text-white
         };
       case 'Verificado':
         return { 
-          bg: [59, 130, 246],    // bg-blue-500
+          bg: [37, 99, 235],     // bg-blue-600 (azul para verificado)
           text: [255, 255, 255]  // text-white
         };
       case 'Rechazado':
         return { 
-          bg: [239, 68, 68],     // bg-red-500
+          bg: [239, 68, 68],     // bg-red-500 (mantener rojo para rechazado)
           text: [255, 255, 255]  // text-white
         };
       default:
         return { 
-          bg: [107, 114, 128],   // bg-gray-500
+          bg: [30, 64, 175],     // bg-blue-800 (azul por defecto)
           text: [255, 255, 255]  // text-white
         };
     }

@@ -346,8 +346,8 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   }
 
   private handleSuccess(response: InscripcionPostSuccessResponse): void {
-    const correoOlimpista = this.olimpistasFormArray.at(0).get('correo')?.value || '';
-    this.successMessage = `¡Inscripción completada exitosamente! Se ha enviado un comprobante de pago al correo: ${correoOlimpista}. Por favor revise su bandeja de entrada.`;
+    const correoTutor = this.tutorsFormArray.at(0).get('correo')?.value || '';
+    this.successMessage = `¡Inscripción completada exitosamente! Se ha enviado un comprobante de pago al correo del tutor: ${correoTutor}. Por favor revise su bandeja de entrada.`;
 
     if (response && response.inscripcion && response.inscripcion.boleta_pago) {
       console.log('Boleta recibida:', response.inscripcion.boleta_pago);
@@ -367,9 +367,9 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
 
       console.log('Boleta procesada para mostrar:', this.boletaGenerada);
 
-      // Enviar boleta por email
-      if (correoOlimpista) {
-        this.enviarBoletaPorEmail(this.boletaGenerada, correoOlimpista);
+      // Enviar boleta por email al tutor
+      if (correoTutor) {
+        this.enviarBoletaPorEmail(this.boletaGenerada, correoTutor);
       }
     } else {
       console.error('La respuesta no contiene datos de boleta válidos:', response);
@@ -386,10 +386,7 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
         next: (response) => {
           console.log('Boleta enviada por email:', response);
         },
-        error: (error) => {
-          console.error('Error al enviar boleta por email:', error);
-          this.errorMessage = 'La inscripción fue exitosa, pero hubo un problema al enviar la boleta por email. Por favor contacte a soporte.';
-        }
+        
       });
   }
 

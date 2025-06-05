@@ -251,10 +251,7 @@ getUniqueSchools(): string[] {
         next: (response) => {
           console.log('Boleta enviada por email:', response);
         },
-        error: (error) => {
-          console.error('Error al enviar boleta por email:', error);
-          this.errorMessage = 'La inscripción fue exitosa, pero hubo un problema al enviar la boleta por email. Por favor contacte a soporte.';
-        }
+        
       });
   }
 
