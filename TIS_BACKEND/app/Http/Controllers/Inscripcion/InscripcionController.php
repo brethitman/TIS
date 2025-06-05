@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inscripcion;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Inscripcion\InscripcionCollection;
 use App\Http\Resources\Inscripcion\InscripcionResource;
+use App\Models\Curso;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Area;
 use App\Models\Inscripcion;
@@ -44,11 +45,11 @@ class InscripcionController extends Controller
     /**
      * Crea una nueva inscripción con olimpistas, tutores y niveles seleccionados.
      */
-public function store(Request $request)
-{
-    $validated = $request->validate([
-        'estado' => 'required|in:Pendiente,Pagado,Verificado',
-        'curso_id' => 'required|integer|exists:curso,id_curso',  // <-- corregido: tabla 'curso', columna 'id_curso'
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'estado' => 'required|in:Pendiente,Pagado,Verificado',
+            'curso_id' => 'required|integer|exists:curso,id_curso',  // <-- corregido: tabla 'curso', columna 'id_curso'
 
         'olimpistas' => 'required|array|min:1|max:1',
         'olimpistas.*.nombres' => 'required|string|max:100',
@@ -61,22 +62,23 @@ public function store(Request $request)
         'olimpistas.*.departamento' => 'required|string|max:50',
         'olimpistas.*.provincia' => 'required|string|max:50',
 
-        'tutors' => 'required|array|min:1|max:2',
-        'tutors.*.nombres' => 'required|string|max:100',
-        'tutors.*.apellidos' => 'required|string|max:100',
-        'tutors.*.ci' => [
-            'required',
-            'string',
-            'max:20',
-            Rule::unique('tutors', 'ci')->where(function ($query) use ($request) {
-                return $query->whereNotIn('id_tutor',
-                    collect($request->tutors)->pluck('id_tutor')->filter()->toArray()
-                );
-            })
-        ],
-        'tutors.*.correo' => 'required|email|max:100',
-        'tutors.*.telefono' => 'required|string|max:20',
-        'tutors.*.contacto' => 'nullable|string|max:255',
+            'tutors' => 'required|array|min:1|max:2',
+            'tutors.*.nombres' => 'required|string|max:100',
+            'tutors.*.apellidos' => 'required|string|max:100',
+            'tutors.*.ci' => [
+                'required',
+                'string',
+                'max:20',
+                Rule::unique('tutors', 'ci')->where(function ($query) use ($request) {
+                    return $query->whereNotIn(
+                        'id_tutor',
+                        collect($request->tutors)->pluck('id_tutor')->filter()->toArray()
+                    );
+                })
+            ],
+            'tutors.*.correo' => 'required|email|max:100',
+            'tutors.*.telefono' => 'required|string|max:20',
+            'tutors.*.contacto' => 'nullable|string|max:255',
 
         'areas' => 'required|array|min:1',
         'areas.*.area_id' => 'required|integer|exists:areas,id_area',
@@ -86,26 +88,26 @@ public function store(Request $request)
 
     DB::beginTransaction();
 
-    try {
-        $inscripcion = Inscripcion::create([
-            'estado' => $validated['estado']
-        ]);
+        try {
+            $inscripcion = Inscripcion::create([
+                'estado' => $validated['estado']
+            ]);
 
-        $olimpistaData = $validated['olimpistas'][0];
-        $olimpistaData['id_curso'] = $validated['curso_id'];
-        $olimpista = $inscripcion->olimpistas()->create($olimpistaData);
+            $olimpistaData = $validated['olimpistas'][0];
+            $olimpistaData['id_curso'] = $validated['curso_id'];
+            $olimpista = $inscripcion->olimpistas()->create($olimpistaData);
 
-        $tutors = [];
-        foreach ($validated['tutors'] as $tutorData) {
-            $tutors[] = $inscripcion->tutors()->create($tutorData);
-        }
+            $tutors = [];
+            foreach ($validated['tutors'] as $tutorData) {
+                $tutors[] = $inscripcion->tutors()->create($tutorData);
+            }
 
-        $curso = Curso::findOrFail($validated['curso_id']);
+            $curso = Curso::findOrFail($validated['curso_id']);
 
-        $totalCosto = 0;
-        $areasNiveles = [];
-        $nivelesSeleccionados = [];
-        $nombreOlimpiada = null;
+            $totalCosto = 0;
+            $areasNiveles = [];
+            $nivelesSeleccionados = [];
+            $nombreOlimpiada = null;
 
         foreach ($validated['areas'] as $areaData) {
             $area = Area::with(['olimpiada', 'nivelCategorias' => function($query) use ($areaData) {
@@ -123,18 +125,18 @@ public function store(Request $request)
                     'nivel_nombre' => $nivel->nombre_nivel
                 ];
 
-                $inscripcion->nivelCategorias()->attach($nivel->id_nivel, [
-                    'id_area' => $area->id_area,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
+                    $inscripcion->nivelCategorias()->attach($nivel->id_nivel, [
+                        'id_area' => $area->id_area,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
 
-                $nivelesSeleccionados[] = [
-                    'id' => $nivel->id_nivel,
-                    'nombre_nivel' => $nivel->nombre_nivel,
-                    'costo' => number_format($nivel->costo, 2, '.', ''),
-                    'fecha_examen' => $nivel->fecha_examen
-                ];
+                    $nivelesSeleccionados[] = [
+                        'id' => $nivel->id_nivel,
+                        'nombre_nivel' => $nivel->nombre_nivel,
+                        'costo' => number_format($nivel->costo, 2, '.', ''),
+                        'fecha_examen' => $nivel->fecha_examen
+                    ];
 
                 $totalCosto += $nivel->costo;
             }
@@ -146,57 +148,56 @@ public function store(Request $request)
             ];
         }
 
-        $boleta = BoletaPago::create([
-            'id_inscripcion' => $inscripcion->id_inscripcion,
-            'id_olimpista' => $olimpista->id_olimpista,
-            'id_tutor' => $tutors[0]->id_tutor,
-            'numero_boleta' => 'BOL-' . strtoupper(Str::random(8)) . '-' . $inscripcion->id_inscripcion,
-            'monto' => number_format($totalCosto, 2, '.', ''),
-            'fecha_generacion' => now()->toDateString(),
-            'areas_niveles' => $areasNiveles,
-            'nombre_olimpiada' => $nombreOlimpiada,
-            'id_curso' => $validated['curso_id']
-        ]);
+            $boleta = BoletaPago::create([
+                'id_inscripcion' => $inscripcion->id_inscripcion,
+                'id_olimpista' => $olimpista->id_olimpista,
+                'id_tutor' => $tutors[0]->id_tutor,
+                'numero_boleta' => 'BOL-' . strtoupper(Str::random(8)) . '-' . $inscripcion->id_inscripcion,
+                'monto' => number_format($totalCosto, 2, '.', ''),
+                'fecha_generacion' => now()->toDateString(),
+                'areas_niveles' => $areasNiveles,
+                'nombre_olimpiada' => $nombreOlimpiada,
+                'id_curso' => $validated['curso_id']
+            ]);
 
         DB::commit();
 
-        return response()->json([
-            'message' => 'Inscripción creada exitosamente',
-            'inscripcion' => [
-                'id' => $inscripcion->id_inscripcion,
-                'estado' => $inscripcion->estado,
-                'fecha_inscripcion' => $inscripcion->created_at->format('Y-m-d H:i:s'),
-                'olimpistas' => [$olimpista->toArray()],
-                'tutors' => array_map(fn($t) => $t->toArray(), $tutors),
-                'boleta_pago' => [
-                    'id' => $boleta->id_boleta,
-                    'numero_boleta' => $boleta->numero_boleta,
-                    'monto' => $boleta->monto,
-                    'fecha_generacion' => $boleta->fecha_generacion,
-                    'areas_niveles' => $boleta->areas_niveles,
-                    'nombre_olimpiada' => $boleta->nombre_olimpiada,
-                    'curso' => [
-                        'id' => $curso->id_curso,
-                        'nombre' => $curso->nameCurso // <-- correcto, según tu modelo
+            return response()->json([
+                'message' => 'Inscripción creada exitosamente',
+                'inscripcion' => [
+                    'id' => $inscripcion->id_inscripcion,
+                    'estado' => $inscripcion->estado,
+                    'fecha_inscripcion' => $inscripcion->created_at->format('Y-m-d H:i:s'),
+                    'olimpistas' => [$olimpista->toArray()],
+                    'tutors' => array_map(fn($t) => $t->toArray(), $tutors),
+                    'boleta_pago' => [
+                        'id' => $boleta->id_boleta,
+                        'numero_boleta' => $boleta->numero_boleta,
+                        'monto' => $boleta->monto,
+                        'fecha_generacion' => $boleta->fecha_generacion,
+                        'areas_niveles' => $boleta->areas_niveles,
+                        'nombre_olimpiada' => $boleta->nombre_olimpiada,
+                        'curso' => [
+                            'id' => $curso->id_curso,
+                            'nombre' => $curso->nameCurso // <-- correcto, según tu modelo
+                        ],
+                        'olimpista' => $olimpista->toArray(),
+                        'tutor_principal' => $tutors[0]->toArray(),
+                        'tutores_adicionales' => array_map(fn($t) => $t->toArray(), array_slice($tutors, 1))
                     ],
-                    'olimpista' => $olimpista->toArray(),
-                    'tutor_principal' => $tutors[0]->toArray(),
-                    'tutores_adicionales' => array_map(fn($t) => $t->toArray(), array_slice($tutors, 1))
-                ],
-                'niveles_seleccionados' => $nivelesSeleccionados
-            ]
-        ], 201);
+                    'niveles_seleccionados' => $nivelesSeleccionados
+                ]
+            ], 201);
 
-    } catch (\Throwable $e) {
-        DB::rollBack();
-        return response()->json([
-            'message' => 'Error al procesar la inscripción',
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ], 500);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error al procesar la inscripción',
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ], 500);
+        }
     }
-}
-
     /**
      * Muestra los detalles de una inscripción específica.
      * Carga las relaciones necesarias para el Resource.
