@@ -52,22 +52,22 @@
           </div>
         </div>
         <div class="flex flex-wrap gap-4">
-      <div class="flex-1">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico:</label>
-        <input type="email" [(ngModel)]="tutor.email" name="email"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          [class.border-red-500]="errors.email">
-        <div *ngIf="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</div>
-      </div>
-      <div class="flex-1">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono:</label>
-        <input type="tel" [(ngModel)]="tutor.telefono" name="phone"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          [class.border-red-500]="errors.telefono">
-          
-        <div *ngIf="errors.telefono" class="mt-1 text-sm text-red-600">{{ errors.telefono }}</div>
-      </div>
-    </div>
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico:</label>
+            <input type="email" [(ngModel)]="tutor.email" name="email"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              [class.border-red-500]="errors.email">
+            <div *ngIf="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</div>
+          </div>
+          <div class="flex-1">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono:</label>
+            <input type="tel" [(ngModel)]="tutor.telefono" name="phone"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              [class.border-red-500]="errors.telefono">
+
+            <div *ngIf="errors.telefono" class="mt-1 text-sm text-red-600">{{ errors.telefono }}</div>
+          </div>
+        </div>
 
         <!-- Sección de confirmación de archivo -->
         <div *ngIf="nombreArchivo" class="bg-gray-50 p-4 rounded-lg border border-gray-200 mt-4">
@@ -165,84 +165,70 @@
   <div *ngIf="confirmSubida == false" class="mt-6 text-gray-600 italic">
     No se han cargado datos del archivo Excel.
   </div>
-  
-    <!-- Visualización en dos tablas: estudiantes y tutores en la parte izquierda -->
-  <div *ngIf="confirmSubida && datosExcel && datosExcel.length > 0" class="mt-6 overflow-auto">
+
+  <!-- Visualización en dos tablas: estudiantes y tutores en la parte izquierda -->
+  <div *ngIf="confirmSubida && datosExcel && datosExcel.length > 0" class="mt-6 ">
     <section class="w-full bg-gradient-to-r from-red-600 to-purple-700 py-3 px-2 animate-gradient">
       <h1 class="text-white text-2xl font-bold">Visualización del documento de Excel</h1>
     </section>
-    
+
     <!-- Contenedor principal con tablas a la izquierda -->
-    <div class="flex flex-col lg:flex-row mt-4">
+    <div class="w-full flex flex-col mt-4">
       <!-- Columna izquierda (tablas) -->
-      <div class="lg:w-1/2">
+      <div class="w-full">
         <!-- Tabla de Estudiantes -->
         <div class="flex flex-col p-4 border border-gray-300 rounded-lg shadow-md bg-[#ececf4] mb-6">
           <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
             Datos de Estudiantes
           </h3>
           <!-- Tabla de Estudiantes -->
-        <div class="overflow-auto max-h-96">
-          <table class="min-w-full text-sm text-left text-gray-700 border border-gray-900">
-            <thead class="bg-blue-50">
-              <tr>
-                <!-- ENCABEZADOS FIJOS (no dinámicos) -->
-                <th class="px-3 py-2 border font-medium text-normal">Nombre</th>
-                <th class="px-3 py-2 border font-medium text-normal">Apellido</th>
-                <th class="px-3 py-2 border font-medium text-normal">CI</th>
-                <th class="px-3 py-2 border font-medium text-normal">Fecha Nacimiento</th>
-                <th class="px-3 py-2 border font-medium text-normal">Email</th>
-                <th class="px-3 py-2 border font-medium text-normal">Teléfono</th>
-                <th class="px-3 py-2 border font-medium text-normal">Colegio</th>
-                <th class="px-3 py-2 border font-medium text-normal">Departamento</th>
-                <th class="px-3 py-2 border font-medium text-normal">Provincia</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- MOSTRAR TODOS LOS DATOS (sin slice) -->
-              <tr *ngFor="let row of datosEstudiantes" class="bg-white hover:bg-gray-50">
-                <td *ngFor="let cell of row" class="px-3 py-2 border text-normal">
-                  {{ cell }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <div class="overflow-auto overflow-x-auto max-h-40">
+            <table class="min-w-full text-sm text-left text-gray-700 border border-gray-900">
+              <tbody>
+                <!-- MOSTRAR TODOS LOS DATOS (sin slice) -->
+                <tr *ngFor="let row of datosEstudiantes" class="bg-white hover:bg-gray-50">
+                  <td *ngFor="let cell of row" class="px-3 py-2 border text-normal">
+                    {{ cell }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
         </div>
 
         <!-- Tabla de Tutores -->
-        <div class="overflow-auto max-h-96">
-          <table class="min-w-full text-sm text-left text-gray-700 border border-gray-900">
-            <thead class="bg-green-50">
-              <tr>
-                <!-- ENCABEZADOS FIJOS -->
-                <th class="px-3 py-2 border font-medium text-normal">Nombre</th>
-                <th class="px-3 py-2 border font-medium text-normal">Apellido</th>
-                <th class="px-3 py-2 border font-medium text-normal">CI</th>
-                <th class="px-3 py-2 border font-medium text-normal">Email</th>
-                <th class="px-3 py-2 border font-medium text-normal">Teléfono</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- MOSTRAR TODOS LOS DATOS -->
-              <tr *ngFor="let row of datosTutores" class="bg-white hover:bg-gray-50">
-                <td *ngFor="let cell of row" class="px-3 py-2 border text-normal">
-                  {{ cell }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="flex flex-col p-4 border border-gray-300 rounded-lg shadow-md bg-[#ececf4] mb-6">
+          <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+            <i class="bi bi-person text-blue-600 font-bold mr-3 text-2xl"></i>
+            Datos del Tutor
+          </h3>
+          <div class="overflow-auto overflow-x-auto max-h-40">
+            <table class="min-w-full text-sm text-left text-gray-700 border border-gray-900">
+              <thead class="bg-green-50">
+              </thead>
+              <tbody>
+                <!-- MOSTRAR TODOS LOS DATOS -->
+                <tr *ngFor="let row of datosTutores" class="bg-white hover:bg-gray-50">
+                  <td *ngFor="let cell of row" class="px-3 py-2 border text-normal">
+                    {{ cell }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-      
+
       <!-- Espacio derecho (puedes agregar más contenido aquí) -->
-      <div class="lg:w-1/2 lg:pl-6 mt-6 lg:mt-0">
-          <app-area-alumno [estudiantes]="estudiantes" [estInscripcion]="datosEstudiantes" [tutores]="datosTutores">
-      </app-area-alumno>
+      <div class="flex flex-col w-full justify-center p-3 items-center">
+        <app-area-alumno [estudiantes]="estudiantes" [estInscripcion]="datosEstudiantes" [tutores]="datosTutores">
+        </app-area-alumno>
       </div>
     </div>
   </div>

@@ -329,6 +329,9 @@ separarEstudiantesTutores(filasConDatos: any[][]): void {
     const listaEstudiante = datosEst.slice(1);
     this.datosEstudiantes = listaEstudiante;
     this.procesarEstudiantes(this.datosEstudiantes);
+    if(listaEstudiante.length > 6){
+      this.mensajeError.push("Error: No puede inscribir a mas de 6 estudiantes")
+    }
     for (let index = 0; index < listaEstudiante.length; index++) {
       const fila = listaEstudiante[index];
 
@@ -399,6 +402,9 @@ separarEstudiantesTutores(filasConDatos: any[][]): void {
   validacionesTutor(datosTutor: any[][]) {
     const listaTutor = datosTutor.slice(1);
     this.datosTutores = listaTutor;
+    if(listaTutor.length>6){
+    this.mensajeError.push("Error: No debe haber mas de 6 tutores registrados");
+  }
     for (let index = 0; index < listaTutor.length; index++) {
       const fila = listaTutor[index];
 
