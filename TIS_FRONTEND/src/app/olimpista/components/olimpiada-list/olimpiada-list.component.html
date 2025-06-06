@@ -1,6 +1,6 @@
 <section class="pt-8 pb-8">
   <div class="container px-4 mx-auto">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
       @for (olimpiada of olimpiada; track olimpiada.id) {
       <app-olimpiada-card [olimpiada]="olimpiada" (olimpiadaEliminada)="onOlimpiadaEliminada($event)"
         (olimpiadaActualizada)="onOlimpiadaActualizada($event)"></app-olimpiada-card>
