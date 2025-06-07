@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Input } from '@angular/core';
 import { VisualizacionService } from '../../service/Visualizacion.service';
 import { BoletaPagoResponse } from '../../interfaces/inscripcion.types';
@@ -8,6 +8,7 @@ import { jsPDF } from 'jspdf';
 import * as htmlToImage from 'html-to-image';
 import html2canvas from 'html2canvas';
 import { EmailService } from '../../service/email.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-boleta-lista',
@@ -16,6 +17,9 @@ import { EmailService } from '../../service/email.service';
   templateUrl: './boleta-lista.component.html'
 })
 export class BoletaListaComponent implements OnInit {
+
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
 
   @Input() olimpista: any[][] = [];
   @Input() tutor: any[][] = [];
@@ -30,7 +34,9 @@ export class BoletaListaComponent implements OnInit {
   errorMessage: string | null = null;
   boletaGenerada = false;
 
-  constructor(private service: VisualizacionService, private emailService: EmailService,) { }
+
+  constructor(private service: VisualizacionService, private emailService: EmailService,) {
+  }
 
   ngOnInit() {
     this.areas = JSON.parse(localStorage.getItem('areasInscripcion') || '[]');
@@ -39,6 +45,12 @@ export class BoletaListaComponent implements OnInit {
     this.inscripciones = JSON.parse(localStorage.getItem('inscripciones') || '[]');
     this.boletaTutor = this.tutor[0];//OBTIENE SOLO LA INFOEMCION DEL TUTOR RESPONSABLE
     this.colegios = [...new Set(this.olimpista.map(olimpista => olimpista[6]))];
+    const idOlimpiada = this.activatedRoute.snapshot.paramMap.get('id');
+    if (idOlimpiada) {
+      this.router.navigate(['/boletaPago', idOlimpiada]);
+    } else {
+      console.warn('No se encontró el ID de la olimpiada en la URL');
+    }
     console.log('Áreas recibidas:', this.areas);
     console.log('Olimpistas recibidos:', this.olimpista);
     console.log('Tutores recibidos:', this.tutor);
@@ -173,7 +185,7 @@ getUniqueSchools(): string[] {
         console.log('Inscripción exitosa:', response);
         if (response?.inscripcion?.boleta_pago) {
           this.boletaPago = response.inscripcion.boleta_pago;
-           this.boletaGenerada = true;
+          this.boletaGenerada = true;
           alert('Inscripción realizada correctamente y Boleta generada con éxito');
           const correoTutor = this.tutor[0]?.[3]; // Accede al correo del tutor
           if (this.boletaPago) {
@@ -257,5 +269,18 @@ getUniqueSchools(): string[] {
         }
       });
   }
+  volver() {
+    const idOlimpiada = this.activatedRoute.snapshot.paramMap.get('id');
+    
+    if (!idOlimpiada) {
+        console.error('No se encontró el ID de la olimpiada en la URL');
+        alert('No se pudo encontrar el ID de la olimpiada. Por favor, intenta nuevamente.');
+        this.router.navigate(['./']); // Redirige a una ruta predeterminada
+        return;
+    }
+
+    this.router.navigate(['/inicio/Olimpiada', idOlimpiada, 'Visualizacion']);
+}
+
 
 }
