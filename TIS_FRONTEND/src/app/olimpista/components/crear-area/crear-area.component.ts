@@ -50,10 +50,56 @@ export class CrearAreaComponent implements OnInit {
 
   toggleSelection(cursoId: number): void {
     const index = this.selectedCursos.indexOf(cursoId);
+    const cursoIndex = this.cursos.findIndex(c => c.id_curso === cursoId);
+
     if (index === -1) {
-      this.selectedCursos.push(cursoId);
+      // Si es la primera selección
+      if (this.selectedCursos.length === 0) {
+        this.selectedCursos.push(cursoId);
+      } else {
+        // Obtener el primer y último curso seleccionado
+        const primerCursoIndex = this.cursos.findIndex(c => c.id_curso === this.selectedCursos[0]);
+        const ultimoCursoIndex = this.cursos.findIndex(c => c.id_curso === this.selectedCursos[this.selectedCursos.length - 1]);
+
+        // Si el nuevo curso está antes del primer curso seleccionado
+        if (cursoIndex < primerCursoIndex) {
+          // Seleccionar todos los cursos desde el nuevo hasta el primer curso seleccionado
+          for (let i = cursoIndex; i <= primerCursoIndex; i++) {
+            const cursoId = this.cursos[i].id_curso;
+            if (!this.selectedCursos.includes(cursoId)) {
+              this.selectedCursos.push(cursoId);
+            }
+          }
+        }
+        // Si el nuevo curso está después del último curso seleccionado
+        else if (cursoIndex > ultimoCursoIndex) {
+          // Seleccionar todos los cursos desde el último curso seleccionado hasta el nuevo
+          for (let i = ultimoCursoIndex; i <= cursoIndex; i++) {
+            const cursoId = this.cursos[i].id_curso;
+            if (!this.selectedCursos.includes(cursoId)) {
+              this.selectedCursos.push(cursoId);
+            }
+          }
+        }
+
+        // Ordenar los cursos seleccionados
+        this.selectedCursos.sort((a, b) => {
+          const indexA = this.cursos.findIndex(c => c.id_curso === a);
+          const indexB = this.cursos.findIndex(c => c.id_curso === b);
+          return indexA - indexB;
+        });
+      }
     } else {
-      this.selectedCursos.splice(index, 1);
+      // Si está deseleccionando
+      const primerCursoIndex = this.cursos.findIndex(c => c.id_curso === this.selectedCursos[0]);
+      const ultimoCursoIndex = this.cursos.findIndex(c => c.id_curso === this.selectedCursos[this.selectedCursos.length - 1]);
+
+      // Solo permitir deseleccionar el primer o último curso
+      if (cursoIndex === primerCursoIndex || cursoIndex === ultimoCursoIndex) {
+        this.selectedCursos.splice(index, 1);
+      } else {
+        this.showError('Solo puede deseleccionar el primer o último curso del rango');
+      }
     }
   }
 
@@ -64,6 +110,18 @@ export class CrearAreaComponent implements OnInit {
 
   onSubmit(): void {
     if (!this.validateForm()) return;
+
+    // Verificar que los cursos seleccionados sean consecutivos
+    const indicesSeleccionados = this.selectedCursos
+      .map(id => this.cursos.findIndex(c => c.id_curso === id))
+      .sort((a, b) => a - b);
+
+    for (let i = 1; i < indicesSeleccionados.length; i++) {
+      if (indicesSeleccionados[i] !== indicesSeleccionados[i - 1] + 1) {
+        this.showError('Los cursos seleccionados deben ser consecutivos');
+        return;
+      }
+    }
 
     // Asignar los cursos seleccionados
     this.areaData.cursos = this.selectedCursos;

@@ -50,7 +50,6 @@ export class VistaAreasCategoriasComponent implements OnInit {
   // Formulario de nivel
   public currentNewLevel: CreateNivelRequest = this.initializeNewLevel();
   public enviando: boolean = false;
-  public errores: string[] = [];
   public formErrors: string[] = [];
   public successMessage: string | null = null;
 
@@ -165,7 +164,7 @@ export class VistaAreasCategoriasComponent implements OnInit {
           console.error('Error al cargar áreas:', err);
           this.errorCarga = 'Error al cargar áreas';
           this.cargando = false;
-          this.errores = ['Error al cargar áreas. Por favor, intente de nuevo.'];
+          this.formErrors = ['Error al cargar áreas. Por favor, intente de nuevo.'];
         }
       });
   }
@@ -197,7 +196,6 @@ export class VistaAreasCategoriasComponent implements OnInit {
     this.advertenciaMultiplesGrados = false;
     this.mostrarSelectorGrados = false;
     this.formErrors = [];
-    this.errores = [];
     this.successMessage = null;
   }
 
@@ -208,6 +206,26 @@ export class VistaAreasCategoriasComponent implements OnInit {
 
   onNivelCheckboxChange(index: number): void {
     this.gradosSeleccionadosNivel[index] = !this.gradosSeleccionadosNivel[index];
+    
+    // Obtener todos los índices seleccionados
+    const indicesSeleccionados = this.gradosSeleccionadosNivel
+      .map((selected, i) => selected ? i : -1)
+      .filter(i => i !== -1);
+
+    if (indicesSeleccionados.length >= 2) {
+      // Ordenar los índices
+      indicesSeleccionados.sort((a, b) => a - b);
+      
+      // Obtener el primer y último índice seleccionado
+      const primerIndice = indicesSeleccionados[0];
+      const ultimoIndice = indicesSeleccionados[indicesSeleccionados.length - 1];
+      
+      // Seleccionar todos los grados entre el primer y último índice
+      for (let i = primerIndice; i <= ultimoIndice; i++) {
+        this.gradosSeleccionadosNivel[i] = true;
+      }
+    }
+
     this.actualizarGradosNivel();
 
     const gradosSeleccionados = this.gradosSeleccionadosNivel.filter(selected => selected).length;
@@ -247,14 +265,14 @@ export class VistaAreasCategoriasComponent implements OnInit {
     return true;
   }
 
-  private validarFormulario(): boolean {
+  public validarFormulario(): boolean {
     this.formErrors = [];
     const nivel = this.currentNewLevel;
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
 
     if (!nivel.nombre_nivel.trim()) {
-      this.formErrors.push('El nombre del nivel es obligatorio.');
+      this.formErrors.push('Por favor, ingrese un nombre para el nivel.');
     }
 
     if (!nivel.gradoIniCat || !nivel.gradoFinCat) {
@@ -271,8 +289,29 @@ export class VistaAreasCategoriasComponent implements OnInit {
       const fechaExamen = new Date(nivel.fecha_examen);
       if (isNaN(fechaExamen.getTime())) {
         this.formErrors.push('Formato de fecha de examen inválido.');
-      } else if (fechaExamen < hoy) {
-        this.formErrors.push('La fecha del examen debe ser en el futuro.');
+      } else {
+        fechaExamen.setHours(0, 0, 0, 0);
+
+        // Primero validar que no sea una fecha pasada
+        if (fechaExamen < hoy) {
+          this.formErrors.push('La fecha del examen debe ser en el futuro.');
+        } else {
+          // Luego validar que esté dentro del rango de la olimpiada
+          if (this.olimpiadaSeleccionada) {
+            const fechaInicioOlimpiada = new Date(this.olimpiadaSeleccionada.fecha_inicio);
+            const fechaFinOlimpiada = new Date(this.olimpiadaSeleccionada.fecha_final);
+            
+            // Ajustar las horas para comparar solo las fechas
+            fechaInicioOlimpiada.setHours(0, 0, 0, 0);
+            fechaFinOlimpiada.setHours(23, 59, 59, 999);
+
+            if (fechaExamen < fechaInicioOlimpiada) {
+              this.formErrors.push(`La fecha del examen debe ser posterior o igual al inicio de la olimpiada (${this.formatearFecha(this.olimpiadaSeleccionada.fecha_inicio)}).`);
+            } else if (fechaExamen > fechaFinOlimpiada) {
+              this.formErrors.push(`La fecha del examen debe ser anterior o igual al fin de la olimpiada (${this.formatearFecha(this.olimpiadaSeleccionada.fecha_final)}).`);
+            }
+          }
+        }
       }
     }
 
@@ -280,51 +319,67 @@ export class VistaAreasCategoriasComponent implements OnInit {
       this.formErrors.push('El costo debe ser un número válido y no negativo.');
     }
 
-    this.errores = [...this.formErrors];
     return this.formErrors.length === 0;
   }
 
-  // Envío de datos
-  enviarNiveles(): void {
+  public getFechaMinima(): string {
+    const hoy = new Date();
+    const fechaInicioOlimpiada = this.olimpiadaSeleccionada ? new Date(this.olimpiadaSeleccionada.fecha_inicio) : null;
+    
+    // Si la fecha de inicio de la olimpiada es posterior a hoy, usar esa fecha
+    if (fechaInicioOlimpiada && fechaInicioOlimpiada > hoy) {
+      return this.olimpiadaSeleccionada!.fecha_inicio;
+    }
+    
+    // Si no, usar la fecha de hoy
+    return hoy.toISOString().split('T')[0];
+  }
+
+  public formatearFecha(fecha: string): string {
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+
+  public enviarNiveles(): void {
+    if (!this.areaActivaId) {
+      this.formErrors = ['No se ha seleccionado un área válida para agregar niveles.'];
+      return;
+    }
+
     if (!this.validarFormulario()) {
       return;
     }
 
-    if (!this.areaActivaId) {
-      this.errores = ['No se ha seleccionado un área válida para agregar niveles.'];
-      return;
-    }
-
     this.enviando = true;
-    this.errores = [];
+    this.formErrors = [];
     this.successMessage = null;
 
-    const bulkRequest: CreateNivelesBulkRequest = {
-      niveles: [this.currentNewLevel]
+    const nivel: CreateNivelRequest = {
+      ...this.currentNewLevel,
+      habilitacion: this.currentNewLevel.habilitacion ? 1 : 0
     };
 
-    this.nivelService.crearNivelesEnArea(this.areaActivaId, bulkRequest)
-      .subscribe({
-        next: (response: CreateNivelesBulkResponse) => {
-          this.mostrarModalExito('Nivel creado exitosamente');
-          this.resetForm();
-          this.areaActivaId = null;
-          this.cargarAreas();
-        },
-        error: (err: any) => {
-          console.error('Error al crear nivel:', err);
-          if (err.error && err.error.message) {
-            this.errores = [`Error al crear nivel: ${err.error.message}`];
-          } else if (err.message) {
-            this.errores = [`Error al crear nivel: ${err.message}`];
-          } else {
-            this.errores = ['Error desconocido al crear el nivel.'];
-          }
-        },
-        complete: () => {
-          this.enviando = false;
+    this.nivelService.crearNivelPorArea(this.areaActivaId, nivel).subscribe({
+      next: (response: NivelResponse) => {
+        this.enviando = false;
+        this.mostrarModalMensaje('exito', 'Nivel creado exitosamente');
+        this.resetForm();
+        this.cargarAreas();
+      },
+      error: (err: Error) => {
+        this.enviando = false;
+        console.error('Error al crear nivel:', err);
+        if (err instanceof Error) {
+          this.formErrors = [`Error al crear nivel: ${err.message}`];
+        } else {
+          this.formErrors = ['Error desconocido al crear el nivel.'];
         }
-      });
+      }
+    });
   }
 
   // Métodos de utilidad
