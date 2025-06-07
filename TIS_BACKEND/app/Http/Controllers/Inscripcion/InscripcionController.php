@@ -54,7 +54,7 @@ class InscripcionController extends Controller
             'olimpistas' => 'required|array|min:1|max:1',
             'olimpistas.*.nombres' => 'required|string|max:100',
             'olimpistas.*.apellidos' => 'required|string|max:100',
-            'olimpistas.*.ci' => 'required|string|max:20|unique:olimpistas,ci',
+            'olimpistas.*.ci' => 'required|string|max:20',
             'olimpistas.*.fecha_nacimiento' => 'required|date|before:-10 years',
             'olimpistas.*.correo' => 'required|email|max:100',
             'olimpistas.*.telefono' => 'required|string|max:20',
@@ -65,17 +65,10 @@ class InscripcionController extends Controller
             'tutors' => 'required|array|min:1|max:2',
             'tutors.*.nombres' => 'required|string|max:100',
             'tutors.*.apellidos' => 'required|string|max:100',
-            'tutors.*.ci' => [
+            'tutors.*.ci' =>
                 'required',
                 'string',
                 'max:20',
-                Rule::unique('tutors', 'ci')->where(function ($query) use ($request) {
-                    return $query->whereNotIn(
-                        'id_tutor',
-                        collect($request->tutors)->pluck('id_tutor')->filter()->toArray()
-                    );
-                })
-            ],
             'tutors.*.correo' => 'required|email|max:100',
             'tutors.*.telefono' => 'required|string|max:20',
             'tutors.*.contacto' => 'nullable|string|max:255',

@@ -57,6 +57,15 @@ export class BotonExelComponent {
     const file = target.files[0];
     const fileName = file.name;
     const fileSize = (file.size / 1024).toFixed(2); // Tamaño en KB
+    const validExtensions = ['xlsx', 'xls'];
+   
+    const fileExtension = fileName.split('.').pop()?.toLowerCase() || '';
+
+    if (!validExtensions.includes(fileExtension)) {
+      alert('Error: El archivo debe ser un archivo Excel (.xlsx o .xls)');
+      this.resetFileInput(); // Resetear el input si el archivo no es válido
+      return;
+    }
 
     const reader: FileReader = new FileReader();
     reader.onload = (e: any) => {
@@ -268,68 +277,68 @@ export class BotonExelComponent {
       this.datosEstudiantes = filasConDatos;
       this.validacionesEst(filasConDatos);
       //this.tutor = 
-    
+
     } else if (fileName === 'Formato_Varios_Tutores.xlsx') {
       this.separarEstudiantesTutores(filasConDatos);
     }
   }
 
- // En tu componente
-tutorPrincipal: any[] = [];  // Nueva propiedad para el tutor principal
+  // En tu componente
+  tutorPrincipal: any[] = [];  // Nueva propiedad para el tutor principal
 
-separarEstudiantesTutores(filasConDatos: any[][]): void {
-  const estudiantes: any[] = [];
-  const tutores: any[] = [];
-  let leyendoEstudiantes = true;
-  let separadorDetectado = false;
-  
-  // Resetear tutor principal
-  this.tutorPrincipal = [];
+  separarEstudiantesTutores(filasConDatos: any[][]): void {
+    const estudiantes: any[] = [];
+    const tutores: any[] = [];
+    let leyendoEstudiantes = true;
+    let separadorDetectado = false;
 
-  filasConDatos.forEach((fila, index) => {
-    // Detectar texto "nombre tutor"
-    const contieneNombreTutor = fila.some(cell => {
-      const esString = typeof cell === 'string';
-      const esSeparador = esString && cell.trim().toLowerCase() === "nombre tutor";
-      return esSeparador;
+    // Resetear tutor principal
+    this.tutorPrincipal = [];
+
+    filasConDatos.forEach((fila, index) => {
+      // Detectar texto "nombre tutor"
+      const contieneNombreTutor = fila.some(cell => {
+        const esString = typeof cell === 'string';
+        const esSeparador = esString && cell.trim().toLowerCase() === "nombre tutor";
+        return esSeparador;
+      });
+
+      // Cambiar estado si se detecta separador
+      if (contieneNombreTutor && !separadorDetectado) {
+        leyendoEstudiantes = false;
+        separadorDetectado = true;
+      }
+
+      // Clasificar fila
+      if (leyendoEstudiantes) {
+        estudiantes.push(fila);
+      } else {
+        tutores.push(fila);
+
+        // Guardar la primera fila después del separador como tutor principal
+        if (tutores.length === 2 && separadorDetectado) {
+          this.tutorPrincipal = [...fila];  // Hacemos copia del array
+          console.log('Tutor principal guardado:', this.tutorPrincipal);
+        }
+      }
     });
 
-    // Cambiar estado si se detecta separador
-    if (contieneNombreTutor && !separadorDetectado) {
-      leyendoEstudiantes = false;
-      separadorDetectado = true;
-    }
+    // Asignar a propiedades
+    this.datosEstudiantes = estudiantes;
+    this.datosTutores = tutores;
 
-    // Clasificar fila
-    if (leyendoEstudiantes) {
-      estudiantes.push(fila);
-    } else {
-      tutores.push(fila);
-      
-      // Guardar la primera fila después del separador como tutor principal
-      if (tutores.length === 2 && separadorDetectado) {
-        this.tutorPrincipal = [...fila];  // Hacemos copia del array
-        console.log('Tutor principal guardado:', this.tutorPrincipal);
-      }
-    }
-  });
+    // Validaciones
+    this.validacionesEst(this.datosEstudiantes);
+    this.validacionesTutor(this.datosTutores);
 
-  // Asignar a propiedades
-  this.datosEstudiantes = estudiantes;
-  this.datosTutores = tutores;
-  
-  // Validaciones
-  this.validacionesEst(this.datosEstudiantes);
-  this.validacionesTutor(this.datosTutores);
-  
-  console.log('Tutor principal final:', this.tutorPrincipal);
-}
+    console.log('Tutor principal final:', this.tutorPrincipal);
+  }
 
   validacionesEst(datosEst: any[][]) {
     const listaEstudiante = datosEst.slice(1);
     this.datosEstudiantes = listaEstudiante;
     this.procesarEstudiantes(this.datosEstudiantes);
-    if(listaEstudiante.length > 6){
+    if (listaEstudiante.length > 6) {
       this.mensajeError.push("Error: No puede inscribir a mas de 6 estudiantes")
     }
     for (let index = 0; index < listaEstudiante.length; index++) {
@@ -398,13 +407,13 @@ separarEstudiantesTutores(filasConDatos: any[][]): void {
     }
 
   }
-  
+
   validacionesTutor(datosTutor: any[][]) {
     const listaTutor = datosTutor.slice(1);
     this.datosTutores = listaTutor;
-    if(listaTutor.length>6){
-    this.mensajeError.push("Error: No debe haber mas de 6 tutores registrados");
-  }
+    if (listaTutor.length > 6) {
+      this.mensajeError.push("Error: No debe haber mas de 6 tutores registrados");
+    }
     for (let index = 0; index < listaTutor.length; index++) {
       const fila = listaTutor[index];
 
