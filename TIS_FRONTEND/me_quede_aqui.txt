@@ -1,0 +1,60 @@
+completado clase 7
+clase 7
+
+
+me quede en la clase 8
+min 45
+
+
+
+nuestra aplicaion es una spa tiene que ser lo mas reactiva
+no queremos que se recarge cada que apretamos un boton
+
+
+osea angular o react te permite hacer un arbol de urls lo que le permite hacer una navegacion reactiva
+
+hay ciertos trabajo donde se desavilita java scrip y en lka empresa tienes que solicitar que se avilite javascrip
+por politicas de empresa para que no se exponga los datos
+
+
+-----------------------------------------------------
+
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Area } from '../interfaces/area.interface';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AreaService {
+  private apiUrl = 'http://localhost:8000/api/area'; // URL de tu API
+
+  constructor(private http: HttpClient) {}
+
+  // Método para enviar los datos del área
+  createArea(area: Area): Observable<Area> {
+    return this.http.post<Area>(this.apiUrl, area);
+  }
+
+  addCategoriaToArea(areaId: number, categoria: string) {
+    // Aquí iría la lógica para enviar la categoría al backend
+    return this.http.post('/api/areas/' + areaId + '/categorias', { categoria });
+  }
+
+   // Método para actualizar un área
+   updateArea(areaId: number, area: Partial<Area>): Observable<Area> {
+    return this.http.put<Area>(`${this.apiUrl}/${areaId}`, area);
+  }
+
+
+  getAreas(): Observable<Area[]> {
+    return this.http.get<Area[]>(this.apiUrl);
+  }
+
+  getAreaById(id: number): Observable<Area> {
+    return this.http.get<Area>(`${this.apiUrl}/${id}`);
+  }
+
+
+}

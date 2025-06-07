@@ -1,0 +1,264 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<div class="bg-[#E3102C] py-5 mb-8 w-screen shadow-md">
+  <h1 class="text-white font-bold text-2xl flex items-center px-4">
+    ADMINISTRADOR
+  </h1>
+</div>
+
+<div class="container mx-auto p-4 max-w-full px-8">
+  <div class="flex items-center mb-8">
+    <h2 class="text-3xl font-bold text-gray-800">Registrar Nueva Olimpiada</h2>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" class="space-y-10">
+    <!-- Información Básica -->
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
+      <div class="flex items-center mb-6">
+        <h3 class="text-xl font-semibold text-gray-800">Información Básica</h3>
+      </div>
+
+      <div class="space-y-6">
+        <!-- Nombre de la olimpiada -->
+        <div>
+          <label for="nombre_olimpiada" class="block text-sm font-semibold text-gray-700 mb-2">
+            <i class="fas fa-medal text-yellow-500 mr-2"></i>Nombre de la Olimpiada *
+          </label>
+          <input type="text" id="nombre_olimpiada" name="nombre_olimpiada" [(ngModel)]="olimpiada.nombre_olimpiada"
+            (blur)="validateNombreOlimpiada()"
+            class="block w-full rounded-lg border-2 border-gray-200 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-4 text-lg transition-all duration-200 hover:border-gray-300"
+            placeholder="Ingrese el nombre de la olimpiada">
+          <p class="text-red-500 text-sm mt-2 ml-1">{{ errors.nombreOlimpiada }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Descripción -->
+          <div>
+            <label for="descripcion_olimpiada" class="block text-sm font-semibold text-gray-700 mb-2">
+              <i class="fas fa-align-left text-green-500 mr-2"></i>Descripción *
+            </label>
+            <textarea id="descripcion_olimpiada" name="descripcion_olimpiada"
+              [(ngModel)]="olimpiada.descripcion_olimpiada" (blur)="validateDescripcion()" rows="5"
+              class="block w-full rounded-lg border-2 border-gray-200 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-4 transition-all duration-200 hover:border-gray-300 resize-none"
+              placeholder="Descripción breve de la olimpiada"></textarea>
+            <p class="text-red-500 text-sm mt-2 ml-1">{{ errors.descripcion }}</p>
+          </div>
+
+          <!-- Presentación -->
+          <div>
+            <label for="presentacion" class="block text-sm font-semibold text-gray-700 mb-2">
+              <i class="fas fa-presentation text-purple-500 mr-2"></i>Presentación
+            </label>
+            <textarea id="presentacion" name="presentacion" [(ngModel)]="olimpiada.presentacion"
+              (blur)="validatePresentacion()" rows="5"
+              placeholder="Descripción detallada de la olimpiada, objetivos y propósito..."
+              class="block w-full rounded-lg border-2 border-gray-200 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-4 transition-all duration-200 hover:border-gray-300 resize-none"></textarea>
+            <p class="text-red-500 text-sm mt-2 ml-1">{{ errors.presentacion }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fechas -->
+    <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-100">
+      <div class="flex items-center mb-6">
+        <h3 class="text-xl font-semibold text-gray-800">Fechas Importantes</h3>
+      </div>
+
+      <!-- Fechas de la Olimpiada -->
+      <div class="mb-8">
+        <h4 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
+          <i class="fas fa-trophy text-yellow-500 mr-2"></i>Período de la Olimpiada
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="relative">
+            <label for="fecha_inicio" class="block text-sm font-semibold text-gray-700 mb-2">
+              <i class="fas fa-play-circle text-green-500 mr-2"></i>Fecha de Inicio *
+            </label>
+            <input type="date" id="fecha_inicio" name="fecha_inicio" [(ngModel)]="olimpiada.fecha_inicio"
+              (change)="onStartDateChange($event)" [min]="minDate" [max]="maxStartDate"
+              class="block w-full rounded-lg border-2 border-gray-200 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 p-4 text-lg transition-all duration-200 hover:border-gray-300"
+              required>
+          </div>
+          <div class="relative">
+            <label for="fecha_final" class="block text-sm font-semibold text-gray-700 mb-2">
+              <i class="fas fa-stop-circle text-red-500 mr-2"></i>Fecha Final *
+            </label>
+            <input type="date" id="fecha_final" name="fecha_final" [(ngModel)]="olimpiada.fecha_final"
+              (change)="validateFechas()" [min]="minEndDate" [max]="maxEndDate" [disabled]="!fechaFinalHabilitada"
+              class="block w-full rounded-lg border-2 border-gray-200 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-200 p-4 text-lg transition-all duration-200 hover:border-gray-300"
+              [ngClass]="{'bg-gray-100 cursor-not-allowed': !fechaFinalHabilitada}" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fechas de Inscripción -->
+      <div>
+        <h4 class="text-lg font-medium text-gray-700 mb-4 flex items-center">
+          <i class="fas fa-user-plus text-blue-500 mr-2"></i>Período de Inscripciones
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="relative">
+            <label for="fecha_inscripcion_inicio" class="block text-sm font-semibold text-gray-700 mb-2">
+              <i class="fas fa-door-open text-blue-500 mr-2"></i>Inicio de Inscripciones
+            </label>
+            <input type="date" id="fecha_inscripcion_inicio" name="fecha_inscripcion_inicio"
+              [(ngModel)]="olimpiada.fecha_inscripcion_inicio" (change)="onInscripcionStartDateChange($event)"
+              [min]="minDate" [max]="maxInscripcionStartDate"
+              class="block w-full rounded-lg border-2 border-gray-200 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-4 text-lg transition-all duration-200 hover:border-gray-300">
+          </div>
+          <div class="relative">
+            <label for="fecha_inscripcion_final" class="block text-sm font-semibold text-gray-700 mb-2">
+              <i class="fas fa-door-closed text-orange-500 mr-2"></i>Cierre de Inscripciones
+            </label>
+            <input type="date" id="fecha_inscripcion_final" name="fecha_inscripcion_final"
+              [(ngModel)]="olimpiada.fecha_inscripcion_final" (change)="validateFechasInscripcion()"
+              [min]="minInscripcionEndDate" [max]="maxInscripcionEndDate" [disabled]="!fechaInscripcionFinalHabilitada"
+              class="block w-full rounded-lg border-2 border-gray-200 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 p-4 text-lg transition-all duration-200 hover:border-gray-300"
+              [ngClass]="{'bg-gray-100 cursor-not-allowed': !fechaInscripcionFinalHabilitada}">
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 space-y-2">
+        <p class="text-red-500 text-sm ml-1">{{ errors.fechas }}</p>
+        <p class="text-red-500 text-sm ml-1">{{ errors.fechasInscripcion }}</p>
+      </div>
+    </div>
+
+    <!-- Requisitos y Premios -->
+    <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100">
+      <div class="flex items-center mb-6">
+        <h3 class="text-xl font-semibold text-gray-800">Requisitos y Premios</h3>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Requisitos -->
+        <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+          <div class="flex items-center mb-4">
+            <div class="bg-red-100 p-2 rounded-lg mr-3">
+              <i class="fas fa-list-check text-red-600"></i>
+            </div>
+            <h4 class="text-lg font-semibold text-gray-700">Requisitos</h4>
+          </div>
+          <textarea id="requisitos" name="requisitos" [(ngModel)]="olimpiada.requisitos" (blur)="validateRequisitos()"
+            rows="6"
+            placeholder="• Requisitos para participar en la olimpiada&#10;• Documentación necesaria&#10;• Criterios de elegibilidad..."
+            class="block w-full rounded-lg border-2 border-gray-200 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 p-4 transition-all duration-200 hover:border-gray-300 resize-none"></textarea>
+          <p class="text-red-500 text-sm mt-2 ml-1">{{ errors.requisitos }}</p>
+        </div>
+
+        <!-- Premios -->
+        <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+          <div class="flex items-center mb-4">
+            <div class="bg-yellow-100 p-2 rounded-lg mr-3">
+              <i class="fas fa-award text-yellow-600"></i>
+            </div>
+            <h4 class="text-lg font-semibold text-gray-700">Premios</h4>
+          </div>
+          <textarea id="premios" name="premios" [(ngModel)]="olimpiada.premios" (blur)="validatePremios()" rows="6"
+            placeholder="• Primer lugar: Descripción del premio&#10;• Segundo lugar: Descripción del premio&#10;• Reconocimientos especiales..."
+            class="block w-full rounded-lg border-2 border-gray-200 shadow-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 p-4 transition-all duration-200 hover:border-gray-300 resize-none"></textarea>
+          <p class="text-red-500 text-sm mt-2 ml-1">{{ errors.premios }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información Adicional -->
+    <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-6 border border-orange-100">
+      <div class="flex items-center mb-6">
+        <h3 class="text-xl font-semibold text-gray-800">Información Adicional</h3>
+      </div>
+
+      <div>
+        <label for="informacion_adicional" class="block text-sm font-semibold text-gray-700 mb-2">
+          <i class="fas fa-info text-orange-500 mr-2"></i>Detalles Complementarios
+        </label>
+        <textarea id="informacion_adicional" name="informacion_adicional" [(ngModel)]="olimpiada.informacion_adicional"
+          (blur)="validateInformacionAdicional()" rows="4"
+          placeholder="Cualquier información adicional relevante como contactos, enlaces, recursos, modalidades especiales..."
+          class="block w-full rounded-lg border-2 border-gray-200 shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-200 p-4 transition-all duration-200 hover:border-gray-300 resize-none"></textarea>
+        <p class="text-red-500 text-sm mt-2 ml-1">{{ errors.informacionAdicional }}</p>
+      </div>
+    </div>
+
+    <!-- Mensaje de error por duplicado -->
+    <div class="text-center">
+      <p class="text-red-500 text-sm font-medium">{{ errors.duplicado }}</p>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-end space-x-4 pt-8 border-t border-gray-200">
+      <button type="submit"
+        class="px-8 py-4 bg-gradient-to-r from-[#0F0981] to-[#1a0ba8] text-white hover:from-[#0a005f] hover:to-[#0F0981] rounded-lg flex items-center gap-3 font-bold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+        <i class="fas fa-plus text-lg"></i>
+        Añadir Olimpiada
+      </button>
+    </div>
+  </form>
+
+  <!-- Modal de éxito o error -->
+  <div *ngIf="mostrarModal" class="fixed inset-0 z-[9999] flex items-center justify-center p-4"
+    style="background-color: rgba(75, 85, 99, 0.3);">
+    <!-- Modal de éxito -->
+    <div *ngIf="modalTipo === 'exito'"
+      class="relative w-full max-w-md p-6 bg-white rounded-xl shadow-2xl transform transition-all">
+      <!-- Icono de éxito -->
+      <div class="flex justify-center mb-4">
+        <div class="p-3 bg-green-100 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-green-600" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Título -->
+      <h2 class="mb-4 text-2xl font-bold text-center text-gray-800">Operación exitosa</h2>
+
+      <!-- Mensaje -->
+      <p class="mb-6 text-center text-gray-700 font-medium">
+        {{ modalMensaje }}
+      </p>
+
+      <!-- Botón de acción -->
+      <div class="flex justify-center">
+        <button (click)="ocultarModal()"
+          class="px-6 py-3 font-medium text-white transition-colors duration-300 transform bg-gradient-to-r from-[#0F0981] to-[#1a0ba8] rounded-lg hover:from-[#0a005f] hover:to-[#0F0981] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-lg hover:shadow-xl">
+          Cerrar
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal de error -->
+    <div *ngIf="modalTipo === 'error'"
+      class="relative w-full max-w-md p-6 bg-white rounded-xl shadow-2xl transform transition-all">
+      <!-- Icono de error -->
+      <div class="flex justify-center mb-4">
+        <div class="p-3 bg-red-100 rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-red-600" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Título -->
+      <h2 class="mb-4 text-2xl font-bold text-center text-gray-800">Ha ocurrido un error</h2>
+
+      <!-- Mensaje -->
+      <div class="mb-6">
+        <p class="text-center text-gray-700 font-medium">{{ modalMensaje }}</p>
+      </div>
+
+      <!-- Botón de acción -->
+      <div class="flex justify-center">
+        <button (click)="ocultarModal()"
+          class="px-6 py-3 font-medium text-white transition-colors duration-300 transform bg-gradient-to-r from-red-600 to-red-700 rounded-lg hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 shadow-lg hover:shadow-xl">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
