@@ -8,6 +8,7 @@ export interface CreateNivelRequest {
   fecha_examen: string;
   costo: number;
   habilitacion: boolean | number; // Acepta tanto boolean como number
+  id_area?: number; // Propiedad opcional para el ID del área
 }
 
 export interface CreateNivelesBulkRequest {

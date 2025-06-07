@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, Input } from '@angular/core';
+import { Component, inject, OnInit, Input, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -58,8 +58,9 @@ export class VistaAreasCategoriasComponent implements OnInit {
     '1ro Primaria', '2do Primaria', '3ro Primaria', '4to Primaria', '5to Primaria', '6to Primaria',
     '1ro Secundaria', '2do Secundaria', '3ro Secundaria', '4to Secundaria', '5to Secundaria', '6to Secundaria'
   ];
-  public mostrarSelectorGrados: boolean = false;
   public gradosSeleccionadosNivel: boolean[] = [];
+  public gradosDisponibles: boolean[] = [];
+  public mostrarSelectorGrados: boolean = false;
   public advertenciaMultiplesGrados: boolean = false;
 
   // Modal
@@ -103,6 +104,7 @@ export class VistaAreasCategoriasComponent implements OnInit {
   ngOnInit(): void {
     this.obtenerIdOlimpiada();
     this.gradosSeleccionadosNivel = this.grados.map(() => false);
+    this.gradosDisponibles = Array(this.grados.length).fill(false);
   }
 
   private initializeNewLevel(): CreateNivelRequest {
@@ -193,6 +195,7 @@ export class VistaAreasCategoriasComponent implements OnInit {
   private resetForm(): void {
     this.currentNewLevel = this.initializeNewLevel();
     this.gradosSeleccionadosNivel = this.grados.map(() => false);
+    this.gradosDisponibles = Array(this.grados.length).fill(false);
     this.advertenciaMultiplesGrados = false;
     this.mostrarSelectorGrados = false;
     this.formErrors = [];
@@ -200,34 +203,99 @@ export class VistaAreasCategoriasComponent implements OnInit {
   }
 
   // Métodos del selector de grados
-  toggleSelectorGrados(): void {
+  toggleSelectorGrados() {
     this.mostrarSelectorGrados = !this.mostrarSelectorGrados;
   }
 
-  onNivelCheckboxChange(index: number): void {
-    this.gradosSeleccionadosNivel[index] = !this.gradosSeleccionadosNivel[index];
+  // Método para inicializar los grados disponibles
+  inicializarGradosDisponibles() {
+    console.log('Inicializando grados disponibles...');
+    console.log('Área seleccionada:', this.currentNewLevel.id_area);
     
-    // Obtener todos los índices seleccionados
-    const indicesSeleccionados = this.gradosSeleccionadosNivel
-      .map((selected, i) => selected ? i : -1)
-      .filter(i => i !== -1);
+    if (this.currentNewLevel.id_area) {
+      // Obtener el área seleccionada
+      const areaSeleccionada = this.areas.find(a => a.id_area === this.currentNewLevel.id_area);
+      console.log('Área encontrada:', areaSeleccionada);
+      
+      if (areaSeleccionada) {
+        // Obtener los índices de los grados disponibles en el área
+        const gradoIniIndex = this.grados.indexOf(areaSeleccionada.gradoIniAr);
+        const gradoFinIndex = this.grados.indexOf(areaSeleccionada.gradoFinAr);
+        
+        console.log('Grados disponibles:', {
+          gradoIni: areaSeleccionada.gradoIniAr,
+          gradoFin: areaSeleccionada.gradoFinAr,
+          gradoIniIndex,
+          gradoFinIndex
+        });
+        
+        // Inicializar el array de grados disponibles
+        this.gradosDisponibles = this.grados.map((grado, index) => {
+          const disponible = index >= gradoIniIndex && index <= gradoFinIndex;
+          console.log(`Grado ${grado}: ${disponible ? 'disponible' : 'no disponible'}`);
+          return disponible;
+        });
 
-    if (indicesSeleccionados.length >= 2) {
-      // Ordenar los índices
-      indicesSeleccionados.sort((a, b) => a - b);
-      
-      // Obtener el primer y último índice seleccionado
-      const primerIndice = indicesSeleccionados[0];
-      const ultimoIndice = indicesSeleccionados[indicesSeleccionados.length - 1];
-      
-      // Seleccionar todos los grados entre el primer y último índice
-      for (let i = primerIndice; i <= ultimoIndice; i++) {
-        this.gradosSeleccionadosNivel[i] = true;
+        // Limpiar las selecciones anteriores
+        this.gradosSeleccionadosNivel = Array(this.grados.length).fill(false);
+      }
+    } else {
+      console.log('No hay área seleccionada');
+      // Si no hay área seleccionada, ningún grado está disponible
+      this.gradosDisponibles = Array(this.grados.length).fill(false);
+      this.gradosSeleccionadosNivel = Array(this.grados.length).fill(false);
+    }
+  }
+
+  // Método para verificar si un grado está disponible
+  isGradoDisponible(index: number): boolean {
+    const disponible = this.gradosDisponibles[index];
+    console.log(`Verificando disponibilidad del grado ${this.grados[index]}: ${disponible}`);
+    return disponible;
+  }
+
+  // Método para manejar el cambio en los checkboxes de grados
+  onNivelCheckboxChange(index: number) {
+    const cursoIndex = index;
+
+    if (!this.gradosSeleccionadosNivel[index]) {
+      // Si es la primera selección
+      if (this.gradosSeleccionadosNivel.filter(selected => selected).length === 0) {
+        this.gradosSeleccionadosNivel[index] = true;
+      } else {
+        // Obtener el primer y último curso seleccionado
+        const primerCursoIndex = this.gradosSeleccionadosNivel.findIndex(selected => selected);
+        const ultimoCursoIndex = this.gradosSeleccionadosNivel.lastIndexOf(true);
+
+        // Si el nuevo curso está antes del primer curso seleccionado
+        if (cursoIndex < primerCursoIndex) {
+          // Seleccionar todos los cursos desde el nuevo hasta el primer curso seleccionado
+          for (let i = cursoIndex; i <= primerCursoIndex; i++) {
+            this.gradosSeleccionadosNivel[i] = true;
+          }
+        }
+        // Si el nuevo curso está después del último curso seleccionado
+        else if (cursoIndex > ultimoCursoIndex) {
+          // Seleccionar todos los cursos desde el último curso seleccionado hasta el nuevo
+          for (let i = ultimoCursoIndex; i <= cursoIndex; i++) {
+            this.gradosSeleccionadosNivel[i] = true;
+          }
+        }
+      }
+    } else {
+      // Si está deseleccionando
+      const primerCursoIndex = this.gradosSeleccionadosNivel.findIndex(selected => selected);
+      const ultimoCursoIndex = this.gradosSeleccionadosNivel.lastIndexOf(true);
+
+      // Solo permitir deseleccionar el primer o último curso
+      if (cursoIndex === primerCursoIndex || cursoIndex === ultimoCursoIndex) {
+        this.gradosSeleccionadosNivel[index] = false;
+      } else {
+        this.formErrors.push('Solo puede deseleccionar el primer o último curso del rango');
       }
     }
 
     this.actualizarGradosNivel();
-
     const gradosSeleccionados = this.gradosSeleccionadosNivel.filter(selected => selected).length;
     this.advertenciaMultiplesGrados = gradosSeleccionados > 1;
   }
@@ -242,6 +310,20 @@ export class VistaAreasCategoriasComponent implements OnInit {
     } else {
       this.currentNewLevel.gradoIniCat = '';
       this.currentNewLevel.gradoFinCat = '';
+    }
+  }
+
+  // Método para cerrar el selector cuando se hace clic fuera
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    const selectorContainer = document.querySelector('.selector-grados-container');
+    const selectorButton = document.querySelector('.selector-grados-button');
+
+    if (selectorContainer && selectorButton) {
+      if (!selectorContainer.contains(target) && !selectorButton.contains(target)) {
+        this.mostrarSelectorGrados = false;
+      }
     }
   }
 
