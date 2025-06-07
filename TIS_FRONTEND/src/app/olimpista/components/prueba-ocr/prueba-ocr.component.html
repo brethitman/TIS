@@ -1,0 +1,237 @@
+<div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-gray-50 to-gray-200 p-6">
+  <div class="w-full max-w-4xl bg-white rounded-xl shadow-xl p-8 space-y-6">
+    <div class="text-center mb-2">
+      <h2 class="text-3xl font-bold text-gray-800">Reconocimiento de Comprobante</h2>
+      <p class="text-gray-600 mt-2">Sube una imagen de tu comprobante para procesarla</p>
+    </div>
+
+    <div class="border-t border-gray-200 my-6"></div>
+
+    <!-- Sección de carga de archivo -->
+    <div class="flex flex-col items-center">
+      <label for="fileInput" class="cursor-pointer">
+        Subir imagen
+        <input type="file" accept="image/*" (change)="onFileSelected($event)" id="fileInput" class="hidden" />
+      </label>
+
+      <!-- Botón para seleccionar archivo -->
+      <button
+        class="bg-indigo-700 hover:bg-indigo-800 text-white px-6 py-3 rounded-lg shadow-md transition duration-300 flex items-center gap-2 font-medium"
+        (click)="triggerFileInput()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+        </svg>
+        Seleccionar Imagen
+      </button>
+    </div>
+
+    <!-- DEBUG: Botón para verificar datos -->
+    <div class="text-center" *ngIf="inscripcionVerificada">
+      <button (click)="debugInscripcion()" class="bg-red-500 text-white px-4 py-2 rounded">
+        DEBUG: Ver Datos en Consola
+      </button>
+    </div>
+
+    <!-- Vista previa de imagen -->
+    <div *ngIf="imagenCargada" class="mt-6">
+      <h3 class="text-lg font-semibold mb-3">Vista previa del comprobante:</h3>
+      <div class="border-2 border-dashed border-gray-200 rounded-lg p-2">
+        <img [src]="imagenCargada" alt="Comprobante subido" class="max-h-64 w-full object-contain" />
+      </div>
+    </div>
+
+    <!-- Resultados -->
+    <div *ngIf="numeroBoletaDetectado" class="mt-6">
+      <div class="bg-blue-50 p-4 rounded-lg">
+        <p class="text-sm font-medium text-blue-600">N° Boleta detectado</p>
+        <p class="text-xl font-semibold text-blue-800">{{ numeroBoletaDetectado }}</p>
+      </div>
+    </div>
+
+    <!-- Progreso -->
+    <div *ngIf="cargandoOCR || procesandoPago" class="mt-6">
+      <div class="flex items-center justify-center space-x-2 text-blue-600">
+        <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+          viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+          </path>
+        </svg>
+        <span>{{ cargandoOCR ? 'Procesando imagen...' : 'Verificando pago...' }}</span>
+      </div>
+    </div>
+
+    <!-- DEBUG: Estado de inscripcionVerificada -->
+    <div *ngIf="inscripcionVerificada" class="bg-yellow-50 p-4 rounded-lg">
+      <h3 class="text-lg font-bold mb-2">DEBUG INFO:</h3>
+      <p><strong>Tiene datos:</strong> {{ !!inscripcionVerificada ? 'SÍ' : 'NO' }}</p>
+      <p><strong>Estado:</strong> {{ inscripcionVerificada?.estado || 'NO ENCONTRADO' }}</p>
+      <p><strong>Tiene boleta_pago:</strong> {{ !!inscripcionVerificada?.boleta_pago ? 'SÍ' : 'NO' }}</p>
+      <p><strong>Número boleta:</strong> {{ inscripcionVerificada?.boleta_pago?.numero_boleta || 'NO ENCONTRADO' }}</p>
+      <p><strong>Monto:</strong> {{ inscripcionVerificada?.boleta_pago?.monto || 'NO ENCONTRADO' }}</p>
+      <p><strong>Cantidad olimpistas:</strong> {{ inscripcionVerificada?.olimpistas?.length || 0 }}</p>
+      <p><strong>Cantidad tutores:</strong> {{ inscripcionVerificada?.tutors?.length || 0 }}</p>
+    </div>
+
+    <!-- Resultado exitoso -->
+    <div *ngIf="inscripcionVerificada" class="bg-green-50 p-6 rounded-lg mt-6">
+      <div class="flex items-center mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600 mr-2" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+        </svg>
+        <h2 class="text-xl font-bold text-green-800">¡Pago Verificado Correctamente!</h2>
+      </div>
+
+      <div class="space-y-8">
+        <!-- Información de la boleta -->
+        <div *ngIf="inscripcionVerificada.boleta_pago">
+          <h3 class="font-semibold text-green-700 mb-4 text-lg border-b pb-2">Información del Pago</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <p class="text-sm text-gray-600">Número de Boleta</p>
+              <p class="font-medium">{{ inscripcionVerificada.boleta_pago.numero_boleta }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600">Monto Pagado</p>
+              <p class="font-medium text-green-700">Bs. {{ inscripcionVerificada.boleta_pago.monto }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600">Fecha de Generación</p>
+              <p class="font-medium">{{ inscripcionVerificada.boleta_pago.fecha_generacion | date:'dd/MM/yyyy' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Información de la inscripción -->
+        <div>
+          <h3 class="font-semibold text-green-700 mb-4 text-lg border-b pb-2">Detalles de la Inscripción</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p class="text-sm text-gray-600">Estado</p>
+              <p class="font-medium">{{ inscripcionVerificada.estado }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600">Fecha de Inscripción</p>
+              <p class="font-medium">{{ inscripcionVerificada.fecha_inscripcion | date:'dd/MM/yyyy' }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600">Fecha de Creación</p>
+              <p class="font-medium">{{ inscripcionVerificada.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-gray-600">Última Actualización</p>
+              <p class="font-medium">{{ inscripcionVerificada.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Participantes (Olimpistas) -->
+        <div *ngIf="inscripcionVerificada.olimpistas && inscripcionVerificada.olimpistas.length > 0">
+          <h3 class="font-semibold text-green-700 mb-4 text-lg border-b pb-2">Participantes</h3>
+          <div class="space-y-4">
+            <div *ngFor="let olimpista of inscripcionVerificada.olimpistas" class="bg-white p-4 rounded-lg shadow-sm">
+              <h4 class="font-medium text-gray-800">{{ olimpista.nombres }} {{ olimpista.apellidos }}</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 text-sm">
+                <div>
+                  <p class="text-gray-600">C.I.</p>
+                  <p>{{ olimpista.ci }}</p>
+                </div>
+                <div>
+                  <p class="text-gray-600">Fecha Nacimiento</p>
+                  <p>{{ olimpista.fecha_nacimiento | date:'dd/MM/yyyy' }}</p>
+                </div>
+                <div>
+                  <p class="text-gray-600">Colegio</p>
+                  <p>{{ olimpista.colegio }}</p>
+                </div>
+                <div>
+                  <p class="text-gray-600">Departamento/Provincia</p>
+                  <p>{{ olimpista.departamento }} - {{ olimpista.provincia }}</p>
+                </div>
+                <div>
+                  <p class="text-gray-600">Contacto</p>
+                  <p>{{ olimpista.telefono }} | {{ olimpista.correo }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensaje si no hay olimpistas -->
+        <div *ngIf="!inscripcionVerificada.olimpistas || inscripcionVerificada.olimpistas.length === 0">
+          <p class="text-red-500">No se encontraron participantes</p>
+        </div>
+
+        <!-- Tutores -->
+        <div *ngIf="inscripcionVerificada.tutors && inscripcionVerificada.tutors.length > 0">
+          <h3 class="font-semibold text-green-700 mb-4 text-lg border-b pb-2">Tutores</h3>
+          <div class="space-y-4">
+            <div *ngFor="let tutor of inscripcionVerificada.tutors" class="bg-white p-4 rounded-lg shadow-sm">
+              <h4 class="font-medium text-gray-800">{{ tutor.nombres }} {{ tutor.apellidos }}</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 text-sm">
+                <div>
+                  <p class="text-gray-600">C.I.</p>
+                  <p>{{ tutor.ci }}</p>
+                </div>
+                <div>
+                  <p class="text-gray-600">Contacto</p>
+                  <p>{{ tutor.telefono }} | {{ tutor.correo }}</p>
+                </div>
+                <div *ngIf="tutor.contacto">
+                  <p class="text-gray-600">Información Adicional</p>
+                  <p>{{ tutor.contacto }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Áreas y Niveles Seleccionados -->
+        <div *ngIf="inscripcionVerificada.boleta_pago?.areas_niveles?.length">
+          <h3 class="font-semibold text-green-700 mb-4 text-lg border-b pb-2">Áreas y Niveles Inscritos</h3>
+          <div class="space-y-6">
+            <!-- Iterar por cada área -->
+            <div *ngFor="let area of inscripcionVerificada.boleta_pago.areas_niveles"
+              class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-green-500">
+              <!-- Nombre del área -->
+              <h4 class="font-bold text-gray-800 text-lg mb-3">{{ area.area_nombre }}</h4>
+
+              <!-- Niveles dentro del área -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 ml-4">
+                <div *ngFor="let nivel of area.niveles" class="bg-gray-50 p-3 rounded-lg">
+                  <h5 class="font-medium text-gray-700">nivel: {{ nivel.nivel_nombre }}</h5>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mensajes de error -->
+        <div *ngIf="errorMensaje" class="bg-red-50 p-4 rounded-lg mt-6">
+          <div class="flex items-center mb-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 class="font-semibold text-red-800">Error en la verificación</h3>
+          </div>
+          <p class="text-red-700">{{ errorMensaje }}</p>
+        </div>
+
+        <!-- Texto OCR procesado -->
+        <div *ngIf="ocrResultado" class="mt-6 border-t pt-6">
+          <h3 class="text-lg font-semibold mb-3">Texto reconocido:</h3>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <pre class="whitespace-pre-wrap break-words text-sm">{{ ocrResultado }}</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

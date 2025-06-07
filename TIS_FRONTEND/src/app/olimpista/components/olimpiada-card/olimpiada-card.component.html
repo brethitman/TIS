@@ -1,0 +1,269 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<div class="flex flex-col gap-4"> <!-- Reduje el gap entre cards de 6 a 4 -->
+  <!-- Card -->
+  <div class="w-full max-w-md mx-auto">
+    <div
+      class="relative rounded-xl bg-white p-4 shadow-xl border-t-4 border-purple-600  <!-- Cambiado de p-6 a p-4 -->
+                hover:shadow-3xl hover:border-purple-800 hover:scale-105 transition-transform duration-300 ease-in-out">
+
+      <!-- Icono superior -->
+      <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 w-10 h-10 flex items-center justify-center rounded-full  <!-- Reduje tamaño de w-12 h-12 a w-10 h-10 -->
+                  bg-gradient-to-r from-purple-600 to-red-600 text-white shadow-lg">
+        <i class="fas fa-layer-group text-lg"></i> <!-- Reduje text-xl a text-lg -->
+      </div>
+
+      <h2 class="text-center text-xl font-bold mb-3 mt-3 text-gray-800">{{ olimpiada.nombre_olimpiada }}</h2>
+      <!-- Reduje mb-4 y mt-4 a mb-3 mt-3 -->
+
+      <!-- Botón de tres puntos mejorado -->
+      <div class="absolute top-3 right-3"> <!-- Reduje top-4 y right-4 a top-3 right-3 -->
+        <button (click)="toggleOpciones()"
+          class="bg-gray-100/50 hover:bg-gray-200 p-1.5 rounded-full transition-all duration-300 group">
+          <!-- Reduje p-2 a p-1.5 -->
+          <svg xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5 text-gray-600 group-hover:text-purple-600 group-hover:scale-110 transition-all duration-300 rotate-90"
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h.01M12 12h.01M19 12h.01" />
+          </svg>
+        </button>
+
+        <!-- Menú desplegable mejorado -->
+        <div *ngIf="mostrarOpciones"
+          class="absolute right-0 mt-1 bg-white rounded-lg shadow-xl overflow-hidden w-44 z-10 border border-gray-200">
+          <!-- Reduje w-48 a w-44 y mt-2 a mt-1 -->
+          <div (click)="openEditModal(); toggleOpciones()"
+            class="px-3 py-2 text-gray-800 hover:bg-blue-50 cursor-pointer flex items-center gap-2 transition-colors">
+            <!-- Reduje px-4 py-3 a px-3 py-2 -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" 
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            <span class="text-sm">Editar Olimpiada</span> <!-- Añadí text-sm -->
+          </div>
+          <div (click)="mostrarConfirmacion = true; toggleOpciones()"
+            class="px-3 py-2 text-gray-800 hover:bg-red-50 cursor-pointer flex items-center gap-2 transition-colors">
+            <!-- Reduje px-4 py-3 a px-3 py-2 -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-600" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            <span class="text-sm">Eliminar Olimpiada</span> <!-- Añadí text-sm -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Cuerpo con mejor espaciado y tipografía -->
+      <div class="px-4 py-3 bg-white rounded-b-xl -mt-1"> <!-- Reduje px-6 py-5 a px-4 py-3 -->
+        <div class="mb-3"> <!-- Reduje mb-4 a mb-3 -->
+          <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0 text-blue-600 mr-2" 
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-gray-700 text-sm leading-snug">{{ olimpiada.descripcion_olimpiada }}</p>
+            <!-- Añadí text-sm -->
+          </div>
+        </div>
+
+        <div class="space-y-2 mb-4"> <!-- Reduje space-y-3 a space-y-2 y mb-5 a mb-4 -->
+          <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-600 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <div>
+              <span class="block text-xs font-medium text-gray-500">Fecha inicio</span>
+              <!-- Cambié text-sm a text-xs -->
+              <span class="text-sm text-gray-800">{{ olimpiada.fecha_inicio | date:'dd/MM/yyyy' }}</span>
+              <!-- Añadí text-sm -->
+            </div>
+          </div>
+          <div class="flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-600 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <div>
+              <span class="block text-xs font-medium text-gray-500">Fecha fin</span> <!-- Cambié text-sm a text-xs -->
+              <span class="text-sm text-gray-800">{{ olimpiada.fecha_final | date:'dd/MM/yyyy' }}</span>
+              <!-- Añadí text-sm -->
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-gray-100"> <!-- Reduje mt-6 a mt-4 y pt-4 a pt-3 -->
+          <button class="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold px-4 py-1.5 rounded-md  <!-- Reduje px-6 a px-4 y py-2 a py-1.5 -->
+    hover:bg-blue-800 hover:scale-105 hover:shadow-lg transition-all duration-300 ease-in-out" (click)="entrar()">
+            Añadir/Ver Áreas
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal Confirmación Eliminación - Versión mejorada -->
+<div *ngIf="mostrarConfirmacion"
+  class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black bg-opacity-50"
+  style="background-color: rgba(75, 85, 99, 0.3);">
+  <div
+    class="bg-white rounded-xl shadow-xl transform transition-all duration-300 ease-out w-full max-w-md overflow-hidden animate-fade-in">
+    <!-- Contenido del modal -->
+    <div class="p-6 text-center">
+      <!-- Icono de advertencia -->
+      <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-red-600" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+
+      <!-- Título y mensaje -->
+      <h3 class="text-xl font-bold text-gray-800 mb-2">¿Eliminar olimpiada?</h3>
+      <p class="text-gray-600 mb-6">
+        Estás a punto de eliminar permanentemente <span class="font-semibold text-gray-800">"{{
+          olimpiada.nombre_olimpiada }}"</span>.
+        Esta acción no se puede deshacer.
+      </p>
+
+      <!-- Botones de acción -->
+      <div class="flex justify-center space-x-3">
+        <button (click)="mostrarConfirmacion = false"
+          class="px-5 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+          Cancelar
+        </button>
+        <button (click)="confirmarEliminacion()" [disabled]="eliminando"
+          class="px-5 py-2.5 text-white bg-gradient-to-r from-red-600 to-red-700 rounded-lg hover:from-red-700 hover:to-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 shadow-sm transition-all disabled:opacity-70 flex items-center justify-center min-w-[120px]">
+          <span *ngIf="eliminando" class="inline-block mr-2">
+            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
+            </svg>
+          </span>
+          <span>{{ eliminando ? 'Eliminando...' : 'Confirmar' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Edición Mejorado -->
+<div *ngIf="isEditModalOpen" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black bg-opacity-50"
+  style="background-color: rgba(75, 85, 99, 0.3);">
+  <div
+    class="bg-white rounded-xl shadow-2xl w-full max-w-lg transform transition-all duration-300 ease-out scale-95 animate-fade-in">
+    <!-- Header del modal -->
+    <div class="border-b border-gray-200 px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800">Editar Olimpiada</h2>
+          <p class="text-sm text-gray-500 mt-1">Actualiza los detalles de la olimpiada</p>
+        </div>
+        <button (click)="closeEditModal()" class="text-gray-400 hover:text-gray-500 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Cuerpo del formulario -->
+    <form #editForm="ngForm" class="px-6 py-4">
+      <!-- Nombre -->
+      <div class="mb-5">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la Olimpiada</label>
+        <div class="relative">
+          <input [(ngModel)]="editableOlimpiada.nombre_olimpiada" name="nombre"
+            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+            placeholder="Ingrese el nombre" required minlength="3" maxlength="30" pattern="^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$" />
+          <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div class="mb-5">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+        <textarea [(ngModel)]="editableOlimpiada.descripcion_olimpiada" name="descripcion"
+          class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all min-h-[100px]"
+          placeholder="Descripción detallada de la olimpiada" required minlength="10" maxlength="300"></textarea>
+      </div>
+
+      <!-- Fechas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de inicio</label>
+          <div class="relative">
+            <input type="date" [(ngModel)]="editableOlimpiada.fecha_inicio" name="fechaInicio"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              [min]="formatDateToInput(olimpiada.fecha_inicio)"
+              [max]="formatDateToInput(addYearsDate(olimpiada.fecha_inicio, 1))" required />
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Fecha final</label>
+          <div class="relative">
+            <input type="date" [(ngModel)]="editableOlimpiada.fecha_final" name="fechaFinal"
+              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              [min]="formatDateToInput(editableOlimpiada.fecha_inicio)" required />
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensaje de error -->
+      <div *ngIf="errorMessage" class="mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {{ errorMessage }}
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+        <button type="button" (click)="closeEditModal()"
+          class="px-6 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+          Cancelar
+        </button>
+        <button type="button" (click)="saveEdit()"
+          class="px-6 py-2.5 text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm transition-all disabled:opacity-70"
+          [disabled]="editForm.invalid">
+          Guardar cambios
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
