@@ -1,212 +1,350 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <div
   class="flex flex-col items-center justify-center w-full min-h-screen bg-gradient-to-b from-gray-50 to-gray-200 p-6">
   <div class="w-full bg-white rounded-xl shadow-xl p-8 space-y-6">
-    <div class="mx-auto ml-4 mb-2 mt-4 grid grid-cols-2 gap-4">
-      <div class="border border-gray-200 rounded-b-lg p-4 shadow-md">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4">Recomendaciones</h2>
-        <ol class="list-decimal pl-5 space-y-2 text-gray-700 text-sm">
-          <li>1.- Suba el comprobante en una imagen con formato <strong>PNG, JPG o JPEG</strong>.</li>
-          <li>2.-Solo podrá subir una imagen.</li>
-          <li>3.-Asegúrese de que la imagen tenga buena calidad y el número de boleta de pago sea claramente visible; de
-            lo
-            contrario, su comprobante no podrá ser procesado.</li>
-          <li>4.- Una vez que el comprobante haya sido subido correctamente, se mostrará un mensaje de confirmación.
-          </li>
-        </ol>
-      </div>
-      <div class="border border-gray-200 rounded-b-lg p-6 shadow-md items-center justify-center">
-        <div class="text-center mb-2">
-          <h2 class="text-3xl font-bold text-gray-800">Reconocimiento de Comprobante</h2>
-          <p class="text-gray-600 mt-2">Sube una imagen de tu comprobante para procesarla</p>
-        </div>
-        <div class="border-t border-gray-200 my-6"></div>
-
-        <!-- Sección de carga de archivo -->
-        <div class="flex flex-col items-center">
-          <label for="fileInput" class="cursor-pointer">
-            Subir imagen
-            <input type="file" accept="image/*" (change)="onFileSelected($event)" id="fileInput" class="hidden" />
-          </label>
-          <!-- Botón para seleccionar archivo -->
-          <button
-            class="bg-indigo-700 hover:bg-indigo-800 text-white px-6 py-3 rounded-lg shadow-md transition duration-300 flex items-center gap-2 font-medium"
-            (click)="triggerFileInput()">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-            </svg>
-            Seleccionar Imagen
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- DEBUG: Botón para verificar datos -->
-    <div class="text-center" *ngIf="inscripcionVerificada">
-      <button (click)="debugInscripcion()" class="bg-red-500 text-white px-4 py-2 rounded">
-        DEBUG: Ver Datos en Consola
-      </button>
-    </div>
-    <div class="mx-auto ml-4 mb-2 mt-4 grid grid-cols-2 gap-4">
-      <!-- Vista previa de imagen -->
-      <div *ngIf="imagenCargada" class="mt-2">
-        <h3 class="text-lg font-semibold mb-3">Vista previa del comprobante:</h3>
-        <div class="border-2 border-dashed border-gray-200 rounded-lg p-2">
-          <img [src]="imagenCargada" alt="Comprobante subido" class="max-h-64 w-full object-contain" />
-        </div>
-      </div>
-      <div class="border border-gray-200 rounded-b-lg p-6 shadow-md items-center justify-center">
-        <!-- Resultados -->
-        <div *ngIf="numeroBoletaDetectado" class="mt-6">
-          <div class="bg-blue-50 p-4 rounded-lg">
-            <p class="text-sm font-medium text-blue-600">N° Boleta detectado</p>
-            <p class="text-xl font-semibold text-blue-800">{{ numeroBoletaDetectado }}</p>
+    <div class="max-w-6xl mx-auto px-4 py-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Panel de Recomendaciones -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+          <div class="bg-blue-50 px-6 py-4 border-b border-blue-100">
+            <h2 class="text-xl font-semibold text-blue-800 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-blue-600" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Recomendaciones para subir tu comprobante
+            </h2>
+          </div>
+          <div class="p-6">
+            <ol class="space-y-4">
+              <li class="flex items-start">
+                <span
+                  class="flex-shrink-0 bg-blue-100 text-blue-800 font-medium rounded-full w-6 h-6 flex items-center justify-center mr-3">1</span>
+                <p class="text-gray-700">Sube el comprobante en formato <strong class="text-blue-600">PNG, JPG o
+                    JPEG</strong> (no se aceptan PDF)</p>
+              </li>
+              <li class="flex items-start">
+                <span
+                  class="flex-shrink-0 bg-blue-100 text-blue-800 font-medium rounded-full w-6 h-6 flex items-center justify-center mr-3">2</span>
+                <p class="text-gray-700">Solo puedes subir <strong class="text-blue-600">una imagen</strong> por
+                  comprobante</p>
+              </li>
+              <li class="flex items-start">
+                <span
+                  class="flex-shrink-0 bg-blue-100 text-blue-800 font-medium rounded-full w-6 h-6 flex items-center justify-center mr-3">3</span>
+                <p class="text-gray-700">Asegúrate que la imagen tenga <strong class="text-blue-600">buena
+                    calidad</strong> y el número de boleta sea <strong class="text-blue-600">claramente visible</strong>
+                </p>
+              </li>
+              <li class="flex items-start">
+                <span
+                  class="flex-shrink-0 bg-blue-100 text-blue-800 font-medium rounded-full w-6 h-6 flex items-center justify-center mr-3">4</span>
+                <p class="text-gray-700">Recibirás un <strong class="text-blue-600">mensaje de confirmación</strong>
+                  cuando el comprobante se haya procesado correctamente</p>
+              </li>
+            </ol>
           </div>
         </div>
-        <!-- DEBUG: Estado de inscripcionVerificada -->
-        <div *ngIf="inscripcionVerificada" class="bg-yellow-50 p-4 rounded-lg">
-          <h3 class="text-lg font-bold mb-2">DEBUG INFO:</h3>
-          <p><strong>Tiene datos:</strong> {{ !!inscripcionVerificada ? 'SÍ' : 'NO' }}</p>
-          <p><strong>Estado:</strong> {{ inscripcionVerificada.estado || 'NO ENCONTRADO' }}</p>
-          <p><strong>Tiene boleta_pago:</strong> {{ !!inscripcionVerificada.boleta_pago ? 'SÍ' : 'NO' }}</p>
-          <p><strong>Número boleta:</strong> {{ inscripcionVerificada.boleta_pago.numero_boleta || 'NO ENCONTRADO' }}
-          </p>
-          <p><strong>Monto:</strong> {{ inscripcionVerificada.boleta_pago.monto || 'NO ENCONTRADO' }}</p>
-          <p><strong>Cantidad olimpistas:</strong> {{ inscripcionVerificada.olimpistas.length || 0 }}</p>
-          <p><strong>Cantidad tutores:</strong> {{ inscripcionVerificada.tutors.length || 0 }}</p>
+
+        <!-- Panel de Carga -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+          <div class="p-6">
+            <div class="text-center mb-6">
+              <h2 class="text-2xl font-bold text-gray-800 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-2 text-indigo-600" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                Reconocimiento de Comprobante
+              </h2>
+              <p class="text-gray-600 mt-2">Sube una imagen clara de tu comprobante de pago</p>
+            </div>
+
+            <div class="border-t border-gray-200 my-6"></div>
+
+            <!-- Zona de arrastrar y soltar -->
+            <div
+              class="flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+              (click)="triggerFileInput()" id="dropZone">
+              <input type="file" accept="image/*" (change)="onFileSelected($event)" id="fileInput" class="hidden" />
+              <button
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg shadow-sm transition duration-300 flex items-center gap-2 font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Seleccionar archivo
+              </button>
+
+              <p class="text-xs text-gray-400 mt-4">Formatos aceptados: JPG, PNG, JPEG</p>
+            </div>
+          </div>
         </div>
-        <!-- Progreso -->
-        <div *ngIf="cargandoOCR || procesandoPago" class="mt-6">
-          <div class="flex items-center justify-center space-x-2 text-blue-600">
-            <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none"
-              viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-              </path>
-            </svg>
-            <span>{{ cargandoOCR ? 'Procesando imagen...' : 'Verificando pago...' }}</span>
+      </div>
+    </div>
+    <!--OCR -->
+    <div class="mx-auto max-w-4xl p-4">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Vista previa de imagen -->
+        <div *ngIf="imagenCargada" class="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div class="p-5">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Vista previa del comprobante</h3>
+            <div
+              class="border-2 border-dashed border-gray-200 rounded-lg p-3 bg-gray-50 flex items-center justify-center">
+              <img [src]="imagenCargada" alt="Comprobante subido" class="max-h-80 w-auto object-contain rounded-md" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel de resultados -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div class="p-5">
+            <!-- Resultado de boleta detectada -->
+            <div *ngIf="numeroBoletaDetectado" class="mb-6">
+              <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                <p class="text-sm font-medium text-blue-600 mb-1">Número de boleta detectado</p>
+                <p class="text-2xl font-bold text-blue-800">{{ numeroBoletaDetectado }}</p>
+              </div>
+            </div>
+
+            <!-- Estado de verificación -->
+            <div *ngIf="inscripcionVerificada" class="space-y-4">
+              <h4 class="text-lg font-semibold text-gray-800 border-b pb-2">Detalles de la inscripción</h4>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <p class="text-xs font-medium text-gray-500">Estado</p>
+                  <p class="font-medium">{{ inscripcionVerificada.estado || 'No encontrado' }}</p>
+                </div>
+
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <p class="text-xs font-medium text-gray-500">Monto pagado</p>
+                  <p class="font-medium">{{ inscripcionVerificada.boleta_pago?.monto || 'No encontrado' }}</p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <p class="text-xs font-medium text-gray-500">Olimpistas</p>
+                  <p class="font-medium">{{ inscripcionVerificada.olimpistas?.length || 0 }}</p>
+                </div>
+
+                <div class="bg-gray-50 p-3 rounded-lg">
+                  <p class="text-xs font-medium text-gray-500">Tutores</p>
+                  <p class="font-medium">{{ inscripcionVerificada.tutors?.length || 0 }}</p>
+                </div>
+              </div>
+
+              <div *ngIf="inscripcionVerificada.boleta_pago" class="bg-green-50 p-3 rounded-lg border border-green-100">
+                <p class="text-xs font-medium text-green-600">Boleta verificada</p>
+                <p class="font-medium text-green-800">
+                  N° {{ inscripcionVerificada.boleta_pago.numero_boleta }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Indicador de carga -->
+            <div *ngIf="cargandoOCR || procesandoPago" class="mt-6">
+              <div class="flex items-center justify-center space-x-3 p-4 bg-gray-50 rounded-lg">
+                <svg class="animate-spin h-6 w-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                  </path>
+                </svg>
+                <span class="text-gray-700 font-medium">
+                  {{ cargandoOCR ? 'Procesando imagen...' : 'Verificando pago...' }}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
     <!-- Resultado exitoso -->
-    <div *ngIf="inscripcionVerificada" class="bg-green-50 p-6 rounded-lg mt-6">
-      <div class="flex items-center mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600 mr-2" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-        </svg>
-        <h2 class="text-xl font-bold text-green-800">¡Pago Verificado Correctamente!</h2>
+    <div *ngIf="inscripcionVerificada"
+      class="bg-white rounded-xl shadow-md overflow-hidden mt-6 border border-green-100">
+      <!-- Encabezado con icono de verificación -->
+      <div class="bg-green-50 px-6 py-4 border-b border-green-100">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 bg-green-100 p-2 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h2 class="text-2xl font-bold text-green-800">¡Pago Verificado Correctamente!</h2>
+            <p class="text-green-600 mt-1">La inscripción ha sido validada con éxito</p>
+          </div>
+        </div>
       </div>
 
-      <div class="space-y-8">
-        <div class="mx-auto ml-4 mb-2 mt-4 grid grid-cols-2 gap-4">
-          <!-- Información de la boleta -->
-          <div *ngIf="inscripcionVerificada.boleta_pago">
-            <h3 class="font-semibold text-green-700 mb-4 text-lg border-b pb-2">Información del Pago</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <p class="text-sm text-gray-600">Número de Boleta</p>
-                <p class="font-medium">{{ inscripcionVerificada.boleta_pago.numero_boleta }}</p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">Monto Pagado</p>
-                <p class="font-medium text-green-700">Bs. {{ inscripcionVerificada.boleta_pago.monto }}</p>
-              </div>
-              <div>
-                <p class="text-sm text-gray-600">Fecha de Generación</p>
-                <p class="font-medium">{{ inscripcionVerificada.boleta_pago.fecha_generacion | date:'dd/MM/yyyy' }}</p>
-              </div>
-            </div>
-          </div>
-          <!-- Información de la inscripción -->
-          <div>
-            <h3 class="font-semibold text-green-700 mb-4 text-lg border-b pb-2">Detalles de la Inscripción</h3>
+      <!-- Contenido principal -->
+      <div class="p-6">
+        <!-- Sección de información de pago e inscripción -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          <!-- Información del pago -->
+          <div class="bg-gray-50 p-5 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 mr-2" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Información del Pago
+            </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p class="text-sm text-gray-600">Estado</p>
-                <p class="font-medium">{{ inscripcionVerificada.estado }}</p>
+              <div class="bg-white p-3 rounded-md shadow-xs">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Número de Boleta</p>
+                <p class="text-lg font-semibold text-gray-800 mt-1">{{ inscripcionVerificada.boleta_pago.numero_boleta
+                  }}</p>
               </div>
-              <div>
-                <p class="text-sm text-gray-600">Fecha de Inscripción</p>
-                <p class="font-medium">{{ inscripcionVerificada.fecha_inscripcion | date:'dd/MM/yyyy' }}</p>
+              <div class="bg-white p-3 rounded-md shadow-xs">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Monto Pagado</p>
+                <p class="text-lg font-semibold text-green-600 mt-1">Bs. {{ inscripcionVerificada.boleta_pago.monto }}
+                </p>
               </div>
-              <div>
-                <p class="text-sm text-gray-600">Fecha de Creación</p>
-                <p class="font-medium">{{ inscripcionVerificada.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+              <div class="bg-white p-3 rounded-md shadow-xs">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha de Generación</p>
+                <p class="text-gray-800 mt-1">{{ inscripcionVerificada.boleta_pago.fecha_generacion | date:'dd/MM/yyyy'
+                  }}</p>
               </div>
-              <div>
-                <p class="text-sm text-gray-600">Última Actualización</p>
-                <p class="font-medium">{{ inscripcionVerificada.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+          </div>
+
+          <!-- Información de la inscripción -->
+          <div class="bg-gray-50 p-5 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 mr-2" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              Detalles de la Inscripción
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-white p-3 rounded-md shadow-xs">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</p>
+                <p class="text-gray-800 mt-1">{{ inscripcionVerificada.estado }}</p>
+              </div>
+              <div class="bg-white p-3 rounded-md shadow-xs">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha de Creación</p>
+                <p class="text-gray-800 mt-1">{{ inscripcionVerificada.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+              </div>
+              <div class="bg-white p-3 rounded-md shadow-xs">
+                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Última Actualización</p>
+                <p class="text-gray-800 mt-1">{{ inscripcionVerificada.updatedAt | date:'dd/MM/yyyy HH:mm' }}</p>
               </div>
             </div>
           </div>
         </div>
-        <div class="mx-auto ml-4 mb-2 mt-4 grid grid-cols-2 gap-4">
+
+        <!-- Sección de tutores y áreas/niveles -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <!-- Tutores -->
-          <div *ngIf="inscripcionVerificada.tutors && inscripcionVerificada.tutors.length > 0">
-            <h3 class="font-semibold text-green-700 mb-4 text-lg border-b pb-2">Tutores</h3>
+          <div *ngIf="inscripcionVerificada.tutors && inscripcionVerificada.tutors.length > 0"
+            class="bg-gray-50 p-5 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 mr-2" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              Tutores Registrados
+            </h3>
+            <div class="space-y-3">
+              <div *ngFor="let tutor of inscripcionVerificada.tutors"
+                class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-green-200 hover:border-green-400 transition-colors">
+                <div class="flex items-start">
+                  <div class="flex-shrink-0 bg-green-100 p-2 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none"
+                      viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <div class="ml-3">
+                    <h4 class="font-medium text-gray-800">{{ tutor.nombres }} {{ tutor.apellidos }}</h4>
+                    <div class="grid grid-cols-2 gap-2 mt-2 text-sm">
+                      <div>
+                        <p class="text-xs text-gray-500">C.I.</p>
+                        <p class="text-gray-700">{{ tutor.ci }}</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-gray-500">Contacto</p>
+                        <p class="text-gray-700">{{ tutor.telefono || 'Sin teléfono' }}<br>{{ tutor.correo || 'Sin
+                          correo' }}</p>
+                      </div>
+                    </div>
+                    <div *ngIf="tutor.contacto" class="mt-2">
+                      <p class="text-xs text-gray-500">Información Adicional</p>
+                      <p class="text-gray-700 text-sm">{{ tutor.contacto }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Áreas y Niveles -->
+          <div *ngIf="inscripcionVerificada.boleta_pago?.areas_niveles?.length" class="bg-gray-50 p-5 rounded-lg">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600 mr-2" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              Áreas y Niveles Inscritos
+            </h3>
             <div class="space-y-4">
-              <div *ngFor="let tutor of inscripcionVerificada.tutors" class="bg-white p-4 rounded-lg shadow-sm">
-                <h4 class="font-medium text-gray-800">{{ tutor.nombres }} {{ tutor.apellidos }}</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 text-sm">
-                  <div>
-                    <p class="text-gray-600">C.I.</p>
-                    <p>{{ tutor.ci }}</p>
-                  </div>
-                  <div>
-                    <p class="text-gray-600">Contacto</p>
-                    <p>{{ tutor.telefono }} | {{ tutor.correo }}</p>
-                  </div>
-                  <div *ngIf="tutor.contacto">
-                    <p class="text-gray-600">Información Adicional</p>
-                    <p>{{ tutor.contacto }}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Áreas y Niveles Seleccionados -->
-          <div *ngIf="inscripcionVerificada.boleta_pago?.areas_niveles?.length">
-            <h3 class="font-semibold text-green-700 mb-4 text-lg border-b pb-2">Áreas y Niveles Inscritos</h3>
-            <div class="space-y-6">
-              <!-- Iterar por cada área -->
               <div *ngFor="let area of inscripcionVerificada.boleta_pago.areas_niveles"
-                class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-green-500">
-                <!-- Nombre del área -->
-                <h4 class="font-bold text-gray-800 text-lg mb-3">{{ area.area_nombre }}</h4>
-
-                <!-- Niveles dentro del área -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 ml-4">
-                  <div *ngFor="let nivel of area.niveles" class="bg-gray-50 p-3 rounded-lg">
-                    <h5 class="font-medium text-gray-700">nivel: {{ nivel.nivel_nombre }}</h5>
-
+                class="bg-white p-4 rounded-lg shadow-sm border-t-4 border-green-200">
+                <h4 class="font-bold text-gray-800 text-md mb-2">{{ area.area_nombre }}</h4>
+                <div class="flex flex-wrap gap-2">
+                  <div *ngFor="let nivel of area.niveles"
+                    class="bg-green-50 px-3 py-1 rounded-full text-sm text-green-800 border border-green-200">
+                    {{ nivel.nivel_nombre }}
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Mensajes de error -->
-        <div *ngIf="errorMensaje != ''" class="bg-red-50 p-4 rounded-lg mt-6">
-          <div class="flex items-center mb-2">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-600 mr-2" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h3 class="font-semibold text-red-800">Error en la verificación</h3>
           </div>
           <p class="text-red-700">{{ errorMensaje }}</p>
         </div>
       </div>
     </div>
 
+        <!-- Mensaje de error -->
+        <div *ngIf="errorMensaje" class="mt-8">
+          <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800">Error en la verificación</h3>
+                <div class="mt-2 text-sm text-red-700">
+                  <p>{{ errorMensaje }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    <!-- Participantes (Olimpistas) 
+<!-- Participantes (Olimpistas) 
         <div *ngIf="inscripcionVerificada.olimpistas && inscripcionVerificada.olimpistas.length > 0">
           <h3 class="font-semibold text-green-700 mb-4 text-lg border-b pb-2">Participantes</h3>
           <div class="space-y-4">
@@ -238,7 +376,7 @@
           </div>
         </div>-->
 
-    <!-- Mensaje si no hay olimpistas 
+<!-- Mensaje si no hay olimpistas 
         <div *ngIf="!inscripcionVerificada.olimpistas || inscripcionVerificada.olimpistas.length === 0">
           <p class="text-red-500">No se encontraron participantes</p>
         </div>-->

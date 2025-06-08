@@ -146,7 +146,7 @@ export class PruebaOcrComponent {
         this.procesandoPago = false;
         this.errorMensaje = error.error?.message || 'Error al verificar el pago';
       }
-    });
+    }); 
   }
 
   // Método de debug para verificar datos
