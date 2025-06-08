@@ -58,7 +58,7 @@ export class BotonExelComponent {
     const fileName = file.name;
     const fileSize = (file.size / 1024).toFixed(2); // Tamaño en KB
     const validExtensions = ['xlsx', 'xls'];
-   
+
     const fileExtension = fileName.split('.').pop()?.toLowerCase() || '';
 
     if (!validExtensions.includes(fileExtension)) {
@@ -338,6 +338,10 @@ export class BotonExelComponent {
     const listaEstudiante = datosEst.slice(1);
     this.datosEstudiantes = listaEstudiante;
     this.procesarEstudiantes(this.datosEstudiantes);
+    if (listaEstudiante.length < 2) {
+      this.mensajeError.push(
+       "Error: No es posible inscribir un solo estudiante en la lista de inscripción grupal. Si desea registrar a un único estudiante, utilice la opción de inscripción individual.")
+    }
     if (listaEstudiante.length > 6) {
       this.mensajeError.push("Error: No puede inscribir a mas de 6 estudiantes")
     }
@@ -411,6 +415,9 @@ export class BotonExelComponent {
   validacionesTutor(datosTutor: any[][]) {
     const listaTutor = datosTutor.slice(1);
     this.datosTutores = listaTutor;
+    if(listaTutor.length<2){
+      this.mensajeError.push("Error: No puede ingresar un solo tutor, elija la opción del formato de varios estudiantes con un solo tutor");
+    }
     if (listaTutor.length > 6) {
       this.mensajeError.push("Error: No debe haber mas de 6 tutores registrados");
     }

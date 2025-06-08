@@ -25,6 +25,7 @@ export class BoletaListaComponent implements OnInit {
   @Input() tutor: any[][] = [];
   @Input() areas: any[][] = [];
   @Input() inscripciones: any[] = [];
+  @Input() idOlimpiada: any
 
   boletaTutor: any[] = [];
   colegios: any[] = [];
@@ -33,7 +34,7 @@ export class BoletaListaComponent implements OnInit {
   mensaje: string = "";
   errorMessage: string | null = null;
   boletaGenerada = false;
-
+  id = 0;
 
   constructor(private service: VisualizacionService, private emailService: EmailService,) {
   }
@@ -45,69 +46,15 @@ export class BoletaListaComponent implements OnInit {
     this.inscripciones = JSON.parse(localStorage.getItem('inscripciones') || '[]');
     this.boletaTutor = this.tutor[0];//OBTIENE SOLO LA INFOEMCION DEL TUTOR RESPONSABLE
     this.colegios = [...new Set(this.olimpista.map(olimpista => olimpista[6]))];
-    const idOlimpiada = this.activatedRoute.snapshot.paramMap.get('id');
-    if (idOlimpiada) {
-      this.router.navigate(['/boletaPago', idOlimpiada]);
-    } else {
-      console.warn('No se encontró el ID de la olimpiada en la URL');
-    }
+    const idOlimpiada = JSON.parse(localStorage.getItem('idOlimpiada') || '0');
+    this.id = idOlimpiada;
+    console.log("ID recuperado:", idOlimpiada);
     console.log('Áreas recibidas:', this.areas);
     console.log('Olimpistas recibidos:', this.olimpista);
     console.log('Tutores recibidos:', this.tutor);
     console.log('tutor boleta', this.boletaTutor);
     console.log('colegios', this.colegios);
   }
-
-  /* Métodos corregidos para contar y listar áreas únicas
-countUniqueAreas(): number {
-  if (!this.areas || !Array.isArray(this.areas)) return 0;
-  
-  const uniqueAreas = new Set<string>();
-  this.areas.forEach(areaObj => {
-    if (areaObj && areaObj.area_id) {
-      // Agrega el ID del área como string
-      uniqueAreas.add(areaObj.area_id.toString()); 
-    }
-  });
-  return uniqueAreas.size;
-}
-
-getUniqueAreas(): string[] {
-  if (!this.areas || !Array.isArray(this.areas)) return [];
-  
-  const uniqueAreas = new Set<string>();
-  this.areas.forEach(areaObj => {
-    if (areaObj && areaObj.area_id) {
-      uniqueAreas.add(`Área ${areaObj.area_id}`);
-    }
-  });
-  return Array.from(uniqueAreas);
-}
-
-// Métodos para contar y listar colegios únicos (estos están bien)
-countUniqueSchools(): number {
-  if (!this.olimpista || !Array.isArray(this.olimpista)) return 0;
-  
-  const uniqueSchools = new Set<string>();
-  this.olimpista.forEach(estudiante => {
-    if (estudiante && estudiante[6]) {
-      uniqueSchools.add(estudiante[6]);
-    }
-  });
-  return uniqueSchools.size;
-}
-
-getUniqueSchools(): string[] {
-  if (!this.olimpista || !Array.isArray(this.olimpista)) return [];
-  
-  const uniqueSchools = new Set<string>();
-  this.olimpista.forEach(estudiante => {
-    if (estudiante && estudiante[6]) {
-      uniqueSchools.add(estudiante[6]);
-    }
-  });
-  return Array.from(uniqueSchools);
-}*/
 
   inscribir() {
     // Verifica primero que tengas datos válidos
@@ -263,21 +210,16 @@ getUniqueSchools(): string[] {
         next: (response) => {
           console.log('Boleta enviada por email:', response);
         },
-        
+
       });
   }
   volver() {
-    const idOlimpiada = this.activatedRoute.snapshot.paramMap.get('id');
-    
-    if (!idOlimpiada) {
-        console.error('No se encontró el ID de la olimpiada en la URL');
-        alert('No se pudo encontrar el ID de la olimpiada. Por favor, intenta nuevamente.');
-        //this.router.navigate(['./']); // Redirige a una ruta predeterminada
-        return;
+    console.log("ID Olimpiada antes de la navegación:", this.id);
+    if (this.id) {
+      this.router.navigate(['/inicio/Olimpiada', this.id, 'Visualizacion']);
+    } else {
+      console.error("Error: idOlimpiada es undefined.");
     }
-
-    this.router.navigate(['/inicio/Olimpiada', idOlimpiada, 'Visualizacion']);
-}
-
+  }
 
 }

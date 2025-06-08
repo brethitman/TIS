@@ -19,7 +19,7 @@ export class PruebaOcrComponent {
   errorMensaje: string = '';
   numeroBoletaDetectado: string = '';
 
-  constructor(private verificarBoletaService: VerificarBoletaService) { }
+  constructor(private verificarBoletaService: VerificarBoletaService) {}
 
   // Método para activar el input de archivo
   triggerFileInput(): void {
@@ -119,7 +119,7 @@ export class PruebaOcrComponent {
       next: (response: any) => {
         console.log('Respuesta RAW completa:', response);
         this.procesandoPago = false;
-
+        
         // Manejo flexible de la respuesta
         if (response.data) {
           // Si viene con wrapper
@@ -130,12 +130,12 @@ export class PruebaOcrComponent {
           this.inscripcionVerificada = response;
           console.log('Usando response directo:', response);
         }
-
+        
         console.log('Inscripción verificada final:', this.inscripcionVerificada);
         console.log('Boleta pago:', this.inscripcionVerificada?.boleta_pago);
         console.log('Olimpistas:', this.inscripcionVerificada?.olimpistas);
         console.log('Tutores:', this.inscripcionVerificada?.tutors);
-
+        
         // Forzar detección de cambios
         setTimeout(() => {
           console.log('After timeout - inscripcionVerificada:', this.inscripcionVerificada);

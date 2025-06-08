@@ -1,78 +1,97 @@
-<div class="flex flex-col p-4 border border-gray-300 rounded-lg shadow-md bg-white h-[350]">
-  <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">INSCRIPCIÓN</h3>
-  <div class="grid grid-cols-2 gap-1">
-    <!-- Dropdown de Estudiantes -->
-    <div class="relative mb-4">
-      <button (click)="toggleStudentDropdown()"
-        class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
-        <!-- Muestra el estudiante seleccionado o el texto por defecto -->
-        <span>
-          {{ estudianteActual ? (estudianteActual.nombre + ' ' + estudianteActual.apellido) : 'Seleccionar estudiante'
-          }}
-        </span>
-        <svg class="ml-2 h-5 w-5 text-gray-500" [class.rotate-180]="isStudentDropdownOpen"
-          xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd"
-            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-            clip-rule="evenodd" />
-        </svg> 
-      </button>
+<!-- Espacio derecho (puedes agregar más contenido aquí) -->
+<div class="flex w-full justify-center p-3 items-center">
+  <div class="w-full max-w-6xl"> <!-- Aumenté el max-width a 6xl -->
+    <div class="flex flex-col p-6 border border-gray-300 rounded-lg shadow-md bg-white w-full">
+      <h3 class="text-xl font-bold text-gray-800 mb-6 text-center flex items-center justify-center gap-2">
+        <i class="bi bi-trophy-fill text-yellow-500 text-2xl"></i>INSCRIPCIÓN
+      </h3>
 
-      <!-- Lista de estudiantes -->
-      <div *ngIf="isStudentDropdownOpen"
-        class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-        <div class="divide-y divide-gray-100">
-          <div *ngFor="let estudiante of estudiantesDisponibles" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
-            (click)="seleccionarEstudiante(estudiante)">
-            <p class="text-sm text-gray-800 font-medium">
-              {{ estudiante.nombre }} {{ estudiante.apellido }}
-            </p>
+      <!-- Fila única con todos los campos -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+
+        <!-- Estudiante -->
+        <div class="relative">
+          <h4 class="text-md font-semibold text-gray-700 mb-2 flex items-center gap-2">
+            <i class="bi bi-robot text-purple-600"></i>
+            ESTUDIANTE
+          </h4>
+          <button (click)="toggleStudentDropdown()"
+            class="w-full flex justify-between items-center px-4 py-3 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+            <span>
+              {{ estudianteActual ? (estudianteActual.nombre + ' ' + estudianteActual.apellido) : 'Seleccionar' }}
+            </span>
+            <svg class="ml-2 h-6 w-6 text-gray-500" [class.rotate-180]="isStudentDropdownOpen"
+              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+
+          <!-- Lista de estudiantes -->
+          <div *ngIf="isStudentDropdownOpen"
+            class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+            <div class="divide-y divide-gray-100">
+              <div *ngFor="let estudiante of estudiantesDisponibles" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+                (click)="seleccionarEstudiante(estudiante)">
+                <p class="text-sm text-gray-800 font-medium">
+                  {{ estudiante.nombre }} {{ estudiante.apellido }}
+                </p>
+              </div>
+            </div>
           </div>
+          <p *ngIf="hasValidationRun && errors.estudiante" class="text-red-500 text-sm mt-1">
+            {{ errors.estudiante }}
+          </p>
         </div>
-      </div>
-      <!-- Mensaje de error para estudiante -->
-      <p *ngIf="hasValidationRun && errors.estudiante" class="text-red-500 text-sm mt-1">
-        {{ errors.estudiante }}
-      </p>
-    </div>
-    <!-- Dropdown de Cursos -->
-    <div class="relative mb-4">
-      <button (click)="toggleCursoDropdown()"
-        class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
-        <span>{{ cursoSeleccionado ? cursoSeleccionado.nameCurso : 'Seleccionar curso' }}</span>
-        <svg class="ml-2 h-5 w-5 text-gray-500" [class.transform]="isCursoDropdownOpen"
-          [class.rotate-180]="isCursoDropdownOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-          fill="currentColor">
-          <path fill-rule="evenodd"
-            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-            clip-rule="evenodd" />
-        </svg>
-      </button>
 
-      <div *ngIf="isCursoDropdownOpen"
-        class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
-        <div class="divide-y divide-gray-100">
-          <div *ngFor="let curso of cursos" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
-            (click)="seleccionarCurso(curso)">
-            <p class="font-medium text-gray-800">{{ curso.nameCurso }}</p>
+        <!-- Curso -->
+        <div class="relative">
+          <h4 class="text-md font-semibold text-gray-700 mb-2 flex items-center gap-2">
+            <i class="bi bi-journal-bookmark-fill text-red-500"></i>
+            CURSO
+          </h4>
+          <button (click)="toggleCursoDropdown()"
+            class="w-full flex justify-between items-center px-4 py-3 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+            <span>{{ cursoSeleccionado ? cursoSeleccionado.nameCurso : 'Seleccionar' }}</span>
+            <svg class="ml-2 h-6 w-6 text-gray-500" [class.transform]="isCursoDropdownOpen"
+              [class.rotate-180]="isCursoDropdownOpen" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+              fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd" />
+            </svg>
+          </button>
+
+          <div *ngIf="isCursoDropdownOpen"
+            class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+            <div class="divide-y divide-gray-100">
+              <div *ngFor="let curso of cursos" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
+                (click)="seleccionarCurso(curso)">
+                <p class="font-medium text-gray-800">{{ curso.nameCurso }}</p>
+              </div>
+            </div>
           </div>
+          <p *ngIf="hasValidationRun && errors.curso" class="text-red-500 text-sm mt-1">
+            {{ errors.curso }}
+          </p>
         </div>
-      </div>
-      <p *ngIf="hasValidationRun && errors.curso" class="text-red-500 text-sm mt-1">
-        {{ errors.curso }}
-      </p>
-    </div>
-  </div>
-  <!-- Área para inscribirse -->
-  <div class="flex flex-col gap-2">
-    <div class="grid grid-cols-2 gap-1">
-      <div>
-        <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">ÁREA PARA INSCRIBIRSE</h4>
 
-        <div class="relative mb-4">
+        <!-- Área 1 -->
+        <div class="relative">
+          <h4 class="text-md font-semibold text-gray-700 mb-2 flex items-center gap-2">
+            <i class="bi bi-flask text-blue-500"></i>
+            ÁREA
+          </h4>
           <button (click)="toggleAreaDropdown()"
-            class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
-            <span>{{ seleccionArea1 }}</span>
+            class="w-full flex justify-between items-center px-4 py-3 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+            <span>{{ seleccionArea1 || 'Seleccionar' }}</span>
+            <svg class="ml-2 h-6 w-6 text-gray-500" [class.rotate-180]="isAreaDropdownOpen"
+              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd" />
+            </svg>
           </button>
 
           <div *ngIf="isAreaDropdownOpen"
@@ -82,19 +101,26 @@
               <p class="font-medium text-gray-800">{{area.nombre_area}}</p>
             </div>
           </div>
+          <p *ngIf="hasValidationRun && errors.area1" class="text-red-500 text-sm mt-1">
+            {{ errors.area1 }}
+          </p>
         </div>
-        <p *ngIf="hasValidationRun && errors.area1" class="text-red-500 text-sm mt-1">
-          {{ errors.area1 }}
-        </p>
-      </div>
 
-      <!-- Sección de Categorías -->
-      <div>
-        <h4 class="text-md font-semibold text-gray-700 mb-3 border-b pb-2">CATEGORÍAS</h4>
-        <div class="relative mb-4">
+        <!-- Categoría 1 -->
+        <div class="relative">
+          <h4 class="text-md font-semibold text-gray-700 mb-2 flex items-center gap-2">
+            <i class="bi bi-award text-yellow-600"></i>
+            CATEGORÍA
+          </h4>
           <button [disabled]="!seleccionArea1" (click)="toggleCategoriaDropdown()"
-            class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
-            <span>{{ seleccionCategoria || "Selecciona una categoría" }}</span>
+            class="w-full flex justify-between items-center px-4 py-3 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none disabled:opacity-50">
+            <span>{{ seleccionCategoria || "Seleccionar" }}</span>
+            <svg class="ml-2 h-6 w-6 text-gray-500" [class.rotate-180]="isCategoriaDropdownOpen"
+              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd" />
+            </svg>
           </button>
 
           <div *ngIf="isCategoriaDropdownOpen"
@@ -104,81 +130,101 @@
               <p class="font-medium text-gray-800">{{ categoria.nombre_nivel }}</p>
             </div>
           </div>
+          <p *ngIf="hasValidationRun && errors.categoria1" class="text-red-500 text-sm mt-1">
+            {{ errors.categoria1 }}
+          </p>
         </div>
-      </div>
-      <p *ngIf="hasValidationRun && errors.categoria1" class="text-red-500 text-sm mt-1">
-        {{ errors.categoria1 }}
-      </p>
-    </div>
-    <div class="flex flex-row gap-1 justify-end items-center pb-2">
-      <button (click)="toggleDuplicado()" *ngIf="!isDuplicated"
-        class="px-3 py-1 bg-sky-950 text-white font-medium rounded-md hover:bg-sky-800">
-        <i class="bi bi-plus-lg text-white text-lg"></i>
-        Añadir otra área
-      </button>
-    </div>
-    <!-- Sección duplicada (solo se muestra una vez) -->
-    <div *ngIf="isDuplicated" class="grid grid-cols-2 gap-1">
-      <div>
-        <h4 class="text-md font-semibold text-gray-700 mb-2 border-b pb-1">ÁREA ADICIONAL</h4>
 
-        <div class="relative mb-4">
+        <!-- Área adicional (solo se muestra si está activa) -->
+        <div class="relative" *ngIf="isDuplicated">
+          <h4 class="text-md font-semibold text-gray-700 mb-2 flex items-center gap-2">
+            <i class="bi bi-flask text-blue-500"></i>
+            ÁREA 2
+          </h4>
           <button (click)="toggleAreaDropdown2()"
-            class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
-            <span>{{ seleccionArea2 }}</span>
+            class="w-full flex justify-between items-center px-4 py-3 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
+            <span>{{ seleccionArea2 || 'Seleccionar' }}</span>
+            <svg class="ml-2 h-6 w-6 text-gray-500" [class.rotate-180]="isAreaDropdownOpen2"
+              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd" />
+            </svg>
           </button>
 
           <div *ngIf="isAreaDropdownOpen2"
-            class="absolute z-20 bottom-full mb-2 w-ful bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+            class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
             <div *ngFor="let area of areasFiltradasParaArea2" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
               (click)="selectArea2(area.nombre_area)">
               <p class="font-medium text-gray-800">{{area.nombre_area}}</p>
             </div>
           </div>
+          <p *ngIf="hasValidationRun && errors.area2" class="text-red-500 text-sm mt-1">
+            {{ errors.area2 }}
+          </p>
         </div>
-        <p *ngIf="hasValidationRun && errors.area2" class="text-red-500 text-sm mt-1">
-          {{ errors.area2 }}
-        </p>
-      </div>
-      <!-- Sección de Categorías -->
-      <div>
-        <h4 class="text-md font-semibold text-gray-700 mb-2 border-b pb-1">CATEGORÍAS ADICIONALES</h4>
-        <div class="relative mb-4">
+
+        <!-- Categoría adicional (solo se muestra si está activa) -->
+        <div class="relative" *ngIf="isDuplicated">
+          <h4 class="text-md font-semibold text-gray-700 mb-2 flex items-center gap-2">
+            <i class="bi bi-award text-yellow-600"></i>
+            CATEGORÍA 2
+          </h4>
           <button [disabled]="!seleccionArea2" (click)="toggleCategoriaDropdown2()"
-            class="w-full flex justify-between items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none">
-            <span>{{ seleccionCategoria2 || "Selecciona una categoría" }}</span>
+            class="w-full flex justify-between items-center px-4 py-3 bg-white border border-gray-300 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none disabled:opacity-50">
+            <span>{{ seleccionCategoria2 || "Seleccionar" }}</span>
+            <svg class="ml-2 h-6 w-6 text-gray-500" [class.rotate-180]="isCategoriaDropdownOpen2"
+              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd" />
+            </svg>
           </button>
 
           <div *ngIf="isCategoriaDropdownOpen2"
-            class="absolute z-20 bottom-full mb-2 w-ful bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
+            class="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none">
             <div *ngFor="let categoria of categorias2" class="px-4 py-2 hover:bg-blue-50 cursor-pointer"
               (click)="selectCategoria2(categoria.nombre_nivel)">
               <p class="font-medium text-gray-800">{{ categoria.nombre_nivel }}</p>
             </div>
           </div>
+          <p *ngIf="hasValidationRun && errors.categoria2" class="text-red-500 text-sm mt-1">
+            {{ errors.categoria2 }}
+          </p>
         </div>
       </div>
-      <p *ngIf="hasValidationRun && errors.categoria2" class="text-red-500 text-sm mt-1">
-        {{ errors.categoria2 }}
-      </p>
-    </div>
-    <div *ngIf="isDuplicated" class="flex flex-row gap-1 justify-end items-center pb-2">
-      <button (click)="toggleDuplicado()"
-        class="px-3 py-1 bg-sky-950 text-white font-medium rounded-md hover:bg-sky-800">
-        <i class="bi bi-dash-circle text-lg text-white"></i>
-        Eliminar área adicional
-      </button>
+
+      <!-- Botones de acción -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-between items-center mt-6">
+        <div>
+          <button (click)="toggleDuplicado()" *ngIf="!isDuplicated"
+            class="px-4 py-2 bg-sky-950 text-white font-medium rounded-md bg-[#0D1271] hover:bg-[#0A0F5C] transform hover:scale-105 flex items-center gap-2 transition duration-300">
+            <i class="bi bi-plus-lg text-white text-xl"></i>
+            Añadir área
+          </button>
+          <button (click)="toggleDuplicado()" *ngIf="isDuplicated"
+            class="px-4 py-2 bg-sky-950 text-white font-medium rounded-md bg-[#0D1271] hover:bg-[#0A0F5C] transform hover:scale-105 flex items-center gap-2 transition duration-300">
+            <i class="bi bi-dash-circle text-white text-xl"></i>
+            Quitar área
+          </button>
+        </div>
+
+        <div class="flex gap-4">
+          <!-- Botón de inscripción -->
+          <button (click)="inscribirEstudiante(); inscripcionEstudiante()" [disabled]="mostrarFinalizar" class="bg-[#0D1271] hover:bg-[#0A0F5C] transform hover:scale-105 text-white font-bold py-2 px-6 rounded-md transition duration-300 
+                   disabled:bg-gray-400 disabled:text-gray-200 flex items-center gap-2">
+            <i class="bi bi-save text-white text-xl"></i>
+            Inscribir
+          </button>
+
+          <!-- Botón de finalizar inscripción -->
+          <button (click)="irABoletaList()" [disabled]="!mostrarFinalizar" class="bg-[#0D1271] hover:bg-[#0A0F5C] transform hover:scale-105 text-white font-bold py-2 px-6 rounded-md transition duration-300
+                   disabled:bg-gray-400 disabled:text-gray-200 flex items-center gap-2">
+            <i class="bi bi-check-circle text-white text-xl"></i>
+            Finalizar
+          </button>
+        </div>
+      </div>
     </div>
   </div>
-
-  <!-- Botón de inscripción -->
-  <button (click)="inscribirEstudiante(); inscripcionEstudiante()"
-    class="w-full bg-[#0D1271] hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-md transition-colors">
-    Inscribir estudiante
-  </button>
-
-  <button *ngIf="mostrarFinalizar" (click)="irABoletaList()"
-    class="mt-4 w-full bg-green-600 text-white font-bold py-2 px-4 rounded-md">
-    Finalizar inscripción
-  </button>
 </div>
