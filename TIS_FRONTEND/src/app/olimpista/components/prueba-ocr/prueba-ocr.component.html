@@ -97,8 +97,7 @@
             <div
               class="border-2 border-dashed border-gray-200 rounded-lg p-4 bg-gray-50 flex items-center justify-center">
               <!-- Aumentado padding de p-3 a p-4 -->
-              <img [src]="imagenCargada" alt="Comprobante subido" class="max-h-96 w-auto object-contain rounded-md"
-              />
+              <img [src]="imagenCargada" alt="Comprobante subido" class="max-h-96 w-auto object-contain rounded-md" />
             </div>
           </div>
         </div>
@@ -107,6 +106,31 @@
         <div class="bg-white rounded-xl shadow-sm overflow-hidden">
           <div class="p-5">
             <!-- ... (el resto del código sigue igual) ... -->
+            <div class="bg-blue-50 p-4 rounded-lg">
+              <p class="text-sm font-medium text-blue-600">N° Boleta detectado</p>
+              <p class="text-xl font-semibold text-blue-800">{{ numeroBoletaDetectado }}</p>
+            </div>
+          </div>
+          <div *ngIf="inscripcionVerificada" class="bg-blue-50 p-4 rounded-lg ml-5 ">
+            <h3 class="text-lg font-bold text-blue-600">INFORMACION ENCONTRADA</h3>
+            <p class="ml-4"><strong class="text-blue-800">Estado:</strong> {{ inscripcionVerificada.estado || 'NO ENCONTRADO' }}</p>
+            <p class="ml-4"><strong class="text-blue-800">Tiene boleta_pago:</strong> {{ !!inscripcionVerificada.boleta_pago ? 'SÍ' : 'NO' }}</p>
+            <p class="ml-4"><strong class="text-blue-800">Número boleta:</strong> {{ inscripcionVerificada.boleta_pago.numero_boleta || 'NO ENCONTRADO'
+              }}</p>
+            <p class="ml-4"><strong class="text-blue-800">Monto:</strong> {{ inscripcionVerificada.boleta_pago.monto || 'NO ENCONTRADO' }}</p>
+          </div>
+          <!-- Progreso -->
+          <div *ngIf="cargandoOCR || procesandoPago" class="mt-6">
+            <div class="flex items-center justify-center space-x-2 text-blue-600">
+              <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+              </svg>
+              <span>{{ cargandoOCR ? 'Procesando imagen...' : 'Verificando pago...' }}</span>
+            </div>
           </div>
         </div>
       </div>
