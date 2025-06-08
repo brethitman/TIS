@@ -272,7 +272,7 @@ getUniqueSchools(): string[] {
     if (!idOlimpiada) {
         console.error('No se encontró el ID de la olimpiada en la URL');
         alert('No se pudo encontrar el ID de la olimpiada. Por favor, intenta nuevamente.');
-        this.router.navigate(['./']); // Redirige a una ruta predeterminada
+        //this.router.navigate(['./']); // Redirige a una ruta predeterminada
         return;
     }
 
