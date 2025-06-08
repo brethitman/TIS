@@ -376,7 +376,7 @@ class InscripcionController extends Controller
                 'areas' => 'required|array|min:1',
                 'areas.*.area_id' => 'required|integer|exists:areas,id_area',
                 'areas.*.nivelesCategoria' => 'required|array|min:1',
-                'areas..nivelesCategoria.' => 'required|integer|exists:nivel_categorias,id_nivel',
+                'areas.*.nivelesCategoria.*' => 'required|integer|exists:nivel_categorias,id_nivel',
             ]);
 
             DB::beginTransaction();
