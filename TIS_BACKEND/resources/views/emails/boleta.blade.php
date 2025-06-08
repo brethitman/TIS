@@ -388,7 +388,7 @@
                     <li>Presente esta boleta impresa en cualquiera de las cajas habilitadas de la Universidad Mayor de San Simón.</li>
                     <li>Realice el pago únicamente con el monto exacto indicado.</li>
                     <li>Conserve su comprobante de pago como respaldo.</li>
-                    <li>Una vez realizado el pago, debe tomar una fotografía clara del comprobante y subirla a <a href="http://localhost:4200/prueba-ocr" class="upload-link">http://localhost:4200/prueba-ocr</a> para continuar con su proceso de inscripción.</li>
+                    <li>Una vez realizado el pago, debe tomar una fotografía clara del comprobante y subirla a <a href="http://bluenebula.tis.cs.umss.edu.bo/prueba-ocr" class="upload-link">http://localhost:4200/prueba-ocr</a> para continuar con su proceso de inscripción.</li>
                     <li>Después de verificar su comprobante, podrá completar su proceso de inscripción en línea o en las ventanillas de su facultad.</li>
                 </ol>
             </div>

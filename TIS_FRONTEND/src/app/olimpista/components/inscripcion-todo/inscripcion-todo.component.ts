@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
@@ -109,18 +109,65 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
     return this.inscripcionForm.get('areas') as FormArray;
   }
 
+  // Validadores personalizados
+  private soloLetrasValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    const value = control.value as string;
+    
+    // Validar que solo contenga letras y espacios
+    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(value)) {
+      return { soloLetras: true };
+    }
+    
+    // Validar longitud mínima de 3 caracteres
+    if (value.length < 3) {
+      return { minLength: true };
+    }
+    
+    // Validar que no sea una letra repetida
+    if (/^(.)\1+$/.test(value)) {
+      return { letraRepetida: true };
+    }
+    
+    return null;
+  }
+
+  private telefonoBolivianoValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    const value = control.value as string;
+    
+    // Validar que sea un número de 8 dígitos que empiece con 6 o 7
+    if (!/^[67]\d{7}$/.test(value)) {
+      return { telefonoInvalido: true };
+    }
+    
+    return null;
+  }
+
+  private ciBolivianoValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    const value = control.value as string;
+    
+    // Validar que sea un número entre 5 y 8 dígitos
+    if (!/^\d{5,8}$/.test(value)) {
+      return { ciInvalido: true };
+    }
+    
+    return null;
+  }
+
   // Métodos para Olimpistas
   private createOlimpista(): FormGroup {
     return this.fb.group({
-      nombres: ['', Validators.required],
-      apellidos: ['', Validators.required],
-      ci: ['', Validators.required],
+      nombres: ['', [Validators.required, this.soloLetrasValidator]],
+      apellidos: ['', [Validators.required, this.soloLetrasValidator]],
+      ci: ['', [Validators.required, this.ciBolivianoValidator]],
       fecha_nacimiento: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
-      telefono: ['', Validators.required],
-      colegio: ['', Validators.required],
-      departamento: ['', Validators.required],
-      provincia: ['', Validators.required]
+      telefono: ['', [Validators.required, this.telefonoBolivianoValidator]],
+      colegio: ['', [Validators.required, this.soloLetrasValidator]],
+      departamento: ['', [Validators.required, this.soloLetrasValidator]],
+      provincia: ['', [Validators.required, this.soloLetrasValidator]]
     });
   }
 
@@ -140,11 +187,11 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   // Métodos para Tutores
   private createTutor(): FormGroup {
     return this.fb.group({
-      nombres: ['', Validators.required],
-      apellidos: ['', Validators.required],
-      ci: ['', Validators.required],
+      nombres: ['', [Validators.required, this.soloLetrasValidator]],
+      apellidos: ['', [Validators.required, this.soloLetrasValidator]],
+      ci: ['', [Validators.required, this.ciBolivianoValidator]],
       correo: ['', [Validators.required, Validators.email]],
-      telefono: ['', Validators.required],
+      telefono: ['', [Validators.required, this.telefonoBolivianoValidator]],
       contacto: ['', Validators.required]
     });
   }

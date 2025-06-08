@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
-import { Router } from '@angular/router';  // Asegúrate de importar Router
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -12,11 +12,17 @@ export class AuthService {
 
   // Usuarios mock para prueba
   private mockUsers = [
-    { email: 'admin@example.com', password: 'admin123' },
-    { email: 'user@example.com', password: 'user123' }
+    { email: 'admin@example.com', password: 'admin123', role: 'admin' },
+    { email: 'user@example.com', password: 'user123', role: 'user' }
   ];
 
-  constructor(private router: Router) {}  // Inyecta Router en el constructor
+  constructor(private router: Router) {
+    // Verificar si hay un estado de autenticación guardado
+    const savedAuth = localStorage.getItem('isAuthenticated');
+    if (savedAuth === 'true') {
+      this.isAuthenticatedSubject.next(true);
+    }
+  }
 
   login(email: string, password: string): Observable<boolean> {
     const isValidUser = this.mockUsers.some(
@@ -28,6 +34,13 @@ export class AuthService {
       tap(result => {
         if (result) {
           this.isAuthenticatedSubject.next(true);
+          // Guardar estado de autenticación
+          localStorage.setItem('isAuthenticated', 'true');
+          // Guardar información del usuario
+          const user = this.mockUsers.find(u => u.email === email);
+          if (user) {
+            localStorage.setItem('userRole', user.role);
+          }
         }
       })
     );
@@ -35,12 +48,19 @@ export class AuthService {
 
   logout(): void {
     this.isAuthenticatedSubject.next(false);
-
-    // Redirigir a la página de inicio (Home) después de cerrar sesión
-    this.router.navigate(['/inicio/waba']);  // Asegúrate de que esta sea la ruta correcta para Home
+    // Limpiar datos de autenticación
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userRole');
+    // Redirigir a la página de inicio
+    this.router.navigate(['/inicio/waba']);
   }
 
   isLoggedIn(): boolean {
     return this.isAuthenticatedSubject.value;
+  }
+
+  // Método para verificar si el usuario es administrador
+  isAdmin(): boolean {
+    return localStorage.getItem('userRole') === 'admin';
   }
 }

@@ -39,7 +39,32 @@ export class CrearAreaComponent implements OnInit {
   loadCursos(): void {
     this.cursoService.obtenerTodosLosCursos().subscribe({
       next: (response) => {
-        this.cursos = response.data;
+        console.log('Respuesta de cursos:', response);
+        
+        // Definir el orden exacto que queremos
+        const ordenDeseado = [
+          '1ro Primaria',
+          '2do Primaria',
+          '3ro Primaria',
+          '4to Primaria',
+          '5to Primaria',
+          '6to Primaria',
+          '1ro Secundaria',
+          '2do Secundaria',
+          '3ro Secundaria',
+          '4to Secundaria',
+          '5to Secundaria',
+          '6to Secundaria'
+        ];
+
+        // Ordenar los cursos según el orden deseado
+        this.cursos = response.data.sort((a, b) => {
+          const indexA = ordenDeseado.indexOf(a.nameCurso);
+          const indexB = ordenDeseado.indexOf(b.nameCurso);
+          return indexA - indexB;
+        });
+
+        console.log('Cursos cargados y ordenados:', this.cursos);
       },
       error: (err) => {
         console.error('Error cargando cursos:', err);
@@ -49,11 +74,37 @@ export class CrearAreaComponent implements OnInit {
   }
 
   toggleSelection(cursoId: number): void {
-    const index = this.selectedCursos.indexOf(cursoId);
-    if (index === -1) {
+    const cursoIndex = this.cursos.findIndex(c => c.id_curso === cursoId);
+    
+    if (this.selectedCursos.length === 0) {
       this.selectedCursos.push(cursoId);
     } else {
-      this.selectedCursos.splice(index, 1);
+      const indicesSeleccionados = this.selectedCursos
+        .map(id => this.cursos.findIndex(c => c.id_curso === id))
+        .sort((a, b) => a - b);
+      
+      const primerIndice = indicesSeleccionados[0];
+      const ultimoIndice = indicesSeleccionados[indicesSeleccionados.length - 1];
+      
+      // Si el curso seleccionado está fuera del rango actual
+      if (cursoIndex < primerIndice || cursoIndex > ultimoIndice) {
+        // Seleccionar todos los cursos entre el primer/último seleccionado y el nuevo
+        const inicio = Math.min(cursoIndex, primerIndice);
+        const fin = Math.max(cursoIndex, ultimoIndice);
+        
+        for (let i = inicio; i <= fin; i++) {
+          const id = this.cursos[i].id_curso;
+          if (!this.selectedCursos.includes(id)) {
+            this.selectedCursos.push(id);
+          }
+        }
+      } else {
+        // Si el curso está dentro del rango, deseleccionarlo
+        const index = this.selectedCursos.indexOf(cursoId);
+        if (index !== -1) {
+          this.selectedCursos.splice(index, 1);
+        }
+      }
     }
   }
 
@@ -65,7 +116,6 @@ export class CrearAreaComponent implements OnInit {
   onSubmit(): void {
     if (!this.validateForm()) return;
 
-    // Asignar los cursos seleccionados
     this.areaData.cursos = this.selectedCursos;
 
     this.areaService.crearAreaBasica(this.areaData).subscribe({
@@ -83,7 +133,6 @@ export class CrearAreaComponent implements OnInit {
   private validateForm(): boolean {
     this.clearMessages();
 
-    // Validación del ID de olimpiada recibido
     if (!this.idOlimpiada || this.idOlimpiada <= 0) {
       this.showError('No se pudo determinar la olimpiada asociada');
       return false;
@@ -103,7 +152,6 @@ export class CrearAreaComponent implements OnInit {
   }
 
   private resetForm(): void {
-    // Mantiene el ID de olimpiada al resetear
     this.areaData = {
       id_olimpiada: this.idOlimpiada,
       nombre_area: '',

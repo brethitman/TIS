@@ -466,6 +466,12 @@ export class EstadisticasComponent implements OnInit {
 
  async exportarPDF() {
     try {
+      // Validación de campos requeridos
+      if (!this.selectedOlimpiada || !this.selectedArea || !this.selectedNivel) {
+        this.error = 'Por favor, seleccione una olimpiada, área y nivel antes de exportar el PDF';
+        return;
+      }
+
       // Crear un nuevo documento PDF
       const pdf = new jsPDF('p', 'mm', 'a4');
       let yOffset = 30;

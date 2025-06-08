@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, Input } from '@angular/core';
+import { Component, inject, OnInit, Input, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -207,7 +207,36 @@ export class VistaAreasCategoriasComponent implements OnInit {
   }
 
   onNivelCheckboxChange(index: number): void {
-    this.gradosSeleccionadosNivel[index] = !this.gradosSeleccionadosNivel[index];
+    // Obtener todos los índices seleccionados actuales
+    const indicesSeleccionados = this.gradosSeleccionadosNivel
+      .map((selected, i) => selected ? i : -1)
+      .filter(i => i !== -1);
+    
+    // Si no hay grados seleccionados, permitir seleccionar este
+    if (indicesSeleccionados.length === 0) {
+      this.gradosSeleccionadosNivel[index] = true;
+    } 
+    // Si ya hay un grado seleccionado
+    else if (indicesSeleccionados.length === 1) {
+      const primerIndice = indicesSeleccionados[0];
+      
+      // Solo permitir seleccionar el grado anterior o siguiente al ya seleccionado
+      if (index === primerIndice - 1 || index === primerIndice + 1) {
+        this.gradosSeleccionadosNivel[index] = true;
+        
+        // Seleccionar todos los grados entre el primero y el actual
+        const inicio = Math.min(primerIndice, index);
+        const fin = Math.max(primerIndice, index);
+        for (let i = inicio; i <= fin; i++) {
+          this.gradosSeleccionadosNivel[i] = true;
+        }
+      }
+    }
+    // Si hay más de un grado seleccionado, solo permitir deseleccionar
+    else {
+      this.gradosSeleccionadosNivel[index] = false;
+    }
+    
     this.actualizarGradosNivel();
 
     const gradosSeleccionados = this.gradosSeleccionadosNivel.filter(selected => selected).length;
@@ -379,5 +408,18 @@ export class VistaAreasCategoriasComponent implements OnInit {
 
   ocultarModal(): void {
     this.mostrarModal = false;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    // Verificar si el clic fue fuera del selector de grados
+    const selectorGrados = document.querySelector('.selector-grados');
+    const botonSelector = document.querySelector('.boton-selector-grados');
+    
+    if (selectorGrados && botonSelector) {
+      if (!selectorGrados.contains(event.target as Node) && !botonSelector.contains(event.target as Node)) {
+        this.mostrarSelectorGrados = false;
+      }
+    }
   }
 }

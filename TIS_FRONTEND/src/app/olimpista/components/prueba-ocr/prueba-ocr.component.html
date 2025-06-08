@@ -124,19 +124,19 @@
 
                 <div class="bg-gray-50 p-3 rounded-lg">
                   <p class="text-xs font-medium text-gray-500">Monto pagado</p>
-                  <p class="font-medium">{{ inscripcionVerificada.boleta_pago?.monto || 'No encontrado' }}</p>
+                  <p class="font-medium">{{ inscripcionVerificada.boleta_pago.monto || 'No encontrado' }}</p>
                 </div>
               </div>
 
               <div class="grid grid-cols-2 gap-4">
                 <div class="bg-gray-50 p-3 rounded-lg">
                   <p class="text-xs font-medium text-gray-500">Olimpistas</p>
-                  <p class="font-medium">{{ inscripcionVerificada.olimpistas?.length || 0 }}</p>
+                  <p class="font-medium">{{ inscripcionVerificada.olimpistas.length || 0 }}</p>
                 </div>
 
                 <div class="bg-gray-50 p-3 rounded-lg">
                   <p class="text-xs font-medium text-gray-500">Tutores</p>
-                  <p class="font-medium">{{ inscripcionVerificada.tutors?.length || 0 }}</p>
+                  <p class="font-medium">{{ inscripcionVerificada.tutors.length || 0 }}</p>
                 </div>
               </div>
 

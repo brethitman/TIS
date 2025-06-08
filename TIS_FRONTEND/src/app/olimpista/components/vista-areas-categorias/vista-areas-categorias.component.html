@@ -152,7 +152,7 @@
               <div class="space-y-2">
                 <label class="block text-sm font-medium text-gray-700 required">Selección de grados</label>
                 <button type="button" (click)="toggleSelectorGrados()"
-                  class="w-full px-3 py-2 border rounded-md bg-white text-left flex justify-between items-center hover:bg-gray-50 focus:ring-2 focus:ring-blue-500">
+                  class="boton-selector-grados w-full px-3 py-2 border rounded-md bg-white text-left flex justify-between items-center hover:bg-gray-50 focus:ring-2 focus:ring-blue-500">
                   <span *ngIf="currentNewLevel.gradoIniCat && currentNewLevel.gradoFinCat">
                     {{ currentNewLevel.gradoIniCat }}
                     <span *ngIf="currentNewLevel.gradoIniCat !== currentNewLevel.gradoFinCat">
@@ -166,7 +166,7 @@
 
                 <!-- Selector de grados con checkboxes (desplegable) -->
                 <div *ngIf="mostrarSelectorGrados"
-                  class="mt-1 p-3 border rounded-md bg-white shadow-lg max-h-64 overflow-y-auto">
+                  class="selector-grados mt-1 p-3 border rounded-md bg-white shadow-lg max-h-64 overflow-y-auto">
                   <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
                     <div *ngFor="let grado of grados; let i = index" class="flex items-center">
                       <input type="checkbox" [id]="'nivel-grado-' + i" [checked]="gradosSeleccionadosNivel[i]"
