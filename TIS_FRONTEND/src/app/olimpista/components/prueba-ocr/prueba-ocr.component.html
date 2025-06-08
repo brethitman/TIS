@@ -88,81 +88,25 @@
       </div>
     </div>
     <!--OCR -->
-    <div class="mx-auto max-w-4xl p-4">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Vista previa de imagen -->
+    <div class="mx-auto max-w-5xl p-4"> <!-- Cambiado de max-w-4xl a max-w-5xl -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8"> <!-- Aumentado el gap de 6 a 8 -->
+        <!-- Vista previa de imagen (ahora ocupa más espacio relativo) -->
         <div *ngIf="imagenCargada" class="bg-white rounded-xl shadow-sm overflow-hidden">
           <div class="p-5">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Vista previa del comprobante</h3>
             <div
-              class="border-2 border-dashed border-gray-200 rounded-lg p-3 bg-gray-50 flex items-center justify-center">
-              <img [src]="imagenCargada" alt="Comprobante subido" class="max-h-80 w-auto object-contain rounded-md" />
+              class="border-2 border-dashed border-gray-200 rounded-lg p-4 bg-gray-50 flex items-center justify-center">
+              <!-- Aumentado padding de p-3 a p-4 -->
+              <img [src]="imagenCargada" alt="Comprobante subido" class="max-h-96 w-auto object-contain rounded-md"
+              />
             </div>
           </div>
         </div>
 
-        <!-- Panel de resultados -->
+        <!-- Panel de resultados (se mantiene igual) -->
         <div class="bg-white rounded-xl shadow-sm overflow-hidden">
           <div class="p-5">
-            <!-- Resultado de boleta detectada -->
-            <div *ngIf="numeroBoletaDetectado" class="mb-6">
-              <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                <p class="text-sm font-medium text-blue-600 mb-1">Número de boleta detectado</p>
-                <p class="text-2xl font-bold text-blue-800">{{ numeroBoletaDetectado }}</p>
-              </div>
-            </div>
-
-            <!-- Estado de verificación -->
-            <div *ngIf="inscripcionVerificada" class="space-y-4">
-              <h4 class="text-lg font-semibold text-gray-800 border-b pb-2">Detalles de la inscripción</h4>
-
-              <div class="grid grid-cols-2 gap-4">
-                <div class="bg-gray-50 p-3 rounded-lg">
-                  <p class="text-xs font-medium text-gray-500">Estado</p>
-                  <p class="font-medium">{{ inscripcionVerificada.estado || 'No encontrado' }}</p>
-                </div>
-
-                <div class="bg-gray-50 p-3 rounded-lg">
-                  <p class="text-xs font-medium text-gray-500">Monto pagado</p>
-                  <p class="font-medium">{{ inscripcionVerificada.boleta_pago.monto || 'No encontrado' }}</p>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-4">
-                <div class="bg-gray-50 p-3 rounded-lg">
-                  <p class="text-xs font-medium text-gray-500">Olimpistas</p>
-                  <p class="font-medium">{{ inscripcionVerificada.olimpistas.length || 0 }}</p>
-                </div>
-
-                <div class="bg-gray-50 p-3 rounded-lg">
-                  <p class="text-xs font-medium text-gray-500">Tutores</p>
-                  <p class="font-medium">{{ inscripcionVerificada.tutors.length || 0 }}</p>
-                </div>
-              </div>
-
-              <div *ngIf="inscripcionVerificada.boleta_pago" class="bg-green-50 p-3 rounded-lg border border-green-100">
-                <p class="text-xs font-medium text-green-600">Boleta verificada</p>
-                <p class="font-medium text-green-800">
-                  N° {{ inscripcionVerificada.boleta_pago.numero_boleta }}
-                </p>
-              </div>
-            </div>
-
-            <!-- Indicador de carga -->
-            <div *ngIf="cargandoOCR || procesandoPago" class="mt-6">
-              <div class="flex items-center justify-center space-x-3 p-4 bg-gray-50 rounded-lg">
-                <svg class="animate-spin h-6 w-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none"
-                  viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                  </path>
-                </svg>
-                <span class="text-gray-700 font-medium">
-                  {{ cargandoOCR ? 'Procesando imagen...' : 'Verificando pago...' }}
-                </span>
-              </div>
-            </div>
+            <!-- ... (el resto del código sigue igual) ... -->
           </div>
         </div>
       </div>
@@ -321,28 +265,28 @@
       </div>
     </div>
 
-        <!-- Mensaje de error -->
-        <div *ngIf="errorMensaje" class="mt-8">
-          <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
-            <div class="flex">
-              <div class="flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24"
-                  stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div class="ml-3">
-                <h3 class="text-sm font-medium text-red-800">Error en la verificación</h3>
-                <div class="mt-2 text-sm text-red-700">
-                  <p>{{ errorMensaje }}</p>
-                </div>
-              </div>
+    <!-- Mensaje de error -->
+    <div *ngIf="errorMensaje" class="mt-8">
+      <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">Error en la verificación</h3>
+            <div class="mt-2 text-sm text-red-700">
+              <p>{{ errorMensaje }}</p>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
 
 <!-- Participantes (Olimpistas) 
         <div *ngIf="inscripcionVerificada.olimpistas && inscripcionVerificada.olimpistas.length > 0">
