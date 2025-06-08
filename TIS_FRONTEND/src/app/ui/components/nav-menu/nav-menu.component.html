@@ -1,51 +1,51 @@
 <!-- nav-menu.component.html -->
-<nav class="bg-white shadow-lg border-b border-gray-200 py-4">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16">
+<nav class="bg-white shadow-lg border-b border-gray-200 py-2 sm:py-4">
+  <div class="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+    <div class="flex items-center justify-between h-12 sm:h-16">
       
-      <!-- LOGO UNIVERSITARIO - Movido más a la derecha -->
-      <div class="flex-shrink-0 flex items-center ml-8">
+      <!-- LOGO UNIVERSITARIO - Ajustado para móvil -->
+      <div class="flex-shrink-0 flex items-center ml-2 sm:ml-8">
         <div class="flex flex-col">
-          <h1 class="text-xl font-bold text-gray-800 leading-tight">
+          <h1 class="text-base sm:text-lg font-bold text-gray-800 leading-tight">
             Universidad Mayor de San Simón
           </h1>
-          <span class="text-sm text-gray-500 font-medium">
+          <span class="text-xs sm:text-sm text-gray-500 font-medium">
             Sistema Académico
           </span>
         </div>
       </div>
 
-      <!-- MENÚ PRINCIPAL CENTRADO ABSOLUTO -->
-      <div class="absolute left-1/2 transform -translate-x-1/2">
-        <div class="hidden md:block">
-          <div class="flex items-baseline space-x-6">
+      <!-- MENÚ PRINCIPAL CENTRADO - Oculto en móvil -->
+      <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2">
+        <div class="flex items-baseline space-x-4 lg:space-x-6">
+          @if (!authService.isLoggedIn()) {
             @for (option of getHomeOptions(); track option.path) {
               <a 
-                class="inline-flex items-center px-5 py-3 rounded-lg text-gray-700 font-medium text-sm uppercase tracking-wider transition-all duration-200 ease-in-out border border-transparent hover:bg-gray-100 hover:text-gray-800 hover:border-gray-300"
+                class="inline-flex items-center px-3 sm:px-5 py-2 sm:py-3 rounded-lg text-gray-700 font-medium text-xs sm:text-sm uppercase tracking-wider transition-all duration-200 ease-in-out border border-transparent hover:bg-gray-100 hover:text-gray-800 hover:border-gray-300"
                 routerLinkActive="bg-gray-800 text-white border-gray-800 font-semibold hover:bg-gray-800 hover:text-white hover:border-gray-800" 
                 [routerLink]="option.path"
               >
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                 </svg>
                 {{option.name}}
               </a>
             }
-          </div>
+          }
         </div>
       </div>
 
-      <!-- LOGIN/LOGOUT A LA DERECHA -->
-      <div class="flex items-center space-x-4">
+      <!-- LOGIN/LOGOUT A LA DERECHA - Ajustado para móvil -->
+      <div class="flex items-center space-x-2 sm:space-x-4">
         @if (!authService.isLoggedIn()) {
           <!-- Botón Login -->
           @for (option of getLoginOptions(); track option.path) {
             <a 
-              class="group inline-flex items-center px-5 py-2.5 rounded-md text-gray-700 font-medium text-sm bg-white border border-gray-300 transition-all duration-200 ease-in-out shadow-sm hover:bg-gray-100 hover:text-gray-800 hover:border-gray-400 hover:shadow-md hover:-translate-y-0.5"
+              class="group inline-flex items-center px-2 sm:px-5 py-1.5 sm:py-2.5 rounded-md text-gray-700 font-medium text-xs sm:text-sm bg-white border border-gray-300 transition-all duration-200 ease-in-out shadow-sm hover:bg-gray-100 hover:text-gray-800 hover:border-gray-400 hover:shadow-md hover:-translate-y-0.5"
               routerLinkActive="bg-gray-100 text-gray-800 border-gray-400 font-semibold hover:bg-gray-100 hover:text-gray-800" 
               [routerLink]="option.path"
             >
-              <svg class="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
               </svg>
               {{option.name}}
@@ -53,10 +53,10 @@
           }
         } @else {
           <!-- Opciones de usuario autenticado -->
-          <div class="flex items-center space-x-3">
+          <div class="hidden sm:flex items-center space-x-2 sm:space-x-3">
             @for (option of getAuthOptions(); track option.path) {
               <a 
-                class="inline-flex items-center px-4 py-2 rounded-md text-gray-600 font-medium text-sm transition-all duration-200 ease-in-out hover:bg-gray-100 hover:text-gray-800"
+                class="inline-flex items-center px-2 sm:px-4 py-1.5 sm:py-2 rounded-md text-gray-600 font-medium text-xs sm:text-sm transition-all duration-200 ease-in-out hover:bg-gray-100 hover:text-gray-800"
                 routerLinkActive="bg-gray-100 text-gray-800 font-semibold" 
                 [routerLink]="option.path"
               >
@@ -65,10 +65,10 @@
             }
             <!-- Botón Logout -->
             <button 
-              class="group inline-flex items-center px-4 py-2 rounded-md text-red-600 font-medium text-sm border border-red-300 bg-transparent transition-all duration-200 ease-in-out hover:bg-red-50 hover:text-red-700 hover:border-red-400"
+              class="group inline-flex items-center px-2 sm:px-4 py-1.5 sm:py-2 rounded-md text-red-600 font-medium text-xs sm:text-sm border border-red-300 bg-transparent transition-all duration-200 ease-in-out hover:bg-red-50 hover:text-red-700 hover:border-red-400"
               (click)="logout()"
             >
-              <svg class="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
               </svg>
               Cerrar Sesión
@@ -77,29 +77,58 @@
         }
       </div>
 
-      <!-- MENÚ MÓVIL -->
+      <!-- MENÚ MÓVIL - Mejorado -->
       <div class="md:hidden">
-        <button class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 border border-transparent transition-all duration-200 ease-in-out hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300" (click)="toggleMobileMenu()">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button class="inline-flex items-center justify-center p-1.5 sm:p-2 rounded-md text-gray-600 border border-transparent transition-all duration-200 ease-in-out hover:text-gray-800 hover:bg-gray-100 hover:border-gray-300" (click)="toggleMobileMenu()">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
       </div>
     </div>
 
-    <!-- MENÚ MÓVIL EXPANDIBLE -->
+    <!-- MENÚ MÓVIL EXPANDIBLE - Mejorado -->
     @if (showMobileMenu) {
-      <div class="md:hidden mt-4 pb-4 border-t border-gray-200">
-        <div class="px-2 pt-2 pb-3 space-y-2">
-          @for (option of menuOptions; track option.path) {
-            <a 
-              class="block px-4 py-3 rounded-md text-gray-600 font-medium transition-all duration-200 ease-in-out hover:bg-gray-100 hover:text-gray-800"
-              routerLinkActive="bg-gray-100 text-gray-800 font-semibold" 
-              [routerLink]="option.path"
-              (click)="closeMobileMenu()"
+      <div class="md:hidden mt-2 pb-2 sm:mt-4 sm:pb-4 border-t border-gray-200">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:space-y-2">
+          @if (!authService.isLoggedIn()) {
+            @for (option of getHomeOptions(); track option.path) {
+              <a 
+                class="block px-3 sm:px-4 py-2 sm:py-3 rounded-md text-gray-600 font-medium text-sm transition-all duration-200 ease-in-out hover:bg-gray-100 hover:text-gray-800"
+                routerLinkActive="bg-gray-100 text-gray-800 font-semibold" 
+                [routerLink]="option.path"
+                (click)="closeMobileMenu()"
+              >
+                {{option.name}}
+              </a>
+            }
+            @for (option of getLoginOptions(); track option.path) {
+              <a 
+                class="block px-3 sm:px-4 py-2 sm:py-3 rounded-md text-gray-600 font-medium text-sm transition-all duration-200 ease-in-out hover:bg-gray-100 hover:text-gray-800"
+                routerLinkActive="bg-gray-100 text-gray-800 font-semibold" 
+                [routerLink]="option.path"
+                (click)="closeMobileMenu()"
+              >
+                {{option.name}}
+              </a>
+            }
+          } @else {
+            @for (option of getAuthOptions(); track option.path) {
+              <a 
+                class="block px-3 sm:px-4 py-2 sm:py-3 rounded-md text-gray-600 font-medium text-sm transition-all duration-200 ease-in-out hover:bg-gray-100 hover:text-gray-800"
+                routerLinkActive="bg-gray-100 text-gray-800 font-semibold" 
+                [routerLink]="option.path"
+                (click)="closeMobileMenu()"
+              >
+                {{option.name}}
+              </a>
+            }
+            <button 
+              class="w-full text-left px-3 sm:px-4 py-2 sm:py-3 rounded-md text-red-600 font-medium text-sm transition-all duration-200 ease-in-out hover:bg-red-50 hover:text-red-700"
+              (click)="logout(); closeMobileMenu()"
             >
-              {{option.name}}
-            </a>
+              Cerrar Sesión
+            </button>
           }
         </div>
       </div>

@@ -1,47 +1,120 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <div class="flex flex-col max-h-full">
   <section class="w-full bg-gradient-to-r from-red-600 to-purple-700 py-3 px-6 animate-gradient">
     <h1 class="text-white text-2xl font-bold ">INCRIPCION A UN GRUPO DE ESTUDIANTES</h1>
   </section>
-  <div class="mx-auto ml-4 mb-2 mt-4 grid grid-cols-2 gap-4">
-    <div class="border border-gray-200 rounded-b-lg p-4 shadow-md">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">Recomendaciones</h2>
-      <ol class="list-decimal pl-5 space-y-2 text-gray-700 text-sm">
-        <li>1.- Descargue el formato de Excel que le proporcionamos y **NO le cambie el nombre**, de lo contrario, no se
-          le permitirá subir el archivo.</li>
-        <li>2.- No puede inscribir **más** de 6 estudiantes.</li>
-        <li>3.- Si está inscribiendo a un estudiante en el área de **Robótica**, no puede inscribirlo en más áreas.</li>
-        <li>4.- Verifique que los campos estén bien llenados; de lo contrario, no se aceptará su archivo de Excel.</li>
-        <li>5.- Una vez subido el archivo de Excel, usted podrá visualizar lo que ingresó anteriormente.</li>
-        <li>6.- El primer tutor en la lista de tutores será el responsable de pagar la boleta de pago y subir el
-          comprobante.</li>
+  <!-- Contenido principal unificado -->
+  <div class="max-w-7xl mx-auto px-4 py-6 bg-white shadow-lg rounded-b-lg">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Panel de Recomendaciones -->
+      <div class="border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="bg-[#2c3c80] px-6 py-3">
+          <h2 class="text-xl font-semibold text-white flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Recomendaciones para la inscripción
+          </h2>
+        </div>
+        <div class="p-6">
+          <ol class="space-y-4">
+            <li class="flex items-start">
+              <span
+                class="flex-shrink-0 bg-indigo-100 text-indigo-800 font-medium rounded-full w-6 h-6 flex items-center justify-center mr-3">1</span>
+              <p class="text-gray-700">
+                Descargue el formato de Excel proporcionado y <strong class="text-indigo-600">no modifique su
+                  nombre</strong>,
+                de lo contrario no podrá subirlo.
+              </p>
+            </li>
+            <li class="flex items-start">
+              <span
+                class="flex-shrink-0 bg-indigo-100 text-indigo-800 font-medium rounded-full w-6 h-6 flex items-center justify-center mr-3">2</span>
+              <p class="text-gray-700">
+                Máximo <strong class="text-indigo-600">6 estudiantes</strong> por inscripción.
+              </p>
+            </li>
+            <li class="flex items-start">
+              <span
+                class="flex-shrink-0 bg-indigo-100 text-indigo-800 font-medium rounded-full w-6 h-6 flex items-center justify-center mr-3">3</span>
+              <p class="text-gray-700">
+                Estudiantes en <strong class="text-indigo-600">Robótica</strong> no pueden inscribirse en otras áreas.
+              </p>
+            </li>
+            <li class="flex items-start">
+              <span
+                class="flex-shrink-0 bg-indigo-100 text-indigo-800 font-medium rounded-full w-6 h-6 flex items-center justify-center mr-3">4</span>
+              <p class="text-gray-700">
+                Verifique que <strong class="text-indigo-600">todos los campos</strong> estén correctamente llenados.
+              </p>
+            </li>
+            <li class="flex items-start">
+              <span
+                class="flex-shrink-0 bg-indigo-100 text-indigo-800 font-medium rounded-full w-6 h-6 flex items-center justify-center mr-3">5</span>
+              <p class="text-gray-700">
+                Podrá <strong class="text-indigo-600">visualizar y confirmar</strong> los datos antes del envío final.
+              </p>
+            </li>
+            <li class="flex items-start">
+              <span
+                class="flex-shrink-0 bg-indigo-100 text-indigo-800 font-medium rounded-full w-6 h-6 flex items-center justify-center mr-3">6</span>
+              <p class="text-gray-700">
+                El <strong class="text-indigo-600">primer tutor</strong> listado será el responsable del pago y envío
+                del comprobante.
+              </p>
+            </li>
+          </ol>
+        </div>
+      </div>
 
-      </ol>
-    </div>
-    <div class="border border-gray-200 rounded-b-lg p-6 shadow-md items-center justify-center">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">Formato de excel a descargar</h2>
-      <div class=" flex flex-col items-center justify-center">
-        <p class="text-gray-700 mb-2 p-2 ">Formato de inscripción de lista de estudiantes con un tutor</p>
-        <button
-          class="bg-[#0D1271] text-white px-4 py-2 rounded flex items-center justify-center shadow-md transition-colors w-1/2"
-          (click)="generarPrimerFormato()">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
-            stroke="currentColor" class="w-6 h-6 text-white">
-            <path strokeLinecap="round" strokeLinejoin="round"
-              d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-          </svg>
-          Descargar formato
-        </button>
-        <p class="text-gray-700 mb-2 p-2">Formato de inscripción de lista de estudiantes con varios tutores</p>
-        <button
-          class="bg-[#0D1271] text-white px-4 py-2 rounded flex items-center justify-center shadow-md transition-colors w-1/2"
-          (click)="generarSegundoFormato()">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
-            stroke="currentColor" class="w-6 h-6 text-white">
-            <path strokeLinecap="round" strokeLinejoin="round"
-              d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-          </svg>
-          Descargar formato
-        </button>
+      <!-- Panel de Descargas -->
+      <div class="border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+        <div class="bg-[#2c3c80] px-6 py-3">
+          <h2 class="text-xl font-semibold text-white flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+            Formatos de Excel disponibles
+          </h2>
+        </div>
+        <div class="p-6 space-y-6">
+          <!-- Formato 1 -->
+          <div class="text-center">
+            <h3 class="text-lg font-medium text-gray-800 mb-2">Inscripción con un tutor</h3>
+            <p class="text-gray-600 text-sm mb-4">Para estudiantes con un solo tutor responsable</p>
+            <button
+              class="bg-[#0D1271] hover:bg-[#0A0F5C] transform hover:scale-105 transition duration-300 text-white px-6 py-3 rounded-lg shadow-md w-full max-w-xs mx-auto flex items-center justify-center gap-2 transition duration-300"
+              (click)="generarPrimerFormato()">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              Descargar Formato
+            </button>
+          </div>
+
+          <div class="border-t border-gray-200"></div>
+
+          <!-- Formato 2 -->
+          <div class="text-center">
+            <h3 class="text-lg font-medium text-gray-800 mb-2">Inscripción con varios tutores</h3>
+            <p class="text-gray-600 text-sm mb-4">Para estudiantes con múltiples tutores asociados</p>
+            <button
+              class="bg-[#0D1271] hover:bg-[#0A0F5C] transform hover:scale-105 text-white px-6 py-3 rounded-lg shadow-md w-full max-w-xs mx-auto flex items-center justify-center gap-2 transition duration-300"
+              (click)="generarSegundoFormato()">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+              Descargar Formato
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

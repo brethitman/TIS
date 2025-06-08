@@ -3,18 +3,22 @@
              background: linear-gradient(0deg, rgba(253,253,253,1) 6%, rgba(151,58,58,1) 39%, rgba(113,110,165,1) 88%);
              height: 500px; width: 100%; overflow: hidden;position: relative;">
 
-        <div class="imgane-banner" style="overflow: hidden; margin-left: 30px; max-width: 100%;">
-            <img src="icon/ohsans-i.png" alt="Imagen del Banner"
-                class="imge-banner max-w-[340px] h-auto rounded-lg animate-movimiento" />
+        <div
+            class="flex md:flex-row items-center justify-center gap-4 overflow-hidden mx-auto w-full max-w-screen-xl">
+            <div class="flex justify-center w-full md:w-1/2">
+                <img src="icon/ohsans-i.png" alt="Imagen del Banner"
+                    class="w-full max-w-[340px] md:max-w-[340px] sm:max-w-[250px] h-auto rounded-lg animate-movimiento" />
+            </div>
+            <section class="text-left text-white w-full md:w-1/2 px-4">
+                <h1 class="font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-slate-300 to-stone-100 
+               text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
+                    OLIMPIADAS CIENTÍFICAS
+                </h1>
+                <h2 class="text-lg sm:text-xl md:text-2xl lg:text-3xl italic text-beige">
+                    Universidad Mayor de San Simón
+                </h2>
+            </section>
         </div>
-        <section class="banner-contenedor text-center text-white"
-            style="margin-left: 60px; text-align: left; overflow: hidden;max-width: 100%;">
-            <h1 class="font-extrabolt bg-clip-text text-transparent bg-gradient-to-r from-slate-300 to-stone-100"
-                style="font-size: 50px; ">
-                OLIMPIADAS CIENTIFICAS</h1>
-            <h2 style="font-size: 30px; font-style: italic; color: beige;"> Universidad Mayor de San Simon</h2>
-            <!-- <button class="btn-areas  "> Ver Areas</button> -->
-        </section>
         <div class="burbujas h-screen bg-blue-500">
             <!-- Burbujas -->
             <div class="burbuja bg-white opacity-30 rounded-full animate-burbuja absolute w-[80px] h-[80px] left-[10%]">

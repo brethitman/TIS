@@ -66,6 +66,9 @@
     <p class="text-sm text-gray-600">Seleccione los cursos para esta área.</p>
 
     <div class="flex flex-wrap gap-4 p-4 border rounded-lg">
+      <div *ngIf="cursos.length === 0" class="text-gray-500">
+        No hay cursos disponibles
+      </div>
       <div *ngFor="let curso of cursos" class="flex items-center space-x-2">
         <input
           type="checkbox"

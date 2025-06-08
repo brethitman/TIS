@@ -1,3 +1,9 @@
+// Interfaz para la respuesta de la API (wrapper)
+export interface ApiResponse {
+  message: string;
+  data: Inscripcion;
+}
+
 // Interfaz para la respuesta completa de la API
 export interface Inscripcion {
   id: number;
@@ -47,9 +53,21 @@ export interface BoletaPago {
   monto: string;
   fecha_generacion: string;
   nombre_olimpiada: string | null;
-  areas_niveles: any[] | null;  // Puedes crear una interfaz más específica si lo necesitas
+  areas_niveles: AreaNivel[] | null;
   createdAt: string;
   updatedAt: string;
+}
+
+// Nueva interfaz para areas_niveles basada en tu respuesta
+export interface AreaNivel {
+  area_id: number;
+  area_nombre: string;
+  niveles: NivelInfo[];
+}
+
+export interface NivelInfo {
+  nivel_id: number;
+  nivel_nombre: string;
 }
 
 export interface NivelCategoria {

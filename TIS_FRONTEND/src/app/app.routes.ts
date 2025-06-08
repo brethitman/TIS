@@ -16,6 +16,7 @@ import { InscripcionTodoComponent } from './olimpista/components/inscripcion-tod
 
 import { PruebaOcrComponent } from './olimpista/components/prueba-ocr/prueba-ocr.component';
 import { BoletaListaComponent } from './olimpista/pages/boleta-lista/boleta-lista.component';
+import { authGuard } from './auth/guards/auth.guard';
 
 export const routes: Routes = [
 
@@ -34,6 +35,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayoutComponent,
+    canActivate: [authGuard],
     children: [
       {
         path: 'products',

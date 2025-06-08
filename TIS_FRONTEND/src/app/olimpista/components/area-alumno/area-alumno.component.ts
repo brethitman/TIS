@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit,ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
@@ -30,6 +30,7 @@ export class AreaAlumnoComponent implements OnInit {
   @Output() estudianteSeleccionado = new EventEmitter<any>();
   @Output() areaSeleccionada = new EventEmitter<any>();
   @Output() inscribir = new EventEmitter<void>();
+  idOlimpiada = 0;
 
   isStudentDropdownOpen = false;
   isCursoDropdownOpen = false;
@@ -112,6 +113,7 @@ export class AreaAlumnoComponent implements OnInit {
   private cargarOlimpiadaId(): void {
     this.route.params.subscribe(params => {
       const olimpiadaId = params['id'];
+      this.idOlimpiada = isNaN(olimpiadaId) ? null : olimpiadaId;
       if (olimpiadaId) {
         this.cargarAreas(olimpiadaId);
         console.log('datos', olimpiadaId)
@@ -255,7 +257,7 @@ export class AreaAlumnoComponent implements OnInit {
     this.successMessage = `Estudiante ${this.estudianteActual.nombre} ${this.estudianteActual.apellido} inscrito correctamente`;
     this.errorMessage = null;
     console.log('Cantidad de estudiantes restantes:', this.estudiantes.length);
-    console.log('cantid est: ',this.estudiantes)
+    console.log('cantid est: ', this.estudiantes)
     // Resetear el formulario
     this.resetearFormulario();
   }
@@ -369,23 +371,28 @@ export class AreaAlumnoComponent implements OnInit {
     console.log('Lista de áreas inscritas:', this.areasInscripcion);
 
   }
-  
+
   irABoletaList() {
     localStorage.setItem('areasInscripcion', JSON.stringify(this.areasInscripcion));
     localStorage.setItem('olimpistas', JSON.stringify(this.estInscripcion));
     localStorage.setItem('tutores', JSON.stringify(this.tutores));
     localStorage.setItem('inscripciones', JSON.stringify(this.insboleta));
+    if (this.idOlimpiada && this.idOlimpiada > 0) {
+      localStorage.setItem('idOlimpiada', JSON.stringify(this.idOlimpiada));
+    } else {
+      console.error("Error: idOlimpiada no tiene un valor válido.");
+    }
 
     console.log('Datos guardados en localStorage:', {
       areasInscripcion: JSON.parse(localStorage.getItem('areasInscripcion') || '[]'),
       olimpistas: JSON.parse(localStorage.getItem('olimpistas') || '[]'),
       tutores: JSON.parse(localStorage.getItem('tutores') || '[]'),
-      inscripciones: JSON.parse(localStorage.getItem('inscripciones')||'[]'),
+      inscripciones: JSON.parse(localStorage.getItem('inscripciones') || '[]'),
     });
     this.router.navigate(['/boletaPago']);
   }
 
-  
+
   mostrarFinalizar = false;
   verificarFinalizacion() {
     if (this.estudiantesDisponibles.length === 0) {
@@ -396,7 +403,7 @@ export class AreaAlumnoComponent implements OnInit {
     //this.inscripciones = [];
     this.estudiantesDisponibles = [...this.estudiantes];
     this.mostrarFinalizar = false;
-   this.router.navigate(['/boletaPago']);
+    this.router.navigate(['/boletaPago']);
   }
 
   finalizarInscripciones() {
