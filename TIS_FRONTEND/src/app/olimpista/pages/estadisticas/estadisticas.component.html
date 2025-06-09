@@ -183,7 +183,7 @@
             <div class="relative w-full sm:w-auto">
                 <select
                     [(ngModel)]="tipoEstadistica"
-                    class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    class="w-full px-4 py-3 bg-white border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
                 >
                     @for (tipo of tiposEstadistica; track tipo.id) {
                         <option [value]="tipo.id">
@@ -302,26 +302,27 @@
                         </div>
 
                         <div class="group relative">
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">
-                                Estado de Inscripción
-                            </label>
-                            <div class="relative">
-                                <select
-                                    class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white hover:border-slate-300 appearance-none cursor-pointer"
-                                    (change)="onFiltroEstadoChange($event)"
-                                >
-                                    <option value="">Todos los estados</option>
-                                    @for (estado of estadosUnicos; track estado) {
-                                        <option [value]="estado">{{ estado }}</option>
-                                    }
-                                </select>
-                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                                    <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                    </svg>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">
+                                    Estado de Inscripción
+                                </label>
+                                <div class="relative">
+                                    <select
+                                        class="w-full px-4 py-3 pr-10 border-2 border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white hover:border-slate-300 appearance-none cursor-pointer"
+                                        (change)="onFiltroEstadoChange($event)"
+                                    >
+                                        <option value="">Todos los estados</option>
+                                        @for (estado of estadosUnicos; track estado) {
+                                            <option [value]="estado">{{ estado }}</option>
+                                        }
+                                    </select>
+                                    <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+
                     </div>
                 </div>
                 

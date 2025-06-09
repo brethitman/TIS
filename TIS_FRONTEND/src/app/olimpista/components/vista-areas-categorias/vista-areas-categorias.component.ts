@@ -365,10 +365,7 @@ export class VistaAreasCategoriasComponent implements OnInit {
   }
 
   isDeshabilitado(habilitacion: boolean | number | null | undefined): boolean {
-    if (habilitacion === null || habilitacion === undefined) {
-      return true;
-    }
-    return habilitacion === false || habilitacion === 0;
+    return !this.isHabilitado(habilitacion);
   }
 
   getEstadoTexto(habilitacion: boolean | number | null | undefined): string {
@@ -381,18 +378,48 @@ export class VistaAreasCategoriasComponent implements OnInit {
       return;
     }
 
-    const nuevoEstado = !nivel.habilitacion;
+    const nuevoEstado = !this.isHabilitado(nivel.habilitacion);
+    const accion = nuevoEstado ? 'habilitar' : 'deshabilitar';
 
     this.nivelService.updateHabilitacion(nivel.id_nivel, nuevoEstado).subscribe({
-      next: (response: any) => {
+      next: (response: NivelResponse) => {
+        // Actualizar el estado local
         nivel.habilitacion = nuevoEstado;
-        this.mostrarModalExito(`Nivel ${nuevoEstado ? 'habilitado' : 'deshabilitado'} exitosamente`);
+        
+        // Mostrar mensaje de éxito
+        this.mostrarModalExito(`Nivel ${accion}do exitosamente`);
+        
+        // Recargar las áreas para asegurar que los datos estén actualizados
+        this.cargarAreas();
       },
       error: (error: any) => {
-        console.error('Error al actualizar estado del nivel:', error);
-        this.mostrarModalMensaje('error', 'Error al actualizar el estado del nivel');
+        console.error(`Error al ${accion} nivel:`, error);
+        
+        // Obtener mensaje de error más detallado
+        let mensajeError = `Error al ${accion} el nivel. `;
+        
+        if (error.error) {
+          if (typeof error.error === 'string') {
+            mensajeError += error.error;
+          } else if (error.error.message) {
+            mensajeError += error.error.message;
+          } else if (error.error.error) {
+            mensajeError += error.error.error;
+          }
+        } else if (error.message) {
+          mensajeError += error.message;
+        } else {
+          mensajeError += 'Por favor, intente nuevamente.';
+        }
+
+        this.mostrarModalMensaje('error', mensajeError);
       }
     });
+  }
+
+  // Método para filtrar niveles habilitados (para uso en otros componentes)
+  getNivelesHabilitados(niveles: NivelCategoria[]): NivelCategoria[] {
+    return niveles.filter(nivel => this.isHabilitado(nivel.habilitacion));
   }
 
   // Métodos del modal

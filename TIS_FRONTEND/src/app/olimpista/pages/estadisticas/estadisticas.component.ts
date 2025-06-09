@@ -142,7 +142,7 @@ export class EstadisticasComponent implements OnInit {
           id_area: area.id_area,
           niveles: area.nivel_categorias?.map(nivel => ({
             id_nivel: nivel.id_nivel,
-            nombre_nivel: nivel.nombre_nivel
+            nombre_nivel: nivel.nombre_nivel,
           })) || []
         }));
         this.loading = false;

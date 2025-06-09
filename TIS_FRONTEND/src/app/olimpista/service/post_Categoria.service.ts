@@ -30,10 +30,22 @@ export class NivelService {
       request
     );
   }
-  updateHabilitacion(idNivel: number, habilitacion: boolean): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/niveles/${idNivel}/habilitacion`, { habilitacion });
-  }
 
+  /**
+   * Actualiza el estado de habilitación de un nivel
+   * @param idNivel ID del nivel a actualizar
+   * @param habilitacion Nuevo estado de habilitación
+   * @returns Observable con la respuesta del servidor
+   */
+  updateHabilitacion(idNivel: number, habilitacion: boolean): Observable<NivelResponse> {
+    // Convertir el booleano a número (0 o 1) para el backend
+    const habilitacionNum = habilitacion ? 1 : 0;
+    
+    return this.http.patch<NivelResponse>(
+      `${this.apiUrl}/nivelCategoria/${idNivel}/habilitacion`,
+      { habilitacion: habilitacionNum }
+    );
+  }
 
   /**
    * Crea un solo nivel para un área específica.
