@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Input } from '@angular/core';
 import { VisualizacionService } from '../../service/Visualizacion.service';
 import { BoletaPagoResponse } from '../../interfaces/inscripcion.types';
@@ -8,6 +8,7 @@ import { jsPDF } from 'jspdf';
 import * as htmlToImage from 'html-to-image';
 import html2canvas from 'html2canvas';
 import { EmailService } from '../../service/email.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-boleta-lista',
@@ -17,10 +18,14 @@ import { EmailService } from '../../service/email.service';
 })
 export class BoletaListaComponent implements OnInit {
 
+  private router = inject(Router);
+  private activatedRoute = inject(ActivatedRoute);
+
   @Input() olimpista: any[][] = [];
   @Input() tutor: any[][] = [];
   @Input() areas: any[][] = [];
   @Input() inscripciones: any[] = [];
+  @Input() idOlimpiada: any
 
   boletaTutor: any[] = [];
   colegios: any[] = [];
@@ -29,8 +34,10 @@ export class BoletaListaComponent implements OnInit {
   mensaje: string = "";
   errorMessage: string | null = null;
   boletaGenerada = false;
+  id = 0;
 
-  constructor(private service: VisualizacionService, private emailService: EmailService,) { }
+  constructor(private service: VisualizacionService, private emailService: EmailService,) {
+  }
 
   ngOnInit() {
     this.areas = JSON.parse(localStorage.getItem('areasInscripcion') || '[]');
@@ -39,63 +46,15 @@ export class BoletaListaComponent implements OnInit {
     this.inscripciones = JSON.parse(localStorage.getItem('inscripciones') || '[]');
     this.boletaTutor = this.tutor[0];//OBTIENE SOLO LA INFOEMCION DEL TUTOR RESPONSABLE
     this.colegios = [...new Set(this.olimpista.map(olimpista => olimpista[6]))];
+    const idOlimpiada = JSON.parse(localStorage.getItem('idOlimpiada') || '0');
+    this.id = idOlimpiada;
+    console.log("ID recuperado:", idOlimpiada);
     console.log('Áreas recibidas:', this.areas);
     console.log('Olimpistas recibidos:', this.olimpista);
     console.log('Tutores recibidos:', this.tutor);
     console.log('tutor boleta', this.boletaTutor);
     console.log('colegios', this.colegios);
   }
-
-  /* Métodos corregidos para contar y listar áreas únicas
-countUniqueAreas(): number {
-  if (!this.areas || !Array.isArray(this.areas)) return 0;
-  
-  const uniqueAreas = new Set<string>();
-  this.areas.forEach(areaObj => {
-    if (areaObj && areaObj.area_id) {
-      // Agrega el ID del área como string
-      uniqueAreas.add(areaObj.area_id.toString()); 
-    }
-  });
-  return uniqueAreas.size;
-}
-
-getUniqueAreas(): string[] {
-  if (!this.areas || !Array.isArray(this.areas)) return [];
-  
-  const uniqueAreas = new Set<string>();
-  this.areas.forEach(areaObj => {
-    if (areaObj && areaObj.area_id) {
-      uniqueAreas.add(`Área ${areaObj.area_id}`);
-    }
-  });
-  return Array.from(uniqueAreas);
-}
-
-// Métodos para contar y listar colegios únicos (estos están bien)
-countUniqueSchools(): number {
-  if (!this.olimpista || !Array.isArray(this.olimpista)) return 0;
-  
-  const uniqueSchools = new Set<string>();
-  this.olimpista.forEach(estudiante => {
-    if (estudiante && estudiante[6]) {
-      uniqueSchools.add(estudiante[6]);
-    }
-  });
-  return uniqueSchools.size;
-}
-
-getUniqueSchools(): string[] {
-  if (!this.olimpista || !Array.isArray(this.olimpista)) return [];
-  
-  const uniqueSchools = new Set<string>();
-  this.olimpista.forEach(estudiante => {
-    if (estudiante && estudiante[6]) {
-      uniqueSchools.add(estudiante[6]);
-    }
-  });
-  return Array.from(uniqueSchools);
-}*/
 
   inscribir() {
     // Verifica primero que tengas datos válidos
@@ -173,7 +132,7 @@ getUniqueSchools(): string[] {
         console.log('Inscripción exitosa:', response);
         if (response?.inscripcion?.boleta_pago) {
           this.boletaPago = response.inscripcion.boleta_pago;
-           this.boletaGenerada = true;
+          this.boletaGenerada = true;
           alert('Inscripción realizada correctamente y Boleta generada con éxito');
           const correoTutor = this.tutor[0]?.[3]; // Accede al correo del tutor
           if (this.boletaPago) {
@@ -251,8 +210,16 @@ getUniqueSchools(): string[] {
         next: (response) => {
           console.log('Boleta enviada por email:', response);
         },
-        
+
       });
+  }
+  volver() {
+    console.log("ID Olimpiada antes de la navegación:", this.id);
+    if (this.id) {
+      this.router.navigate(['/inicio/Olimpiada', this.id, 'Visualizacion']);
+    } else {
+      console.error("Error: idOlimpiada es undefined.");
+    }
   }
 
 }
