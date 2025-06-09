@@ -245,13 +245,26 @@
 
           <!-- Grid de niveles con diseño mejorado (sin cambios funcionales) -->
           <div *ngIf="areaSeleccionada.nivel_categorias?.length" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div *ngFor="let nivel of areaSeleccionada.nivel_categorias" class="flex justify-center">
-              <div class="relative w-full max-w-sm rounded-xl bg-white p-6 shadow-lg border-l-4 border-purple-600 
-        hover:shadow-xl hover:border-purple-700 hover:scale-[1.02] transition-all duration-300 ease-in-out">
+            <div *ngFor="let nivel of areaSeleccionada.nivel_categorias" 
+                 class="flex justify-center"
+                 [ngClass]="{'opacity-50': !isHabilitado(nivel.habilitacion)}">
+              <div class="relative w-full max-w-sm rounded-xl bg-white p-6 shadow-lg border-l-4"
+                   [ngClass]="{
+                     'border-purple-600 hover:border-purple-700': isHabilitado(nivel.habilitacion),
+                     'border-red-600 hover:border-red-700': !isHabilitado(nivel.habilitacion)
+                   }"
+                   [class.hover:shadow-xl]="isHabilitado(nivel.habilitacion)"
+                   [class.hover:scale-[1.02]]="isHabilitado(nivel.habilitacion)"
+                   [class.transition-all]="isHabilitado(nivel.habilitacion)"
+                   [class.duration-300]="isHabilitado(nivel.habilitacion)"
+                   [class.ease-in-out]="isHabilitado(nivel.habilitacion)">
 
                 <!-- Icono superior mejorado -->
-                <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 flex items-center justify-center 
-          rounded-xl bg-gradient-to-br from-purple-600 to-indigo-600 text-white shadow-md">
+                <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 w-12 h-12 flex items-center justify-center rounded-xl text-white shadow-md"
+                     [ngClass]="{
+                       'bg-gradient-to-br from-purple-600 to-indigo-600': isHabilitado(nivel.habilitacion),
+                       'bg-gradient-to-br from-red-600 to-red-700': !isHabilitado(nivel.habilitacion)
+                     }">
                   <i class="fas fa-graduation-cap text-xl"></i>
                 </div>
 
@@ -260,6 +273,9 @@
                   <!-- Nombre del nivel con mejor jerarquía visual -->
                   <h2 class="text-center text-xl font-bold mb-5 text-gray-800">
                     {{ nivel.nombre_nivel }}
+                    <span *ngIf="!isHabilitado(nivel.habilitacion)" class="text-sm text-red-600 ml-2">
+                      (Deshabilitado)
+                    </span>
                   </h2>
 
                   <!-- Detalles del nivel - diseño más limpio -->
@@ -323,12 +339,14 @@
 
                   <!-- Botón de acción con diseño mejorado -->
                   <div class="mt-6 pt-4 border-t border-gray-100">
-                    <button (click)="toggleHabilitacion(nivel)" [class]="nivel.habilitacion ? 
-              'bg-red-600 hover:bg-red-700' : 
-              'bg-green-600 hover:bg-green-700'" class="w-full text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 ease-in-out 
-                  flex items-center justify-center space-x-2">
-                      <i [class]="nivel.habilitacion ? 'fas fa-ban' : 'fas fa-check'"></i>
-                      <span>{{ nivel.habilitacion ? 'DESHABILITAR' : 'HABILITAR' }}</span>
+                    <button (click)="toggleHabilitacion(nivel)" 
+                            [class]="isHabilitado(nivel.habilitacion) ? 
+                                    'bg-red-600 hover:bg-red-700' : 
+                                    'bg-green-600 hover:bg-green-700'" 
+                            class="w-full text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 ease-in-out 
+                                   flex items-center justify-center space-x-2">
+                      <i [class]="isHabilitado(nivel.habilitacion) ? 'fas fa-ban' : 'fas fa-check'"></i>
+                      <span>{{ isHabilitado(nivel.habilitacion) ? 'DESHABILITAR' : 'HABILITAR' }}</span>
                     </button>
                   </div>
                 </div>

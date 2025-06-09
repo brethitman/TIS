@@ -288,7 +288,14 @@ export class InscripcionTodoComponent implements OnInit, OnDestroy {
   getNivelesParaAreaEnFormArray(areaControl: AbstractControl): NivelCategoria[] {
     if (areaControl instanceof FormGroup) {
       const area = areaControl.get('area')?.value;
-      return area?.nivel_categorias || [];
+      if (area?.nivel_categorias) {
+        // Filtrar solo los niveles habilitados
+        return area.nivel_categorias.filter((nivel: NivelCategoria) => {
+          // Convertir a número para comparación consistente
+          const habilitacion = Number(nivel.habilitacion);
+          return habilitacion === 1;
+        });
+      }
     }
     return [];
   }
